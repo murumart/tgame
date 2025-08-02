@@ -1,0 +1,1 @@
+Ehk esemed, materjalid. Prototüübis lihtsalt Dict<string, int>. Nüüd võiks iga ressursitüübi juures veidi rohkem infot olla.
