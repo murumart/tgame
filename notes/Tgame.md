@@ -10,4 +10,4 @@ Mängijale nähtav kaart on ruudustik. Mõõtkava on selline, et üks ruut mahut
 Hoidkem C# abil mälus mänguobjekte, ning Godot's stseeni avamisel laadigem see visuaalselt ning mängijale "katsutavalt" - ehk mänguloogika ning -graafika hoida eraldi.
 
 ### Visuaalid
-Värvipalett olgu [see](https://lospec.com/palette-list/puffball-6).
+Värvipalett olgu [see](https://lospec.com/palette-list/31).
