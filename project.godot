@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Colony/strategy game"
-config/features=PackedStringArray("4.5", "Mobile")
+config/features=PackedStringArray("4.5", "C#", "Mobile")
 boot_splash/bg_color=Color(0.20392157, 0, 0, 1)
 boot_splash/fullsize=false
 boot_splash/use_filter=false
@@ -29,10 +29,15 @@ window/size/viewport_height=360
 window/size/window_width_override=960
 window/size/window_height_override=720
 window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
 
 [dotnet]
 
 project/assembly_name="Colonygame"
+
+[gui]
+
+theme/custom="uid://beql3um0mpmyd"
 
 [input]
 

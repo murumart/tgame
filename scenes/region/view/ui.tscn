@@ -1,0 +1,132 @@
+[gd_scene load_steps=4 format=3 uid="uid://cp354pcilqv48"]
+
+[ext_resource type="Script" uid="uid://mje62owcow40" path="res://scenes/region/view/ui.gd" id="1_bjdfm"]
+[ext_resource type="LabelSettings" uid="uid://v03gdc53ijm1" path="res://resources/theme/half_size.tres" id="1_nfevs"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_bjdfm"]
+
+[node name="Ui" type="MarginContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 2
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 2
+theme_override_constants/margin_bottom = 2
+script = ExtResource("1_bjdfm")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="ResourceDisplay" type="PanelContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/ResourceDisplay"]
+layout_mode = 2
+theme_override_constants/margin_left = 2
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 2
+theme_override_constants/margin_bottom = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/ResourceDisplay/MarginContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="Label" type="Label" parent="VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer"]
+layout_mode = 2
+text = "pop: 0"
+label_settings = ExtResource("1_nfevs")
+
+[node name="Label2" type="Label" parent="VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer"]
+layout_mode = 2
+text = "silver: 0"
+label_settings = ExtResource("1_nfevs")
+
+[node name="Fat" type="Control" parent="VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Label3" type="Label" parent="VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer"]
+layout_mode = 2
+text = "01/01/0000"
+label_settings = ExtResource("1_nfevs")
+
+[node name="Fat" type="Control" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="MenuTabs" type="TabContainer" parent="VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_bjdfm")
+current_tab = 0
+tabs_visible = false
+deselect_enabled = true
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/MenuTabs"]
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer/MenuTabs/HBoxContainer"]
+custom_minimum_size = Vector2(169, 240)
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/MenuTabs/HBoxContainer/PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 2
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 2
+theme_override_constants/margin_bottom = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/MenuTabs/HBoxContainer/PanelContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/MenuTabs/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "What to build?"
+
+[node name="BuildMenuList" type="ItemList" parent="VBoxContainer/MenuTabs/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+item_count = 2
+item_0/text = "Housing"
+item_1/text = "Well"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/MenuTabs/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+alignment = 2
+
+[node name="BuildMenuConfirmation" type="Button" parent="VBoxContainer/MenuTabs/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+disabled = true
+text = "select"
+
+[node name="Fat" type="Control" parent="VBoxContainer/MenuTabs/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ControlButtons" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="BuildButton" type="Button" parent="VBoxContainer/ControlButtons"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Build"
+
+[node name="PolicyButton" type="Button" parent="VBoxContainer/ControlButtons"]
+unique_name_in_owner = true
+layout_mode = 2
+disabled = true
+text = "Policy"
+
+[node name="WorldButton" type="Button" parent="VBoxContainer/ControlButtons"]
+unique_name_in_owner = true
+layout_mode = 2
+disabled = true
+text = "World"

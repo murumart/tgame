@@ -10,6 +10,7 @@ insert_final_newline = false
 
 # New line preferences
 [*.cs]
+indent_size = 8
 csharp_new_line_before_catch = false
 csharp_new_line_before_else = false
 csharp_new_line_before_finally = false

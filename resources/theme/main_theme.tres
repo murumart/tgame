@@ -1,0 +1,22 @@
+[gd_resource type="Theme" load_steps=4 format=3 uid="uid://beql3um0mpmyd"]
+
+[ext_resource type="FontVariation" uid="uid://dliky8sbpgnxp" path="res://resources/font/title_font.tres" id="1_70gfe"]
+[ext_resource type="FontVariation" uid="uid://16wjjwlxw4iw" path="res://resources/font/default_font.tres" id="1_rjbnf"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5kvdv"]
+bg_color = Color(0.1882353, 0.21960784, 0.2627451, 0.5019608)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+shadow_color = Color(0.1882353, 0.21960784, 0.2627451, 0.14509805)
+shadow_size = 1
+shadow_offset = Vector2(1, 1)
+anti_aliasing = false
+
+[resource]
+Button/fonts/font = ExtResource("1_70gfe")
+Control/colors/font_color = Color(0.8352941, 0.8392157, 0.85882354, 1)
+Control/font_sizes/font_size = 12
+Control/fonts/font = ExtResource("1_rjbnf")
+Control/styles/panel = SubResource("StyleBoxFlat_5kvdv")
