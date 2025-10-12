@@ -1,6 +1,6 @@
 [gd_scene load_steps=9 format=4 uid="uid://dfsyk55h5ioh0"]
 
-[ext_resource type="Script" uid="uid://br73idjniu5mg" path="res://scenes/region/game_man.gd" id="1_spsxg"]
+[ext_resource type="Script" uid="uid://tg0ox5vibsay" path="res://scenes/region/GameMan.cs" id="1_spsxg"]
 [ext_resource type="Texture2D" uid="uid://bqktcpnjk5qk5" path="res://scenes/region/view/tiles1.png" id="2_spsxg"]
 [ext_resource type="Texture2D" uid="uid://8wjabtgow84g" path="res://scenes/region/view/tiles2.png" id="2_yddgr"]
 [ext_resource type="Texture2D" uid="uid://b8g2fakdu1wl2" path="res://crab.png" id="3_yjnyd"]
@@ -42,8 +42,9 @@ sources/2 = SubResource("TileSetAtlasSource_spsxg")
 script = ExtResource("1_spsxg")
 ui = NodePath("../RegionCamera/Ui")
 
-[node name="RegionCamera" parent="." node_paths=PackedStringArray("region_tiles") instance=ExtResource("4_cjagt")]
-region_tiles = NodePath("../Tiles/Region")
+[node name="RegionCamera" parent="." node_paths=PackedStringArray("cursor", "regionTiles") instance=ExtResource("4_cjagt")]
+cursor = NodePath("Cursor")
+regionTiles = NodePath("../Tiles/Region")
 
 [node name="Tiles" type="Node2D" parent="."]
 y_sort_enabled = true
