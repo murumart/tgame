@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://cp354pcilqv48"]
 
 [ext_resource type="LabelSettings" uid="uid://v03gdc53ijm1" path="res://resources/theme/half_size.tres" id="1_nfevs"]
-[ext_resource type="Script" uid="uid://cd6mwdns4bcwa" path="res://scenes/region/view/Ui.cs" id="1_vkak1"]
+[ext_resource type="Script" uid="uid://cd6mwdns4bcwa" path="res://scenes/region/view/UI.cs" id="1_vkak1"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_bjdfm"]
 

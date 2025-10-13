@@ -3,7 +3,7 @@ using System;
 
 
 namespace scenes.region.view {
-	public partial class Ui : Control {
+	public partial class UI : Control {
 
 		// one big script to rule all region ui interactions
 

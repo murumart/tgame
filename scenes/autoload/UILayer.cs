@@ -2,8 +2,8 @@ using Godot;
 using System;
 
 namespace scenes.autoload {
-	public partial class UiLayer : CanvasLayer {
-		public static UiLayer Instance;
+	public partial class UILayer : CanvasLayer {
+		public static UILayer Instance;
 
 		public override void _Ready() {
 			Instance = this;

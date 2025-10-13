@@ -5,9 +5,12 @@ namespace scenes.region {
 
 	public partial class GameMan : Node {
 
-
 		[Export]
-		public view.Ui ui;
+		public view.UI ui;
+
+		public override void _Ready() {
+
+		}
 	}
 
 }

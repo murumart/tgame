@@ -19,9 +19,9 @@ namespace scenes.region.view {
 		float zoomSize = 1.0f;
 
 		public override void _Ready() {
-			Ui ui = (Ui)GetNode("Ui");
+			UI ui = (UI)GetNode("Ui");
 			RemoveChild(ui);
-			UiLayer.Instance.AddChild(ui);
+			UILayer.Instance.AddChild(ui);
 		}
 
 		public override void _UnhandledInput(InputEvent evt) {
