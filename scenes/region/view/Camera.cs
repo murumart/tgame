@@ -6,33 +6,36 @@ namespace scenes.region.view {
 
 	public partial class Camera : Camera2D {
 
-		readonly Vector2I TILE_SIZE = new(64, 32);
+		readonly static Vector2I TILE_SIZE = new(64, 32);
 
 		const float SPEED = 360.0f;
 		const float ACCEL = 60.0f;
 		const float DECEL = 20.0f;
 
-		[Export] public Node2D cursor;
-		[Export] public TileMapLayer regionTiles;
+		[Export] Node2D cursor;
+		[Export] TileMapLayer regionTiles;
+		[Export] UI ui;
 
 		Vector2 velocity = new();
 		float zoomSize = 1.0f;
 
 		public override void _Ready() {
-			UI ui = (UI)GetNode("Ui");
 			RemoveChild(ui);
 			UILayer.Instance.AddChild(ui);
 		}
 
 		public override void _UnhandledInput(InputEvent evt) {
 			if (evt is InputEventMouseButton) {
-				MouseButton btnIx = (evt as InputEventMouseButton).ButtonIndex;
-				if (btnIx == MouseButton.WheelUp) {
+				var bEvent = evt as InputEventMouseButton;
+				if (bEvent.ButtonIndex == MouseButton.WheelUp) {
 					zoomSize = Mathf.Min(zoomSize + 0.1f * zoomSize, 8.0f);
-				} else if (btnIx == MouseButton.WheelDown) {
+				} else if (bEvent.ButtonIndex == MouseButton.WheelDown) {
 					zoomSize = Mathf.Max(zoomSize - 0.1f * zoomSize, 0.25f);
+				} else if (bEvent.ButtonIndex == MouseButton.Left && evt.IsPressed()) {
+					var wPos = GetCanvasTransform().AffineInverse() * bEvent.Position;
+					ui.OnLeftMouseClick(wPos, PosToTilePos(wPos));
 				}
-				if (btnIx != MouseButton.None) Zoom = new Vector2(zoomSize, zoomSize);
+				if (bEvent.ButtonIndex != MouseButton.None) Zoom = new Vector2(zoomSize, zoomSize);
 			}
 		}
 
@@ -57,12 +60,12 @@ namespace scenes.region.view {
 		}
 
 		private void MouseHighlight() {
-			var lmp = regionTiles.GetLocalMousePosition();
-			var tp = regionTiles.LocalToMap(lmp);
-			cursor.GlobalPosition = TilePosToWorldPos(tp);
+			var localMousePos = regionTiles.GetLocalMousePosition();
+			var tilepos = regionTiles.LocalToMap(localMousePos);
+			cursor.GlobalPosition = TilePosToWorldPos(tilepos);
 		}
 
-		private Vector2 TilePosToWorldPos(Vector2I tilePos) {
+		public static Vector2 TilePosToWorldPos(Vector2I tilePos) {
 			var halfTs = TILE_SIZE / 2;
 			var tilecenter = new Vector2(tilePos.X, tilePos.Y / 2) * TILE_SIZE + halfTs;
 			if (tilePos.Y % 2 != 0) {
@@ -70,6 +73,10 @@ namespace scenes.region.view {
 				tilecenter.Y += (tilePos.Y > 0) ? halfTs.Y : -halfTs.Y;
 			}
 			return tilecenter;
+		}
+
+		public Vector2I PosToTilePos(Vector2 pos) {
+			return regionTiles.LocalToMap(pos);
 		}
 	}
 
