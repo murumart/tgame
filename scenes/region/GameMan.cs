@@ -3,6 +3,7 @@ using Godot.Collections;
 using scenes.region.view;
 using scenes.region.view.buildings;
 using System;
+using System.Collections.Generic;
 
 namespace scenes.region {
 
@@ -12,7 +13,7 @@ namespace scenes.region {
 		[Export] Tilemaps tilemaps;
 
 		[ExportGroup("Building")]
-		[Export] Array<PackedScene> buildingScenes;
+		[Export] Array<BuildingType> buildingTypes;
 		[Export] Node2D buildingsParent;
 
 		Region region;
@@ -20,8 +21,9 @@ namespace scenes.region {
 		// setup
 
 		public override void _Ready() {
-			ui.BuildTargetSet += OnUIBuildTargetPicked;
 			ui.BuildRequested += OnUIBuildingPlaceRequested;
+			ui.BuildingTypes = new();
+			foreach (var type in buildingTypes) ui.BuildingTypes.Add(type);
 
 			region = Region.GetTestCircleRegion(25);
 
@@ -31,18 +33,16 @@ namespace scenes.region {
 		// building
 
 		public bool CanPlaceBuilding(BuildingView building, Vector2I tilepos) {
-			return true;
+			return region.CanPlaceBuilding(building.BuildingType, tilepos);
 		}
 
-		public void PlaceBuilding(BuildingView building, Vector2I tilepos) {
-			BuildingView duplicate = (BuildingView)building.Duplicate();
+		public void PlaceBuilding(BuildingView buildingView, Vector2I tilepos) {
+			var building = region.PlaceBuilding(buildingView.BuildingType, tilepos);
+			BuildingView duplicate = (BuildingView)buildingView.Duplicate();
 			buildingsParent.AddChild(duplicate);
 			duplicate.Position = Camera.TilePosToWorldPos(tilepos);
 			duplicate.Modulate = new Color(1f, 1f, 1f);
-		}
-
-		private void OnUIBuildTargetPicked(int target) {
-			ui.SetBuildCursorScene(buildingScenes[target]);
+			duplicate.Initialise(building);
 		}
 
 		private void OnUIBuildingPlaceRequested(BuildingView building, Vector2I tilePosition) {

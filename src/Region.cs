@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Godot;
+using scenes.region.view.buildings;
 
 public enum GroundTileType : short {
 	VOID,
@@ -10,13 +11,11 @@ public enum GroundTileType : short {
 public class Region {
 
 	Dictionary<Vector2I, GroundTileType> groundTiles = new();
-	public Dictionary<Vector2I, GroundTileType> GroundTiles {
-		get { return groundTiles; }
-		set { }
-	}
+	public Dictionary<Vector2I, GroundTileType> GroundTiles { get => groundTiles; }
 	Dictionary<Vector2I, int> higherTiles = new();
 	Dictionary<Vector2I, Building> buildings = new();
 
+	// debugging
 	public static Region GetTestCircleRegion(int radius) {
 		var tiles = new Dictionary<Vector2I, GroundTileType>();
 		for (int i = -radius; i < radius; i++) {
@@ -30,6 +29,17 @@ public class Region {
 			groundTiles = tiles,
 		};
 		return reg;
+	}
+
+	public bool CanPlaceBuilding(BuildingType type, Vector2I position) {
+		Building b;
+		return !buildings.TryGetValue(position, out b);
+	}
+
+	public Building PlaceBuilding(BuildingType type, Vector2I position) {
+		var building = new Building(type);
+		buildings[position] = building;
+		return building;
 	}
 
 }

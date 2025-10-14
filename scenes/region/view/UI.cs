@@ -1,6 +1,7 @@
 using Godot;
 using scenes.region.view.buildings;
 using System;
+using System.Collections.Generic;
 
 
 namespace scenes.region.view {
@@ -9,7 +10,6 @@ namespace scenes.region.view {
 		// one big script to rule all region ui interactions
 
 
-		[Signal] public delegate void BuildTargetSetEventHandler(int target);
 		[Signal] public delegate void BuildRequestedEventHandler(BuildingView building, Vector2I tilePosition);
 
 		private enum State {
@@ -18,7 +18,8 @@ namespace scenes.region.view {
 			PLACING_BUILD,
 		}
 
-		private enum Tab {
+		private enum Tab : int {
+			NONE = -1,
 			BUILD,
 		}
 
@@ -52,6 +53,7 @@ namespace scenes.region.view {
 		}
 		private long selectedBuildThingId = -1;
 		private BuildingView buildingScene = null;
+		public List<BuildingType> BuildingTypes;
 
 
 		// overrides and connections
@@ -73,10 +75,10 @@ namespace scenes.region.view {
 		private void OnBuildButtonPressed() {
 			if (menuTabs.CurrentTab != (int)Tab.BUILD) {
 				state = State.CHOOSING_BUILD;
-				SelectTab(0);
+				SelectTab(Tab.BUILD);
 			} else {
 				state = State.IDLE;
-				SelectTab(-1);
+				SelectTab(Tab.NONE);
 			}
 		}
 
@@ -93,33 +95,46 @@ namespace scenes.region.view {
 
 		private void OnBuildThingConfirmed(long which) {
 			selectedBuildThingId = which;
-			EmitSignal(SignalName.BuildTargetSet, selectedBuildThingId);
+			SetBuildCursor((BuildingType)buildMenuList.GetItemMetadata((int)which).AsGodotObject());
 			selectedBuildThingId = -1;
-			SelectTab(-1);
+			SelectTab(Tab.NONE);
 		}
 
 		// menu activites
 
-		private void SelectTab(long which) {
-			if (which == -1) {
+		private void SelectTab(Tab which) {
+			if (which == Tab.NONE) {
 				// reset some things
 				buildMenuConfirmation.Disabled = true;
 				buildMenuConfirmation.Text = "select";
 				selectedBuildThingId = -1;
+				buildMenuList.Clear();
+			} else if (which == Tab.BUILD) {
+				UpdateBuildMenuList();
 			}
 			menuTabs.CurrentTab = (int)which;
 		}
 
-		public void SetBuildCursorScene(PackedScene packedScene) {
-			if (packedScene == null && buildingScene != null) {
+		private void UpdateBuildMenuList() {
+			buildMenuList.Clear();
+			foreach (var buildingType in BuildingTypes) {
+				int ix = buildMenuList.AddItem(buildingType.Name);
+				buildMenuList.SetItemMetadata(ix, Variant.CreateFrom(buildingType));
+			}
+		}
+
+		public void SetBuildCursor(BuildingType buildingType) {
+			if (buildingType == null && buildingScene != null) {
 				buildingScene.QueueFree();
 				buildingScene = null;
 				return;
 			}
+			var packedScene = GD.Load<PackedScene>(buildingType.ScenePath);
 			Node scene = packedScene.Instantiate();
 			Debug.Assert(scene is BuildingView, "trying to build something that doesn't extend BuildingView");
 			cameraCursor.AddChild(scene);
 			buildingScene = scene as BuildingView;
+			buildingScene.BuildingType = buildingType;
 			state = State.PLACING_BUILD;
 			buildingScene.Modulate = new Color(buildingScene.Modulate, 0.67f);
 		}
@@ -149,7 +164,7 @@ namespace scenes.region.view {
 		private void OnStateChanged(State old, State current) {
 			if (old == State.PLACING_BUILD && old != current) {
 				buildMenuConfirmation.Disabled = true;
-				SetBuildCursorScene(null);
+				SetBuildCursor(null);
 			}
 		}
 

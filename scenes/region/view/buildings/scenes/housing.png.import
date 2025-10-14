@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://lcyomp7reeke"
-path="res://.godot/imported/well.png-2cc8f2cc5a76c88c426fa76668e744fa.ctex"
+uid="uid://d6lvmy1yhnkg"
+path="res://.godot/imported/housing.png-fda23f439db488fb72a6a507bc1b9c25.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://scenes/region/view/buildings/well.png"
-dest_files=["res://.godot/imported/well.png-2cc8f2cc5a76c88c426fa76668e744fa.ctex"]
+source_file="res://scenes/region/view/buildings/scenes/housing.png"
+dest_files=["res://.godot/imported/housing.png-fda23f439db488fb72a6a507bc1b9c25.ctex"]
 
 [params]
 

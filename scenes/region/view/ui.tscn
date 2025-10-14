@@ -111,7 +111,7 @@ size_flags_vertical = 3
 item_count = 3
 item_0/text = "Housing"
 item_1/text = "Well"
-item_2/text = "Ass"
+item_2/text = "Idk"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/MenuTabs/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2

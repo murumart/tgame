@@ -1,13 +1,12 @@
-[gd_scene load_steps=13 format=3 uid="uid://dfsyk55h5ioh0"]
+[gd_scene load_steps=12 format=3 uid="uid://dfsyk55h5ioh0"]
 
 [ext_resource type="Script" uid="uid://tg0ox5vibsay" path="res://scenes/region/GameMan.cs" id="1_spsxg"]
-[ext_resource type="PackedScene" uid="uid://dyw8xmwwkvu5m" path="res://scenes/region/view/buildings/housing.tscn" id="2_cjagt"]
+[ext_resource type="Resource" uid="uid://c613ci251pl2v" path="res://scenes/region/view/buildings/types/housing.tres" id="2_f8i46"]
 [ext_resource type="Texture2D" uid="uid://bqktcpnjk5qk5" path="res://scenes/region/view/tiles1.png" id="2_spsxg"]
 [ext_resource type="Texture2D" uid="uid://8wjabtgow84g" path="res://scenes/region/view/tiles2.png" id="2_yddgr"]
-[ext_resource type="PackedScene" uid="uid://b2bo11jryfpr" path="res://scenes/region/view/buildings/well.tscn" id="3_f8i46"]
+[ext_resource type="Resource" uid="uid://dm7cl54id0t35" path="res://scenes/region/view/buildings/types/well.tres" id="3_es2am"]
 [ext_resource type="Texture2D" uid="uid://b8g2fakdu1wl2" path="res://crab.png" id="3_yjnyd"]
 [ext_resource type="PackedScene" uid="uid://b1t88emteoav4" path="res://scenes/region/view/camera.tscn" id="4_cjagt"]
-[ext_resource type="PackedScene" uid="uid://cp354pcilqv48" path="res://scenes/region/view/ui.tscn" id="4_f8i46"]
 [ext_resource type="Script" uid="uid://yte5f225ahij" path="res://scenes/region/Tilemaps.cs" id="6_es2am"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_s3w5i"]
@@ -43,7 +42,7 @@ sources/2 = SubResource("TileSetAtlasSource_spsxg")
 script = ExtResource("1_spsxg")
 ui = NodePath("../RegionCamera/Ui")
 tilemaps = NodePath("../Tilemaps")
-buildingScenes = Array[PackedScene]([ExtResource("2_cjagt"), ExtResource("3_f8i46"), ExtResource("4_f8i46")])
+buildingTypes = Array[Object]([ExtResource("2_f8i46"), ExtResource("3_es2am")])
 buildingsParent = NodePath("../Tilemaps/Buildings")
 
 [node name="RegionCamera" parent="." node_paths=PackedStringArray("cursor", "regionTiles", "ui") instance=ExtResource("4_cjagt")]

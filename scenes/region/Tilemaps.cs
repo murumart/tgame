@@ -22,10 +22,9 @@ namespace scenes.region {
 			var elapsedMs = watch.ElapsedMilliseconds;
 			GD.Print("TILEMAPS: displaying ground took " + elapsedMs + " ms");
 		}
-
 	}
 
-	struct GroundCellType {
+	class GroundCellType {
 
 		public readonly static GroundCellType GRASS = new() {
 			SourceId = 1,
@@ -41,8 +40,8 @@ namespace scenes.region {
 
 		public static GroundCellType MatchTileTypeToCell(GroundTileType tile) {
 			return tile switch {
-				GroundTileType.VOID => GroundCellType.VOID,
-				GroundTileType.GRASS => GroundCellType.GRASS,
+				GroundTileType.VOID => VOID,
+				GroundTileType.GRASS => GRASS,
 				_ => throw new Exception($"Can't match {tile} to CellType")
 			};
 		}
