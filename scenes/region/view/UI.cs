@@ -139,6 +139,12 @@ namespace scenes.region.view {
 			buildingScene.Modulate = new Color(buildingScene.Modulate, 0.67f);
 		}
 
+		private void PlacingBuild(Vector2I tpos) {
+			EmitSignal(SignalName.BuildRequested, buildingScene, tpos);
+		}
+
+		// utilities
+
 		public void OnLeftMouseClick(Vector2 position, Vector2I tilePosition) {
 			switch (state) {
 				case State.PLACING_BUILD:
@@ -149,11 +155,9 @@ namespace scenes.region.view {
 			}
 		}
 
-		private void PlacingBuild(Vector2I tpos) {
-			EmitSignal(SignalName.BuildRequested, buildingScene, tpos);
-		}
+		public void OnTileHighlighted(Vector2I tilePosition, Region region) {
 
-		// utilities
+		}
 
 		private void Reset() {
 			state = State.IDLE;
@@ -167,7 +171,5 @@ namespace scenes.region.view {
 				SetBuildCursor(null);
 			}
 		}
-
-
 	}
 }

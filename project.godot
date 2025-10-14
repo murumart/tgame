@@ -12,7 +12,7 @@ config_version=5
 
 config/name="Colony/strategy game"
 config/features=PackedStringArray("4.5", "C#", "Mobile")
-boot_splash/bg_color=Color(0.20392157, 0, 0, 1)
+boot_splash/bg_color=Color(0.34901962, 0.24313726, 0.2784314, 1)
 boot_splash/fullsize=false
 boot_splash/use_filter=false
 boot_splash/image="uid://b8g2fakdu1wl2"

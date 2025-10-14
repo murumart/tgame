@@ -16,6 +16,8 @@ namespace scenes.region.view {
 		[Export] TileMapLayer regionTiles;
 		[Export] UI ui;
 
+		public Region Region;
+
 		Vector2 velocity = new();
 		float zoomSize = 1.0f;
 
@@ -59,10 +61,15 @@ namespace scenes.region.view {
 			Position += velocity;
 		}
 
+		private Vector2I lastTilePos;
 		private void MouseHighlight() {
 			var localMousePos = regionTiles.GetLocalMousePosition();
 			var tilepos = regionTiles.LocalToMap(localMousePos);
 			cursor.GlobalPosition = TilePosToWorldPos(tilepos);
+			if (tilepos != lastTilePos) {
+				lastTilePos = tilepos;
+				ui.OnTileHighlighted(tilepos, Region);
+			}
 		}
 
 		public static Vector2 TilePosToWorldPos(Vector2I tilePos) {

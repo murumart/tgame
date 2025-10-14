@@ -10,6 +10,7 @@ namespace scenes.region {
 	public partial class GameMan : Node {
 
 		[Export] UI ui;
+		[Export] Camera camera;
 		[Export] Tilemaps tilemaps;
 
 		[ExportGroup("Building")]
@@ -28,6 +29,8 @@ namespace scenes.region {
 			region = Region.GetTestCircleRegion(25);
 
 			tilemaps.DisplayGround(region);
+
+			camera.Region = region;
 		}
 
 		// building

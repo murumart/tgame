@@ -32,8 +32,7 @@ public class Region {
 	}
 
 	public bool CanPlaceBuilding(BuildingType type, Vector2I position) {
-		Building b;
-		return !buildings.TryGetValue(position, out b);
+		return !buildings.ContainsKey(position);
 	}
 
 	public Building PlaceBuilding(BuildingType type, Vector2I position) {
