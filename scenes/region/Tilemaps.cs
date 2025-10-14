@@ -26,13 +26,17 @@ namespace scenes.region {
 
 	class GroundCellType {
 
-		public readonly static GroundCellType GRASS = new() {
-			SourceId = 1,
-			AtlasCoords = Vector2I.Zero
-		};
 		public readonly static GroundCellType VOID = new() {
 			SourceId = 1,
-			AtlasCoords = Vector2I.Zero
+			AtlasCoords = Vector2I.Zero,
+		};
+		public readonly static GroundCellType GRASS = new() {
+			SourceId = 1,
+			AtlasCoords = Vector2I.Zero,
+		};
+		public readonly static GroundCellType SAND = new() {
+			SourceId = 1,
+			AtlasCoords = new Vector2I(1, 0),
 		};
 
 		public int SourceId;

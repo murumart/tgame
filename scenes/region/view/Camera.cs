@@ -72,7 +72,17 @@ namespace scenes.region.view {
 			}
 		}
 
+		// matches Godot's TileLayout.DIAMOND_DOWN
 		public static Vector2 TilePosToWorldPos(Vector2I tilePos) {
+			var halfTs = TILE_SIZE / 2;
+			return new Vector2(
+				halfTs.X + tilePos.X * halfTs.X - tilePos.Y * halfTs.X,
+				halfTs.Y + tilePos.X * halfTs.Y + tilePos.Y * halfTs.Y
+			);
+		}
+
+		// matches Godot's TileLayout.STACKED
+		public static Vector2 TilePosToWorldPosStackedMode(Vector2I tilePos) {
 			var halfTs = TILE_SIZE / 2;
 			var tilecenter = new Vector2(tilePos.X, tilePos.Y / 2) * TILE_SIZE + halfTs;
 			if (tilePos.Y % 2 != 0) {

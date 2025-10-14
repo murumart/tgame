@@ -5,7 +5,7 @@
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_bjdfm"]
 
-[node name="Ui" type="MarginContainer" node_paths=PackedStringArray("buildButton", "policyButton", "worldButton", "menuTabs", "buildMenuList", "buildMenuConfirmation", "fpsLabel")]
+[node name="Ui" type="MarginContainer" node_paths=PackedStringArray("buildButton", "policyButton", "worldButton", "menuTabs", "buildMenuList", "buildMenuConfirmation", "fpsLabel", "tilePosLabel")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -24,6 +24,7 @@ menuTabs = NodePath("VBoxContainer/MenuTabs")
 buildMenuList = NodePath("VBoxContainer/MenuTabs/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/BuildMenuList")
 buildMenuConfirmation = NodePath("VBoxContainer/MenuTabs/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/BuildMenuConfirmation")
 fpsLabel = NodePath("VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer/Fpslabel")
+tilePosLabel = NodePath("VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer/Tileposlabel")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 2
@@ -58,6 +59,11 @@ layout_mode = 2
 text = "fps: "
 label_settings = ExtResource("1_nfevs")
 
+[node name="Tileposlabel" type="Label" parent="VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer"]
+layout_mode = 2
+text = "fps: "
+label_settings = ExtResource("1_nfevs")
+
 [node name="Fat" type="Control" parent="VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
@@ -78,11 +84,11 @@ mouse_filter = 2
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_bjdfm")
-current_tab = 0
 tabs_visible = false
 deselect_enabled = true
 
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/MenuTabs"]
+visible = false
 layout_mode = 2
 metadata/_tab_index = 0
 

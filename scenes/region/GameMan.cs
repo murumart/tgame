@@ -26,7 +26,7 @@ namespace scenes.region {
 			ui.BuildingTypes = new();
 			foreach (var type in buildingTypes) ui.BuildingTypes.Add(type);
 
-			region = Region.GetTestCircleRegion(25);
+			region = Region.GetTestCircleRegion(6);
 
 			tilemaps.DisplayGround(region);
 

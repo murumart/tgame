@@ -18,9 +18,9 @@ public class Region {
 	// debugging
 	public static Region GetTestCircleRegion(int radius) {
 		var tiles = new Dictionary<Vector2I, GroundTileType>();
-		for (int i = -radius; i < radius; i++) {
-			for (int j = -radius; j < radius; j++) {
-				if (i * i + j * j < radius * radius) {
+		for (int i = -radius; i <= radius; i++) {
+			for (int j = -radius; j <= radius; j++) {
+				if (i * i + j * j <= radius * radius) {
 					tiles[new Vector2I(i, j)] = GroundTileType.GRASS;
 				}
 			}

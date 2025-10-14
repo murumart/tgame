@@ -21,6 +21,7 @@ texture_region_size = Vector2i(64, 32)
 3:1/0 = 0
 1:2/0 = 0
 0:2/0 = 0
+1:0/0 = 0
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_spsxg"]
 texture = ExtResource("2_yddgr")
@@ -31,15 +32,17 @@ texture_region_size = Vector2i(64, 32)
 
 [sub_resource type="TileSet" id="TileSet_tb5r1"]
 tile_shape = 1
+tile_layout = 5
 tile_size = Vector2i(64, 32)
 sources/1 = SubResource("TileSetAtlasSource_s3w5i")
 sources/2 = SubResource("TileSetAtlasSource_spsxg")
 
 [node name="RegionView" type="Node2D"]
 
-[node name="GameMan" type="Node" parent="." node_paths=PackedStringArray("ui", "tilemaps", "buildingsParent")]
+[node name="GameMan" type="Node" parent="." node_paths=PackedStringArray("ui", "camera", "tilemaps", "buildingsParent")]
 script = ExtResource("1_spsxg")
 ui = NodePath("../RegionCamera/Ui")
+camera = NodePath("../RegionCamera")
 tilemaps = NodePath("../Tilemaps")
 buildingTypes = Array[Object]([ExtResource("2_f8i46"), ExtResource("3_es2am")])
 buildingsParent = NodePath("../Tilemaps/Buildings")

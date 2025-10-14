@@ -40,6 +40,7 @@ namespace scenes.region.view {
 
 		// top bar
 		[Export] Label fpsLabel; // debug
+		[Export] Label tilePosLabel; // debug
 
 		private State _state;
 		private State state {
@@ -156,7 +157,7 @@ namespace scenes.region.view {
 		}
 
 		public void OnTileHighlighted(Vector2I tilePosition, Region region) {
-
+			tilePosLabel.Text = tilePosition.ToString();
 		}
 
 		private void Reset() {
