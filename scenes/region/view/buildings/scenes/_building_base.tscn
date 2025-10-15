@@ -1,0 +1,25 @@
+[gd_scene load_steps=4 format=3 uid="uid://pfy55aydpy4t"]
+
+[ext_resource type="Script" uid="uid://yr6q8gjnc8wh" path="res://scenes/region/view/buildings/BuildingView.cs" id="1_jqyv4"]
+[ext_resource type="PackedScene" uid="uid://3kvcwdnxdp36" path="res://scenes/region/view/buildings/infopanel.tscn" id="2_nt1n5"]
+
+[sub_resource type="ConvexPolygonShape2D" id="ConvexPolygonShape2D_nt1n5"]
+points = PackedVector2Array(-32, 0, 0, -16, 32, 0, 0, 16)
+
+[node name="BuildingBase" type="Node2D" node_paths=PackedStringArray("Infopanel", "clickDetector")]
+script = ExtResource("1_jqyv4")
+Infopanel = NodePath("Infopanel")
+clickDetector = NodePath("Clickarea")
+metadata/_custom_type_script = "uid://yr6q8gjnc8wh"
+
+[node name="Infopanel" parent="." instance=ExtResource("2_nt1n5")]
+
+[node name="Clickarea" type="Area2D" parent="."]
+collision_layer = 8388608
+collision_mask = 0
+input_pickable = false
+monitoring = false
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Clickarea"]
+shape = SubResource("ConvexPolygonShape2D_nt1n5")

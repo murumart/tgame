@@ -1,20 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://b2bo11jryfpr"]
+[gd_scene load_steps=3 format=3 uid="uid://b2bo11jryfpr"]
 
+[ext_resource type="PackedScene" uid="uid://pfy55aydpy4t" path="res://scenes/region/view/buildings/scenes/_building_base.tscn" id="1_2pxko"]
 [ext_resource type="Texture2D" uid="uid://lcyomp7reeke" path="res://scenes/region/view/buildings/scenes/well.png" id="1_6km4e"]
-[ext_resource type="Script" uid="uid://yr6q8gjnc8wh" path="res://scenes/region/view/buildings/BuildingView.cs" id="1_o2bw5"]
-[ext_resource type="Script" uid="uid://b5xb3tdf3yoon" path="res://scenes/region/view/buildings/BuildingType.cs" id="2_fj0jh"]
 
-[sub_resource type="Resource" id="Resource_fj0jh"]
-script = ExtResource("2_fj0jh")
-name = "Well"
-scenePath = "uid://b2bo11jryfpr"
-metadata/_custom_type_script = "uid://b5xb3tdf3yoon"
+[node name="BuildingBase" instance=ExtResource("1_2pxko")]
 
-[node name="Well" type="Node2D"]
-script = ExtResource("1_o2bw5")
-BuildingType = SubResource("Resource_fj0jh")
-metadata/_custom_type_script = "uid://yr6q8gjnc8wh"
-
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Sprite2D" type="Sprite2D" parent="." index="0"]
 position = Vector2(0, -13)
 texture = ExtResource("1_6km4e")

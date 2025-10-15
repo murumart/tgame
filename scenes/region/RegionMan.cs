@@ -1,5 +1,6 @@
 using Godot;
 using Godot.Collections;
+using scenes.autoload;
 using scenes.region.view;
 using scenes.region.view.buildings;
 using System;
@@ -26,7 +27,7 @@ namespace scenes.region {
 			ui.BuildingTypes = new();
 			foreach (var type in buildingTypes) ui.BuildingTypes.Add(type);
 
-			region = Region.GetTestCircleRegion(6);
+			region = GameMan.Singleton.Game.Map.GetRegion(0);
 
 			tilemaps.DisplayGround(region);
 
@@ -42,10 +43,20 @@ namespace scenes.region {
 		public void PlaceBuilding(BuildingView buildingView, Vector2I tilepos) {
 			var building = region.PlaceBuilding(buildingView.BuildingType, tilepos);
 			BuildingView duplicate = (BuildingView)buildingView.Duplicate();
-			buildingsParent.AddChild(duplicate);
-			duplicate.Position = Camera.TilePosToWorldPos(tilepos);
-			duplicate.Modulate = new Color(1f, 1f, 1f);
-			duplicate.Initialise(building);
+			DisplayBuilding(duplicate, building, tilepos);
+		}
+
+		public void PlaceBuilding(Building building) {
+			var view = GD.Load<PackedScene>(building.Type.ScenePath).Instantiate<BuildingView>();
+			DisplayBuilding(view, building, building.Position);
+		}
+
+		private void DisplayBuilding(BuildingView buildingView, Building building, Vector2I tilepos) {
+			buildingsParent.AddChild(buildingView);
+			buildingView.Position = Camera.TilePosToWorldPos(tilepos);
+			buildingView.Modulate = new Color(1f, 1f, 1f);
+			buildingView.Initialise(building);
+			buildingView.BuildingClicked += ui.OnBuildingClicked;
 		}
 
 		private void OnUIBuildingPlaceRequested(BuildingView building, Vector2I tilePosition) {

@@ -42,8 +42,11 @@ namespace scenes.region.view {
 		[Export] Label fpsLabel; // debug
 		[Export] Label tilePosLabel; // debug
 
-		private State _state;
-		private State state {
+		// internal
+		public List<BuildingType> BuildingTypes;
+
+		State _state;
+		State state {
 			get => _state;
 			set {
 				var old = _state;
@@ -52,9 +55,9 @@ namespace scenes.region.view {
 				//Debug.PrintWithStack("UI: state changed to", value);
 			}
 		}
-		private long selectedBuildThingId = -1;
-		private BuildingView buildingScene = null;
-		public List<BuildingType> BuildingTypes;
+		long selectedBuildThingId = -1;
+		BuildingView buildingScene = null;
+		Dictionary<BuildingView, TileInfoPanel> openBuildingInfos = new();
 
 
 		// overrides and connections
@@ -156,8 +159,30 @@ namespace scenes.region.view {
 			}
 		}
 
+		public void OnRightMouseClick(Vector2 position, Vector2I tilePosition) {
+			if (state == State.PLACING_BUILD) {
+				state = State.IDLE;
+			}
+			HideInfoPanels();
+		}
+
 		public void OnTileHighlighted(Vector2I tilePosition, Region region) {
 			tilePosLabel.Text = tilePosition.ToString();
+		}
+
+		public void OnBuildingClicked(BuildingView buildingView, TileInfoPanel buildingInfopanel) {
+			if (state != State.IDLE) return;
+			HideInfoPanels();
+			buildingInfopanel.Show();
+			openBuildingInfos[buildingView] = buildingInfopanel;
+			buildingInfopanel.Display(buildingView);
+		}
+
+		private void HideInfoPanels() {
+			foreach (BuildingView bv in openBuildingInfos.Keys) {
+				openBuildingInfos[bv].Hide();
+				openBuildingInfos.Remove(bv);
+			}
 		}
 
 		private void Reset() {
@@ -167,9 +192,12 @@ namespace scenes.region.view {
 		}
 
 		private void OnStateChanged(State old, State current) {
-			if (old == State.PLACING_BUILD && old != current) {
-				buildMenuConfirmation.Disabled = true;
-				SetBuildCursor(null);
+			if (old != current) {
+				if (old == State.PLACING_BUILD) {
+					buildMenuConfirmation.Disabled = true;
+					SetBuildCursor(null);
+				}
+				if (old == State.IDLE) HideInfoPanels();
 			}
 		}
 	}

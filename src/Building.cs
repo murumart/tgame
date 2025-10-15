@@ -7,11 +7,13 @@ using System.Collections.Generic;
 public class Building : ITimePassing {
 	BuildingType type; public BuildingType Type { get => type; }
 
+	Vector2I position; public Vector2I Position { get => position; }
 	int population; public int Population { get => population; }
 	float constructionProgress; public float ConstructionProgress { get => constructionProgress; }
 
-	public Building(BuildingType type) {
+	public Building(BuildingType type, Vector2I position) {
 		this.type = type;
+		this.position = position;
 	}
 
 	public void PassTime(float secs) {

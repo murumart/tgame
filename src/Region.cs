@@ -46,7 +46,7 @@ public class Region : ITimePassing {
 	}
 
 	public Building PlaceBuilding(BuildingType type, Vector2I position) {
-		var building = new Building(type);
+		var building = new Building(type, position);
 		buildings[position] = building;
 		return building;
 	}

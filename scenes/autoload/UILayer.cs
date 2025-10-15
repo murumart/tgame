@@ -3,10 +3,11 @@ using System;
 
 namespace scenes.autoload {
 	public partial class UILayer : CanvasLayer {
-		public static UILayer Instance;
+		static UILayer singleton;
+		public static UILayer Singleton { get => singleton; }
 
 		public override void _Ready() {
-			Instance = this;
+			singleton = this;
 		}
 
 		public void AddUiChild(Node node) {

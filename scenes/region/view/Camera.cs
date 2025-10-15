@@ -23,7 +23,7 @@ namespace scenes.region.view {
 
 		public override void _Ready() {
 			RemoveChild(ui);
-			UILayer.Instance.AddChild(ui);
+			UILayer.Singleton.AddChild(ui);
 		}
 
 		public override void _UnhandledInput(InputEvent evt) {
@@ -36,6 +36,9 @@ namespace scenes.region.view {
 				} else if (bEvent.ButtonIndex == MouseButton.Left && evt.IsPressed()) {
 					var wPos = GetCanvasTransform().AffineInverse() * bEvent.Position;
 					ui.OnLeftMouseClick(wPos, PosToTilePos(wPos));
+				} else if (bEvent.ButtonIndex == MouseButton.Right && evt.IsPressed()) {
+					var wPos = GetCanvasTransform().AffineInverse() * bEvent.Position;
+					ui.OnRightMouseClick(wPos, PosToTilePos(wPos));
 				}
 				if (bEvent.ButtonIndex != MouseButton.None) Zoom = new Vector2(zoomSize, zoomSize);
 			}
