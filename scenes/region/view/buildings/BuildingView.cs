@@ -1,16 +1,16 @@
 using Godot;
+using scenes.autoload;
 using System;
 
 namespace scenes.region.view.buildings {
 
 	[GlobalClass]
 	public partial class BuildingView : Node2D {
-		[Signal] public delegate void BuildingClickedEventHandler(BuildingView buildingView, TileInfoPanel buildingInfopanel);
+		[Signal] public delegate void BuildingClickedEventHandler(BuildingView buildingView);
 
 		// info
 		[Export] public BuildingType BuildingType;
 		// ui things
-		[Export] public TileInfoPanel Infopanel;
 		[Export] CollisionObject2D clickDetector;
 		// internal
 		Building building; public Building Building { get => building; }
@@ -18,14 +18,25 @@ namespace scenes.region.view.buildings {
 
 		public override void _Ready() {
 			clickDetector.InputEvent += OnInputEvent;
-			Infopanel.Hide();
+			clickDetector.MouseEntered += OnMouseHoverOn;
+			clickDetector.MouseExited += OnMouseHoverOff;
+		}
+
+		private void OnMouseHoverOff() {
+			if (!initialised) return;
+			UILayer.HideInfopanel();
+		}
+
+		private void OnMouseHoverOn() {
+			if (!initialised) return;
+			UILayer.DisplayInfopanel(this);
 		}
 
 		public void OnInputEvent(Node viewport, InputEvent evt, long shapeIdx) {
 			if (!initialised) return;
 			if (evt is InputEventMouseButton mouseEvent) {
 				if (mouseEvent.IsPressed() && mouseEvent.ButtonIndex == MouseButton.Left) {
-					EmitSignal(SignalName.BuildingClicked, this, Infopanel);
+					EmitSignal(SignalName.BuildingClicked, this);
 				}
 			}
 		}

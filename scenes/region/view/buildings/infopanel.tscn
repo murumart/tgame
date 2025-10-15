@@ -12,10 +12,10 @@ font_size = 8
 
 [node name="Infopanel" type="PanelContainer" node_paths=PackedStringArray("nameLabel", "infoLabel")]
 z_index = 10
-offset_left = -49.0
-offset_top = -87.0
-offset_right = 46.0
-offset_bottom = -9.0
+offset_left = -47.0
+offset_top = -88.0
+offset_right = 48.0
+offset_bottom = -45.0
 script = ExtResource("1_ags74")
 nameLabel = NodePath("MarginContainer/VBoxContainer/NameLabel")
 infoLabel = NodePath("MarginContainer/VBoxContainer/InfoLabel")
@@ -36,7 +36,7 @@ text = "Building name"
 label_settings = SubResource("LabelSettings_nt1n5")
 
 [node name="InfoLabel" type="Label" parent="MarginContainer/VBoxContainer"]
-custom_minimum_size = Vector2(89, 69)
+custom_minimum_size = Vector2(89, 20)
 layout_mode = 2
 label_settings = SubResource("LabelSettings_ags74")
 autowrap_mode = 2

@@ -57,8 +57,6 @@ namespace scenes.region.view {
 		}
 		long selectedBuildThingId = -1;
 		BuildingView buildingScene = null;
-		Dictionary<BuildingView, TileInfoPanel> openBuildingInfos = new();
-
 
 		// overrides and connections
 
@@ -163,26 +161,14 @@ namespace scenes.region.view {
 			if (state == State.PLACING_BUILD) {
 				state = State.IDLE;
 			}
-			HideInfoPanels();
 		}
 
 		public void OnTileHighlighted(Vector2I tilePosition, Region region) {
 			tilePosLabel.Text = tilePosition.ToString();
 		}
 
-		public void OnBuildingClicked(BuildingView buildingView, TileInfoPanel buildingInfopanel) {
+		public void OnBuildingClicked(BuildingView buildingView) {
 			if (state != State.IDLE) return;
-			HideInfoPanels();
-			buildingInfopanel.Show();
-			openBuildingInfos[buildingView] = buildingInfopanel;
-			buildingInfopanel.Display(buildingView);
-		}
-
-		private void HideInfoPanels() {
-			foreach (BuildingView bv in openBuildingInfos.Keys) {
-				openBuildingInfos[bv].Hide();
-				openBuildingInfos.Remove(bv);
-			}
 		}
 
 		private void Reset() {
@@ -197,7 +183,6 @@ namespace scenes.region.view {
 					buildMenuConfirmation.Disabled = true;
 					SetBuildCursor(null);
 				}
-				if (old == State.IDLE) HideInfoPanels();
 			}
 		}
 	}

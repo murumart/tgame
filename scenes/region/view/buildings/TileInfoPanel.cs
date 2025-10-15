@@ -26,6 +26,7 @@ namespace scenes.region.view {
 
 		public void Display() {
 			if (display == null) return;
+			Position = GetGlobalMousePosition(); // hacky
 			nameLabel.Text = display.BuildingType.Name;
 			infoStr.Clear();
 			var bld = display.Building;
