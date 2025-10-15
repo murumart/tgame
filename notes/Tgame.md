@@ -14,28 +14,3 @@ Hoidkem C# abil mälus mänguobjekte, ning Godot's stseeni avamisel laadigem see
 ### Visuaalid
 
 Värvipalett olgu "[31](https://lospec.com/palette-list/31)".
-
-### Arendusplaan
-
-#### Oktoober 2025
-
-Eesmärk jõuda prototüübiga võrreldavale tasemele. *Game Loop*. Mängus on olemas:
-
-- [ ] aeg jookseb
-	- [ ] saab pausile panna
-	- [ ] ehitiste ehitamine võtab aega
-- [ ] ruutude ui
-- [ ] ui ehitistele vajutades
-	- [ ] ehitise nimi, inimesed sees, tegevused ehitisega
-- [ ] tegevused ehitisega
-	- [ ] inimeste palkamine ehitamiseks
-	- [ ] inimeste palkamine tööle
-- [ ] ressursid
-	- [ ] ehitiste ehitamine võtab ressursse
-- [ ] rahvas
-	- [ ] populatsiooniarv UIs
-	- [ ] eraldi arvud majades inimeste ning kodutute kohta
-	- [ ] eraldi arvud töös inimeste ning töötute kohta
-- [ ] tootlus
-- [ ] tootluskvoot
-	- [ ] lihtne gameover: kvoodi täitmata jätmine
