@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 
 
-public class Building {
+public class Building : ITimePassing {
 	BuildingType type; public BuildingType Type { get => type; }
 
 	int population; public int Population { get => population; }
@@ -12,6 +12,12 @@ public class Building {
 
 	public Building(BuildingType type) {
 		this.type = type;
+	}
+
+	public void PassTime(float secs) {
+		if (constructionProgress < 1.0) {
+			constructionProgress += secs * 0.1f; // take 10 seconds to construct a building
+		}
 	}
 }
 

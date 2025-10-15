@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace scenes.region {
 
-	public partial class GameMan : Node {
+	public partial class RegionMan : Node {
 
 		[Export] UI ui;
 		[Export] Camera camera;

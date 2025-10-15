@@ -8,12 +8,24 @@ public enum GroundTileType : short {
 	GRASS,
 }
 
-public class Region {
+public class Region : ITimePassing {
 
-	Dictionary<Vector2I, GroundTileType> groundTiles = new();
+	readonly Dictionary<Vector2I, GroundTileType> groundTiles = new();
 	public Dictionary<Vector2I, GroundTileType> GroundTiles { get => groundTiles; }
-	Dictionary<Vector2I, int> higherTiles = new();
-	Dictionary<Vector2I, Building> buildings = new();
+	readonly Dictionary<Vector2I, int> higherTiles = new();
+	readonly Dictionary<Vector2I, Building> buildings = new();
+
+	public Region() { }
+
+	public Region(Dictionary<Vector2I, GroundTileType> groundTiles) {
+		this.groundTiles = groundTiles;
+	}
+
+	public void PassTime(float secs) {
+		foreach (Building building in buildings.Values) {
+			building.PassTime(secs);
+		}
+	}
 
 	// debugging
 	public static Region GetTestCircleRegion(int radius) {
@@ -25,9 +37,7 @@ public class Region {
 				}
 			}
 		}
-		var reg = new Region() {
-			groundTiles = tiles,
-		};
+		var reg = new Region(tiles);
 		return reg;
 	}
 

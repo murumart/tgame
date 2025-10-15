@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://d2h63lt28ygdk"]
+
+[ext_resource type="Script" uid="uid://ddlyxlh6olwj1" path="res://scenes/autoload/GameMan.cs" id="1_ef55t"]
+
+[node name="GameMan" type="Node"]
+script = ExtResource("1_ef55t")
