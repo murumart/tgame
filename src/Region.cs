@@ -14,21 +14,29 @@ public class Region : ITimePassing {
 	public Dictionary<Vector2I, GroundTileType> GroundTiles { get => groundTiles; }
 	readonly Dictionary<Vector2I, int> higherTiles = new();
 	readonly Dictionary<Vector2I, Building> buildings = new();
+	Population homelessPopulation; public Population HomelessPopulation { get => homelessPopulation; }
 
-	public Region() { }
+	public Region() {
+		homelessPopulation = new Population(100);
+		homelessPopulation.Pop = 10;
+	}
 
-	public Region(Dictionary<Vector2I, GroundTileType> groundTiles) {
+	public Region(Dictionary<Vector2I, GroundTileType> groundTiles) : this() {
 		this.groundTiles = groundTiles;
 	}
 
 	public void PassTime(float secs) {
 		foreach (Building building in buildings.Values) {
 			building.PassTime(secs);
+			if (building.ConstructionProgress >= 1.0 && homelessPopulation.Pop > 0) {
+				if (homelessPopulation.CanTransfer(ref building.Population, 1)) {
+					homelessPopulation.Transfer(ref building.Population, 1);
+				}
+			}
 		}
 	}
 
-	// debugging
-	public static Region GetTestCircleRegion(int radius) {
+	public static Region GetTestCircleRegion(int radius) { // debugging
 		var tiles = new Dictionary<Vector2I, GroundTileType>();
 		for (int i = -radius; i <= radius; i++) {
 			for (int j = -radius; j <= radius; j++) {
@@ -49,6 +57,14 @@ public class Region : ITimePassing {
 		var building = new Building(type, position);
 		buildings[position] = building;
 		return building;
+	}
+
+	public int GetPopulationCount() {
+		int count = homelessPopulation.Pop;
+		foreach (var b in buildings.Values) {
+			count += b.Population.Pop;
+		}
+		return count;
 	}
 
 }

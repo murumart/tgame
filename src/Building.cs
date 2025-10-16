@@ -8,12 +8,13 @@ public class Building : ITimePassing {
 	BuildingType type; public BuildingType Type { get => type; }
 
 	Vector2I position; public Vector2I Position { get => position; }
-	int population; public int Population { get => population; }
+	Population population; public ref Population Population => ref population;
 	float constructionProgress; public float ConstructionProgress { get => constructionProgress; }
 
 	public Building(BuildingType type, Vector2I position) {
 		this.type = type;
 		this.position = position;
+		this.population = new Population(type.PopulationCapacity);
 	}
 
 	public void PassTime(float secs) {

@@ -28,10 +28,17 @@ namespace scenes.region {
 			foreach (var type in buildingTypes) ui.BuildingTypes.Add(type);
 
 			region = GameMan.Singleton.Game.Map.GetRegion(0);
+			ui.GetPopulationCount += region.GetPopulationCount;
+			ui.GetHomelessPopulationCount += GetHomelessPopulationCount;
 
 			tilemaps.DisplayGround(region);
 
 			camera.Region = region;
+		}
+
+		public override void _ExitTree() {
+			ui.GetPopulationCount -= region.GetPopulationCount;
+			ui.GetPopulationCount -= GetHomelessPopulationCount;
 		}
 
 		// building
@@ -63,6 +70,10 @@ namespace scenes.region {
 			if (CanPlaceBuilding(building, tilePosition)) {
 				PlaceBuilding(building, tilePosition);
 			}
+		}
+
+		public int GetHomelessPopulationCount() {
+			return region.HomelessPopulation.Pop;
 		}
 	}
 

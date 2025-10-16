@@ -34,7 +34,7 @@ namespace scenes.region.view {
 				infoStr.Append("Construction progress: ").Append((int)(bld.ConstructionProgress * 100)).Append('%');
 			} else {
 				if (bld.Type.PopulationCapacity > 0) {
-					infoStr.Append("Residents: ").Append(bld.Population).Append('/').Append(bld.Type.PopulationCapacity);
+					infoStr.Append("Residents: ").Append(bld.Population.Pop).Append('/').Append(bld.Population.MaxPop);
 				}
 			}
 			infoLabel.Text = infoStr.ToString();

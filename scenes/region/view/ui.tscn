@@ -5,7 +5,7 @@
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_bjdfm"]
 
-[node name="Ui" type="MarginContainer" node_paths=PackedStringArray("buildButton", "policyButton", "worldButton", "menuTabs", "buildMenuList", "buildMenuConfirmation", "fpsLabel", "tilePosLabel")]
+[node name="Ui" type="MarginContainer" node_paths=PackedStringArray("buildButton", "policyButton", "worldButton", "menuTabs", "buildMenuList", "buildMenuConfirmation", "populationLabel", "fpsLabel", "tilePosLabel")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -23,6 +23,7 @@ worldButton = NodePath("VBoxContainer/ControlButtons/WorldButton")
 menuTabs = NodePath("VBoxContainer/MenuTabs")
 buildMenuList = NodePath("VBoxContainer/MenuTabs/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/BuildMenuList")
 buildMenuConfirmation = NodePath("VBoxContainer/MenuTabs/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/BuildMenuConfirmation")
+populationLabel = NodePath("VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer/poplabel")
 fpsLabel = NodePath("VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer/Fpslabel")
 tilePosLabel = NodePath("VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer/Tileposlabel")
 
@@ -44,14 +45,14 @@ theme_override_constants/margin_bottom = 2
 layout_mode = 2
 alignment = 1
 
-[node name="Label" type="Label" parent="VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer"]
+[node name="poplabel" type="Label" parent="VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer"]
 layout_mode = 2
-text = "pop: 0"
+text = "pop: -9099"
 label_settings = ExtResource("1_nfevs")
 
 [node name="Label2" type="Label" parent="VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer"]
 layout_mode = 2
-text = "silver: 0"
+text = "silver: -blaab"
 label_settings = ExtResource("1_nfevs")
 
 [node name="Fpslabel" type="Label" parent="VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer"]

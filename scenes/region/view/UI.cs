@@ -11,6 +11,8 @@ namespace scenes.region.view {
 
 
 		[Signal] public delegate void BuildRequestedEventHandler(BuildingView building, Vector2I tilePosition);
+		public event Func<int> GetPopulationCount;
+		public event Func<int> GetHomelessPopulationCount;
 
 		private enum State {
 			IDLE,
@@ -39,6 +41,7 @@ namespace scenes.region.view {
 		[Export] Button buildMenuConfirmation;
 
 		// top bar
+		[Export] Label populationLabel;
 		[Export] Label fpsLabel; // debug
 		[Export] Label tilePosLabel; // debug
 
@@ -72,6 +75,7 @@ namespace scenes.region.view {
 
 		public override void _Process(double delta) {
 			fpsLabel.Text = "fps: " + Engine.GetFramesPerSecond().ToString();
+			populationLabel.Text = $"pop: {GetPopulationCount?.Invoke() ?? -1} ({GetHomelessPopulationCount?.Invoke() ?? -1} homeless)";
 		}
 
 		private void OnBuildButtonPressed() {
