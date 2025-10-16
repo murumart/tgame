@@ -7,7 +7,7 @@ Eesmärk jõuda prototüübiga võrreldavale tasemele. *Game Loop*. Mängus on o
 	- [x] ehitiste ehitamine võtab aega
 	- [ ] fookuses regiooni aeg peaks detailsemalt jooksma
 - [ ] ruutude ui
-	- [x] ui ehitistele vajutades
+	- [x] ui ehitise peale hiirega minnes
 		- [ ] ehitise nimi, inimesed sees, tegevused ehitisega
 - [ ] tegevused ehitisega
 	- [ ] inimeste palkamine ehitamiseks
