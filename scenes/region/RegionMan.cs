@@ -53,7 +53,7 @@ namespace scenes.region {
 			DisplayBuilding(duplicate, building, tilepos);
 		}
 
-		public void PlaceBuilding(Building building) {
+		public void LoadBuildingView(Building building) {
 			var view = GD.Load<PackedScene>(building.Type.ScenePath).Instantiate<BuildingView>();
 			DisplayBuilding(view, building, building.Position);
 		}

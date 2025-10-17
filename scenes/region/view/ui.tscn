@@ -76,10 +76,41 @@ layout_mode = 2
 text = "01/01/0000"
 label_settings = ExtResource("1_nfevs")
 
-[node name="Fat" type="Control" parent="VBoxContainer"]
+[node name="Fat" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 mouse_filter = 2
+alignment = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer/Fat"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/Fat/PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 2
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 2
+theme_override_constants/margin_bottom = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer/Fat/PanelContainer/MarginContainer"]
+custom_minimum_size = Vector2(89, 0)
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Fat/PanelContainer/MarginContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="VBoxContainer/Fat/PanelContainer/MarginContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+text = "Work Details"
+horizontal_alignment = 1
+
+[node name="Label2" type="Label" parent="VBoxContainer/Fat/PanelContainer/MarginContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+text = "Work title
+	3 resource/day"
+tab_stops = PackedFloat32Array(5, 10)
 
 [node name="MenuTabs" type="TabContainer" parent="VBoxContainer"]
 unique_name_in_owner = true
@@ -150,6 +181,12 @@ unique_name_in_owner = true
 layout_mode = 2
 disabled = true
 text = "Policy"
+
+[node name="JobsButton" type="Button" parent="VBoxContainer/ControlButtons"]
+unique_name_in_owner = true
+layout_mode = 2
+disabled = true
+text = "Jobs"
 
 [node name="WorldButton" type="Button" parent="VBoxContainer/ControlButtons"]
 unique_name_in_owner = true
