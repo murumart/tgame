@@ -16,7 +16,10 @@ anti_aliasing = false
 
 [resource]
 Button/fonts/font = ExtResource("1_70gfe")
+Control/colors/default_color = Color(0.8352941, 0.8392157, 0.85882354, 1)
 Control/colors/font_color = Color(0.8352941, 0.8392157, 0.85882354, 1)
 Control/font_sizes/font_size = 12
+Control/font_sizes/normal_font_size = 12
 Control/fonts/font = ExtResource("1_rjbnf")
+Control/fonts/normal_font = ExtResource("1_rjbnf")
 Control/styles/panel = SubResource("StyleBoxFlat_5kvdv")
