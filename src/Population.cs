@@ -30,11 +30,12 @@ public struct Population {
 
 	}
 
-	public void Transfer(ref Population dest, int maxAmt) {
+	public Population Transfer(ref Population dest, int maxAmt) {
 		int amt = Math.Min(Pop, maxAmt);
 		amt = Math.Min(dest.MaxPop - dest.Pop, amt);
 		pop -= amt;
 		dest.Pop += amt;
+		return this;
 	}
 
 

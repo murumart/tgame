@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using Godot;
+using Jobs;
 using scenes.region.view.buildings;
 
 public enum GroundTileType : short {
@@ -14,7 +16,9 @@ public class Region : ITimePassing {
 	public Dictionary<Vector2I, GroundTileType> GroundTiles { get => groundTiles; }
 	readonly Dictionary<Vector2I, int> higherTiles = new();
 	readonly Dictionary<Vector2I, Building> buildings = new();
-	Population homelessPopulation; public Population HomelessPopulation { get => homelessPopulation; }
+	readonly List<Job> jobs = new();
+	readonly Dictionary<Vector2I, Job> jobsByPosition = new();
+	Population homelessPopulation; public ref Population HomelessPopulation { get => ref homelessPopulation; }
 
 	public Region() {
 		homelessPopulation = new Population(100);
@@ -25,14 +29,13 @@ public class Region : ITimePassing {
 		this.groundTiles = groundTiles;
 	}
 
+	float remainderPeopleTransferTime = 0.0f;
 	public void PassTime(float hours) {
+		foreach (Job job in jobs) {
+			job.PassTime(hours);
+		}
 		foreach (Building building in buildings.Values) {
 			building.PassTime(hours);
-			if (building.ConstructionProgress >= 1.0 && homelessPopulation.Pop > 0) {
-				if (homelessPopulation.CanTransfer(ref building.Population, 1)) {
-					homelessPopulation.Transfer(ref building.Population, 1);
-				}
-			}
 		}
 	}
 
@@ -56,6 +59,7 @@ public class Region : ITimePassing {
 	public Building PlaceBuilding(BuildingType type, Vector2I position) {
 		var building = new Building(type, position);
 		buildings[position] = building;
+		AddJob(position, new AbsorbFromHomelessPopulationJob(building, this));
 		return building;
 	}
 
@@ -65,6 +69,16 @@ public class Region : ITimePassing {
 			count += b.Population.Pop;
 		}
 		return count;
+	}
+
+	public void AddJob(Vector2I pos, Job job) {
+		Debug.Assert(!jobsByPosition.ContainsKey(pos), $"Job at place {pos} exists ({job})");
+		jobsByPosition[pos] = job;
+		AddJob(job);
+	}
+
+	public void AddJob(Job job) {
+		jobs.Add(job);
 	}
 
 }

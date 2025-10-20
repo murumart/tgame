@@ -30,8 +30,8 @@ namespace scenes.region.view {
 			nameLabel.Text = display.BuildingType.Name;
 			infoStr.Clear();
 			var bld = display.Building;
-			if (display.Building.ConstructionProgress < 1.0) {
-				infoStr.Append("Construction progress: ").Append((int)(bld.ConstructionProgress * 100)).Append('%');
+			if (!display.Building.IsConstructed) {
+				infoStr.Append("Construction progress: ").Append("nithign").Append('%');
 			} else {
 				if (bld.Type.PopulationCapacity > 0) {
 					infoStr.Append("Residents: ").Append(bld.Population.Pop).Append('/').Append(bld.Population.MaxPop);
