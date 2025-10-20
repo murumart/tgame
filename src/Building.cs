@@ -17,10 +17,15 @@ public class Building : ITimePassing {
 		this.population = new Population(type.PopulationCapacity);
 	}
 
-	public void PassTime(float secs) {
+	public void PassTime(float hours) {
+		// TODO move to the job..
 		if (constructionProgress < 1.0) {
-			constructionProgress += secs * 0.1f; // take 10 seconds to construct a building
+			constructionProgress += hours * 0.1f; // take 10 hours to construct a building
 		}
+	}
+
+	public void ProgressConstruction(float amt) {
+		constructionProgress += amt;
 	}
 }
 

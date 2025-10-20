@@ -25,9 +25,9 @@ public class Region : ITimePassing {
 		this.groundTiles = groundTiles;
 	}
 
-	public void PassTime(float secs) {
+	public void PassTime(float hours) {
 		foreach (Building building in buildings.Values) {
-			building.PassTime(secs);
+			building.PassTime(hours);
 			if (building.ConstructionProgress >= 1.0 && homelessPopulation.Pop > 0) {
 				if (homelessPopulation.CanTransfer(ref building.Population, 1)) {
 					homelessPopulation.Transfer(ref building.Population, 1);

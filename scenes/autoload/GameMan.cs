@@ -8,7 +8,7 @@ namespace scenes.autoload {
 		Game game;
 		public Game Game { get => game; }
 
-		public float GameSpeed = 1.0f;
+		public float GameSpeed = 30.0f;
 
 		public override void _Ready() {
 			singleton = this;
@@ -17,7 +17,7 @@ namespace scenes.autoload {
 		}
 
 		public override void _Process(double delta) {
-			Game.PassTime((float)delta * GameSpeed);
+			Game.PassTime((float)delta * GameSpeed * Time.SECS_TO_HOURS);
 		}
 	}
 }

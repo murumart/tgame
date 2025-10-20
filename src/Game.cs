@@ -6,7 +6,7 @@ public class Game {
 		Map = map;
 	}
 
-	public void PassTime(float secs) {
-		Map.PassTime(secs);
+	public void PassTime(float hours) {
+		Map.PassTime(hours);
 	}
 }

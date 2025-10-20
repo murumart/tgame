@@ -84,6 +84,7 @@ mouse_filter = 2
 alignment = 2
 
 [node name="PanelContainer" type="PanelContainer" parent="VBoxContainer/Fat"]
+visible = false
 layout_mode = 2
 mouse_force_pass_scroll_events = false
 

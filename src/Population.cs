@@ -3,7 +3,8 @@ using System;
 public struct Population {
 	private int pop;
 	public int Pop {
-		readonly get => pop; set {
+		readonly get => pop;
+		set {
 			Debug.Assert(value <= MaxPop, $"People overflow ({value} vs {MaxPop})");
 			Debug.Assert(value > 0, $"People underflow ({value} vs 0)");
 			pop = value;

@@ -14,9 +14,9 @@ public class Map : ITimePassing {
 		return regions[ix];
 	}
 
-	public void PassTime(float secs) {
+	public void PassTime(float hours) {
 		foreach (Region region in regions) {
-			region.PassTime(secs);
+			region.PassTime(hours);
 		}
 	}
 }
