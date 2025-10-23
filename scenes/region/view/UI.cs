@@ -10,17 +10,18 @@ namespace scenes.region.view {
 		// one big script to rule all region ui interactions
 
 
-		[Signal] public delegate void BuildRequestedEventHandler(BuildingView building, Vector2I tilePosition);
+		public event Action<BuildingView, Vector2I> BuildRequested;
 		public event Func<int> GetPopulationCount;
 		public event Func<int> GetHomelessPopulationCount;
+		public event Func<List<BuildingType>> GetBuildingTypes;
 
-		private enum State {
+		enum State {
 			IDLE,
 			CHOOSING_BUILD,
 			PLACING_BUILD,
 		}
 
-		private enum Tab : int {
+		enum Tab : int {
 			NONE = -1,
 			BUILD,
 		}
@@ -46,7 +47,6 @@ namespace scenes.region.view {
 		[Export] Label tilePosLabel; // debug
 
 		// internal
-		public List<BuildingType> BuildingTypes;
 
 		State _state;
 		State state {
@@ -75,10 +75,10 @@ namespace scenes.region.view {
 
 		public override void _Process(double delta) {
 			fpsLabel.Text = "fps: " + Engine.GetFramesPerSecond().ToString();
-			populationLabel.Text = $"pop: {GetPopulationCount?.Invoke() ?? -1} ({GetHomelessPopulationCount?.Invoke() ?? -1} homeless)";
+			populationLabel.Text = $"pop: {GetPopulationCount?.Invoke() ?? -2} ({GetHomelessPopulationCount?.Invoke() ?? -2} homeless)";
 		}
 
-		private void OnBuildButtonPressed() {
+		void OnBuildButtonPressed() {
 			if (menuTabs.CurrentTab != (int)Tab.BUILD) {
 				state = State.CHOOSING_BUILD;
 				SelectTab(Tab.BUILD);
@@ -88,18 +88,18 @@ namespace scenes.region.view {
 			}
 		}
 
-		private void OnBuildThingSelected(long which) {
+		void OnBuildThingSelected(long which) {
 			buildMenuConfirmation.Disabled = false;
 			selectedBuildThingId = which;
 			buildMenuConfirmation.Text = "Build " + buildMenuList.GetItemText((int)which);
 		}
 
-		private void OnBuildThingConfirmed() {
+		void OnBuildThingConfirmed() {
 			// pressed button, didnt doubleclick
 			OnBuildThingConfirmed(selectedBuildThingId);
 		}
 
-		private void OnBuildThingConfirmed(long which) {
+		void OnBuildThingConfirmed(long which) {
 			selectedBuildThingId = which;
 			SetBuildCursor((BuildingType)buildMenuList.GetItemMetadata((int)which).AsGodotObject());
 			selectedBuildThingId = -1;
@@ -108,7 +108,7 @@ namespace scenes.region.view {
 
 		// menu activites
 
-		private void SelectTab(Tab which) {
+		void SelectTab(Tab which) {
 			if (which == Tab.NONE) {
 				// reset some things
 				buildMenuConfirmation.Disabled = true;
@@ -121,9 +121,9 @@ namespace scenes.region.view {
 			menuTabs.CurrentTab = (int)which;
 		}
 
-		private void UpdateBuildMenuList() {
+		void UpdateBuildMenuList() {
 			buildMenuList.Clear();
-			foreach (var buildingType in BuildingTypes) {
+			foreach (var buildingType in GetBuildingTypes?.Invoke()) {
 				int ix = buildMenuList.AddItem(buildingType.Name);
 				buildMenuList.SetItemMetadata(ix, Variant.CreateFrom(buildingType));
 			}
@@ -145,8 +145,8 @@ namespace scenes.region.view {
 			buildingScene.Modulate = new Color(buildingScene.Modulate, 0.67f);
 		}
 
-		private void PlacingBuild(Vector2I tpos) {
-			EmitSignal(SignalName.BuildRequested, buildingScene, tpos);
+		void PlacingBuild(Vector2I tpos) {
+			BuildRequested.Invoke(buildingScene, tpos);
 		}
 
 		// utilities
@@ -175,13 +175,13 @@ namespace scenes.region.view {
 			if (state != State.IDLE) return;
 		}
 
-		private void Reset() {
+		void Reset() {
 			state = State.IDLE;
 			menuTabs.CurrentTab = -1;
 			buildMenuConfirmation.Disabled = true;
 		}
 
-		private void OnStateChanged(State old, State current) {
+		void OnStateChanged(State old, State current) {
 			if (old != current) {
 				if (old == State.PLACING_BUILD) {
 					buildMenuConfirmation.Disabled = true;
