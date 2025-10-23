@@ -1,7 +1,7 @@
-Ehitised ruutude peal. Need on passiivsete boonuste ja tulu allikas.
+Ehitised ruutude peal. Need on passiivsete boonuste ja tulu allikas. Võib vaja olla ehitisele inimesi palgata, et nende mõju kehtiks. Näiteks pagaritöökoda - kas mängija palkab sinna inimesed leiba küpsetama, või rendib neile äripinna, et leiba toodetaks.
 
-Ehitisel võib olla mõjuala, mis mõjutab teiste lähedaste ehitiste tööd positiivselt või negatiivselt (vt Spore city stage).
+Ehitisel võib olla mõjuala, mis mõjutab teiste lähedaste ehitiste tööd positiivselt või negatiivselt (vt Spore city stage). Näiteks annaks kaev vett ümbruses ehitistele, mis seda vajavad.
 
-Ehitisi peaks saama arendada (*upgrade*), mis suurendaks nende mõju.
+Ehitisi peaks saama arendada (*upgrade*), mis suurendaks nende mõju. See toimuks ehitiste palkamise läbi.
 
 Rünnakus võivad ehitised viga saada ning vajada parandust.

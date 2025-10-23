@@ -1,3 +1,0 @@
-Olgu kaks kihti ruudukaardil: aluspind (kas murune muld, liiv, kivi) ning pealispind (puu, põõsas, ehitis). Avatud maailmakaardiruutude info hoiame mälus. Kasutada 16bit täisarvu, ning eraldi infot ruudu kohta viida asemel struktuuris eraldi Dictionarys, mille võtmeteks on ruudu indeksid kaardil.
-
-Eraldi tsüklid kaardi niisama läbi käimiseks id-de tasemel (muru kasvab??) ning ekstra-andmete muutmiseks (viimane on lühem tsükkel kuid mahukama loogikaga) aja möödudes.
