@@ -27,13 +27,13 @@ namespace scenes.region.view {
 		public void Display() {
 			if (display == null) return;
 			Position = GetGlobalMousePosition(); // hacky
-			nameLabel.Text = display.BuildingType.Name;
+			nameLabel.Text = display.Building.Type.GetName();
 			infoStr.Clear();
 			var bld = display.Building;
 			if (!display.Building.IsConstructed) {
 				infoStr.Append("Construction progress: ").Append("nithign").Append('%');
 			} else {
-				if (bld.Type.PopulationCapacity > 0) {
+				if (bld.Type.GetPopulationCapacity() > 0) {
 					infoStr.Append("Residents: ").Append(bld.Population.Pop).Append('/').Append(bld.Population.MaxPop);
 				}
 			}

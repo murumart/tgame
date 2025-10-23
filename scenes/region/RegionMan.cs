@@ -46,27 +46,27 @@ namespace scenes.region {
 
 		// building
 
-		public bool CanPlaceBuilding(BuildingView building, Vector2I tilepos) {
-			return region.CanPlaceBuilding(building.BuildingType, tilepos);
+		public bool CanPlaceBuilding(BuildingView view, Vector2I tilepos) {
+			return region.CanPlaceBuilding(view.Building.Type, tilepos);
 		}
 
-		public void PlaceBuilding(BuildingView buildingView, Vector2I tilepos) {
-			var building = region.PlaceBuilding(buildingView.BuildingType, tilepos);
-			BuildingView duplicate = (BuildingView)buildingView.Duplicate();
+		public void PlaceBuilding(BuildingView view, Vector2I tilepos) {
+			var building = region.PlaceBuilding(view.Building.Type, tilepos);
+			BuildingView duplicate = (BuildingView)view.Duplicate();
 			DisplayBuilding(duplicate, building, tilepos);
 		}
 
 		public void LoadBuildingView(Building building) {
-			var view = GD.Load<PackedScene>(building.Type.ScenePath).Instantiate<BuildingView>();
+			var view = GD.Load<PackedScene>(building.Type.GetScenePath()).Instantiate<BuildingView>();
 			DisplayBuilding(view, building, building.Position);
 		}
 
-		private void DisplayBuilding(BuildingView buildingView, Building building, Vector2I tilepos) {
-			buildingsParent.AddChild(buildingView);
-			buildingView.Position = Camera.TilePosToWorldPos(tilepos);
-			buildingView.Modulate = new Color(1f, 1f, 1f);
-			buildingView.Initialise(building);
-			buildingView.BuildingClicked += ui.OnBuildingClicked;
+		private void DisplayBuilding(BuildingView view, Building building, Vector2I tilepos) {
+			buildingsParent.AddChild(view);
+			view.Position = Camera.TilePosToWorldPos(tilepos);
+			view.Modulate = new Color(1f, 1f, 1f);
+			view.Initialise(building);
+			view.BuildingClicked += ui.OnBuildingClicked;
 		}
 
 		private void OnUIBuildingPlaceRequested(BuildingView building, Vector2I tilePosition) {

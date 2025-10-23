@@ -8,8 +8,6 @@ namespace scenes.region.view.buildings {
 	public partial class BuildingView : Node2D {
 		[Signal] public delegate void BuildingClickedEventHandler(BuildingView buildingView);
 
-		// info
-		[Export] public BuildingType BuildingType;
 		// ui things
 		[Export] CollisionObject2D clickDetector;
 		// internal

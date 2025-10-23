@@ -2,6 +2,7 @@ using Godot;
 using scenes.region.view.buildings;
 using System;
 using System.Collections.Generic;
+using IBuildingType = Building.IBuildingType;
 
 
 namespace scenes.region.view {
@@ -124,23 +125,22 @@ namespace scenes.region.view {
 		void UpdateBuildMenuList() {
 			buildMenuList.Clear();
 			foreach (var buildingType in GetBuildingTypes?.Invoke()) {
-				int ix = buildMenuList.AddItem(buildingType.Name);
+				int ix = buildMenuList.AddItem(buildingType.GetName());
 				buildMenuList.SetItemMetadata(ix, Variant.CreateFrom(buildingType));
 			}
 		}
 
-		public void SetBuildCursor(BuildingType buildingType) {
+		public void SetBuildCursor(IBuildingType buildingType) {
 			if (buildingType == null && buildingScene != null) {
 				buildingScene.QueueFree();
 				buildingScene = null;
 				return;
 			}
-			var packedScene = GD.Load<PackedScene>(buildingType.ScenePath);
+			var packedScene = GD.Load<PackedScene>(buildingType.GetScenePath());
 			Node scene = packedScene.Instantiate();
 			Debug.Assert(scene is BuildingView, "trying to build something that doesn't extend BuildingView");
 			cameraCursor.AddChild(scene);
 			buildingScene = scene as BuildingView;
-			buildingScene.BuildingType = buildingType;
 			state = State.PLACING_BUILD;
 			buildingScene.Modulate = new Color(buildingScene.Modulate, 0.67f);
 		}

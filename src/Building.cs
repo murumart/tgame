@@ -1,20 +1,19 @@
 using Godot;
-using scenes.region.view.buildings;
 using System;
 using System.Collections.Generic;
 
 
-public class Building : ITimePassing {
-	BuildingType type; public BuildingType Type { get => type; }
+public partial class Building : ITimePassing {
+	readonly IBuildingType type; public IBuildingType Type { get => type; }
 
 	Vector2I position; public Vector2I Position { get => position; }
 	Population population; public ref Population Population => ref population;
 	bool isConstructed = true; public bool IsConstructed { get => isConstructed; }
 
-	public Building(BuildingType type, Vector2I position) {
+	protected Building(IBuildingType type, Vector2I position) {
 		this.type = type;
 		this.position = position;
-		this.population = new Population(type.PopulationCapacity);
+		this.population = new Population(type.GetPopulationCapacity());
 	}
 
 	public void PassTime(float hours) {
@@ -23,12 +22,18 @@ public class Building : ITimePassing {
 	}
 }
 
-public static class BuildingRegistry {
+public partial class Building {
 
-	static Dictionary<BuildingType, Building> buildingsByType;
-
-	public static Building GetBuildingFromType(BuildingType type) {
-		return buildingsByType[type];
+	public interface IBuildingType {
+		string GetName();
+		string GetScenePath();
+		int GetPopulationCapacity();
+		Building CreateBuildingObject(Vector2I position) {
+			return new Building(this, position);
+		}
 	}
 }
+
+
+
 

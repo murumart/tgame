@@ -5,3 +5,10 @@ Ehitisel võib olla mõjuala, mis mõjutab teiste lähedaste ehitiste tööd pos
 Ehitisi peaks saama arendada (*upgrade*), mis suurendaks nende mõju. See toimuks ehitiste palkamise läbi.
 
 Rünnakus võivad ehitised viga saada ning vajada parandust.
+
+## Soovinimekiri
+
+- Majutus
+  - mahutab 5 inimest
+  - kodutud inimesed liiguvad automaatselt sisse
+  - kui kõik kodutud on majutatud, liiguvad tühjadesse kohtadesse uued inimesed väljast vahetevahel

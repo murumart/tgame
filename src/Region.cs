@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using Godot;
 using Jobs;
 using scenes.region.view.buildings;
+using IBuildingType = Building.IBuildingType;
 
 public enum GroundTileType : short {
 	VOID,
@@ -52,14 +53,14 @@ public class Region : ITimePassing {
 		return reg;
 	}
 
-	public bool CanPlaceBuilding(BuildingType type, Vector2I position) {
+	public bool CanPlaceBuilding(IBuildingType type, Vector2I position) {
 		return !buildings.ContainsKey(position);
 	}
 
-	public Building PlaceBuilding(BuildingType type, Vector2I position) {
-		var building = new Building(type, position);
+	public Building PlaceBuilding(IBuildingType type, Vector2I position) {
+		var building = type.CreateBuildingObject(position);
 		buildings[position] = building;
-		AddJob(position, new AbsorbFromHomelessPopulationJob(building, this));
+		if (type.GetPopulationCapacity() > 0) AddJob(position, new AbsorbFromHomelessPopulationJob(building, this));
 		return building;
 	}
 

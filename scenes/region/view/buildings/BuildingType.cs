@@ -1,15 +1,24 @@
 using Godot;
 using System;
+using IBuildingType = Building.IBuildingType;
 
 namespace scenes.region.view.buildings {
 	[GlobalClass]
-	public partial class BuildingType : Resource {
-		[Export] public string Name;
-		[Export] public int PopulationCapacity;
-		[Export(PropertyHint.File, "*.tscn")] public string ScenePath;
+	public partial class BuildingType : Resource, IBuildingType {
+		[Export] string Name;
+		[Export] int PopulationCapacity;
+		[Export(PropertyHint.File, "*.tscn")] string ScenePath;
 
 		public BuildingType() {
 			GD.Print(ScenePath);
+		}
+
+		public string GetScenePath() {
+			return ScenePath;
+		}
+
+		public int GetPopulationCapacity() {
+			return PopulationCapacity;
 		}
 	}
 }
