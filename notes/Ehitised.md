@@ -2,7 +2,7 @@ Ehitised ruutude peal. Need on passiivsete boonuste ja tulu allikas. Võib vaja 
 
 Ehitisel võib olla mõjuala, mis mõjutab teiste lähedaste ehitiste tööd positiivselt või negatiivselt (vt Spore city stage). Näiteks annaks kaev vett ümbruses ehitistele, mis seda vajavad.
 
-Ehitisi peaks saama arendada (*upgrade*), mis suurendaks nende mõju. See toimuks ehitiste palkamise läbi.
+Ehitisi peaks saama arendada (*upgrade*), mis suurendaks nende mõju. See toimuks ehitajate palkamise läbi.
 
 Rünnakus võivad ehitised viga saada ning vajada parandust.
 
@@ -12,3 +12,6 @@ Rünnakus võivad ehitised viga saada ning vajada parandust.
   - mahutab 5 inimest
   - kodutud inimesed liiguvad automaatselt sisse
   - kui kõik kodutud on majutatud, liiguvad tühjadesse kohtadesse uued inimesed väljast vahetevahel
+- Postkontor? Kõrts?
+  - tööl mõned inimesed
+  - võimaldab juurdepääsu uudistele - mis maailmas toimub meie emamaaga seoses
