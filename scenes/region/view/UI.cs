@@ -11,7 +11,7 @@ namespace scenes.region.view {
 		// one big script to rule all region ui interactions
 
 
-		public event Action<BuildingView, Vector2I> BuildRequested;
+		public event Action<IBuildingType, Vector2I> BuildRequested;
 		public event Func<int> GetPopulationCount;
 		public event Func<int> GetHomelessPopulationCount;
 		public event Func<List<BuildingType>> GetBuildingTypes;
@@ -60,7 +60,8 @@ namespace scenes.region.view {
 			}
 		}
 		long selectedBuildThingId = -1;
-		BuildingView buildingScene = null;
+		BuildingView selectedBuildingScene = null;
+		IBuildingType selectedBuildingType = null;
 
 		// overrides and connections
 
@@ -131,22 +132,24 @@ namespace scenes.region.view {
 		}
 
 		public void SetBuildCursor(IBuildingType buildingType) {
-			if (buildingType == null && buildingScene != null) {
-				buildingScene.QueueFree();
-				buildingScene = null;
+			if (buildingType == null && selectedBuildingScene != null) {
+				selectedBuildingScene.QueueFree();
+				selectedBuildingScene = null;
+				selectedBuildingType = null;
 				return;
 			}
 			var packedScene = GD.Load<PackedScene>(buildingType.GetScenePath());
 			Node scene = packedScene.Instantiate();
 			Debug.Assert(scene is BuildingView, "trying to build something that doesn't extend BuildingView");
 			cameraCursor.AddChild(scene);
-			buildingScene = scene as BuildingView;
+			selectedBuildingScene = scene as BuildingView;
+			selectedBuildingType = buildingType;
 			state = State.PLACING_BUILD;
-			buildingScene.Modulate = new Color(buildingScene.Modulate, 0.67f);
+			selectedBuildingScene.Modulate = new Color(selectedBuildingScene.Modulate, 0.67f);
 		}
 
 		void PlacingBuild(Vector2I tpos) {
-			BuildRequested.Invoke(buildingScene, tpos);
+			BuildRequested.Invoke(selectedBuildingType, tpos);
 		}
 
 		// utilities

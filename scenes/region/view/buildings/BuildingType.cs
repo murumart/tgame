@@ -20,5 +20,9 @@ namespace scenes.region.view.buildings {
 		public int GetPopulationCapacity() {
 			return PopulationCapacity;
 		}
+
+		public new string GetName() { // hiding Resource.GetName ??
+			return Name;
+		}
 	}
 }

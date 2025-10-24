@@ -5,6 +5,7 @@ using scenes.region.view;
 using scenes.region.view.buildings;
 using System;
 using System.Collections.Generic;
+using static Building;
 
 namespace scenes.region {
 
@@ -46,14 +47,14 @@ namespace scenes.region {
 
 		// building
 
-		public bool CanPlaceBuilding(BuildingView view, Vector2I tilepos) {
-			return region.CanPlaceBuilding(view.Building.Type, tilepos);
+		public bool CanPlaceBuilding(IBuildingType type, Vector2I tilepos) {
+			return region.CanPlaceBuilding(type, tilepos);
 		}
 
-		public void PlaceBuilding(BuildingView view, Vector2I tilepos) {
-			var building = region.PlaceBuilding(view.Building.Type, tilepos);
-			BuildingView duplicate = (BuildingView)view.Duplicate();
-			DisplayBuilding(duplicate, building, tilepos);
+		public void PlaceBuilding(IBuildingType type, Vector2I tilepos) {
+	    	var view = GD.Load<PackedScene>(type.GetScenePath()).Instantiate<BuildingView>();
+	    	var building = region.PlaceBuilding(type, tilepos);
+			DisplayBuilding(view, building, tilepos);
 		}
 
 		public void LoadBuildingView(Building building) {
@@ -69,9 +70,9 @@ namespace scenes.region {
 			view.BuildingClicked += ui.OnBuildingClicked;
 		}
 
-		private void OnUIBuildingPlaceRequested(BuildingView building, Vector2I tilePosition) {
-			if (CanPlaceBuilding(building, tilePosition)) {
-				PlaceBuilding(building, tilePosition);
+		private void OnUIBuildingPlaceRequested(IBuildingType type, Vector2I tilePosition) {
+			if (CanPlaceBuilding(type, tilePosition)) {
+				PlaceBuilding(type, tilePosition);
 			}
 		}
 
