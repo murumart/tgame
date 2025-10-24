@@ -127,6 +127,9 @@ namespace scenes.region.view {
 			buildMenuList.Clear();
 			foreach (var buildingType in GetBuildingTypes?.Invoke()) {
 				int ix = buildMenuList.AddItem(buildingType.GetName());
+				// storing buildingtype references locally so if we happen to update the buildingtypes list
+				// in between calls here, we should still get the correct buildings that the visual
+				// ItemList was set up with
 				buildMenuList.SetItemMetadata(ix, Variant.CreateFrom(buildingType));
 			}
 		}
