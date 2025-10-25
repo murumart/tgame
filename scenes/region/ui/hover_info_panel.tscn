@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://3kvcwdnxdp36"]
 
-[ext_resource type="Script" uid="uid://db3hi55th3gjl" path="res://scenes/region/view/buildings/TileInfoPanel.cs" id="1_ags74"]
+[ext_resource type="Script" uid="uid://db3hi55th3gjl" path="res://scenes/region/ui/HoverInfoPanel.cs" id="1_ags74"]
 [ext_resource type="FontVariation" uid="uid://dliky8sbpgnxp" path="res://resources/font/title_font.tres" id="1_bvvw3"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_nt1n5"]

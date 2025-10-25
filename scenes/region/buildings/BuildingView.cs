@@ -2,7 +2,7 @@ using Godot;
 using scenes.autoload;
 using System;
 
-namespace scenes.region.view.buildings {
+namespace scenes.region.buildings {
 
 	[GlobalClass]
 	public partial class BuildingView : Node2D {

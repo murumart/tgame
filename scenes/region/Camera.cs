@@ -1,8 +1,9 @@
 using Godot;
 using scenes.autoload;
+using scenes.region.ui;
 using System;
 
-namespace scenes.region.view {
+namespace scenes.region {
 
 	public partial class Camera : Camera2D {
 

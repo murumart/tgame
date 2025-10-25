@@ -1,15 +1,15 @@
 [gd_scene load_steps=11 format=3 uid="uid://dfsyk55h5ioh0"]
 
-[ext_resource type="Script" uid="uid://tg0ox5vibsay" path="res://scenes/region/RegionMan.cs" id="1_spsxg"]
-[ext_resource type="Resource" uid="uid://c613ci251pl2v" path="res://scenes/region/view/buildings/types/housing.tres" id="2_f8i46"]
-[ext_resource type="Texture2D" uid="uid://bqktcpnjk5qk5" path="res://scenes/region/view/tiles1.png" id="2_spsxg"]
-[ext_resource type="Texture2D" uid="uid://8wjabtgow84g" path="res://scenes/region/view/tiles2.png" id="2_yddgr"]
-[ext_resource type="Resource" uid="uid://dm7cl54id0t35" path="res://scenes/region/view/buildings/types/well.tres" id="3_es2am"]
-[ext_resource type="PackedScene" uid="uid://b1t88emteoav4" path="res://scenes/region/view/camera.tscn" id="4_cjagt"]
-[ext_resource type="Script" uid="uid://yte5f225ahij" path="res://scenes/region/Tilemaps.cs" id="6_es2am"]
+[ext_resource type="Script" uid="uid://tg0ox5vibsay" path="res://scenes/region/RegionMan.cs" id="1_qi5r4"]
+[ext_resource type="Resource" uid="uid://c613ci251pl2v" path="res://scenes/region/buildings/types/housing.tres" id="2_8gw1h"]
+[ext_resource type="Resource" uid="uid://dm7cl54id0t35" path="res://scenes/region/buildings/types/well.tres" id="3_4uata"]
+[ext_resource type="PackedScene" uid="uid://b1t88emteoav4" path="res://scenes/region/camera.tscn" id="4_du6xo"]
+[ext_resource type="Script" uid="uid://yte5f225ahij" path="res://scenes/region/Tilemaps.cs" id="5_pfucr"]
+[ext_resource type="Texture2D" uid="uid://bqktcpnjk5qk5" path="res://scenes/region/tiles1.png" id="6_6lhrb"]
+[ext_resource type="Texture2D" uid="uid://8wjabtgow84g" path="res://scenes/region/tiles2.png" id="7_gtst4"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_s3w5i"]
-texture = ExtResource("2_spsxg")
+texture = ExtResource("6_6lhrb")
 texture_region_size = Vector2i(64, 32)
 0:0/0 = 0
 0:3/size_in_atlas = Vector2i(1, 2)
@@ -24,7 +24,7 @@ texture_region_size = Vector2i(64, 32)
 1:0/0 = 0
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_spsxg"]
-texture = ExtResource("2_yddgr")
+texture = ExtResource("7_gtst4")
 texture_region_size = Vector2i(64, 32)
 0:0/size_in_atlas = Vector2i(1, 2)
 0:0/0 = 0
@@ -37,22 +37,22 @@ tile_size = Vector2i(64, 32)
 sources/1 = SubResource("TileSetAtlasSource_s3w5i")
 sources/2 = SubResource("TileSetAtlasSource_spsxg")
 
-[node name="RegionView" type="Node" node_paths=PackedStringArray("ui", "camera", "tilemaps", "buildingsParent")]
-script = ExtResource("1_spsxg")
+[node name="RegionMan" type="Node" node_paths=PackedStringArray("ui", "camera", "tilemaps", "buildingsParent")]
+script = ExtResource("1_qi5r4")
 ui = NodePath("RegionCamera/Ui")
 camera = NodePath("RegionCamera")
 tilemaps = NodePath("Tilemaps")
-buildingTypes = Array[Object]([ExtResource("2_f8i46"), ExtResource("3_es2am")])
+buildingTypes = Array[Object]([ExtResource("2_8gw1h"), ExtResource("3_4uata")])
 buildingsParent = NodePath("Tilemaps/Buildings")
 
-[node name="RegionCamera" parent="." node_paths=PackedStringArray("cursor", "regionTiles", "ui") instance=ExtResource("4_cjagt")]
+[node name="RegionCamera" parent="." node_paths=PackedStringArray("cursor", "regionTiles", "ui") instance=ExtResource("4_du6xo")]
 cursor = NodePath("Cursor")
 regionTiles = NodePath("../Tilemaps/Region")
 ui = NodePath("Ui")
 
 [node name="Tilemaps" type="Node2D" parent="." node_paths=PackedStringArray("ground")]
 y_sort_enabled = true
-script = ExtResource("6_es2am")
+script = ExtResource("5_pfucr")
 ground = NodePath("Region")
 
 [node name="Region" type="TileMapLayer" parent="Tilemaps"]

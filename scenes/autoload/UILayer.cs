@@ -1,11 +1,11 @@
 using Godot;
-using scenes.region.view;
-using scenes.region.view.buildings;
+using scenes.region.buildings;
+using scenes.region.ui;
 using System;
 
 namespace scenes.autoload {
 	public partial class UILayer : CanvasLayer {
-		[Export] TileInfoPanel infoPanel;
+		[Export] HoverInfoPanel infoPanel;
 
 		static UILayer singleton;
 		public static UILayer Singleton { get => singleton; }

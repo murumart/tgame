@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://b2bo11jryfpr"]
+
+[ext_resource type="PackedScene" uid="uid://pfy55aydpy4t" path="res://scenes/region/buildings/scenes/_building_base.tscn" id="1_2pxko"]
+[ext_resource type="Texture2D" uid="uid://lcyomp7reeke" path="res://scenes/region/buildings/scenes/well.png" id="1_6km4e"]
+
+[node name="BuildingBase" instance=ExtResource("1_2pxko")]
+
+[node name="Sprite2D" type="Sprite2D" parent="." index="0"]
+position = Vector2(0, -13)
+texture = ExtResource("1_6km4e")

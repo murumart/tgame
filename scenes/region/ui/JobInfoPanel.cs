@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-namespace scenes.region.view {
+namespace scenes.region.ui {
 
 	public partial class JobInfoPanel : Control {
 		public static readonly PackedScene Packed = GD.Load<PackedScene>("res://scenes/region/view/job_infopanel.tscn");

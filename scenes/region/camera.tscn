@@ -1,9 +1,9 @@
 [gd_scene load_steps=5 format=3 uid="uid://b1t88emteoav4"]
 
-[ext_resource type="Script" uid="uid://hk3d5pdgs6ra" path="res://scenes/region/view/Camera.cs" id="1_rxgj5"]
-[ext_resource type="PackedScene" uid="uid://cp354pcilqv48" path="res://scenes/region/view/ui.tscn" id="2_lh5hp"]
+[ext_resource type="Script" uid="uid://hk3d5pdgs6ra" path="res://scenes/region/Camera.cs" id="1_rxgj5"]
+[ext_resource type="PackedScene" uid="uid://cp354pcilqv48" path="res://scenes/region/ui/ui.tscn" id="2_lh5hp"]
 [ext_resource type="Material" uid="uid://cet7ep6cvqk3p" path="res://resources/add_material.tres" id="3_snfgk"]
-[ext_resource type="Texture2D" uid="uid://ethlsfg8xmhk" path="res://scenes/region/view/iso_mask.png" id="4_jowqh"]
+[ext_resource type="Texture2D" uid="uid://ethlsfg8xmhk" path="res://scenes/region/iso_mask.png" id="4_jowqh"]
 
 [node name="RegionCamera" type="Camera2D"]
 script = ExtResource("1_rxgj5")

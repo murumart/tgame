@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://c7ew6g8hdbgfg"]
 
-[ext_resource type="Script" uid="uid://h0fsb3ksyveu" path="res://scenes/region/view/JobsList.cs" id="1_8ib8f"]
-[ext_resource type="PackedScene" uid="uid://bit7aavyxpq38" path="res://scenes/region/view/job_infopanel.tscn" id="1_x7p5j"]
+[ext_resource type="Script" uid="uid://h0fsb3ksyveu" path="res://scenes/region/ui/JobsList.cs" id="1_8ib8f"]
+[ext_resource type="PackedScene" uid="uid://bit7aavyxpq38" path="res://scenes/region/ui/job_info_panel.tscn" id="1_x7p5j"]
 
 [node name="JobsList" type="ScrollContainer"]
 custom_minimum_size = Vector2(100, 80)

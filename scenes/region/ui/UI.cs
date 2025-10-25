@@ -1,11 +1,11 @@
 using Godot;
-using scenes.region.view.buildings;
+using scenes.region.buildings;
 using System;
 using System.Collections.Generic;
 using IBuildingType = Building.IBuildingType;
 
 
-namespace scenes.region.view {
+namespace scenes.region.ui {
 	public partial class UI : Control {
 
 		// one big script to rule all region ui interactions

@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://lcyomp7reeke"
-path="res://.godot/imported/well.png-6392af5a670916e210461c9566e4ec49.ctex"
+path="res://.godot/imported/well.png-0eba02a1c1a3f2a0cb8d93df0f031662.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://scenes/region/view/buildings/scenes/well.png"
-dest_files=["res://.godot/imported/well.png-6392af5a670916e210461c9566e4ec49.ctex"]
+source_file="res://scenes/region/buildings/scenes/well.png"
+dest_files=["res://.godot/imported/well.png-0eba02a1c1a3f2a0cb8d93df0f031662.ctex"]
 
 [params]
 

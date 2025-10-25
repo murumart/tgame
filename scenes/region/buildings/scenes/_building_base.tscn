@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://pfy55aydpy4t"]
 
-[ext_resource type="Script" uid="uid://yr6q8gjnc8wh" path="res://scenes/region/view/buildings/BuildingView.cs" id="1_jqyv4"]
+[ext_resource type="Script" uid="uid://yr6q8gjnc8wh" path="res://scenes/region/buildings/BuildingView.cs" id="1_jqyv4"]
 
 [sub_resource type="ConvexPolygonShape2D" id="ConvexPolygonShape2D_nt1n5"]
 points = PackedVector2Array(-32, 0, 0, -16, 32, 0, 0, 16)

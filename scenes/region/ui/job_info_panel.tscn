@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://bit7aavyxpq38"]
 
-[ext_resource type="Script" uid="uid://do5uvuxk7ubbq" path="res://scenes/region/view/JobInfoPanel.cs" id="1_vh8na"]
+[ext_resource type="Script" uid="uid://do5uvuxk7ubbq" path="res://scenes/region/ui/JobInfoPanel.cs" id="1_vh8na"]
 [ext_resource type="LabelSettings" uid="uid://v03gdc53ijm1" path="res://resources/theme/half_size.tres" id="2_m5kf2"]
 
 [node name="JobInfopanel" type="HBoxContainer" node_paths=PackedStringArray("infoLabel", "sidebar", "topbar")]

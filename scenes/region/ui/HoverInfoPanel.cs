@@ -1,11 +1,10 @@
 using Godot;
-using scenes.region.view.buildings;
-using System;
+using scenes.region.buildings;
 using System.Text;
 
-namespace scenes.region.view {
+namespace scenes.region.ui {
 
-	public partial class TileInfoPanel : PanelContainer {
+	public partial class HoverInfoPanel : PanelContainer {
 		[Export] Label nameLabel;
 		[Export] Label infoLabel;
 		BuildingView display;

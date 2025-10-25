@@ -2,7 +2,7 @@ using Godot;
 using System;
 using IBuildingType = Building.IBuildingType;
 
-namespace scenes.region.view.buildings {
+namespace scenes.region.buildings {
 	[GlobalClass]
 	public partial class BuildingType : Resource, IBuildingType {
 		[Export] string Name;

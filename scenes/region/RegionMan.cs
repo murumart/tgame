@@ -1,9 +1,8 @@
 using Godot;
 using Godot.Collections;
 using scenes.autoload;
-using scenes.region.view;
-using scenes.region.view.buildings;
-using System;
+using scenes.region.buildings;
+using scenes.region.ui;
 using System.Collections.Generic;
 using static Building;
 
