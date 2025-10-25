@@ -1,12 +1,22 @@
 using System.Collections.Generic;
+using static Faction;
 
 public class Map : ITimePassing {
+
 	readonly List<Region> regions = new();
+	readonly List<Faction> factions = new();
+	readonly List<RegionFaction> regionFactions = new();
+
 
 	public Map() {
 		// debug
 		for (int i = 0; i < 10; i++) {
-			regions.Add(Region.GetTestCircleRegion(12));
+			var region = Region.GetTestCircleRegion(12);
+			regions.Add(region);
+			var faction = new Faction();
+			factions.Add(faction);
+			var regionFaction = faction.CreateOwnedFaction(region);
+			regionFactions.Add(regionFaction);
 		}
 	}
 
@@ -14,9 +24,19 @@ public class Map : ITimePassing {
 		return regions[ix];
 	}
 
+	public Faction GetFaction(int ix) {
+		return factions[ix];
+	}
+
 	public void PassTime(float hours) {
 		foreach (Region region in regions) {
 			region.PassTime(hours);
+		}
+		foreach (var faction in factions) {
+			faction.PassTime(hours);
+		}
+		foreach (var regionFaction in regionFactions) {
+			regionFaction.PassTime(hours);
 		}
 	}
 }

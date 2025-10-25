@@ -1,4 +1,5 @@
 using Godot;
+using static Faction;
 
 namespace Jobs {
 
@@ -40,24 +41,24 @@ namespace Jobs {
 
 	public class AbsorbFromHomelessPopulationJob : Job {
 		Building building;
-		Region region;
+		RegionFaction faction;
 
-		public AbsorbFromHomelessPopulationJob(Building building, Region region) {
+		public AbsorbFromHomelessPopulationJob(Building building, RegionFaction fac) {
 			this.building = building;
-			this.region = region;
+			this.faction = fac;
 		}
 
 		public override void Finish() { }
 
 		float remainderPeopleTransferTime;
 		public override void PassTime(float hours) {
-			if (building.IsConstructed && region.HomelessPopulation.Pop > 0) {
+			if (building.IsConstructed && faction.HomelessPopulation.Pop > 0) {
 				/* if (homelessPopulation.CanTransfer(ref building.Population, 1)) {
 					homelessPopulation.Transfer(ref building.Population, 1);
 				} */
 				float peopleTransferTime = hours + remainderPeopleTransferTime;
-				while (peopleTransferTime > 0.1 && region.HomelessPopulation.CanTransfer(ref building.Population, 1)) {
-					region.HomelessPopulation.Transfer(ref building.Population, 1);
+				while (peopleTransferTime > 0.1 && faction.HomelessPopulation.CanTransfer(ref building.Population, 1)) {
+					faction.HomelessPopulation.Transfer(ref building.Population, 1);
 					peopleTransferTime -= 0.1f;
 				}
 				remainderPeopleTransferTime = peopleTransferTime;

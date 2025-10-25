@@ -1,25 +1,30 @@
-using Godot;
 using System;
 using System.Collections.Generic;
+using Godot;
 
 
-public partial class Building : ITimePassing {
+public abstract partial class MapObject : ITimePassing {
+	protected Vector2I position; public Vector2I Position { get => position; }
+
+	public MapObject(Vector2I position) {
+		this.position = position;
+	}
+
+	public void PassTime(float hours) { }
+}
+
+public partial class Building : MapObject, ITimePassing {
 	readonly IBuildingType type; public IBuildingType Type { get => type; }
 
-	Vector2I position; public Vector2I Position { get => position; }
 	Population population; public ref Population Population => ref population;
 	bool isConstructed = true; public bool IsConstructed { get => isConstructed; }
 
-	protected Building(IBuildingType type, Vector2I position) {
+	protected Building(IBuildingType type, Vector2I position) : base(position) {
 		this.type = type;
-		this.position = position;
 		this.population = new Population(type.GetPopulationCapacity());
 	}
 
-	public void PassTime(float hours) {
-		// TODO move to the job..
-
-	}
+	public void PassTime(float hours) { }
 }
 
 public partial class Building {

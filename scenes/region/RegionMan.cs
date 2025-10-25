@@ -5,6 +5,7 @@ using scenes.region.buildings;
 using scenes.region.ui;
 using System.Collections.Generic;
 using static Building;
+using static Faction;
 
 namespace scenes.region {
 
@@ -19,6 +20,7 @@ namespace scenes.region {
 		[Export] Node2D buildingsParent;
 
 		Region region;
+		RegionFaction regionFaction;
 
 		// setup
 
@@ -27,7 +29,8 @@ namespace scenes.region {
 			ui.GetBuildingTypes += GetBuildingTypes;
 
 			region = GameMan.Singleton.Game.Map.GetRegion(0);
-			ui.GetPopulationCount += region.GetPopulationCount;
+			regionFaction = GameMan.Singleton.Game.Map.GetFaction(0).GetOwnedRegionFaction(0);
+			ui.GetPopulationCount += regionFaction.GetPopulationCount;
 			ui.GetHomelessPopulationCount += GetHomelessPopulationCount;
 
 			tilemaps.DisplayGround(region);
@@ -37,7 +40,7 @@ namespace scenes.region {
 
 		public override void _Notification(int what) {
 			if (what == NotificationPredelete) {
-				ui.GetPopulationCount -= region.GetPopulationCount;
+				ui.GetPopulationCount -= regionFaction.GetPopulationCount;
 				ui.GetPopulationCount -= GetHomelessPopulationCount;
 				ui.GetBuildingTypes -= GetBuildingTypes;
 				ui.BuildRequested -= OnUIBuildingPlaceRequested;
@@ -47,12 +50,12 @@ namespace scenes.region {
 		// building
 
 		public bool CanPlaceBuilding(IBuildingType type, Vector2I tilepos) {
-			return region.CanPlaceBuilding(type, tilepos);
+			return regionFaction.CanPlaceBuilding(type, tilepos);
 		}
 
 		public void PlaceBuilding(IBuildingType type, Vector2I tilepos) {
 	    	var view = GD.Load<PackedScene>(type.GetScenePath()).Instantiate<BuildingView>();
-	    	var building = region.PlaceBuilding(type, tilepos);
+	    	var building = regionFaction.PlaceBuilding(type, tilepos);
 			DisplayBuilding(view, building, tilepos);
 		}
 
@@ -82,7 +85,7 @@ namespace scenes.region {
 		}
 
 		public int GetHomelessPopulationCount() {
-			return region.HomelessPopulation.Pop;
+			return regionFaction.HomelessPopulation.Pop;
 		}
 	}
 
