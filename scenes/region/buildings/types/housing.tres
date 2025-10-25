@@ -1,10 +1,15 @@
 [gd_resource type="Resource" script_class="BuildingType" load_steps=2 format=3 uid="uid://c613ci251pl2v"]
 
-[ext_resource type="Script" uid="uid://b5xb3tdf3yoon" path="res://scenes/region/buildings/BuildingType.cs" id="1_iyx4e"]
+[ext_resource type="Script" uid="uid://b5xb3tdf3yoon" path="res://scenes/region/buildings/BuildingType.cs" id="1_gy54i"]
 
 [resource]
-script = ExtResource("1_iyx4e")
+script = ExtResource("1_gy54i")
 Name = "Housing"
 PopulationCapacity = 5
+ResourceCapacities = Dictionary[int, int]({})
+ResourceCosts = Dictionary[int, int]({
+0: 10,
+1: 5
+})
 ScenePath = "uid://dyw8xmwwkvu5m"
 metadata/_custom_type_script = "uid://b5xb3tdf3yoon"

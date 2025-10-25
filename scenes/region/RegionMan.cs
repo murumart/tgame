@@ -6,6 +6,7 @@ using scenes.region.ui;
 using System.Collections.Generic;
 using static Building;
 using static Faction;
+using static ResourceType;
 
 namespace scenes.region {
 
@@ -17,6 +18,7 @@ namespace scenes.region {
 
 		[ExportGroup("Building")]
 		[Export] Array<BuildingType> buildingTypes;
+		[Export] Array<map.ResourceType> resourceTypes;
 		[Export] Node2D buildingsParent;
 
 		Region region;

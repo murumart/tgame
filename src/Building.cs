@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Godot;
+using static ResourceStorage;
 
 
 public abstract partial class MapObject : ITimePassing {
@@ -10,7 +11,7 @@ public abstract partial class MapObject : ITimePassing {
 		this.position = position;
 	}
 
-	public void PassTime(float hours) { }
+	public virtual void PassTime(float hours) { }
 }
 
 public partial class Building : MapObject, ITimePassing {
@@ -24,7 +25,7 @@ public partial class Building : MapObject, ITimePassing {
 		this.population = new Population(type.GetPopulationCapacity());
 	}
 
-	public void PassTime(float hours) { }
+	public override void PassTime(float hours) { }
 }
 
 public partial class Building {
@@ -33,6 +34,9 @@ public partial class Building {
 		string GetName();
 		string GetScenePath();
 		int GetPopulationCapacity();
+		ResourceCapacity[] GetResourceCapacities();
+		ResourceBundle[] GetResourceRequirements();
+
 		Building CreateBuildingObject(Vector2I position) {
 			return new Building(this, position);
 		}
