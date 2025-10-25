@@ -1,13 +1,15 @@
-## Oktoober 2025
+## Kuude kaupa
+
+### Oktoober 2025
 
 Eesmärk jõuda prototüübiga võrreldavale tasemele. *Game Loop*. Mängus on olemas:
 
-- [x] aeg jookseb
+- [X] aeg jookseb
 	- [ ] saab pausile panna
-	- [x] ehitiste ehitamine võtab aega
+	- [X] ehitiste ehitamine võtab aega
 	- [ ] fookuses regiooni aeg peaks detailsemalt jooksma
 - [ ] ruutude ui
-	- [x] ui ehitise peale hiirega minnes
+	- [X] ui ehitise peale hiirega minnes
 		- [ ] ehitise nimi, inimesed sees, tegevused ehitisega
 - [ ] tegevused ehitisega
 	- [ ] inimeste palkamine ehitamiseks
@@ -21,3 +23,14 @@ Eesmärk jõuda prototüübiga võrreldavale tasemele. *Game Loop*. Mängus on o
 - [ ] tootlus
 - [ ] tootluskvoot
 	- [ ] lihtne gameover: kvoodi täitmata jätmine
+
+## Verstapostid
+
+Mäng peab olema mängitav iga verstaposti saabudes.
+
+### 0.1.0
+
+- [ ] genereeritud maailm
+	- [ ] müra: kõrgus, sügavus, et oleks vahe mere ja maa vahel
+	- [ ] müra: jõed (hallid alad)
+	- [ ] 

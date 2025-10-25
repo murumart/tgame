@@ -11,7 +11,7 @@ namespace scenes.region.ui {
 		// one big script to rule all region ui interactions
 
 
-		public event Action<IBuildingType, Vector2I> BuildRequested;
+		public event Action<Building.IBuildingType, Vector2I> BuildRequested;
 		public event Func<int> GetPopulationCount;
 		public event Func<int> GetHomelessPopulationCount;
 		public event Func<List<BuildingType>> GetBuildingTypes;
@@ -61,7 +61,7 @@ namespace scenes.region.ui {
 		}
 		long selectedBuildThingId = -1;
 		BuildingView selectedBuildingScene = null;
-		IBuildingType selectedBuildingType = null;
+	Building.IBuildingType selectedBuildingType = null;
 
 		// overrides and connections
 
@@ -134,7 +134,7 @@ namespace scenes.region.ui {
 			}
 		}
 
-		public void SetBuildCursor(IBuildingType buildingType) {
+		public void SetBuildCursor(Building.IBuildingType buildingType) {
 			if (buildingType == null && selectedBuildingScene != null) {
 				selectedBuildingScene.QueueFree();
 				selectedBuildingScene = null;

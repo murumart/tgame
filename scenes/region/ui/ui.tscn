@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://cp354pcilqv48"]
 
-[ext_resource type="LabelSettings" uid="uid://v03gdc53ijm1" path="res://resources/theme/half_size.tres" id="1_nfevs"]
+[ext_resource type="LabelSettings" uid="uid://v03gdc53ijm1" path="res://resources/visual/theme/half_size.tres" id="1_nfevs"]
 [ext_resource type="Script" uid="uid://cd6mwdns4bcwa" path="res://scenes/region/ui/UI.cs" id="1_vkak1"]
 [ext_resource type="PackedScene" uid="uid://c7ew6g8hdbgfg" path="res://scenes/region/ui/jobs_list.tscn" id="3_y7o2c"]
 

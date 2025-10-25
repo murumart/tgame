@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://bit7aavyxpq38"]
 
-[ext_resource type="Script" uid="uid://do5uvuxk7ubbq" path="res://scenes/region/ui/JobInfoPanel.cs" id="1_vh8na"]
-[ext_resource type="LabelSettings" uid="uid://v03gdc53ijm1" path="res://resources/theme/half_size.tres" id="2_m5kf2"]
+[ext_resource type="Script" uid="uid://do5uvuxk7ubbq" path="res://scenes/region/ui/JobInfoPanel.cs" id="1_4q80a"]
+[ext_resource type="LabelSettings" uid="uid://v03gdc53ijm1" path="res://resources/visual/theme/half_size.tres" id="2_cgm35"]
 
 [node name="JobInfopanel" type="HBoxContainer" node_paths=PackedStringArray("infoLabel", "sidebar", "topbar")]
 offset_right = 85.0
@@ -9,7 +9,7 @@ offset_bottom = 56.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 1
-script = ExtResource("1_vh8na")
+script = ExtResource("1_4q80a")
 infoLabel = NodePath("VBoxContainer2/JobInfopanel/MarginContainer/VBoxContainer/Label2")
 sidebar = NodePath("VBoxContainer")
 topbar = NodePath("VBoxContainer2")
@@ -45,7 +45,7 @@ layout_mode = 2
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Work Details"
-label_settings = ExtResource("2_m5kf2")
+label_settings = ExtResource("2_cgm35")
 
 [node name="Button" type="Button" parent="VBoxContainer2/PanelContainer/HBoxContainer"]
 layout_mode = 2

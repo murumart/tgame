@@ -3,12 +3,12 @@
 importer="font_data_dynamic"
 type="FontFile"
 uid="uid://oyhbnlguurfb"
-path="res://.godot/imported/Jupiteroid-Regular.ttf-69d467b8f5435dd84446b051e8fdb5a4.fontdata"
+path="res://.godot/imported/Jupiteroid-Regular.ttf-4fe8ec0eb088c6c86f23c56240af305b.fontdata"
 
 [deps]
 
-source_file="res://resources/font/Jupiteroid-Regular.ttf"
-dest_files=["res://.godot/imported/Jupiteroid-Regular.ttf-69d467b8f5435dd84446b051e8fdb5a4.fontdata"]
+source_file="res://resources/visual/font/Jupiteroid-Regular.ttf"
+dest_files=["res://.godot/imported/Jupiteroid-Regular.ttf-4fe8ec0eb088c6c86f23c56240af305b.fontdata"]
 
 [params]
 

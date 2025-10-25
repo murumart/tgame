@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="BuildingType" load_steps=4 format=3 uid="uid://dm7cl54id0t35"]
+
+[ext_resource type="Script" uid="uid://b5xb3tdf3yoon" path="res://resources/game/building_types/BuildingType.cs" id="1_7mu2a"]
+[ext_resource type="Resource" uid="uid://nw83fam2omvi" path="res://resources/game/resource_types/rock.tres" id="1_cgu5r"]
+[ext_resource type="Resource" uid="uid://b8507qbvqvdy8" path="res://resources/game/resource_types/wood.tres" id="2_7l37s"]
+
+[resource]
+script = ExtResource("1_7mu2a")
+Name = "Well"
+ResourceCapacities = null
+ResourceCosts = Dictionary[Object, int]({
+ExtResource("1_cgu5r"): 10,
+ExtResource("2_7l37s"): 3
+})
+ScenePath = "uid://b2bo11jryfpr"
+metadata/_custom_type_script = "uid://b5xb3tdf3yoon"

@@ -1,6 +1,6 @@
 [gd_resource type="FontVariation" load_steps=2 format=3 uid="uid://dliky8sbpgnxp"]
 
-[ext_resource type="FontFile" uid="uid://b63wng23v3j8l" path="res://resources/font/Zerove-Regular.ttf" id="1_f83hn"]
+[ext_resource type="FontFile" uid="uid://b63wng23v3j8l" path="res://resources/visual/font/Zerove-Regular.ttf" id="1_f83hn"]
 
 [resource]
 base_font = ExtResource("1_f83hn")

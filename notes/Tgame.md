@@ -41,7 +41,7 @@ Kolooniana peab suhtlema emamaaga, kes sätib kvoodi mingi asja tootmiseks ning 
 
 Emamaaga oleks võimalik rääkida enda autonoomia teemal ning järjest rohkem seda saada, kuni saavutatakse iseseisvus. Emamaa ründaks siis oma vägedega mängija regiooni.
 
-### AI RTS
+### Automaat-RTS
 
 Ümbritsevad riigid haldavad samuti kolooniaid/linnu. Samad dünaamikad, mis mängija linna ning emamaa vahel. Riigid kauplevad, kemplevad, sõdivad vastavalt arvutustele.
 

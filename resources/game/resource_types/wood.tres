@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="ResourceType" load_steps=2 format=3 uid="uid://b8507qbvqvdy8"]
+
+[ext_resource type="Script" uid="uid://coqr05mqlancq" path="res://scenes/map/ResourceType.cs" id="1_3evks"]
+
+[resource]
+script = ExtResource("1_3evks")
+name = "wood"
+metadata/_custom_type_script = "uid://coqr05mqlancq"

@@ -1,9 +1,0 @@
-[gd_resource type="Resource" script_class="BuildingType" load_steps=2 format=3 uid="uid://dm7cl54id0t35"]
-
-[ext_resource type="Script" uid="uid://b5xb3tdf3yoon" path="res://scenes/region/buildings/BuildingType.cs" id="1_7mu2a"]
-
-[resource]
-script = ExtResource("1_7mu2a")
-Name = "Well"
-ScenePath = "uid://b2bo11jryfpr"
-metadata/_custom_type_script = "uid://b5xb3tdf3yoon"
