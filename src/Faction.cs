@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Godot;
 using Jobs;
 using static Building;
-using static ResourceType;
 
 public partial class Faction : ITimePassing {
 
@@ -50,9 +49,9 @@ public partial class Faction {
 			homelessPopulation = new Population(100);
 			homelessPopulation.Pop = 10;
 			// ASSUMING these are wood rock and ... a third thing initially...
-			resourceStorage.IncreaseCapacity(ResourceRegistry.GetResourceType(0), 30);
-			resourceStorage.IncreaseCapacity(ResourceRegistry.GetResourceType(1), 30);
-			resourceStorage.IncreaseCapacity(ResourceRegistry.GetResourceType(2), 30);
+			resourceStorage.IncreaseCapacity(Registry.Resources.GetAsset(0), 30);
+			resourceStorage.IncreaseCapacity(Registry.Resources.GetAsset(1), 30);
+			resourceStorage.IncreaseCapacity(Registry.Resources.GetAsset(2), 30);
 		}
 
 		public void PassTime(float hours) {

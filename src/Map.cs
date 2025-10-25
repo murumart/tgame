@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Godot;
 using static Faction;
 
 public class Map : ITimePassing {
@@ -39,4 +40,18 @@ public class Map : ITimePassing {
 			regionFaction.PassTime(hours);
 		}
 	}
+	
+}
+
+public abstract partial class MapObject : ITimePassing {
+
+	protected Vector2I position; public Vector2I Position { get => position; }
+
+
+	public MapObject(Vector2I position) {
+		this.position = position;
+	}
+
+	public virtual void PassTime(float hours) { }
+
 }

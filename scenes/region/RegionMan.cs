@@ -1,12 +1,11 @@
+using System.Collections.Generic;
 using Godot;
 using Godot.Collections;
 using scenes.autoload;
 using scenes.region.buildings;
 using scenes.region.ui;
-using System.Collections.Generic;
 using static Building;
 using static Faction;
-using static ResourceType;
 
 namespace scenes.region {
 
@@ -17,8 +16,6 @@ namespace scenes.region {
 		[Export] Tilemaps tilemaps;
 
 		[ExportGroup("Building")]
-		[Export] Array<BuildingType> buildingTypes;
-		[Export] Array<map.ResourceType> resourceTypes;
 		[Export] Node2D buildingsParent;
 
 		Region region;
@@ -51,13 +48,13 @@ namespace scenes.region {
 
 		// building
 
-		public bool CanPlaceBuilding(IBuildingType type, Vector2I tilepos) {
+		public bool CanPlaceBuilding(Building.IBuildingType type, Vector2I tilepos) {
 			return regionFaction.CanPlaceBuilding(type, tilepos);
 		}
 
-		public void PlaceBuilding(IBuildingType type, Vector2I tilepos) {
-	    	var view = GD.Load<PackedScene>(type.GetScenePath()).Instantiate<BuildingView>();
-	    	var building = regionFaction.PlaceBuilding(type, tilepos);
+		public void PlaceBuilding(Building.IBuildingType type, Vector2I tilepos) {
+			var view = GD.Load<PackedScene>(type.GetScenePath()).Instantiate<BuildingView>();
+			var building = regionFaction.PlaceBuilding(type, tilepos);
 			DisplayBuilding(view, building, tilepos);
 		}
 
@@ -74,7 +71,7 @@ namespace scenes.region {
 			view.BuildingClicked += ui.OnBuildingClicked;
 		}
 
-		private void OnUIBuildingPlaceRequested(IBuildingType type, Vector2I tilePosition) {
+		private void OnUIBuildingPlaceRequested(Building.IBuildingType type, Vector2I tilePosition) {
 			if (CanPlaceBuilding(type, tilePosition)) {
 				PlaceBuilding(type, tilePosition);
 			}
@@ -82,7 +79,7 @@ namespace scenes.region {
 
 		public List<BuildingType> GetBuildingTypes() {
 			var list = new List<BuildingType>();
-			foreach (var b in buildingTypes) list.Add(b);
+			foreach (var b in Registry.Buildings.GetAssets()) list.Add((BuildingType)b);
 			return list;
 		}
 

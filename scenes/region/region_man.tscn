@@ -1,28 +1,10 @@
-[gd_scene load_steps=15 format=3 uid="uid://dfsyk55h5ioh0"]
+[gd_scene load_steps=9 format=3 uid="uid://dfsyk55h5ioh0"]
 
 [ext_resource type="Script" uid="uid://tg0ox5vibsay" path="res://scenes/region/RegionMan.cs" id="1_qi5r4"]
-[ext_resource type="Resource" uid="uid://c613ci251pl2v" path="res://scenes/region/buildings/types/housing.tres" id="2_8gw1h"]
-[ext_resource type="Resource" uid="uid://dm7cl54id0t35" path="res://scenes/region/buildings/types/well.tres" id="3_4uata"]
-[ext_resource type="Script" uid="uid://coqr05mqlancq" path="res://scenes/map/ResourceType.cs" id="4_8gw1h"]
 [ext_resource type="PackedScene" uid="uid://b1t88emteoav4" path="res://scenes/region/camera.tscn" id="4_du6xo"]
 [ext_resource type="Script" uid="uid://yte5f225ahij" path="res://scenes/region/Tilemaps.cs" id="5_pfucr"]
 [ext_resource type="Texture2D" uid="uid://bqktcpnjk5qk5" path="res://scenes/region/tiles1.png" id="6_6lhrb"]
 [ext_resource type="Texture2D" uid="uid://8wjabtgow84g" path="res://scenes/region/tiles2.png" id="7_gtst4"]
-
-[sub_resource type="Resource" id="Resource_4uata"]
-script = ExtResource("4_8gw1h")
-name = "wood"
-metadata/_custom_type_script = "uid://coqr05mqlancq"
-
-[sub_resource type="Resource" id="Resource_du6xo"]
-script = ExtResource("4_8gw1h")
-name = "rock"
-metadata/_custom_type_script = "uid://coqr05mqlancq"
-
-[sub_resource type="Resource" id="Resource_pfucr"]
-script = ExtResource("4_8gw1h")
-name = "fish"
-metadata/_custom_type_script = "uid://coqr05mqlancq"
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_s3w5i"]
 texture = ExtResource("6_6lhrb")
@@ -58,8 +40,6 @@ script = ExtResource("1_qi5r4")
 ui = NodePath("RegionCamera/Ui")
 camera = NodePath("RegionCamera")
 tilemaps = NodePath("Tilemaps")
-buildingTypes = Array[Object]([ExtResource("2_8gw1h"), ExtResource("3_4uata")])
-resourceTypes = Array[Resource]([SubResource("Resource_4uata"), SubResource("Resource_du6xo"), SubResource("Resource_pfucr")])
 buildingsParent = NodePath("Tilemaps/Buildings")
 
 [node name="RegionCamera" parent="." node_paths=PackedStringArray("cursor", "regionTiles", "ui") instance=ExtResource("4_du6xo")]

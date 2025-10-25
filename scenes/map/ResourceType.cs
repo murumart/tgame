@@ -1,11 +1,10 @@
 using System;
 using Godot;
-using static ResourceType;
 
 namespace scenes.map {
 
 	[GlobalClass]
-	public partial class ResourceType : Resource, IResourceTypeData {
+	public partial class ResourceType : Resource, IResourceType {
 
 		[Export] string name;
 		public string Name => name;

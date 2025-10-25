@@ -48,7 +48,7 @@ public class Region : ITimePassing {
 		return !mapObjects.ContainsKey(position);
 	}
 
-	public Building CreateBuildingSpotAndPlace(IBuildingType type, Vector2I position) {
+	public Building CreateBuildingSpotAndPlace(Building.IBuildingType type, Vector2I position) {
 		var building = type.CreateBuildingObject(position);
 		mapObjects[position] = building;
 		return building;

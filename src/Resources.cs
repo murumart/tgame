@@ -2,26 +2,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-public partial class ResourceType {
+public interface IResourceType {
 
-	protected int id;
-	protected string name;
-
-
-	protected ResourceType(int id, string name) {
-		this.id = id;
-		this.name = name;
-	}
+	public string Name { get; }
 
 }
 
 public struct ResourceBundle {
 
-	public ResourceType Type;
+	public IResourceType Type;
 	public int Amount;
 
 
-	public ResourceBundle(ResourceType type, int amount) {
+	public ResourceBundle(IResourceType type, int amount) {
 		this.Type = type;
 		this.Amount = amount;
 	}
@@ -30,23 +23,23 @@ public struct ResourceBundle {
 
 public partial class ResourceStorage {
 
-	readonly Dictionary<ResourceType, Amount> storageAmounts = new();
+	readonly Dictionary<IResourceType, Amount> storageAmounts = new();
 
 
-	public void IncreaseCapacity(ResourceType resourceType, int amount) {
+	public void IncreaseCapacity(IResourceType resourceType, int amount) {
 		if (!storageAmounts.ContainsKey(resourceType)) storageAmounts[resourceType] = new();
 		var old = storageAmounts[resourceType];
 		storageAmounts[resourceType] = new(old.Capacity + amount);
 	}
 
-	public void ReduceCapacity(ResourceType resourceType, int amount) {
+	public void ReduceCapacity(IResourceType resourceType, int amount) {
 		Debug.Assert(storageAmounts.ContainsKey(resourceType), "cant reduce resource type that's not in storage!!");
 		var old = storageAmounts[resourceType];
 		var amtLimit = Math.Max(old.Capacity - amount, 0);
 		storageAmounts[resourceType] = new(amtLimit, Math.Min(old.Count, amtLimit));
 	}
 
-	public int GetCapacity(ResourceType resourceType) {
+	public int GetCapacity(IResourceType resourceType) {
 		if (!storageAmounts.TryGetValue(resourceType, out Amount value)) return 0;
 		return value.Capacity;
 	}
@@ -73,11 +66,11 @@ public partial class ResourceStorage {
 	}
 
 	public struct ResourceCapacity {
-		public ResourceType Type;
+		public IResourceType Type;
 		public int Capacity;
 
 
-		public ResourceCapacity(ResourceType type, int capacity) {
+		public ResourceCapacity(IResourceType type, int capacity) {
 			this.Type = type;
 			this.Capacity = capacity;
 		}
@@ -94,42 +87,7 @@ public partial class ResourceStorage {
 
 }
 
-public partial class ResourceType {
-
-	public interface IResourceTypeData {
-
-		public string Name { get; }
-
-		public ResourceType GetResourceType(int id) {
-			return new ResourceType(id, Name);
-		}
-	}
 
 
-	public static partial class ResourceRegistry {
-
-		static ResourceType[] resourceTypes;
-		static Dictionary<IResourceTypeData, ResourceType> resourceTypesByData;
 
 
-		public static void RegisterResources(IResourceTypeData[] resourceTypes) {
-			resourceTypesByData = new();
-			ResourceRegistry.resourceTypes = new ResourceType[resourceTypes.Length];
-			for (int i = 0; i < resourceTypes.Length; i++) {
-				var rt = resourceTypes[i].GetResourceType(i);
-				ResourceRegistry.resourceTypes[i] = rt;
-				resourceTypesByData[resourceTypes[i]] = rt;
-			}
-		}
-
-		public static ResourceType GetResourceType(int id) {
-			return resourceTypes[id];
-		}
-
-		public static ResourceType GetResourceType(IResourceTypeData resourceTypeData) {
-			return resourceTypesByData[resourceTypeData];
-		}
-
-	}
-
-}
