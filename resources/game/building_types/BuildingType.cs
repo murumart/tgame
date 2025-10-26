@@ -5,17 +5,16 @@ using static Building;
 using static ResourceStorage;
 
 namespace scenes.region.buildings {
+
 	[GlobalClass]
 	public partial class BuildingType : Resource, IBuildingType {
+
 		[Export] string Name;
 		[Export] int PopulationCapacity;
 		[Export] Dictionary<ResourceType, int> ResourceCapacities;
 		[Export] Dictionary<ResourceType, int> ResourceCosts;
 		[Export(PropertyHint.File, "*.tscn")] string ScenePath;
 
-		public BuildingType() {
-			GD.Print(ScenePath);
-		}
 
 		public string GetScenePath() {
 			return ScenePath;
@@ -46,5 +45,7 @@ namespace scenes.region.buildings {
 			}
 			return arr;
 		}
+
 	}
+	
 }

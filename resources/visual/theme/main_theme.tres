@@ -1,7 +1,8 @@
-[gd_resource type="Theme" load_steps=4 format=3 uid="uid://beql3um0mpmyd"]
+[gd_resource type="Theme" load_steps=8 format=3 uid="uid://beql3um0mpmyd"]
 
 [ext_resource type="FontVariation" uid="uid://dliky8sbpgnxp" path="res://resources/visual/font/title_font.tres" id="1_70gfe"]
 [ext_resource type="FontVariation" uid="uid://16wjjwlxw4iw" path="res://resources/visual/font/default_font.tres" id="1_rjbnf"]
+[ext_resource type="Texture2D" uid="uid://dlsoj84e70cwb" path="res://resources/visual/theme/circle8x8.svg" id="3_hwdam"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5kvdv"]
 bg_color = Color(0.1882353, 0.21960784, 0.2627451, 0.5019608)
@@ -14,6 +15,33 @@ shadow_size = 1
 shadow_offset = Vector2(1, 1)
 anti_aliasing = false
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_i0op6"]
+bg_color = Color(0.42352942, 0.5058824, 0.6313726, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+expand_margin_top = 1.0
+expand_margin_bottom = 1.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3wo1x"]
+bg_color = Color(0.7921569, 0.9019608, 0.8509804, 0.47843137)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+expand_margin_top = 1.0
+expand_margin_bottom = 1.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hwdam"]
+bg_color = Color(0.1882353, 0.21960784, 0.2627451, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+expand_margin_top = 1.0
+expand_margin_bottom = 1.0
+
 [resource]
 Button/fonts/font = ExtResource("1_70gfe")
 Control/colors/default_color = Color(0.8352941, 0.8392157, 0.85882354, 1)
@@ -23,3 +51,14 @@ Control/font_sizes/normal_font_size = 12
 Control/fonts/font = ExtResource("1_rjbnf")
 Control/fonts/normal_font = ExtResource("1_rjbnf")
 Control/styles/panel = SubResource("StyleBoxFlat_5kvdv")
+HSlider/icons/grabber = ExtResource("3_hwdam")
+HSlider/icons/grabber_disabled = ExtResource("3_hwdam")
+HSlider/icons/grabber_highlight = ExtResource("3_hwdam")
+HSlider/icons/tick = null
+HSlider/styles/grabber_area = SubResource("StyleBoxFlat_i0op6")
+HSlider/styles/grabber_area_highlight = SubResource("StyleBoxFlat_3wo1x")
+HSlider/styles/slider = SubResource("StyleBoxFlat_hwdam")
+VSlider/icons/grabber = null
+VSlider/icons/grabber_disabled = null
+VSlider/icons/grabber_highlight = null
+VSlider/icons/tick = null
