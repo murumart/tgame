@@ -1,5 +1,4 @@
 using Godot;
-using Jobs;
 using System;
 
 namespace scenes.region.ui {
@@ -22,8 +21,8 @@ namespace scenes.region.ui {
 			topbar.Visible = showTop;
 		}
 
-		public void Display(Job job) {
-			
+		public void Display(IJob job) {
+
 		}
 
 	}

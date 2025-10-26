@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Godot;
-using Jobs;
 using static Building;
 
 public partial class Faction : ITimePassing {
@@ -35,8 +34,8 @@ public partial class Faction {
 		readonly HashSet<Vector2I> ownedTiles = new();
 
 		readonly Dictionary<Vector2I, Building> buildings = new();
-		readonly List<Job> jobs = new();
-		readonly Dictionary<Vector2I, HashSet<Job>> jobsByPosition = new();
+		readonly List<IJob> jobs = new();
+		readonly Dictionary<Vector2I, HashSet<IJob>> jobsByPosition = new();
 
 		readonly ResourceStorage resourceStorage = new();
 
@@ -69,14 +68,14 @@ public partial class Faction {
 			return count;
 		}
 
-		public void AddJob(Vector2I pos, Job job) {
+		public void AddJob(Vector2I pos, IJob job) {
 			Debug.Assert(!(jobsByPosition.ContainsKey(pos) && jobsByPosition[pos].Contains(job)), $"Job at place {pos} exists ({job})");
 			if (!jobsByPosition.ContainsKey(pos)) jobsByPosition[pos] = new();
 			jobsByPosition[pos].Add(job);
 			AddJob(job);
 		}
 
-		public void AddJob(Job job) {
+		public void AddJob(IJob job) {
 			jobs.Add(job);
 		}
 

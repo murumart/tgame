@@ -1,7 +1,5 @@
 using System.Collections.Generic;
 using Godot;
-using Jobs;
-using IBuildingType = Building.IBuildingType;
 
 public enum GroundTileType : short {
 	VOID,
