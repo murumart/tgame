@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -21,9 +22,9 @@ public struct ResourceBundle {
 
 }
 
-public partial class ResourceStorage {
+public partial class ResourceStorage : IEnumerable {
 
-	readonly Dictionary<IResourceType, Amount> storageAmounts = new();
+	readonly Dictionary<IResourceType, InStorage> storageAmounts = new();
 
 
 	public void IncreaseCapacity(IResourceType resourceType, int amount) {
@@ -36,31 +37,46 @@ public partial class ResourceStorage {
 		Debug.Assert(storageAmounts.ContainsKey(resourceType), "cant reduce resource type that's not in storage!!");
 		var old = storageAmounts[resourceType];
 		var amtLimit = Math.Max(old.Capacity - amount, 0);
-		storageAmounts[resourceType] = new(amtLimit, Math.Min(old.Count, amtLimit));
+		storageAmounts[resourceType] = new(amtLimit, Math.Min(old.Amount, amtLimit));
 	}
 
 	public int GetCapacity(IResourceType resourceType) {
-		if (!storageAmounts.TryGetValue(resourceType, out Amount value)) return 0;
-		return value.Capacity;
+		if (!storageAmounts.TryGetValue(resourceType, out InStorage stored)) return 0;
+		return stored.Capacity;
 	}
 
+	public bool HasEnough(ResourceBundle resource) {
+		if (!storageAmounts.TryGetValue(resource.Type, out InStorage stored)) return false;
+		return resource.Amount <= stored.Amount;
+	}
+
+	public bool HasAll(ICollection<ResourceBundle> resources) {
+		foreach (var r in resources) {
+			if (!HasEnough(r)) return false;
+		}
+		return true;
+	}
+
+	public IEnumerator GetEnumerator() {
+		return storageAmounts.GetEnumerator();
+	}
 }
 
 public partial class ResourceStorage {
 
-	public struct Amount {
-		public int Count;
+	public struct InStorage {
+		public int Amount;
 		public int Capacity;
 
 
-		public Amount(int capacity, int count) {
+		public InStorage(int capacity, int count) {
 			this.Capacity = capacity;
-			this.Count = count;
+			this.Amount = count;
 		}
 
-		public Amount(int capacity) {
+		public InStorage(int capacity) {
 			this.Capacity = capacity;
-			this.Count = 0;
+			this.Amount = 0;
 		}
 
 	}

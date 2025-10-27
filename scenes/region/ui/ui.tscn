@@ -77,11 +77,12 @@ layout_mode = 2
 text = "01/01/0000"
 label_settings = ExtResource("1_nfevs")
 
-[node name="Fat" type="HBoxContainer" parent="VBoxContainer"]
+[node name="Fat" type="AspectRatioContainer" parent="VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 mouse_filter = 2
-alignment = 2
+alignment_horizontal = 0
+alignment_vertical = 0
 
 [node name="PanelContainer" type="PanelContainer" parent="VBoxContainer/Fat"]
 visible = false
@@ -90,6 +91,10 @@ mouse_force_pass_scroll_events = false
 
 [node name="JobsList" parent="VBoxContainer/Fat/PanelContainer" instance=ExtResource("3_y7o2c")]
 layout_mode = 2
+
+[node name="ResourcesList" type="RichTextLabel" parent="VBoxContainer/Fat"]
+layout_mode = 2
+theme_override_font_sizes/normal_font_size = 8
 
 [node name="MenuTabs" type="TabContainer" parent="VBoxContainer"]
 unique_name_in_owner = true

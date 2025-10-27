@@ -6,6 +6,7 @@ using IBuildingType = Building.IBuildingType;
 
 
 namespace scenes.region.ui {
+
 	public partial class UI : Control {
 
 		// one big script to rule all region ui interactions
@@ -15,6 +16,7 @@ namespace scenes.region.ui {
 		public event Func<int> GetPopulationCount;
 		public event Func<int> GetHomelessPopulationCount;
 		public event Func<List<BuildingType>> GetBuildingTypes;
+		public event Func<ResourceStorage> GetResources;
 
 		enum State {
 			IDLE,
@@ -35,7 +37,6 @@ namespace scenes.region.ui {
 		[Export] Button policyButton;
 		[Export] Button worldButton;
 
-
 		// bottom bar menus menus
 		[Export] TabContainer menuTabs;
 
@@ -46,6 +47,8 @@ namespace scenes.region.ui {
 		[Export] Label populationLabel;
 		[Export] Label fpsLabel; // debug
 		[Export] Label tilePosLabel; // debug
+
+		[Export] RichTextLabel resourceLabel;
 
 		// internal
 
@@ -61,7 +64,7 @@ namespace scenes.region.ui {
 		}
 		long selectedBuildThingId = -1;
 		BuildingView selectedBuildingScene = null;
-	Building.IBuildingType selectedBuildingType = null;
+		Building.IBuildingType selectedBuildingType = null;
 
 		// overrides and connections
 
@@ -155,9 +158,19 @@ namespace scenes.region.ui {
 			BuildRequested.Invoke(selectedBuildingType, tpos);
 		}
 
+		// display
+
+		void DisplayResources() {
+			resourceLabel.Text = "";
+			var resources = GetResources?.Invoke();
+			foreach (var p in resources) {
+
+			}
+		}
+
 		// utilities
 
-		public void OnLeftMouseClick(Vector2 position, Vector2I tilePosition) {
+		void OnLeftMouseClick(Vector2 position, Vector2I tilePosition) {
 			switch (state) {
 				case State.PLACING_BUILD:
 					PlacingBuild(tilePosition);
@@ -167,17 +180,17 @@ namespace scenes.region.ui {
 			}
 		}
 
-		public void OnRightMouseClick(Vector2 position, Vector2I tilePosition) {
+		void OnRightMouseClick(Vector2 position, Vector2I tilePosition) {
 			if (state == State.PLACING_BUILD) {
 				state = State.IDLE;
 			}
 		}
 
-		public void OnTileHighlighted(Vector2I tilePosition, Region region) {
+		void OnTileHighlighted(Vector2I tilePosition, Region region) {
 			tilePosLabel.Text = tilePosition.ToString();
 		}
 
-		public void OnBuildingClicked(BuildingView buildingView) {
+		void OnBuildingClicked(BuildingView buildingView) {
 			if (state != State.IDLE) return;
 		}
 
@@ -195,5 +208,7 @@ namespace scenes.region.ui {
 				}
 			}
 		}
+
 	}
+
 }

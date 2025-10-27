@@ -21,7 +21,7 @@ namespace scenes.region.ui {
 			topbar.Visible = showTop;
 		}
 
-		public void Display(IJob job) {
+		public void Display(Job job) {
 
 		}
 

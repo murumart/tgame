@@ -13,6 +13,7 @@ namespace scenes.region.buildings {
 		[Export] int PopulationCapacity;
 		[Export] Dictionary<ResourceType, int> ResourceCapacities;
 		[Export] Dictionary<ResourceType, int> ResourceCosts;
+		[Export] float hoursToConstruct = 1f;
 		[Export(PropertyHint.File, "*.tscn")] string ScenePath;
 
 
@@ -46,6 +47,10 @@ namespace scenes.region.buildings {
 			return arr;
 		}
 
+		public float GetHoursToConstruct() {
+			return hoursToConstruct;
+		}
+
 	}
-	
+
 }
