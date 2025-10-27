@@ -26,6 +26,7 @@ namespace scenes.region {
 		public override void _Ready() {
 			ui.BuildRequested += OnUIBuildingPlaceRequested;
 			ui.GetBuildingTypes += GetBuildingTypes;
+			ui.GetResources += GetResourceStorage;
 
 			region = GameMan.Singleton.Game.Map.GetRegion(0);
 			regionFaction = GameMan.Singleton.Game.Map.GetFaction(0).GetOwnedRegionFaction(0);
@@ -43,6 +44,7 @@ namespace scenes.region {
 				ui.GetPopulationCount -= GetHomelessPopulationCount;
 				ui.GetBuildingTypes -= GetBuildingTypes;
 				ui.BuildRequested -= OnUIBuildingPlaceRequested;
+				ui.GetResources -= GetResourceStorage;
 			}
 		}
 
@@ -85,6 +87,10 @@ namespace scenes.region {
 
 		public int GetHomelessPopulationCount() {
 			return regionFaction.HomelessPopulation.Pop;
+		}
+
+		public ResourceStorage GetResourceStorage() {
+			return regionFaction.Resources;
 		}
 	}
 

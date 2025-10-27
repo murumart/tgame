@@ -81,6 +81,7 @@ namespace scenes.region.ui {
 		public override void _Process(double delta) {
 			fpsLabel.Text = "fps: " + Engine.GetFramesPerSecond().ToString();
 			populationLabel.Text = $"pop: {GetPopulationCount?.Invoke() ?? -2} ({GetHomelessPopulationCount?.Invoke() ?? -2} homeless)";
+			DisplayResources();
 		}
 
 		void OnBuildButtonPressed() {
@@ -137,7 +138,7 @@ namespace scenes.region.ui {
 			}
 		}
 
-		public void SetBuildCursor(Building.IBuildingType buildingType) {
+		public void SetBuildCursor(IBuildingType buildingType) {
 			if (buildingType == null && selectedBuildingScene != null) {
 				selectedBuildingScene.QueueFree();
 				selectedBuildingScene = null;
@@ -164,13 +165,13 @@ namespace scenes.region.ui {
 			resourceLabel.Text = "";
 			var resources = GetResources?.Invoke();
 			foreach (var p in resources) {
-
+				resourceLabel.AppendText($"{p.Key.Name} x {p.Value.Amount}\n");
 			}
 		}
 
 		// utilities
 
-		void OnLeftMouseClick(Vector2 position, Vector2I tilePosition) {
+		public void OnLeftMouseClick(Vector2 position, Vector2I tilePosition) {
 			switch (state) {
 				case State.PLACING_BUILD:
 					PlacingBuild(tilePosition);
@@ -180,17 +181,17 @@ namespace scenes.region.ui {
 			}
 		}
 
-		void OnRightMouseClick(Vector2 position, Vector2I tilePosition) {
+		public void OnRightMouseClick(Vector2 position, Vector2I tilePosition) {
 			if (state == State.PLACING_BUILD) {
 				state = State.IDLE;
 			}
 		}
 
-		void OnTileHighlighted(Vector2I tilePosition, Region region) {
+		public void OnTileHighlighted(Vector2I tilePosition, Region region) {
 			tilePosLabel.Text = tilePosition.ToString();
 		}
 
-		void OnBuildingClicked(BuildingView buildingView) {
+		public void OnBuildingClicked(BuildingView buildingView) {
 			if (state != State.IDLE) return;
 		}
 

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using static ResourceStorage;
 
 public interface IResourceType {
 
@@ -22,7 +23,7 @@ public struct ResourceBundle {
 
 }
 
-public partial class ResourceStorage : IEnumerable {
+public partial class ResourceStorage : IEnumerable<KeyValuePair<IResourceType, InStorage>> {
 
 	readonly Dictionary<IResourceType, InStorage> storageAmounts = new();
 
@@ -57,8 +58,12 @@ public partial class ResourceStorage : IEnumerable {
 		return true;
 	}
 
-	public IEnumerator GetEnumerator() {
+	public IEnumerator<KeyValuePair<IResourceType, InStorage>> GetEnumerator() {
 		return storageAmounts.GetEnumerator();
+	}
+
+	IEnumerator IEnumerable.GetEnumerator() {
+		return GetEnumerator();
 	}
 }
 
