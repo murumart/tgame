@@ -47,6 +47,9 @@ cursor = NodePath("Cursor")
 regionTiles = NodePath("../Tilemaps/Region")
 ui = NodePath("Ui")
 
+[node name="Ui" parent="RegionCamera" index="0" node_paths=PackedStringArray("CameraCursor")]
+CameraCursor = NodePath("../Cursor")
+
 [node name="Tilemaps" type="Node2D" parent="." node_paths=PackedStringArray("ground")]
 y_sort_enabled = true
 script = ExtResource("5_pfucr")

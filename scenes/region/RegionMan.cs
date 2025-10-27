@@ -24,14 +24,14 @@ namespace scenes.region {
 		// setup
 
 		public override void _Ready() {
-			ui.BuildRequested += OnUIBuildingPlaceRequested;
-			ui.GetBuildingTypes += GetBuildingTypes;
-			ui.GetResources += GetResourceStorage;
+			ui.BuildRequestedEvent += OnUIBuildingPlaceRequested;
+			ui.GetBuildingTypesEvent += GetBuildingTypes;
+			ui.GetResourcesEvent += GetResourceStorage;
 
 			region = GameMan.Singleton.Game.Map.GetRegion(0);
 			regionFaction = GameMan.Singleton.Game.Map.GetFaction(0).GetOwnedRegionFaction(0);
-			ui.GetPopulationCount += regionFaction.GetPopulationCount;
-			ui.GetHomelessPopulationCount += GetHomelessPopulationCount;
+			ui.GetPopulationCountEvent += regionFaction.GetPopulationCount;
+			ui.GetHomelessPopulationCountEvent += GetHomelessPopulationCount;
 
 			tilemaps.DisplayGround(region);
 
@@ -40,21 +40,23 @@ namespace scenes.region {
 
 		public override void _Notification(int what) {
 			if (what == NotificationPredelete) {
-				ui.GetPopulationCount -= regionFaction.GetPopulationCount;
-				ui.GetPopulationCount -= GetHomelessPopulationCount;
-				ui.GetBuildingTypes -= GetBuildingTypes;
-				ui.BuildRequested -= OnUIBuildingPlaceRequested;
-				ui.GetResources -= GetResourceStorage;
+				ui.GetPopulationCountEvent -= regionFaction.GetPopulationCount;
+				ui.GetPopulationCountEvent -= GetHomelessPopulationCount;
+				ui.GetBuildingTypesEvent -= GetBuildingTypes;
+				ui.BuildRequestedEvent -= OnUIBuildingPlaceRequested;
+				ui.GetResourcesEvent -= GetResourceStorage;
 			}
 		}
 
 		// building
 
-		public bool CanPlaceBuilding(Building.IBuildingType type, Vector2I tilepos) {
+		public bool CanPlaceBuilding(IBuildingType type, Vector2I tilepos) {
+			Debug.Assert(type != null, "Cant place NULL building type!!");
 			return regionFaction.CanPlaceBuilding(type, tilepos);
 		}
 
-		public void PlaceBuilding(Building.IBuildingType type, Vector2I tilepos) {
+		public void PlaceBuilding(IBuildingType type, Vector2I tilepos) {
+			Debug.Assert(type != null, "Cant place NULL building type!!");
 			var view = GD.Load<PackedScene>(type.GetScenePath()).Instantiate<BuildingView>();
 			var building = regionFaction.PlaceBuilding(type, tilepos);
 			DisplayBuilding(view, building, tilepos);
@@ -73,7 +75,7 @@ namespace scenes.region {
 			view.BuildingClicked += ui.OnBuildingClicked;
 		}
 
-		private void OnUIBuildingPlaceRequested(Building.IBuildingType type, Vector2I tilePosition) {
+		private void OnUIBuildingPlaceRequested(IBuildingType type, Vector2I tilePosition) {
 			if (CanPlaceBuilding(type, tilePosition)) {
 				PlaceBuilding(type, tilePosition);
 			}

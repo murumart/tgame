@@ -1,12 +1,13 @@
-[gd_scene load_steps=5 format=3 uid="uid://cp354pcilqv48"]
+[gd_scene load_steps=6 format=3 uid="uid://cp354pcilqv48"]
 
 [ext_resource type="LabelSettings" uid="uid://v03gdc53ijm1" path="res://resources/visual/theme/half_size.tres" id="1_nfevs"]
 [ext_resource type="Script" uid="uid://cd6mwdns4bcwa" path="res://scenes/region/ui/UI.cs" id="1_vkak1"]
 [ext_resource type="PackedScene" uid="uid://c7ew6g8hdbgfg" path="res://scenes/region/ui/jobs_list.tscn" id="3_y7o2c"]
+[ext_resource type="Script" uid="uid://2xhwk4iyfu73" path="res://scenes/region/ui/BuildingList.cs" id="4_suhma"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_bjdfm"]
 
-[node name="Ui" type="MarginContainer" node_paths=PackedStringArray("buildButton", "policyButton", "worldButton", "menuTabs", "buildMenuList", "buildMenuConfirmation", "populationLabel", "fpsLabel", "tilePosLabel", "resourceLabel")]
+[node name="Ui" type="MarginContainer" node_paths=PackedStringArray("buildButton", "policyButton", "worldButton", "menuTabs", "buildingList", "populationLabel", "fpsLabel", "tilePosLabel", "resourceLabel")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -22,8 +23,7 @@ buildButton = NodePath("VBoxContainer/ControlButtons/BuildButton")
 policyButton = NodePath("VBoxContainer/ControlButtons/PolicyButton")
 worldButton = NodePath("VBoxContainer/ControlButtons/WorldButton")
 menuTabs = NodePath("VBoxContainer/MenuTabs")
-buildMenuList = NodePath("VBoxContainer/MenuTabs/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/BuildMenuList")
-buildMenuConfirmation = NodePath("VBoxContainer/MenuTabs/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/BuildMenuConfirmation")
+buildingList = NodePath("VBoxContainer/MenuTabs/HBoxContainer/BuildingList")
 populationLabel = NodePath("VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer/poplabel")
 fpsLabel = NodePath("VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer/Fpslabel")
 tilePosLabel = NodePath("VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer/Tileposlabel")
@@ -110,25 +110,29 @@ deselect_enabled = true
 layout_mode = 2
 metadata/_tab_index = 0
 
-[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer/MenuTabs/HBoxContainer"]
+[node name="BuildingList" type="PanelContainer" parent="VBoxContainer/MenuTabs/HBoxContainer" node_paths=PackedStringArray("ui", "buildMenuList", "buildMenuConfirmation")]
 custom_minimum_size = Vector2(169, 240)
 layout_mode = 2
+script = ExtResource("4_suhma")
+ui = NodePath("../../../..")
+buildMenuList = NodePath("MarginContainer/VBoxContainer/BuildMenuList")
+buildMenuConfirmation = NodePath("MarginContainer/VBoxContainer/HBoxContainer/BuildMenuConfirmation")
 
-[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/MenuTabs/HBoxContainer/PanelContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/MenuTabs/HBoxContainer/BuildingList"]
 layout_mode = 2
 theme_override_constants/margin_left = 2
 theme_override_constants/margin_top = 2
 theme_override_constants/margin_right = 2
 theme_override_constants/margin_bottom = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/MenuTabs/HBoxContainer/PanelContainer/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/MenuTabs/HBoxContainer/BuildingList/MarginContainer"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="VBoxContainer/MenuTabs/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer"]
+[node name="Label" type="Label" parent="VBoxContainer/MenuTabs/HBoxContainer/BuildingList/MarginContainer/VBoxContainer"]
 layout_mode = 2
 text = "What to build?"
 
-[node name="BuildMenuList" type="ItemList" parent="VBoxContainer/MenuTabs/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer"]
+[node name="BuildMenuList" type="ItemList" parent="VBoxContainer/MenuTabs/HBoxContainer/BuildingList/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
@@ -137,18 +141,18 @@ item_0/text = "Housing"
 item_1/text = "Well"
 item_2/text = "Idk"
 
-[node name="ResourceList" type="RichTextLabel" parent="VBoxContainer/MenuTabs/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer"]
+[node name="ResourceList" type="RichTextLabel" parent="VBoxContainer/MenuTabs/HBoxContainer/BuildingList/MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.33
 bbcode_enabled = true
 text = "you need my resources. to construct these building"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/MenuTabs/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/MenuTabs/HBoxContainer/BuildingList/MarginContainer/VBoxContainer"]
 layout_mode = 2
 alignment = 2
 
-[node name="BuildMenuConfirmation" type="Button" parent="VBoxContainer/MenuTabs/HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="BuildMenuConfirmation" type="Button" parent="VBoxContainer/MenuTabs/HBoxContainer/BuildingList/MarginContainer/VBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 disabled = true
