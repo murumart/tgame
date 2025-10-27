@@ -39,9 +39,9 @@ namespace scenes.region.buildings {
 		}
 
 		public ResourceBundle[] GetResourceRequirements() {
-			var arr = new ResourceBundle[ResourceCapacities.Count];
+			var arr = new ResourceBundle[ResourceCosts.Count];
 			int i = 0;
-			foreach (var pair in ResourceCapacities) {
+			foreach (var pair in ResourceCosts) {
 				arr[i++] = new ResourceBundle(pair.Key, pair.Value);
 			}
 			return arr;

@@ -110,13 +110,14 @@ deselect_enabled = true
 layout_mode = 2
 metadata/_tab_index = 0
 
-[node name="BuildingList" type="PanelContainer" parent="VBoxContainer/MenuTabs/HBoxContainer" node_paths=PackedStringArray("ui", "buildMenuList", "buildMenuConfirmation")]
+[node name="BuildingList" type="PanelContainer" parent="VBoxContainer/MenuTabs/HBoxContainer" node_paths=PackedStringArray("ui", "itemList", "buildConfirmation", "resourceListText")]
 custom_minimum_size = Vector2(169, 240)
 layout_mode = 2
 script = ExtResource("4_suhma")
 ui = NodePath("../../../..")
-buildMenuList = NodePath("MarginContainer/VBoxContainer/BuildMenuList")
-buildMenuConfirmation = NodePath("MarginContainer/VBoxContainer/HBoxContainer/BuildMenuConfirmation")
+itemList = NodePath("MarginContainer/VBoxContainer/BuildMenuList")
+buildConfirmation = NodePath("MarginContainer/VBoxContainer/HBoxContainer/BuildMenuConfirmation")
+resourceListText = NodePath("MarginContainer/VBoxContainer/ResourceList")
 
 [node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/MenuTabs/HBoxContainer/BuildingList"]
 layout_mode = 2

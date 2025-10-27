@@ -7,8 +7,9 @@ using static Building;
 public partial class BuildingList : PanelContainer {
 
 	[Export] UI ui; // COUPLING YAAAAAYYYYYYYY
-	[Export] ItemList buildMenuList;
-	[Export] Button buildMenuConfirmation;
+	[Export] ItemList itemList;
+	[Export] Button buildConfirmation;
+	[Export] RichTextLabel resourceListText;
 
 	long selectedBuildThingId = -1;
 	BuildingView selectedBuildingScene = null;
@@ -26,15 +27,23 @@ public partial class BuildingList : PanelContainer {
 
 
 	public override void _Ready() {
-		buildMenuList.ItemActivated += OnBuildThingConfirmed;
-		buildMenuList.ItemSelected += OnBuildThingSelected;
-		buildMenuConfirmation.Pressed += OnBuildThingConfirmed;
+		itemList.ItemActivated += OnBuildThingConfirmed;
+		itemList.ItemSelected += OnBuildThingSelected;
+		buildConfirmation.Pressed += OnBuildThingConfirmed;
 	}
 
 	void OnBuildThingSelected(long which) {
-		buildMenuConfirmation.Disabled = false;
+		buildConfirmation.Disabled = false;
 		selectedBuildThingId = which;
-		buildMenuConfirmation.Text = "Build " + buildMenuList.GetItemText((int)which);
+		var btype = (BuildingType)itemList.GetItemMetadata((int)which).Obj;
+		buildConfirmation.Text = "Build " + btype.GetName();
+		resourceListText.Text = "";
+		var resources = ui.GetResources();
+		foreach (var r in btype.GetResourceRequirements()) {
+			var str = $"{r.Type.Name} x {r.Amount}";
+			if (!resources.HasEnough(r)) str = "[color=red]" + str + "[/color]";
+			resourceListText.AppendText(str + "\n");
+		}
 	}
 
 	void OnBuildThingConfirmed() {
@@ -44,7 +53,7 @@ public partial class BuildingList : PanelContainer {
 
 	void OnBuildThingConfirmed(long which) {
 		selectedBuildThingId = which;
-		SetBuildCursor((BuildingType)buildMenuList.GetItemMetadata((int)which).AsGodotObject());
+		SetBuildCursor((BuildingType)itemList.GetItemMetadata((int)which).AsGodotObject());
 		selectedBuildThingId = -1;
 		ui.SelectTab(UI.Tab.NONE);
 	}
@@ -76,21 +85,22 @@ public partial class BuildingList : PanelContainer {
 	}
 
 	public void Update() {
-		buildMenuList.Clear();
+		itemList.Clear();
 		foreach (var buildingType in ui.GetBuildingTypes()) {
-			int ix = buildMenuList.AddItem(buildingType.GetName());
+			int ix = itemList.AddItem(buildingType.GetName());
 			// storing buildingtype references locally so if we happen to update the buildingtypes list
 			// in between calls here, we should still get the correct buildings that the visual
 			// ItemList was set up with
-			buildMenuList.SetItemMetadata(ix, Variant.CreateFrom(buildingType));
+			itemList.SetItemMetadata(ix, Variant.CreateFrom(buildingType));
 		}
 	}
 
 	public void Reset() {
 		selectedBuildThingId = -1;
-		buildMenuConfirmation.Disabled = true;
-		buildMenuConfirmation.Text = "select";
-		buildMenuList.Clear();
+		buildConfirmation.Disabled = true;
+		buildConfirmation.Text = "select";
+		resourceListText.Text = "";
+		itemList.Clear();
 	}
 
 
