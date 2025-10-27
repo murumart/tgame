@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using static ResourceStorage;
 
 public interface IResourceType {
@@ -58,6 +57,25 @@ public partial class ResourceStorage : IEnumerable<KeyValuePair<IResourceType, I
 		return true;
 	}
 
+	public bool CanAdd(ResourceBundle resource) {
+		storageAmounts.TryGetValue(resource.Type, out InStorage stored);
+		return stored.Amount + resource.Amount <= stored.Capacity;
+	}
+
+	public void AddResource(ResourceBundle resource) {
+		Debug.Assert(CanAdd(resource), "These resources dont fit here.................................");
+		storageAmounts.TryGetValue(resource.Type, out InStorage stored);
+		storageAmounts[resource.Type] = stored.Add(resource);
+	}
+
+	public void SubtractResource(ResourceBundle resource) {
+		Debug.Assert(storageAmounts.ContainsKey(resource.Type), "cant subtract resource type that's not in storage!!");
+		storageAmounts.TryGetValue(resource.Type, out InStorage stored);
+		storageAmounts[resource.Type] = stored.Sub(resource);
+	}
+
+	// enumerating over the object
+
 	public IEnumerator<KeyValuePair<IResourceType, InStorage>> GetEnumerator() {
 		return storageAmounts.GetEnumerator();
 	}
@@ -65,13 +83,14 @@ public partial class ResourceStorage : IEnumerable<KeyValuePair<IResourceType, I
 	IEnumerator IEnumerable.GetEnumerator() {
 		return GetEnumerator();
 	}
+
 }
 
 public partial class ResourceStorage {
 
 	public struct InStorage {
-		public int Amount;
-		public int Capacity;
+		public int Amount = 0;
+		public int Capacity = 0;
 
 
 		public InStorage(int capacity, int count) {
@@ -82,6 +101,14 @@ public partial class ResourceStorage {
 		public InStorage(int capacity) {
 			this.Capacity = capacity;
 			this.Amount = 0;
+		}
+
+		public InStorage Add(ResourceBundle resource) {
+			return new InStorage(Capacity, Amount + resource.Amount);
+		}
+
+		public InStorage Sub(ResourceBundle resource) {
+			return new InStorage(Capacity, Amount - resource.Amount);
 		}
 
 	}

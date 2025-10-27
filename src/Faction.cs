@@ -51,6 +51,9 @@ public partial class Faction {
 			resourceStorage.IncreaseCapacity(Registry.Resources.GetAsset(0), 30);
 			resourceStorage.IncreaseCapacity(Registry.Resources.GetAsset(1), 30);
 			resourceStorage.IncreaseCapacity(Registry.Resources.GetAsset(2), 30);
+			resourceStorage.AddResource(new(Registry.Resources.GetAsset(0), 25));
+			resourceStorage.AddResource(new(Registry.Resources.GetAsset(1), 25));
+			resourceStorage.AddResource(new(Registry.Resources.GetAsset(2), 25));
 		}
 
 		public void PassTime(float hours) {
