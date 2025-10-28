@@ -41,7 +41,10 @@ public partial class BuildingList : PanelContainer {
 		var resources = ui.GetResources();
 		foreach (var r in btype.GetResourceRequirements()) {
 			var str = $"{r.Type.Name} x {r.Amount}";
-			if (!resources.HasEnough(r)) str = "[color=red]" + str + "[/color]";
+			if (!resources.HasEnough(r)) {
+				str = "[color=red]" + str + "[/color]";
+				buildConfirmation.Disabled = true;
+			}
 			resourceListText.AppendText(str + "\n");
 		}
 	}
@@ -52,8 +55,9 @@ public partial class BuildingList : PanelContainer {
 	}
 
 	void OnBuildThingConfirmed(long which) {
-		selectedBuildThingId = which;
-		SetBuildCursor((BuildingType)itemList.GetItemMetadata((int)which).AsGodotObject());
+		var btype = (BuildingType)itemList.GetItemMetadata((int)which).Obj;
+		if (!ui.GetCanBuild(btype)) return;
+		SetBuildCursor(btype);
 		selectedBuildThingId = -1;
 		ui.SelectTab(UI.Tab.NONE);
 	}
@@ -69,6 +73,7 @@ public partial class BuildingList : PanelContainer {
 			return;
 		}
 		Debug.Assert(buildingType != null, "Buuldint type canät be null here....w aht...");
+		Debug.Assert(ui.GetCanBuild(buildingType), "can't build this...");
 		var packedScene = GD.Load<PackedScene>(buildingType.GetScenePath());
 		Node scene = packedScene.Instantiate();
 		Debug.Assert(scene != null, "building display scene canät be null here....w aht...");

@@ -14,6 +14,7 @@ namespace scenes.region.ui {
 		public event Action<IBuildingType, Vector2I> BuildRequestedEvent;
 		public event Func<int> GetPopulationCountEvent;
 		public event Func<int> GetHomelessPopulationCountEvent;
+		public event Func<IBuildingType, bool> GetCanBuildEvent;
 		public event Func<List<BuildingType>> GetBuildingTypesEvent;
 		public event Func<ResourceStorage> GetResourcesEvent;
 
@@ -149,6 +150,7 @@ namespace scenes.region.ui {
 		public void BuildRequested(IBuildingType a, Vector2I b) => BuildRequestedEvent?.Invoke(a, b);
 		public int GetPopulationCount() => GetPopulationCountEvent?.Invoke() ?? -1;
 		public int GetHomelessPopulationCount() => GetHomelessPopulationCountEvent?.Invoke() ?? -1;
+		public bool GetCanBuild(IBuildingType btype) => GetCanBuildEvent?.Invoke(btype) ?? false;
 		public List<BuildingType> GetBuildingTypes() => GetBuildingTypesEvent?.Invoke();
 		public ResourceStorage GetResources() => GetResourcesEvent?.Invoke();
 	}

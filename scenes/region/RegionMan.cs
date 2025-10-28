@@ -27,6 +27,7 @@ namespace scenes.region {
 			ui.BuildRequestedEvent += OnUIBuildingPlaceRequested;
 			ui.GetBuildingTypesEvent += GetBuildingTypes;
 			ui.GetResourcesEvent += GetResourceStorage;
+			ui.GetCanBuildEvent += CanBuild;
 
 			region = GameMan.Singleton.Game.Map.GetRegion(0);
 			regionFaction = GameMan.Singleton.Game.Map.GetFaction(0).GetOwnedRegionFaction(0);
@@ -45,10 +46,15 @@ namespace scenes.region {
 				ui.GetBuildingTypesEvent -= GetBuildingTypes;
 				ui.BuildRequestedEvent -= OnUIBuildingPlaceRequested;
 				ui.GetResourcesEvent -= GetResourceStorage;
+				ui.GetCanBuildEvent -= CanBuild;
 			}
 		}
 
 		// building
+
+		public bool CanBuild(IBuildingType type) {
+			return regionFaction.CanBuild(type);
+		}
 
 		public bool CanPlaceBuilding(IBuildingType type, Vector2I tilepos) {
 			Debug.Assert(type != null, "Cant place NULL building type!!");
@@ -94,6 +100,7 @@ namespace scenes.region {
 		public ResourceStorage GetResourceStorage() {
 			return regionFaction.Resources;
 		}
+
 	}
 
 }

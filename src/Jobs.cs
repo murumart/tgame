@@ -70,7 +70,7 @@ public class ConstructBuildingJob : Job {
 	}
 
 	public override bool CanCreateJob(RegionFaction ctxFaction) {
-		return ctxFaction.Resources.HasAll(GetRequirements());
+		return ctxFaction.Resources.HasEnoughAll(GetRequirements());
 	}
 
 	public override List<ResourceBundle> GetRequirements() {

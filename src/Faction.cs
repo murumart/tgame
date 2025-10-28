@@ -51,7 +51,7 @@ public partial class Faction {
 			resourceStorage.IncreaseCapacity(Registry.Resources.GetAsset(0), 30);
 			resourceStorage.IncreaseCapacity(Registry.Resources.GetAsset(1), 30);
 			resourceStorage.IncreaseCapacity(Registry.Resources.GetAsset(2), 30);
-			resourceStorage.AddResource(new(Registry.Resources.GetAsset(0), 25));
+			resourceStorage.AddResource(new(Registry.Resources.GetAsset(0), 4));
 			resourceStorage.AddResource(new(Registry.Resources.GetAsset(1), 25));
 			resourceStorage.AddResource(new(Registry.Resources.GetAsset(2), 25));
 		}
@@ -89,7 +89,11 @@ public partial class Faction {
 		}
 
 		public bool CanPlaceBuilding(IBuildingType type, Vector2I tilepos) {
-			return region.CanPlaceBuilding(tilepos);
+			return CanBuild(type) && region.CanPlaceBuilding(tilepos);
+		}
+
+		public bool CanBuild(IBuildingType type) {
+			return resourceStorage.HasEnoughAll(type.GetResourceRequirements());
 		}
 	}
 }
