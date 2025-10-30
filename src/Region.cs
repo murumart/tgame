@@ -47,6 +47,7 @@ public class Region : ITimePassing {
 	}
 
 	public Building CreateBuildingSpotAndPlace(Building.IBuildingType type, Vector2I position) {
+		Debug.Assert(!mapObjects.ContainsKey(position), $"there's already a mapobject at position {position}");
 		var building = type.CreateBuildingObject(position);
 		mapObjects[position] = building;
 		return building;

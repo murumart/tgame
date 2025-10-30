@@ -11,6 +11,7 @@ public partial class Building : MapObject, ITimePassing {
 	Population population; public ref Population Population => ref population;
 	float constructionProgress;
 	public bool IsConstructed { get => constructionProgress >= type.GetHoursToConstruct(); }
+	public ConstructBuildingJob ConstructionJob;
 
 
 	protected Building(IBuildingType type, Vector2I position) : base(position) {

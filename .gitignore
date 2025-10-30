@@ -4,3 +4,7 @@
 
 # editor
 .vscode/
+
+# what
+*.csproj.old.*
+*.csproj.old
