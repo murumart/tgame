@@ -85,9 +85,10 @@ public partial class Faction {
 
 		public Building PlaceBuilding(IBuildingType type, Vector2I position) {
 			var building = region.CreateBuildingSpotAndPlace(type, position);
-			if (type.GetHoursToConstruct() > 0) {
+			if (type.TakesTimeToConstruct() || type.HasResourceRequirements()) {
 				var job = new ConstructBuildingJob(type.GetResourceRequirements().ToList(), building);
 				Debug.Assert(job.CanCreateJob(this), "Job cannot be created!");
+				job.Initialise(this);
 				AddJob(position, job);
 				building.ConstructionJob = job;
 			}

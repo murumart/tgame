@@ -14,8 +14,8 @@ Eesmärk jõuda prototüübiga võrreldavale tasemele. *Game Loop*. Mängus on o
 - [ ] tegevused ehitisega
 	- [ ] inimeste palkamine ehitamiseks
 	- [ ] inimeste palkamine tööle
-- [ ] ressursid
-	- [ ] ehitiste ehitamine võtab ressursse
+- [X] ressursid
+	- [X] ehitiste ehitamine võtab ressursse
 - [ ] rahvas
 	- [X] populatsiooniarv UIs
 	- [X] eraldi arvud majades inimeste ning kodutute kohta

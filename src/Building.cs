@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Godot;
 using static ResourceStorage;
 
@@ -42,6 +43,14 @@ public partial class Building {
 		Building CreateBuildingObject(Vector2I position) {
 			return new Building(this, position);
 		}
+
+		bool HasResourceRequirements() {
+			var r = GetResourceRequirements();
+			return r != null && r.Length > 0;
+		}
+
+		bool TakesTimeToConstruct() => GetHoursToConstruct() > 0;
+
 
 	}
 

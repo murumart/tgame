@@ -13,6 +13,18 @@ public abstract class Job : ITimePassing {
 
 	public abstract bool CanCreateJob(RegionFaction ctxFaction);
 
+	/// <summary>
+	/// Call before adding job. Do things like consume resources here.
+	/// </summary>
+	/// <param name="ctxFaction"></param>
+	public abstract void Initialise(RegionFaction ctxFaction);
+
+	/// <summary>
+	/// Call before removing job. Can uninitialise things here.
+	/// </summary>
+	/// <param name="ctxFaction"></param>
+	public abstract void Cancel(RegionFaction ctxFaction);
+
 	public virtual ref Population GetWorkers() { return ref dummyPop; }
 
 	public virtual List<ResourceBundle> GetRequirements() { return null; }
@@ -53,8 +65,16 @@ public class AbsorbFromHomelessPopulationJob : Job {
 	}
 
 	public override bool CanCreateJob(RegionFaction ctxFaction) {
-		throw new System.NotImplementedException();
+		throw new System.NotImplementedException("You can make this job anytime you want ;-))");
 	}
+
+    public override void Initialise(RegionFaction ctxFaction) {
+		throw new System.NotImplementedException("You can make this job anytime you want ;-))");
+    }
+
+    public override void Cancel(RegionFaction ctxFaction) {
+		throw new System.NotImplementedException("This doesn't do anything on this job class");
+    }
 }
 
 public class ConstructBuildingJob : Job {
@@ -73,6 +93,20 @@ public class ConstructBuildingJob : Job {
 		return ctxFaction.Resources.HasEnoughAll(GetRequirements());
 	}
 
+	public override void Initialise(RegionFaction ctxFaction) {
+		Debug.Assert(CanCreateJob(ctxFaction), "Job cannot be created!!");
+		foreach (var r in requirements) {
+			ctxFaction.Resources.SubtractResource(r);
+		}
+    }
+
+	public override void Cancel(RegionFaction ctxFaction) {
+		foreach (var r in requirements) {
+			ctxFaction.Resources.AddResource(r);
+		}
+		requirements.Clear();
+    }
+
 	public override List<ResourceBundle> GetRequirements() {
 		return requirements;
 	}
@@ -81,8 +115,10 @@ public class ConstructBuildingJob : Job {
 		return ref workers;
 	}
 
-	public override void PassTime(float hours) {
+    public override void PassTime(float hours) {
 		if (building.IsConstructed) return;
 		building.ProgressBuild(hours * workers.Pop);
 	}
+
+    
 }
