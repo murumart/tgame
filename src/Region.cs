@@ -23,9 +23,9 @@ public class Region : ITimePassing {
 		this.groundTiles = groundTiles;
 	}
 
-	public void PassTime(float hours) {
+	public void PassTime(TimeT minutes) {
 		foreach (MapObject ob in mapObjects.Values) {
-			ob.PassTime(hours);
+			ob.PassTime(minutes);
 		}
 	}
 

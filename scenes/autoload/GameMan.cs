@@ -23,7 +23,7 @@ namespace scenes.autoload {
 		}
 
 		public override void _Process(double delta) {
-			Game.PassTime((float)delta * GameSpeed * Time.SECS_TO_HOURS);
+			Game.PassTime((TimeT)(delta * GameSpeed * GameTime.SECS_TO_HOURS));
 		}
 
 	}

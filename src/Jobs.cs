@@ -30,7 +30,25 @@ public abstract class Job : ITimePassing {
 	public virtual List<ResourceBundle> GetRequirements() { return null; }
 	public virtual List<ResourceBundle> GetRewards() { return null; }
 
-	public abstract void PassTime(float hours);
+	protected void ConsumeRequirements(List<ResourceBundle> requirements, RegionFaction ctxFaction) {
+		foreach (var r in requirements) {
+			ctxFaction.Resources.SubtractResource(r);
+		}
+	}
+
+	protected void RefundRequirements(List<ResourceBundle> requirements, RegionFaction ctxFaction) {
+		foreach (var r in requirements) {
+			ctxFaction.Resources.AddResource(r);
+		}
+	}
+
+	protected void ProvideRewards(List<ResourceBundle> rewards, RegionFaction ctxFaction) {
+		foreach (var r in rewards) {
+			ctxFaction.Resources.AddResource(r);
+		}
+	}
+
+	public abstract void PassTime(TimeT minutes);
 }
 
 // concrete (hard-coded) jobs
@@ -47,20 +65,20 @@ public class AbsorbFromHomelessPopulationJob : Job {
 
 	public void Finish() { }
 
-	float remainderPeopleTransferTime;
-	public override void PassTime(float hours) {
+	TimeT remainderPeopleTransferTime;
+	public override void PassTime(TimeT minutes) {
 		if (building.IsConstructed && faction.HomelessPopulation.Pop > 0) {
 			/* if (homelessPopulation.CanTransfer(ref building.Population, 1)) {
 				homelessPopulation.Transfer(ref building.Population, 1);
 			} */
-			float peopleTransferTime = hours + remainderPeopleTransferTime;
-			while (peopleTransferTime > 0.1 && faction.HomelessPopulation.CanTransfer(ref building.Population, 1)) {
+			TimeT peopleTransferTime = minutes + remainderPeopleTransferTime;
+			while (peopleTransferTime > 6 && faction.HomelessPopulation.CanTransfer(ref building.Population, 1)) {
 				faction.HomelessPopulation.Transfer(ref building.Population, 1);
-				peopleTransferTime -= 0.1f;
+				peopleTransferTime -= 6;
 			}
 			remainderPeopleTransferTime = peopleTransferTime;
 		} else {
-			remainderPeopleTransferTime = 0.0f;
+			remainderPeopleTransferTime = 0;
 		}
 	}
 
@@ -68,13 +86,13 @@ public class AbsorbFromHomelessPopulationJob : Job {
 		throw new System.NotImplementedException("You can make this job anytime you want ;-))");
 	}
 
-    public override void Initialise(RegionFaction ctxFaction) {
+	public override void Initialise(RegionFaction ctxFaction) {
 		throw new System.NotImplementedException("You can make this job anytime you want ;-))");
-    }
+	}
 
-    public override void Cancel(RegionFaction ctxFaction) {
+	public override void Cancel(RegionFaction ctxFaction) {
 		throw new System.NotImplementedException("This doesn't do anything on this job class");
-    }
+	}
 }
 
 public class ConstructBuildingJob : Job {
@@ -95,17 +113,13 @@ public class ConstructBuildingJob : Job {
 
 	public override void Initialise(RegionFaction ctxFaction) {
 		Debug.Assert(CanCreateJob(ctxFaction), "Job cannot be created!!");
-		foreach (var r in requirements) {
-			ctxFaction.Resources.SubtractResource(r);
-		}
-    }
+		ConsumeRequirements(requirements, ctxFaction);
+	}
 
 	public override void Cancel(RegionFaction ctxFaction) {
-		foreach (var r in requirements) {
-			ctxFaction.Resources.AddResource(r);
-		}
+		RefundRequirements(requirements, ctxFaction);
 		requirements.Clear();
-    }
+	}
 
 	public override List<ResourceBundle> GetRequirements() {
 		return requirements;
@@ -115,10 +129,10 @@ public class ConstructBuildingJob : Job {
 		return ref workers;
 	}
 
-    public override void PassTime(float hours) {
+	public override void PassTime(TimeT minutes) {
 		if (building.IsConstructed) return;
-		building.ProgressBuild(hours * workers.Pop);
+		building.ProgressBuild(minutes * workers.Pop);
 	}
 
-    
+
 }

@@ -1,12 +1,14 @@
 public class Game {
 	public readonly Map Map;
-	float time;
+	public readonly GameTime Time;
 
 	public Game(Map map) {
 		Map = map;
+		Time = new();
 	}
 
-	public void PassTime(float hours) {
-		Map.PassTime(hours);
+	public void PassTime(TimeT minutes) {
+		Map.PassTime(minutes);
+		Time.PassTime(minutes);
 	}
 }

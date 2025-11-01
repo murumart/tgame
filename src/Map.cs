@@ -29,15 +29,15 @@ public class Map : ITimePassing {
 		return factions[ix];
 	}
 
-	public void PassTime(float hours) {
+	public void PassTime(TimeT minutes) {
 		foreach (Region region in regions) {
-			region.PassTime(hours);
+			region.PassTime(minutes);
 		}
 		foreach (var faction in factions) {
-			faction.PassTime(hours);
+			faction.PassTime(minutes);
 		}
 		foreach (var regionFaction in regionFactions) {
-			regionFaction.PassTime(hours);
+			regionFaction.PassTime(minutes);
 		}
 	}
 	
@@ -52,6 +52,6 @@ public abstract partial class MapObject : ITimePassing {
 		this.position = position;
 	}
 
-	public virtual void PassTime(float hours) { }
+	public virtual void PassTime(TimeT minutes) { }
 
 }

@@ -20,7 +20,7 @@ public partial class Faction : ITimePassing {
 		return ownedFactions[ix];
 	}
 
-	public void PassTime(float hours) {
+	public void PassTime(TimeT minutes) {
 		// RegionFaction time passes in Map.PassTime
 	}
 }
@@ -57,9 +57,9 @@ public partial class Faction {
 			resourceStorage.AddResource(new(Registry.Resources.GetAsset(2), 25));
 		}
 
-		public void PassTime(float hours) {
+		public void PassTime(TimeT minutes) {
 			foreach (var job in jobs) {
-				job.PassTime(hours);
+				job.PassTime(minutes);
 			}
 			// building time is passed in Region
 		}
