@@ -34,6 +34,9 @@ namespace scenes.region {
 			ui.GetPopulationCountEvent += regionFaction.GetPopulationCount;
 			ui.GetHomelessPopulationCountEvent += GetHomelessPopulationCount;
 
+			ui.PauseRequestedEvent += UiTogglePause;
+			ui.GameSpeedChangeRequestedEvent += UiChangeGameSpeed;
+
 			tilemaps.DisplayGround(region);
 
 			camera.Region = region;
@@ -48,6 +51,9 @@ namespace scenes.region {
 				ui.GetResourcesEvent -= GetResourceStorage;
 				ui.GetCanBuildEvent -= CanBuild;
 				ui.GetTimeStringEvent -= GetDateTimeString;
+				ui.PauseRequestedEvent -= UiTogglePause;
+				ui.GameSpeedChangeRequestedEvent -= UiChangeGameSpeed;
+
 			}
 		}
 
@@ -100,6 +106,15 @@ namespace scenes.region {
 
 		public ResourceStorage GetResourceStorage() {
 			return regionFaction.Resources;
+		}
+
+		public void UiChangeGameSpeed(float to) {
+			GameMan.Singleton.MultiplyGameSpeed(GameMan.GameSpeedChanger.UI, to);
+		}
+
+		public bool UiTogglePause() {
+			GameMan.Singleton.TogglePause();
+			return GameMan.Singleton.IsPaused;
 		}
 
 		public string GetTimeString() => $"{GameMan.Singleton.Game.Time.GetDayHour():00}:{GameMan.Singleton.Game.Time.GetHourMinute():00}";

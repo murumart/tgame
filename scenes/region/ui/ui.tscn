@@ -1,13 +1,17 @@
-[gd_scene load_steps=6 format=3 uid="uid://cp354pcilqv48"]
+[gd_scene load_steps=7 format=3 uid="uid://cp354pcilqv48"]
 
 [ext_resource type="LabelSettings" uid="uid://v03gdc53ijm1" path="res://resources/visual/theme/half_size.tres" id="1_nfevs"]
 [ext_resource type="Script" uid="uid://cd6mwdns4bcwa" path="res://scenes/region/ui/UI.cs" id="1_vkak1"]
 [ext_resource type="PackedScene" uid="uid://c7ew6g8hdbgfg" path="res://scenes/region/ui/jobs_list.tscn" id="3_y7o2c"]
 [ext_resource type="Script" uid="uid://2xhwk4iyfu73" path="res://scenes/region/ui/BuildingList.cs" id="4_suhma"]
 
+[sub_resource type="LabelSettings" id="LabelSettings_suhma"]
+font_size = 8
+font_color = Color(0.8352941, 0.8392157, 0.85882354, 1)
+
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_bjdfm"]
 
-[node name="Ui" type="MarginContainer" node_paths=PackedStringArray("buildButton", "policyButton", "worldButton", "menuTabs", "buildingList", "populationLabel", "timeLabel", "fpsLabel", "tilePosLabel", "resourceLabel")]
+[node name="Ui" type="MarginContainer" node_paths=PackedStringArray("buildButton", "policyButton", "worldButton", "menuTabs", "buildingList", "populationLabel", "timeLabel", "fpsLabel", "tilePosLabel", "gameSpeedLabel", "pauseButton", "normalSpeedButton", "fastSpeedButton", "resourceLabel")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -24,62 +28,105 @@ policyButton = NodePath("VBoxContainer/ControlButtons/PolicyButton")
 worldButton = NodePath("VBoxContainer/ControlButtons/WorldButton")
 menuTabs = NodePath("VBoxContainer/MenuTabs")
 buildingList = NodePath("VBoxContainer/MenuTabs/HBoxContainer/BuildingList")
-populationLabel = NodePath("VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer/poplabel")
-timeLabel = NodePath("VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer/TimeLabel")
-fpsLabel = NodePath("VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer/Fpslabel")
-tilePosLabel = NodePath("VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer/Tileposlabel")
+populationLabel = NodePath("VBoxContainer/VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer/poplabel")
+timeLabel = NodePath("VBoxContainer/VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer/TimeLabel")
+fpsLabel = NodePath("VBoxContainer/VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer/Fpslabel")
+tilePosLabel = NodePath("VBoxContainer/VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer/Tileposlabel")
+gameSpeedLabel = NodePath("VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer/Label")
+pauseButton = NodePath("VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer/PauseButton")
+normalSpeedButton = NodePath("VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer/NormalSpeedButton")
+fastSpeedButton = NodePath("VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer/FastButton")
 resourceLabel = NodePath("VBoxContainer/Fat/ResourcesList")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="ResourceDisplay" type="PanelContainer" parent="VBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 1
+
+[node name="ResourceDisplay" type="PanelContainer" parent="VBoxContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/ResourceDisplay"]
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/VBoxContainer/ResourceDisplay"]
 layout_mode = 2
 theme_override_constants/margin_left = 2
 theme_override_constants/margin_top = 2
 theme_override_constants/margin_right = 2
 theme_override_constants/margin_bottom = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/ResourceDisplay/MarginContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/VBoxContainer/ResourceDisplay/MarginContainer"]
 layout_mode = 2
 alignment = 1
 
-[node name="poplabel" type="Label" parent="VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer"]
+[node name="poplabel" type="Label" parent="VBoxContainer/VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer"]
 layout_mode = 2
 text = "pop: -9099"
 label_settings = ExtResource("1_nfevs")
 
-[node name="Label2" type="Label" parent="VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer"]
+[node name="Label2" type="Label" parent="VBoxContainer/VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer"]
 layout_mode = 2
 text = "silver: -blaab"
 label_settings = ExtResource("1_nfevs")
 
-[node name="Fpslabel" type="Label" parent="VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer"]
+[node name="Fpslabel" type="Label" parent="VBoxContainer/VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer"]
 layout_mode = 2
 text = "fps: "
 label_settings = ExtResource("1_nfevs")
 
-[node name="Tileposlabel" type="Label" parent="VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer"]
+[node name="Tileposlabel" type="Label" parent="VBoxContainer/VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer"]
 layout_mode = 2
 text = "fps: "
 label_settings = ExtResource("1_nfevs")
 
-[node name="Fat" type="Control" parent="VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer"]
+[node name="Fat" type="Control" parent="VBoxContainer/VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 mouse_filter = 2
 
-[node name="TimeLabel" type="Label" parent="VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer"]
+[node name="TimeLabel" type="Label" parent="VBoxContainer/VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer"]
 custom_minimum_size = Vector2(37, 0)
 layout_mode = 2
 text = "01/01/0000"
 label_settings = ExtResource("1_nfevs")
 horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/VBoxContainer"]
+layout_mode = 2
+alignment = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+theme_override_constants/separation = 1
+
+[node name="Label" type="Label" parent="VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "game speed 3x"
+label_settings = SubResource("LabelSettings_suhma")
+
+[node name="PauseButton" type="Button" parent="VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+theme_override_font_sizes/font_size = 6
+text = "||"
+
+[node name="NormalSpeedButton" type="Button" parent="VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+theme_override_font_sizes/font_size = 6
+text = ">"
+
+[node name="FastButton" type="Button" parent="VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+theme_override_font_sizes/font_size = 6
+text = ">>"
 
 [node name="Fat" type="AspectRatioContainer" parent="VBoxContainer"]
 layout_mode = 2
@@ -100,6 +147,13 @@ layout_mode = 2
 layout_mode = 2
 mouse_filter = 2
 theme_override_font_sizes/normal_font_size = 8
+text = "aaaaa
+aa
+aaa
+a
+aa
+a
+"
 
 [node name="MenuTabs" type="TabContainer" parent="VBoxContainer"]
 unique_name_in_owner = true
@@ -114,6 +168,7 @@ layout_mode = 2
 metadata/_tab_index = 0
 
 [node name="BuildingList" type="PanelContainer" parent="VBoxContainer/MenuTabs/HBoxContainer" node_paths=PackedStringArray("ui", "itemList", "buildConfirmation", "resourceListText")]
+visible = false
 custom_minimum_size = Vector2(169, 240)
 layout_mode = 2
 script = ExtResource("4_suhma")

@@ -1,7 +1,7 @@
-using Godot;
-using scenes.region.buildings;
 using System;
 using System.Collections.Generic;
+using Godot;
+using scenes.region.buildings;
 using IBuildingType = Building.IBuildingType;
 
 
@@ -12,12 +12,16 @@ namespace scenes.region.ui {
 		// one big script to rule all region ui interactions
 
 		public event Action<IBuildingType, Vector2I> BuildRequestedEvent;
+		public event Func<IBuildingType, bool> GetCanBuildEvent;
+		public event Func<ResourceStorage> GetResourcesEvent;
+
 		public event Func<int> GetPopulationCountEvent;
 		public event Func<int> GetHomelessPopulationCountEvent;
 		public event Func<string> GetTimeStringEvent;
-		public event Func<IBuildingType, bool> GetCanBuildEvent;
 		public event Func<List<BuildingType>> GetBuildingTypesEvent;
-		public event Func<ResourceStorage> GetResourcesEvent;
+
+		public event Func<bool> PauseRequestedEvent;
+		public event Action<float> GameSpeedChangeRequestedEvent;
 
 		public enum State {
 			IDLE,
@@ -48,6 +52,12 @@ namespace scenes.region.ui {
 		[Export] public Label fpsLabel; // debug
 		[Export] public Label tilePosLabel; // debug
 
+		// top bar bottom
+		[Export] public Label gameSpeedLabel;
+		[Export] public Button pauseButton;
+		[Export] public Button normalSpeedButton;
+		[Export] public Button fastSpeedButton;
+
 		[Export] public RichTextLabel resourceLabel;
 
 		// internal
@@ -62,19 +72,23 @@ namespace scenes.region.ui {
 				//Debug.PrintWithStack("UI: state changed to", value);
 			}
 		}
+		float gameSpeed = 1f;
+		bool gamePaused = false;
 
 		// overrides and connections
 
 		public override void _Ready() {
 			buildButton.Pressed += OnBuildButtonPressed;
+
+			pauseButton.Pressed += OnPauseButtonPressed;
+			normalSpeedButton.Pressed += OnNormalSpeedButtonPressed;
+			fastSpeedButton.Pressed += OnFastSpeedButtonPressed;
+
 			Reset();
 		}
 
 		public override void _Process(double delta) {
-			fpsLabel.Text = "fps: " + Engine.GetFramesPerSecond().ToString();
-			populationLabel.Text = $"pop: {GetPopulationCountEvent?.Invoke() ?? -2} ({GetHomelessPopulationCountEvent?.Invoke() ?? -2} homeless)";
-			DisplayResources();
-			timeLabel.Text = GetTimeString();
+			UpdateDisplays(); // todo move this to something that doesn't happen every frame... if it becomes a bottleneck
 		}
 
 		void OnBuildButtonPressed() {
@@ -86,6 +100,25 @@ namespace scenes.region.ui {
 				SelectTab(Tab.NONE);
 			}
 		}
+
+		void OnPauseButtonPressed() {
+			gamePaused = PauseRequested();
+			SetGameSpeedLabelText();
+		}
+
+		void OnNormalSpeedButtonPressed() {
+			GameSpeedChangeRequested(1);
+			gameSpeed = 1;
+			SetGameSpeedLabelText();
+		}
+
+		void OnFastSpeedButtonPressed() {
+			GameSpeedChangeRequested(3);
+			gameSpeed = 3;
+			SetGameSpeedLabelText();
+		}
+
+		void SetGameSpeedLabelText() => gameSpeedLabel.Text = gamePaused ? "paused" : $"{gameSpeed}x game speed";
 
 		// menu activites
 
@@ -100,6 +133,14 @@ namespace scenes.region.ui {
 		}
 
 		// display
+
+		void UpdateDisplays() {
+			fpsLabel.Text = "fps: " + Engine.GetFramesPerSecond().ToString();
+			populationLabel.Text = $"pop: {GetPopulationCountEvent?.Invoke() ?? -2} ({GetHomelessPopulationCountEvent?.Invoke() ?? -2} homeless)";
+			DisplayResources();
+			SetGameSpeedLabelText();
+			timeLabel.Text = GetTimeString();
+		}
 
 		void DisplayResources() {
 			resourceLabel.Text = "";
@@ -151,12 +192,16 @@ namespace scenes.region.ui {
 		}
 
 		public void BuildRequested(IBuildingType a, Vector2I b) => BuildRequestedEvent?.Invoke(a, b);
-		public int GetPopulationCount() => GetPopulationCountEvent?.Invoke() ?? -1;
-		public int GetHomelessPopulationCount() => GetHomelessPopulationCountEvent?.Invoke() ?? -1;
-		public string GetTimeString() => GetTimeStringEvent?.Invoke() ?? "NEVER";
 		public bool GetCanBuild(IBuildingType btype) => GetCanBuildEvent?.Invoke(btype) ?? false;
 		public List<BuildingType> GetBuildingTypes() => GetBuildingTypesEvent?.Invoke();
 		public ResourceStorage GetResources() => GetResourcesEvent?.Invoke();
+
+		public int GetPopulationCount() => GetPopulationCountEvent?.Invoke() ?? -1;
+		public int GetHomelessPopulationCount() => GetHomelessPopulationCountEvent?.Invoke() ?? -1;
+		public string GetTimeString() => GetTimeStringEvent?.Invoke() ?? "NEVER";
+
+		public bool PauseRequested() => PauseRequestedEvent?.Invoke() ?? false;
+		public void GameSpeedChangeRequested(float spd) => GameSpeedChangeRequestedEvent?.Invoke(spd);
 
 	}
 
