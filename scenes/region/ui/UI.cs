@@ -14,6 +14,7 @@ namespace scenes.region.ui {
 		public event Action<IBuildingType, Vector2I> BuildRequestedEvent;
 		public event Func<int> GetPopulationCountEvent;
 		public event Func<int> GetHomelessPopulationCountEvent;
+		public event Func<string> GetTimeStringEvent;
 		public event Func<IBuildingType, bool> GetCanBuildEvent;
 		public event Func<List<BuildingType>> GetBuildingTypesEvent;
 		public event Func<ResourceStorage> GetResourcesEvent;
@@ -43,6 +44,7 @@ namespace scenes.region.ui {
 
 		// top bar
 		[Export] public Label populationLabel;
+		[Export] public Label timeLabel;
 		[Export] public Label fpsLabel; // debug
 		[Export] public Label tilePosLabel; // debug
 
@@ -72,6 +74,7 @@ namespace scenes.region.ui {
 			fpsLabel.Text = "fps: " + Engine.GetFramesPerSecond().ToString();
 			populationLabel.Text = $"pop: {GetPopulationCountEvent?.Invoke() ?? -2} ({GetHomelessPopulationCountEvent?.Invoke() ?? -2} homeless)";
 			DisplayResources();
+			timeLabel.Text = GetTimeString();
 		}
 
 		void OnBuildButtonPressed() {
@@ -150,9 +153,11 @@ namespace scenes.region.ui {
 		public void BuildRequested(IBuildingType a, Vector2I b) => BuildRequestedEvent?.Invoke(a, b);
 		public int GetPopulationCount() => GetPopulationCountEvent?.Invoke() ?? -1;
 		public int GetHomelessPopulationCount() => GetHomelessPopulationCountEvent?.Invoke() ?? -1;
+		public string GetTimeString() => GetTimeStringEvent?.Invoke() ?? "NEVER";
 		public bool GetCanBuild(IBuildingType btype) => GetCanBuildEvent?.Invoke(btype) ?? false;
 		public List<BuildingType> GetBuildingTypes() => GetBuildingTypesEvent?.Invoke();
 		public ResourceStorage GetResources() => GetResourcesEvent?.Invoke();
+
 	}
 
 }

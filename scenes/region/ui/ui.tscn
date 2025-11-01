@@ -7,7 +7,7 @@
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_bjdfm"]
 
-[node name="Ui" type="MarginContainer" node_paths=PackedStringArray("buildButton", "policyButton", "worldButton", "menuTabs", "buildingList", "populationLabel", "fpsLabel", "tilePosLabel", "resourceLabel")]
+[node name="Ui" type="MarginContainer" node_paths=PackedStringArray("buildButton", "policyButton", "worldButton", "menuTabs", "buildingList", "populationLabel", "timeLabel", "fpsLabel", "tilePosLabel", "resourceLabel")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -25,6 +25,7 @@ worldButton = NodePath("VBoxContainer/ControlButtons/WorldButton")
 menuTabs = NodePath("VBoxContainer/MenuTabs")
 buildingList = NodePath("VBoxContainer/MenuTabs/HBoxContainer/BuildingList")
 populationLabel = NodePath("VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer/poplabel")
+timeLabel = NodePath("VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer/TimeLabel")
 fpsLabel = NodePath("VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer/Fpslabel")
 tilePosLabel = NodePath("VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer/Tileposlabel")
 resourceLabel = NodePath("VBoxContainer/Fat/ResourcesList")
@@ -73,10 +74,12 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 mouse_filter = 2
 
-[node name="Label3" type="Label" parent="VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer"]
+[node name="TimeLabel" type="Label" parent="VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(37, 0)
 layout_mode = 2
 text = "01/01/0000"
 label_settings = ExtResource("1_nfevs")
+horizontal_alignment = 1
 
 [node name="Fat" type="AspectRatioContainer" parent="VBoxContainer"]
 layout_mode = 2

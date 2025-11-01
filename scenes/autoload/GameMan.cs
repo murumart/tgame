@@ -1,5 +1,5 @@
-using Godot;
 using System;
+using Godot;
 
 namespace scenes.autoload {
 
@@ -12,7 +12,7 @@ namespace scenes.autoload {
 		Game game;
 		public Game Game { get => game; }
 
-		public float GameSpeed = 30.0f;
+		public float GameMinutesPerRealSeconds = 2.0f;
 
 		public override void _Ready() {
 			singleton = this;
@@ -20,10 +20,18 @@ namespace scenes.autoload {
 			dataRegistry.RegisterThings();
 
 			game = new(new Map());
+
+			game.PassTime(60 * 7);
 		}
 
+		double timeAccum;
 		public override void _Process(double delta) {
-			Game.PassTime((TimeT)(delta * GameSpeed * GameTime.SECS_TO_HOURS));
+			double toPass = delta * GameMinutesPerRealSeconds * (GameTime.SECS_TO_HOURS * GameTime.MINUTES_PER_HOUR);
+			timeAccum += toPass;
+			if (timeAccum >= 1) {
+				Game.PassTime(1);
+				timeAccum -= 1;
+			}
 		}
 
 	}

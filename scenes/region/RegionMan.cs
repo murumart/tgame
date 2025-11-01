@@ -27,6 +27,7 @@ namespace scenes.region {
 			ui.GetBuildingTypesEvent += GetBuildingTypes;
 			ui.GetResourcesEvent += GetResourceStorage;
 			ui.GetCanBuildEvent += CanBuild;
+			ui.GetTimeStringEvent += GetDateTimeString;
 
 			region = GameMan.Singleton.Game.Map.GetRegion(0);
 			regionFaction = GameMan.Singleton.Game.Map.GetFaction(0).GetOwnedRegionFaction(0);
@@ -46,6 +47,7 @@ namespace scenes.region {
 				ui.BuildRequestedEvent -= OnUIBuildingPlaceRequested;
 				ui.GetResourcesEvent -= GetResourceStorage;
 				ui.GetCanBuildEvent -= CanBuild;
+				ui.GetTimeStringEvent -= GetDateTimeString;
 			}
 		}
 
@@ -99,6 +101,9 @@ namespace scenes.region {
 		public ResourceStorage GetResourceStorage() {
 			return regionFaction.Resources;
 		}
+
+		public string GetTimeString() => $"{GameMan.Singleton.Game.Time.GetDayHour():00}:{GameMan.Singleton.Game.Time.GetHourMinute():00}";
+		public string GetDateTimeString() => $"{GetTimeString()} {GameMan.Singleton.Game.Time.GetMonthDay():00}/{GameMan.Singleton.Game.Time.GetMonth() + 1:00}";
 
 	}
 
