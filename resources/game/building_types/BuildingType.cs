@@ -1,5 +1,6 @@
+using System;
+using System.Collections.Generic;
 using Godot;
-using Godot.Collections;
 using scenes.map;
 using static Building;
 using static ResourceStorage;
@@ -11,9 +12,10 @@ namespace scenes.region.buildings {
 
 		[Export] string Name;
 		[Export] int PopulationCapacity;
-		[Export] Dictionary<ResourceType, int> ResourceCapacities;
-		[Export] Dictionary<ResourceType, int> ResourceCosts;
-		[Export] float hoursToConstruct = 1f;
+		[Export] Godot.Collections.Dictionary<ResourceType, int> ResourceCapacities;
+		[Export] Godot.Collections.Dictionary<ResourceType, int> ResourceCosts;
+		[Export] float HoursToConstruct = 1f;
+		[Export] string[] AvailableJobClassNames = Array.Empty<string>();
 		[Export(PropertyHint.File, "*.tscn")] string ScenePath;
 
 
@@ -48,7 +50,17 @@ namespace scenes.region.buildings {
 		}
 
 		public float GetHoursToConstruct() {
-			return hoursToConstruct;
+			return HoursToConstruct;
+		}
+
+		public IEnumerable<Job> GetAvailableJobs() {
+			List<Job> jobs = new();
+			foreach (string typename in AvailableJobClassNames) {
+				Type type = Type.GetType(typename);
+				Job job = (Job)Activator.CreateInstance(type);
+				jobs.Add(job);
+			}
+			return jobs;
 		}
 
 	}

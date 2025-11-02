@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Godot;
 using scenes.region.buildings;
 using IBuildingType = Building.IBuildingType;
@@ -14,6 +15,9 @@ namespace scenes.region.ui {
 		public event Action<IBuildingType, Vector2I> BuildRequestedEvent;
 		public event Func<IBuildingType, bool> GetCanBuildEvent;
 		public event Func<ResourceStorage> GetResourcesEvent;
+		public event Func<BuildingView, ICollection<Job>> GetBuildingJobsEvent;
+		public event Action<Building, Job> AddJobRequestedEvent;
+
 
 		public event Func<int> GetPopulationCountEvent;
 		public event Func<int> GetHomelessPopulationCountEvent;
@@ -27,6 +31,7 @@ namespace scenes.region.ui {
 			IDLE,
 			CHOOSING_BUILD,
 			PLACING_BUILD,
+			JOBS_MENU,
 		}
 
 		public enum Tab : int {
@@ -46,7 +51,11 @@ namespace scenes.region.ui {
 		[Export] public TabContainer menuTabs;
 		[Export] public BuildingList buildingList;
 
+		// right
+		[Export] public JobsList jobsList;
+
 		// top bar
+		[Export] public Panel pauseDisplayPanel;
 		[Export] public Label populationLabel;
 		[Export] public Label timeLabel;
 		[Export] public Label fpsLabel; // debug
@@ -72,8 +81,12 @@ namespace scenes.region.ui {
 				//Debug.PrintWithStack("UI: state changed to", value);
 			}
 		}
+
+
 		float gameSpeed = 1f;
 		bool gamePaused = false;
+		bool internalGamePaused = false;
+		bool timeSpeedAlteringDisabled = false;
 
 		// overrides and connections
 
@@ -102,23 +115,26 @@ namespace scenes.region.ui {
 		}
 
 		void OnPauseButtonPressed() {
+			if (timeSpeedAlteringDisabled) return;
 			gamePaused = PauseRequested();
 			SetGameSpeedLabelText();
 		}
 
 		void OnNormalSpeedButtonPressed() {
+			if (timeSpeedAlteringDisabled) return;
 			GameSpeedChangeRequested(1);
 			gameSpeed = 1;
 			SetGameSpeedLabelText();
 		}
 
 		void OnFastSpeedButtonPressed() {
+			if (timeSpeedAlteringDisabled) return;
 			GameSpeedChangeRequested(3);
 			gameSpeed = 3;
 			SetGameSpeedLabelText();
 		}
 
-		void SetGameSpeedLabelText() => gameSpeedLabel.Text = gamePaused ? "paused" : $"{gameSpeed}x game speed";
+		void SetGameSpeedLabelText() => gameSpeedLabel.Text = gamePaused || internalGamePaused ? "paused" : $"{gameSpeed}x game speed";
 
 		// menu activites
 
@@ -128,6 +144,7 @@ namespace scenes.region.ui {
 				buildingList.Reset();
 			} else if (which == Tab.BUILD) {
 				buildingList.Update();
+				buildingList.Show();
 			}
 			menuTabs.CurrentTab = (int)which;
 		}
@@ -140,6 +157,7 @@ namespace scenes.region.ui {
 			DisplayResources();
 			SetGameSpeedLabelText();
 			timeLabel.Text = GetTimeString();
+			pauseDisplayPanel.Visible = gamePaused || gameSpeed == 0f || internalGamePaused;
 		}
 
 		void DisplayResources() {
@@ -166,6 +184,9 @@ namespace scenes.region.ui {
 			if (state == State.PLACING_BUILD) {
 				state = State.IDLE;
 			}
+			if (state == State.JOBS_MENU) {
+				state = State.IDLE;
+			}
 		}
 
 		public void OnTileHighlighted(Vector2I tilePosition, Region region) {
@@ -174,6 +195,9 @@ namespace scenes.region.ui {
 
 		public void OnBuildingClicked(BuildingView buildingView) {
 			if (state != State.IDLE) return;
+			state = State.JOBS_MENU;
+			var jobs = GetBuildingJobs(buildingView);
+			jobsList.Open(buildingView);
 		}
 
 		void OnStateChanged(State old, State current) {
@@ -182,7 +206,23 @@ namespace scenes.region.ui {
 					buildingList.Reset();
 					buildingList.SetBuildCursor(null);
 				}
+				if (old == State.JOBS_MENU) {
+					jobsList.Close();
+					SetTimeSpeedAltering(true);
+					if (!gamePaused) internalGamePaused = PauseRequested();
+				}
 			}
+			if (current == State.JOBS_MENU) {
+				SetTimeSpeedAltering(false);
+				internalGamePaused = PauseRequested();
+			}
+		}
+
+		void SetTimeSpeedAltering(bool to) {
+			timeSpeedAlteringDisabled = !to;
+			pauseButton.Disabled = !to;
+			fastSpeedButton.Disabled = !to;
+			normalSpeedButton.Disabled = !to;
 		}
 
 		void Reset() {
@@ -195,6 +235,8 @@ namespace scenes.region.ui {
 		public bool GetCanBuild(IBuildingType btype) => GetCanBuildEvent?.Invoke(btype) ?? false;
 		public List<BuildingType> GetBuildingTypes() => GetBuildingTypesEvent?.Invoke();
 		public ResourceStorage GetResources() => GetResourcesEvent?.Invoke();
+		public ICollection<Job> GetBuildingJobs(BuildingView view) => GetBuildingJobsEvent?.Invoke(view);
+		public void AddJobRequested(Building building, Job job) => AddJobRequestedEvent?.Invoke(building, job);
 
 		public int GetPopulationCount() => GetPopulationCountEvent?.Invoke() ?? -1;
 		public int GetHomelessPopulationCount() => GetHomelessPopulationCountEvent?.Invoke() ?? -1;

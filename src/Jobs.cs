@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Text;
 using Godot;
 using static Faction;
 
@@ -10,6 +11,11 @@ public abstract class Job : ITimePassing {
 
 	private Population dummyPop;
 
+	public virtual string Title => "Some kind of job???";
+	public virtual bool Internal => false;
+
+
+	public abstract Job Copy();
 
 	public abstract bool CanCreateJob(RegionFaction ctxFaction);
 
@@ -25,27 +31,41 @@ public abstract class Job : ITimePassing {
 	/// <param name="ctxFaction"></param>
 	public abstract void Cancel(RegionFaction ctxFaction);
 
-	public virtual ref Population GetWorkers() { return ref dummyPop; }
+	// sandbox methods vv
 
-	public virtual List<ResourceBundle> GetRequirements() { return null; }
-	public virtual List<ResourceBundle> GetRewards() { return null; }
+	public virtual ref Population GetWorkers() => ref dummyPop;
 
-	protected void ConsumeRequirements(List<ResourceBundle> requirements, RegionFaction ctxFaction) {
+	public virtual List<ResourceBundle> GetRequirements() => null;
+	public virtual List<ResourceBundle> GetRewards() => null;
+
+	protected static void ConsumeRequirements(List<ResourceBundle> requirements, RegionFaction ctxFaction) {
 		foreach (var r in requirements) {
 			ctxFaction.Resources.SubtractResource(r);
 		}
 	}
 
-	protected void RefundRequirements(List<ResourceBundle> requirements, RegionFaction ctxFaction) {
+	protected static void RefundRequirements(List<ResourceBundle> requirements, RegionFaction ctxFaction) {
 		foreach (var r in requirements) {
 			ctxFaction.Resources.AddResource(r);
 		}
 	}
 
-	protected void ProvideRewards(List<ResourceBundle> rewards, RegionFaction ctxFaction) {
+	protected static void ProvideRewards(List<ResourceBundle> rewards, RegionFaction ctxFaction) {
 		foreach (var r in rewards) {
 			ctxFaction.Resources.AddResource(r);
 		}
+	}
+
+	public virtual string GetResourceRequirementDescription() {
+		StringBuilder sb = new();
+		var resourceReqs = GetRequirements();
+		if (resourceReqs != null) {
+			sb.Append("Required Resources:\n");
+			foreach (ResourceBundle res in resourceReqs) {
+				sb.Append("  ").Append(res.Type.Name).Append(" x ").Append(res.Amount).Append('\n');
+			}
+		}
+		return sb.ToString();
 	}
 
 	public abstract void PassTime(TimeT minutes);
@@ -55,8 +75,11 @@ public abstract class Job : ITimePassing {
 
 public class AbsorbFromHomelessPopulationJob : Job {
 
-	Building building;
-	RegionFaction faction;
+	public override bool Internal => true;
+
+	readonly Building building;
+	readonly RegionFaction faction;
+
 
 	public AbsorbFromHomelessPopulationJob(Building building, RegionFaction fac) {
 		this.building = building;
@@ -93,13 +116,20 @@ public class AbsorbFromHomelessPopulationJob : Job {
 	public override void Cancel(RegionFaction ctxFaction) {
 		throw new System.NotImplementedException("This doesn't do anything on this job class");
 	}
+
+	public override Job Copy() {
+		throw new System.NotImplementedException("You shouldn't have to copy this...");
+	}
 }
 
 public class ConstructBuildingJob : Job {
 
-	List<ResourceBundle> requirements;
+	public override string Title => "Construct Building";
+
+	readonly List<ResourceBundle> requirements;
+
 	Population workers;
-	Building building;
+	readonly Building building;
 
 
 	public ConstructBuildingJob(List<ResourceBundle> requirements, Building building) {
@@ -107,9 +137,7 @@ public class ConstructBuildingJob : Job {
 		this.building = building;
 	}
 
-	public override bool CanCreateJob(RegionFaction ctxFaction) {
-		return ctxFaction.Resources.HasEnoughAll(GetRequirements());
-	}
+	public override bool CanCreateJob(RegionFaction ctxFaction) => ctxFaction.Resources.HasEnoughAll(GetRequirements());
 
 	public override void Initialise(RegionFaction ctxFaction) {
 		Debug.Assert(CanCreateJob(ctxFaction), "Job cannot be created!!");
@@ -121,18 +149,43 @@ public class ConstructBuildingJob : Job {
 		requirements.Clear();
 	}
 
-	public override List<ResourceBundle> GetRequirements() {
-		return requirements;
-	}
+	public override List<ResourceBundle> GetRequirements() => requirements;
 
-	public override ref Population GetWorkers() {
-		return ref workers;
-	}
+	public override ref Population GetWorkers() => ref workers;
+
 
 	public override void PassTime(TimeT minutes) {
 		if (building.IsConstructed) return;
 		building.ProgressBuild(minutes * workers.Pop);
 	}
 
+	public override Job Copy() {
+		return new ConstructBuildingJob(requirements, building);
+	}
+
+}
+
+public class FishByHandJob : Job {
+
+	public override string Title => "Fish by Hand";
+
+	ResourceStorage storage;
+	
+
+	public override void Cancel(RegionFaction ctxFaction) {
+		throw new System.NotImplementedException();
+	}
+
+	public override bool CanCreateJob(RegionFaction ctxFaction) => true;
+
+	public override Job Copy() => new FishByHandJob();
+
+	public override void Initialise(RegionFaction ctxFaction) {
+		storage = ctxFaction.Resources;
+	}
+
+	public override void PassTime(TimeT minutes) {
+		GD.Print("We fish x", minutes);
+	}
 
 }

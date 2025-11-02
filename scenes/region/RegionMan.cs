@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Godot;
 using scenes.autoload;
 using scenes.region.buildings;
@@ -28,6 +29,8 @@ namespace scenes.region {
 			ui.GetResourcesEvent += GetResourceStorage;
 			ui.GetCanBuildEvent += CanBuild;
 			ui.GetTimeStringEvent += GetDateTimeString;
+			ui.GetBuildingJobsEvent += GetBuildingJobs;
+			ui.AddJobRequestedEvent += AddJob;
 
 			region = GameMan.Singleton.Game.Map.GetRegion(0);
 			regionFaction = GameMan.Singleton.Game.Map.GetFaction(0).GetOwnedRegionFaction(0);
@@ -40,6 +43,9 @@ namespace scenes.region {
 			tilemaps.DisplayGround(region);
 
 			camera.Region = region;
+			foreach (var m in regionFaction.GetBuildings()) {
+				LoadBuildingView(m);
+			}
 		}
 
 		public override void _Notification(int what) {
@@ -53,6 +59,8 @@ namespace scenes.region {
 				ui.GetTimeStringEvent -= GetDateTimeString;
 				ui.PauseRequestedEvent -= UiTogglePause;
 				ui.GameSpeedChangeRequestedEvent -= UiChangeGameSpeed;
+				ui.GetBuildingJobsEvent -= GetBuildingJobs;
+				ui.AddJobRequestedEvent -= AddJob;
 
 			}
 		}
@@ -115,6 +123,16 @@ namespace scenes.region {
 		public bool UiTogglePause() {
 			GameMan.Singleton.TogglePause();
 			return GameMan.Singleton.IsPaused;
+		}
+
+		public HashSet<Job> GetBuildingJobs(BuildingView view) {
+			var pos = view.Building.Position;
+			var jobs = regionFaction.GetJobs(pos);
+			return jobs.ToHashSet<Job>();
+		}
+
+		public void AddJob(Building building, Job job) {
+			regionFaction.AddJob(building.Position, job);
 		}
 
 		public string GetTimeString() => $"{GameMan.Singleton.Game.Time.GetDayHour():00}:{GameMan.Singleton.Game.Time.GetHourMinute():00}";

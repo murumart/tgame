@@ -1,13 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://pfy55aydpy4t"]
+[gd_scene load_steps=2 format=3 uid="uid://pfy55aydpy4t"]
 
 [ext_resource type="Script" uid="uid://yr6q8gjnc8wh" path="res://scenes/region/buildings/BuildingView.cs" id="1_jqyv4"]
 
-[sub_resource type="ConvexPolygonShape2D" id="ConvexPolygonShape2D_nt1n5"]
-points = PackedVector2Array(-32, 0, 0, -16, 32, 0, 0, 16)
-
-[node name="BuildingBase" type="Node2D" node_paths=PackedStringArray("Infopanel", "clickDetector")]
+[node name="BuildingBase" type="Node2D" node_paths=PackedStringArray("clickDetector")]
 script = ExtResource("1_jqyv4")
-Infopanel = NodePath("")
 clickDetector = NodePath("Clickarea")
 metadata/_custom_type_script = "uid://yr6q8gjnc8wh"
 
@@ -18,7 +14,7 @@ input_pickable = false
 monitoring = false
 monitorable = false
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Clickarea"]
-shape = SubResource("ConvexPolygonShape2D_nt1n5")
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Clickarea"]
+polygon = PackedVector2Array(-32, 0, 0, -16, 32, 0, 0, 16)
 
 [node name="RemoteTransform2D" type="RemoteTransform2D" parent="."]

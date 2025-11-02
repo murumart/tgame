@@ -6,6 +6,7 @@ namespace scenes.region.buildings {
 
 	[GlobalClass]
 	public partial class BuildingView : Node2D {
+
 		[Signal] public delegate void BuildingClickedEventHandler(BuildingView buildingView);
 
 		// ui things

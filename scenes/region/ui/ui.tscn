@@ -1,9 +1,21 @@
-[gd_scene load_steps=7 format=3 uid="uid://cp354pcilqv48"]
+[gd_scene load_steps=8 format=3 uid="uid://cp354pcilqv48"]
 
 [ext_resource type="LabelSettings" uid="uid://v03gdc53ijm1" path="res://resources/visual/theme/half_size.tres" id="1_nfevs"]
 [ext_resource type="Script" uid="uid://cd6mwdns4bcwa" path="res://scenes/region/ui/UI.cs" id="1_vkak1"]
 [ext_resource type="PackedScene" uid="uid://c7ew6g8hdbgfg" path="res://scenes/region/ui/jobs_list.tscn" id="3_y7o2c"]
 [ext_resource type="Script" uid="uid://2xhwk4iyfu73" path="res://scenes/region/ui/BuildingList.cs" id="4_suhma"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_suhma"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.70980394, 0.34901962, 0.27058825, 1)
+expand_margin_left = 1.0
+expand_margin_top = 1.0
+expand_margin_right = 1.0
+expand_margin_bottom = 1.0
 
 [sub_resource type="LabelSettings" id="LabelSettings_suhma"]
 font_size = 8
@@ -11,7 +23,7 @@ font_color = Color(0.8352941, 0.8392157, 0.85882354, 1)
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_bjdfm"]
 
-[node name="Ui" type="MarginContainer" node_paths=PackedStringArray("buildButton", "policyButton", "worldButton", "menuTabs", "buildingList", "populationLabel", "timeLabel", "fpsLabel", "tilePosLabel", "gameSpeedLabel", "pauseButton", "normalSpeedButton", "fastSpeedButton", "resourceLabel")]
+[node name="Ui" type="MarginContainer" node_paths=PackedStringArray("buildButton", "policyButton", "worldButton", "menuTabs", "buildingList", "jobsList", "pauseDisplayPanel", "populationLabel", "timeLabel", "fpsLabel", "tilePosLabel", "gameSpeedLabel", "pauseButton", "normalSpeedButton", "fastSpeedButton", "resourceLabel")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -28,6 +40,8 @@ policyButton = NodePath("VBoxContainer/ControlButtons/PolicyButton")
 worldButton = NodePath("VBoxContainer/ControlButtons/WorldButton")
 menuTabs = NodePath("VBoxContainer/MenuTabs")
 buildingList = NodePath("VBoxContainer/MenuTabs/HBoxContainer/BuildingList")
+jobsList = NodePath("VBoxContainer/Horizon/JobsList")
+pauseDisplayPanel = NodePath("PausePanel")
 populationLabel = NodePath("VBoxContainer/VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer/poplabel")
 timeLabel = NodePath("VBoxContainer/VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer/TimeLabel")
 fpsLabel = NodePath("VBoxContainer/VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer/Fpslabel")
@@ -36,7 +50,13 @@ gameSpeedLabel = NodePath("VBoxContainer/VBoxContainer/HBoxContainer/HBoxContain
 pauseButton = NodePath("VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer/PauseButton")
 normalSpeedButton = NodePath("VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer/NormalSpeedButton")
 fastSpeedButton = NodePath("VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer/FastButton")
-resourceLabel = NodePath("VBoxContainer/Fat/ResourcesList")
+resourceLabel = NodePath("VBoxContainer/Horizon/ResourcesList")
+
+[node name="PausePanel" type="Panel" parent="."]
+visible = false
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_suhma")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 2
@@ -128,22 +148,13 @@ focus_mode = 0
 theme_override_font_sizes/font_size = 6
 text = ">>"
 
-[node name="Fat" type="AspectRatioContainer" parent="VBoxContainer"]
+[node name="Horizon" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 mouse_filter = 2
-alignment_horizontal = 0
-alignment_vertical = 0
 
-[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer/Fat"]
-visible = false
-layout_mode = 2
-mouse_force_pass_scroll_events = false
-
-[node name="JobsList" parent="VBoxContainer/Fat/PanelContainer" instance=ExtResource("3_y7o2c")]
-layout_mode = 2
-
-[node name="ResourcesList" type="RichTextLabel" parent="VBoxContainer/Fat"]
+[node name="ResourcesList" type="RichTextLabel" parent="VBoxContainer/Horizon"]
+custom_minimum_size = Vector2(60, 0)
 layout_mode = 2
 mouse_filter = 2
 theme_override_font_sizes/normal_font_size = 8
@@ -154,6 +165,16 @@ a
 aa
 a
 "
+
+[node name="Fat" type="Control" parent="VBoxContainer/Horizon"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="JobsList" parent="VBoxContainer/Horizon" node_paths=PackedStringArray("ui") instance=ExtResource("3_y7o2c")]
+visible = false
+layout_mode = 2
+ui = NodePath("../../..")
 
 [node name="MenuTabs" type="TabContainer" parent="VBoxContainer"]
 unique_name_in_owner = true

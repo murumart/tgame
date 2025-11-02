@@ -23,6 +23,7 @@ public partial class Faction : ITimePassing {
 	public void PassTime(TimeT minutes) {
 		// RegionFaction time passes in Map.PassTime
 	}
+
 }
 
 public partial class Faction {
@@ -55,6 +56,10 @@ public partial class Faction {
 			resourceStorage.AddResource(new(Registry.Resources.GetAsset(0), 4));
 			resourceStorage.AddResource(new(Registry.Resources.GetAsset(1), 25));
 			resourceStorage.AddResource(new(Registry.Resources.GetAsset(2), 25));
+
+			var housing = Registry.Buildings.GetAsset(0);
+			var starterHouse = PlacePrebuiltBuilding(housing, new(0, 0));
+			starterHouse.ProgressBuild((int)(housing.GetHoursToConstruct() * 60));
 		}
 
 		public void PassTime(TimeT minutes) {
@@ -72,15 +77,20 @@ public partial class Faction {
 			return count;
 		}
 
-		public void AddJob(Vector2I pos, Job job) {
-			Debug.Assert(!(jobsByPosition.ContainsKey(pos) && jobsByPosition[pos].Contains(job)), $"Job at place {pos} exists ({job})");
-			if (!jobsByPosition.ContainsKey(pos)) jobsByPosition[pos] = new();
-			jobsByPosition[pos].Add(job);
-			AddJob(job);
+		public void AddJob(Vector2I position, Job job) {
+			Debug.Assert(!(jobsByPosition.ContainsKey(position) && jobsByPosition[position].Contains(job)), $"Job at place {position} exists ({job})");
+			if (!jobsByPosition.ContainsKey(position)) jobsByPosition[position] = new();
+			jobsByPosition[position].Add(job);
+			AddJobWithoutPosition(job);
 		}
 
-		public void AddJob(Job job) {
+		void AddJobWithoutPosition(Job job) {
 			jobs.Add(job);
+		}
+
+		public IEnumerable<Job> GetJobs(Vector2I position) {
+			jobsByPosition.TryGetValue(position, out HashSet<Job> gottenJobs);
+			return gottenJobs.Where<Job>((j) => !j.Internal);
 		}
 
 		public Building PlaceBuilding(IBuildingType type, Vector2I position) {
@@ -93,6 +103,16 @@ public partial class Faction {
 				building.ConstructionJob = job;
 			}
 			if (type.GetPopulationCapacity() > 0) AddJob(position, new AbsorbFromHomelessPopulationJob(building, this));
+			Debug.Assert(!buildings.ContainsKey(position), "There's a lreayd a building here");
+			buildings[position] = building;
+			return building;
+		}
+
+		public Building PlacePrebuiltBuilding(IBuildingType type, Vector2I position) {
+			var building = region.CreateBuildingSpotAndPlace(type, position);
+			if (type.GetPopulationCapacity() > 0) AddJob(position, new AbsorbFromHomelessPopulationJob(building, this));
+			Debug.Assert(!buildings.ContainsKey(position), "There's a lreayd a building here");
+			buildings[position] = building;
 			return building;
 		}
 
@@ -103,5 +123,9 @@ public partial class Faction {
 		public bool CanBuild(IBuildingType type) {
 			return resourceStorage.HasEnoughAll(type.GetResourceRequirements());
 		}
+
+		public ICollection<Building> GetBuildings() => buildings.Values;
+
 	}
+
 }

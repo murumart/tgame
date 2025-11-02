@@ -11,7 +11,7 @@ public partial class Building : MapObject, ITimePassing {
 
 	Population population; public ref Population Population => ref population;
 	uint constructionProgress; // in minutes
-	public bool IsConstructed { get => constructionProgress >= type.GetHoursToConstruct() * 60; }
+	public bool IsConstructed => constructionProgress >= type.GetHoursToConstruct() * 60;
 	public ConstructBuildingJob ConstructionJob;
 
 
@@ -39,6 +39,7 @@ public partial class Building {
 		ResourceCapacity[] GetResourceCapacities();
 		ResourceBundle[] GetResourceRequirements();
 		float GetHoursToConstruct();
+		IEnumerable<Job> GetAvailableJobs();
 
 		Building CreateBuildingObject(Vector2I position) {
 			return new Building(this, position);
@@ -50,7 +51,6 @@ public partial class Building {
 		}
 
 		bool TakesTimeToConstruct() => GetHoursToConstruct() > 0;
-
 
 	}
 
