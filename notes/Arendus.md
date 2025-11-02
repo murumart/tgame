@@ -24,6 +24,14 @@ Eesmärk jõuda prototüübiga võrreldavale tasemele. *Game Loop*. Mängus on o
 - [ ] tootluskvoot
 	- [ ] lihtne gameover: kvoodi täitmata jätmine
 
+### November 2025
+
+Eesmärk jõuda oktoobris plaanitud tasemele(!!). Alustada tööd esimese verstaposti jaoks.
+
+Kriitiline: inimeste määramine tööle, tootluskvoodid emamaalt -- ilma nendeta pole mängu!!
+
+Nõu pidada UI disaini teemal (nüri ning aeganõudev).
+
 ## Verstapostid
 
 Mäng peab olema mängitav iga verstaposti saabudes.
@@ -33,4 +41,33 @@ Mäng peab olema mängitav iga verstaposti saabudes.
 - [ ] genereeritud maailm
 	- [ ] müra: kõrgus, sügavus, et oleks vahe mere ja maa vahel
 	- [ ] müra: jõed (hallid alad)
-	- [ ] 
+	- [ ] regioonideks jaotamine (voronoi? mingisugune juhuslik "paint bucket"?)
+	- [ ] eri pooled
+		- [ ] AI käitugu praegu täiesti suvaliselt kus seda on lihtne implementeerida
+- [ ] ruudud millega mängida
+	- [ ] metsad puuraidumiseks
+	- [ ] kivid kiviraidumiseks
+	- [ ] vesi kala püüdmiseks
+	- [ ] turg äri ajamiseks (suurem teema kui eelnevad!)
+- [ ] mängumehaanikad
+	- [ ] populatsioon sööb toitu, kasvab sündidest, kahaneb surmadest
+	- [ ] emamaa peab arvet ressurssidest mida kasutab, saadab nende ning regiooni asukoha põhjal mandaate
+	- [ ] populatsioonist tööliste määramine
+
+### 0.2.0
+
+- [ ] AI pooled
+	- [ ] implementeerida "utility theory" sisendid ja väljundi valimine
+	- [ ] meetod kuidas AI tegevusi vaadelda, et mängija saaks aru, et mäng sellega tegeleb
+
+### 0.3.0
+
+- [ ] võitlused poolte vahel
+	- [ ] AI saadetud rünnakud
+	- [ ] mängija saadetud rünnakud
+- [ ] genereeritud maailm: müra: temperatuur ja niiskus et oleks alus eri bioomideks
+
+### Määramata tulevik
+
+- populatsiooni peab palkama, et nad tööd teeks
+- populatsiooni heaolu loeb - inimesed lahkuvad kehvast kolooniast
