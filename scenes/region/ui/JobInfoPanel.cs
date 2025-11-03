@@ -1,6 +1,5 @@
-using Godot;
 using System;
-using System.Text;
+using Godot;
 
 namespace scenes.region.ui {
 
@@ -13,7 +12,6 @@ namespace scenes.region.ui {
 		[Export] Label titleLabel;
 		[Export] Control sidebar;
 		[Export] Control topbar;
-		[Export] RichTextLabel informationText;
 		[Export] Container informationList;
 
 
@@ -23,11 +21,16 @@ namespace scenes.region.ui {
 			topbar.Visible = showTop;
 		}
 
-		public void Display(Job job) {
+		public void Display(Job job, int jobIndex, int maxFreeWorkers, Action<int, int> workersSelected) {
+			if (job.NeedsWorkers) {
+				var slider = JobSlider.Instantiate();
+				informationList.AddChild(slider);
+				slider.Setup(workersSelected, jobIndex, job.GetWorkers().Pop, "workers", maxFreeWorkers, "");
+			}
+
 			titleLabel.Text = job.Title;
 
 			infoLabel.Text = job.GetResourceRequirementDescription();
-
 		}
 
 	}

@@ -15,9 +15,11 @@ namespace scenes.region.ui {
 		public event Action<IBuildingType, Vector2I> BuildRequestedEvent;
 		public event Func<IBuildingType, bool> GetCanBuildEvent;
 		public event Func<ResourceStorage> GetResourcesEvent;
+
 		public event Func<BuildingView, ICollection<Job>> GetBuildingJobsEvent;
 		public event Action<Building, Job> AddJobRequestedEvent;
-
+		public event Func<int> GetMaxFreeWorkersEvent;
+		public event Action<Job, int> SetJobWorkerCountEvent;
 
 		public event Func<int> GetPopulationCountEvent;
 		public event Func<int> GetHomelessPopulationCountEvent;
@@ -81,7 +83,6 @@ namespace scenes.region.ui {
 				//Debug.PrintWithStack("UI: state changed to", value);
 			}
 		}
-
 
 		float gameSpeed = 1f;
 		bool gamePaused = false;
@@ -235,8 +236,11 @@ namespace scenes.region.ui {
 		public bool GetCanBuild(IBuildingType btype) => GetCanBuildEvent?.Invoke(btype) ?? false;
 		public List<BuildingType> GetBuildingTypes() => GetBuildingTypesEvent?.Invoke();
 		public ResourceStorage GetResources() => GetResourcesEvent?.Invoke();
+
 		public ICollection<Job> GetBuildingJobs(BuildingView view) => GetBuildingJobsEvent?.Invoke(view);
 		public void AddJobRequested(Building building, Job job) => AddJobRequestedEvent?.Invoke(building, job);
+		public int GetMaxFreeWorkers() => GetMaxFreeWorkersEvent?.Invoke() ?? -1;
+		public void SetJobWorkerCount(Job job, int workers) => SetJobWorkerCountEvent?.Invoke(job, workers);
 
 		public int GetPopulationCount() => GetPopulationCountEvent?.Invoke() ?? -1;
 		public int GetHomelessPopulationCount() => GetHomelessPopulationCountEvent?.Invoke() ?? -1;

@@ -6,17 +6,17 @@
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_cgm35"]
 content_margin_left = 2.0
 
-[node name="JobInfopanel" type="HBoxContainer" node_paths=PackedStringArray("infoLabel", "titleLabel", "sidebar", "topbar")]
+[node name="JobInfopanel" type="HBoxContainer" node_paths=PackedStringArray("infoLabel", "titleLabel", "sidebar", "topbar", "informationList")]
 offset_right = 107.0
 offset_bottom = 135.0
 size_flags_horizontal = 3
-size_flags_vertical = 3
 theme_override_constants/separation = 1
 script = ExtResource("1_4q80a")
 infoLabel = NodePath("VBoxContainer2/JobInfopanel/MarginContainer/InformationList/WorkDetails2")
 titleLabel = NodePath("VBoxContainer2/TopBar/TopBar/Label")
 sidebar = NodePath("SideButtons")
 topbar = NodePath("VBoxContainer2/TopBar")
+informationList = NodePath("VBoxContainer2/JobInfopanel/MarginContainer/InformationList")
 
 [node name="SideButtons" type="VBoxContainer" parent="."]
 layout_mode = 2

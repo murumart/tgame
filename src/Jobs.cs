@@ -12,6 +12,7 @@ public abstract class Job : ITimePassing {
 	private Population dummyPop;
 
 	public virtual string Title => "Some kind of job???";
+	public virtual bool NeedsWorkers => true;
 	public virtual bool Internal => false;
 
 
@@ -76,6 +77,7 @@ public abstract class Job : ITimePassing {
 public class AbsorbFromHomelessPopulationJob : Job {
 
 	public override bool Internal => true;
+	public override bool NeedsWorkers => false;
 
 	readonly Building building;
 	readonly RegionFaction faction;
@@ -120,6 +122,7 @@ public class AbsorbFromHomelessPopulationJob : Job {
 	public override Job Copy() {
 		throw new System.NotImplementedException("You shouldn't have to copy this...");
 	}
+
 }
 
 public class ConstructBuildingJob : Job {
@@ -170,7 +173,7 @@ public class FishByHandJob : Job {
 	public override string Title => "Fish by Hand";
 
 	ResourceStorage storage;
-	
+
 
 	public override void Cancel(RegionFaction ctxFaction) {
 		throw new System.NotImplementedException();

@@ -31,6 +31,8 @@ namespace scenes.region {
 			ui.GetTimeStringEvent += GetDateTimeString;
 			ui.GetBuildingJobsEvent += GetBuildingJobs;
 			ui.AddJobRequestedEvent += AddJob;
+			ui.GetMaxFreeWorkersEvent += GetJobMaxWorkers;
+			ui.SetJobWorkerCountEvent += SetJobWorkersTo;
 
 			region = GameMan.Singleton.Game.Map.GetRegion(0);
 			regionFaction = GameMan.Singleton.Game.Map.GetFaction(0).GetOwnedRegionFaction(0);
@@ -61,6 +63,8 @@ namespace scenes.region {
 				ui.GameSpeedChangeRequestedEvent -= UiChangeGameSpeed;
 				ui.GetBuildingJobsEvent -= GetBuildingJobs;
 				ui.AddJobRequestedEvent -= AddJob;
+				ui.GetMaxFreeWorkersEvent -= GetJobMaxWorkers;
+				ui.SetJobWorkerCountEvent -= SetJobWorkersTo;
 
 			}
 		}
@@ -133,6 +137,14 @@ namespace scenes.region {
 
 		public void AddJob(Building building, Job job) {
 			regionFaction.AddJob(building.Position, job);
+		}
+
+		public int GetJobMaxWorkers() {
+			return 4;
+		}
+
+		public void SetJobWorkersTo(Job job, int to) {
+			job.GetWorkers().Pop = to;
 		}
 
 		public string GetTimeString() => $"{GameMan.Singleton.Game.Time.GetDayHour():00}:{GameMan.Singleton.Game.Time.GetHourMinute():00}";
