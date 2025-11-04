@@ -138,6 +138,7 @@ public class ConstructBuildingJob : Job {
 	public ConstructBuildingJob(List<ResourceBundle> requirements, Building building) {
 		this.requirements = requirements;
 		this.building = building;
+		workers = new(35);
 	}
 
 	public override bool CanCreateJob(RegionFaction ctxFaction) => ctxFaction.Resources.HasEnoughAll(GetRequirements());

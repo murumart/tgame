@@ -1,16 +1,18 @@
 using System;
 
 public struct Population {
+
 	private int pop;
 	public int Pop {
 		readonly get => pop;
 		set {
 			Debug.Assert(value <= MaxPop, $"People overflow ({value} vs {MaxPop})");
-			Debug.Assert(value > 0, $"People underflow ({value} vs 0)");
+			Debug.Assert(value >= 0, $"People underflow ({value} vs 0)");
 			pop = value;
 		}
 	}
 	public readonly int MaxPop;
+
 
 	public Population(int maxPop) {
 		Debug.Assert(maxPop > -1, "need max population to be positive or 0");

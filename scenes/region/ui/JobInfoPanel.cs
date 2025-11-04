@@ -21,11 +21,11 @@ namespace scenes.region.ui {
 			topbar.Visible = showTop;
 		}
 
-		public void Display(Job job, int jobIndex, int maxFreeWorkers, Action<int, int> workersSelected) {
+		public void Display(Job job, int jobIndex, int sliderMax, Action<int, int> workersSelected) {
 			if (job.NeedsWorkers) {
 				var slider = JobSlider.Instantiate();
 				informationList.AddChild(slider);
-				slider.Setup(workersSelected, jobIndex, job.GetWorkers().Pop, "workers", maxFreeWorkers, "");
+				slider.Setup(workersSelected, jobIndex, job.GetWorkers().Pop, "workers", sliderMax, "");
 			}
 
 			titleLabel.Text = job.Title;

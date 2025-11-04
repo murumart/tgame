@@ -19,10 +19,11 @@ namespace scenes.region.ui {
 		public event Func<BuildingView, ICollection<Job>> GetBuildingJobsEvent;
 		public event Action<Building, Job> AddJobRequestedEvent;
 		public event Func<int> GetMaxFreeWorkersEvent;
-		public event Action<Job, int> SetJobWorkerCountEvent;
+		public event Action<Job, int> ChangeJobWorkerCountEvent;
 
 		public event Func<int> GetPopulationCountEvent;
 		public event Func<int> GetHomelessPopulationCountEvent;
+		public event Func<int> GetUnemployedPopulationCountEvent;
 		public event Func<string> GetTimeStringEvent;
 		public event Func<List<BuildingType>> GetBuildingTypesEvent;
 
@@ -154,7 +155,7 @@ namespace scenes.region.ui {
 
 		void UpdateDisplays() {
 			fpsLabel.Text = "fps: " + Engine.GetFramesPerSecond().ToString();
-			populationLabel.Text = $"pop: {GetPopulationCountEvent?.Invoke() ?? -2} ({GetHomelessPopulationCountEvent?.Invoke() ?? -2} homeless)";
+			populationLabel.Text = $"pop: {GetPopulationCount()} ({GetHomelessPopulationCount()} homeless, {GetUnemployedPopulationCount()} unemployed)";
 			DisplayResources();
 			SetGameSpeedLabelText();
 			timeLabel.Text = GetTimeString();
@@ -240,10 +241,11 @@ namespace scenes.region.ui {
 		public ICollection<Job> GetBuildingJobs(BuildingView view) => GetBuildingJobsEvent?.Invoke(view);
 		public void AddJobRequested(Building building, Job job) => AddJobRequestedEvent?.Invoke(building, job);
 		public int GetMaxFreeWorkers() => GetMaxFreeWorkersEvent?.Invoke() ?? -1;
-		public void SetJobWorkerCount(Job job, int workers) => SetJobWorkerCountEvent?.Invoke(job, workers);
+		public void ChangeJobWorkerCount(Job job, int amount) => ChangeJobWorkerCountEvent?.Invoke(job, amount);
 
 		public int GetPopulationCount() => GetPopulationCountEvent?.Invoke() ?? -1;
 		public int GetHomelessPopulationCount() => GetHomelessPopulationCountEvent?.Invoke() ?? -1;
+		public int GetUnemployedPopulationCount() => GetUnemployedPopulationCountEvent?.Invoke() ?? -1;
 		public string GetTimeString() => GetTimeStringEvent?.Invoke() ?? "NEVER";
 
 		public bool PauseRequested() => PauseRequestedEvent?.Invoke() ?? false;

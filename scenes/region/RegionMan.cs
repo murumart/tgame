@@ -32,12 +32,13 @@ namespace scenes.region {
 			ui.GetBuildingJobsEvent += GetBuildingJobs;
 			ui.AddJobRequestedEvent += AddJob;
 			ui.GetMaxFreeWorkersEvent += GetJobMaxWorkers;
-			ui.SetJobWorkerCountEvent += SetJobWorkersTo;
+			ui.ChangeJobWorkerCountEvent += ChangeJobWorkerCount;
 
 			region = GameMan.Singleton.Game.Map.GetRegion(0);
 			regionFaction = GameMan.Singleton.Game.Map.GetFaction(0).GetOwnedRegionFaction(0);
 			ui.GetPopulationCountEvent += regionFaction.GetPopulationCount;
 			ui.GetHomelessPopulationCountEvent += GetHomelessPopulationCount;
+			ui.GetUnemployedPopulationCountEvent += GetUnemployedPopulationCount;
 
 			ui.PauseRequestedEvent += UiTogglePause;
 			ui.GameSpeedChangeRequestedEvent += UiChangeGameSpeed;
@@ -53,7 +54,8 @@ namespace scenes.region {
 		public override void _Notification(int what) {
 			if (what == NotificationPredelete) {
 				ui.GetPopulationCountEvent -= regionFaction.GetPopulationCount;
-				ui.GetPopulationCountEvent -= GetHomelessPopulationCount;
+				ui.GetHomelessPopulationCountEvent -= GetHomelessPopulationCount;
+				ui.GetUnemployedPopulationCountEvent -= GetUnemployedPopulationCount;
 				ui.GetBuildingTypesEvent -= GetBuildingTypes;
 				ui.BuildRequestedEvent -= OnUIBuildingPlaceRequested;
 				ui.GetResourcesEvent -= GetResourceStorage;
@@ -64,7 +66,7 @@ namespace scenes.region {
 				ui.GetBuildingJobsEvent -= GetBuildingJobs;
 				ui.AddJobRequestedEvent -= AddJob;
 				ui.GetMaxFreeWorkersEvent -= GetJobMaxWorkers;
-				ui.SetJobWorkerCountEvent -= SetJobWorkersTo;
+				ui.ChangeJobWorkerCountEvent -= ChangeJobWorkerCount;
 
 			}
 		}
@@ -112,9 +114,9 @@ namespace scenes.region {
 			return list;
 		}
 
-		public int GetHomelessPopulationCount() {
-			return regionFaction.HomelessPopulation.Pop;
-		}
+		public int GetHomelessPopulationCount() => regionFaction.HomelessPopulation.Pop;
+
+		public int GetUnemployedPopulationCount() => regionFaction.UnemployedPopulation.Pop;
 
 		public ResourceStorage GetResourceStorage() {
 			return regionFaction.Resources;
@@ -139,12 +141,10 @@ namespace scenes.region {
 			regionFaction.AddJob(building.Position, job);
 		}
 
-		public int GetJobMaxWorkers() {
-			return 4;
-		}
+		public int GetJobMaxWorkers() => regionFaction.GetFreeWorkers();
 
-		public void SetJobWorkersTo(Job job, int to) {
-			job.GetWorkers().Pop = to;
+		public void ChangeJobWorkerCount(Job job, int by) {
+			regionFaction.EmployWorkers(job, by);
 		}
 
 		public string GetTimeString() => $"{GameMan.Singleton.Game.Time.GetDayHour():00}:{GameMan.Singleton.Game.Time.GetHourMinute():00}";

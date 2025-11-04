@@ -1,5 +1,6 @@
 using Godot;
 using scenes.region.buildings;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -108,6 +109,7 @@ namespace scenes.region.ui {
 		}
 
 		void OpenViewJobScreen() {
+			GD.Print("opening jobs");
 			state = State.VIEW_JOBS;
 			tabs.CurrentTab = (int)state;
 
@@ -115,16 +117,18 @@ namespace scenes.region.ui {
 
 			for (int i = ExtantJobs.Count - 1; i >= 0; i--) {
 				var job = ExtantJobs[i];
+				int sliderMax = ui.GetMaxFreeWorkers() + job.GetWorkers().Pop;
 				var panel = JobInfoPanel.Packed.Instantiate<JobInfoPanel>();
 				panel.AddToTree(jobsList, false, true);
-				panel.Display(job, i, ui.GetMaxFreeWorkers(), JobWorkerCountChanged);
+				panel.Display(job, i, sliderMax, JobWorkerCountChanged);
 			}
 
 			ManageTabButtons();
 		}
 
-		void JobWorkerCountChanged(int ix, int to) {
-			ui.SetJobWorkerCount(ExtantJobs[ix], to);
+		void JobWorkerCountChanged(int ix, int by) {
+			GD.Print("worker count changed by ", by);
+			ui.ChangeJobWorkerCount(ExtantJobs[ix], by);
 			OpenViewJobScreen(); // redo all so that we're good....witht the thing
 		}
 

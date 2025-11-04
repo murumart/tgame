@@ -41,15 +41,17 @@ public partial class Faction {
 
 		readonly ResourceStorage resourceStorage = new(); public ResourceStorage Resources { get => resourceStorage; }
 
-		Population homelessPopulation; public ref Population HomelessPopulation { get => ref homelessPopulation; }
+		Population homelessPopulation; public ref Population HomelessPopulation => ref homelessPopulation;
+		Population unemployedPopulation; public ref Population UnemployedPopulation => ref unemployedPopulation;
 
 
 		public RegionFaction(Region region, Faction faction) {
 			this.region = region;
 			this.faction = faction;
-			homelessPopulation = new Population(100);
-			homelessPopulation.Pop = 10;
-			// ASSUMING these are wood rock and ... a third thing initially...
+			homelessPopulation = new(100) { Pop = 10 };
+			unemployedPopulation = new(100) { Pop = 10 };
+
+			// ASSUMING these are wood rock and ... a third thing initially... TODO make sensical
 			resourceStorage.IncreaseCapacity(Registry.Resources.GetAsset(0), 30);
 			resourceStorage.IncreaseCapacity(Registry.Resources.GetAsset(1), 30);
 			resourceStorage.IncreaseCapacity(Registry.Resources.GetAsset(2), 30);
@@ -91,6 +93,20 @@ public partial class Faction {
 		public IEnumerable<Job> GetJobs(Vector2I position) {
 			jobsByPosition.TryGetValue(position, out HashSet<Job> gottenJobs);
 			return gottenJobs.Where<Job>((j) => !j.Internal);
+		}
+
+		public int GetFreeWorkers() => unemployedPopulation.Pop;
+
+		public bool CanEmployWorkers(Job job, int amount) {
+			Debug.Assert(jobs.Contains(job), "This isn't my job...");
+			return UnemployedPopulation.CanTransfer(ref job.GetWorkers(), amount);
+		}
+
+		public void EmployWorkers(Job job, int amount) {
+			Debug.Assert(jobs.Contains(job), "This isn't my job...");
+			Debug.Assert(CanEmployWorkers(job, amount), "Can't employ these workers!");
+
+			UnemployedPopulation.Transfer(ref job.GetWorkers(), amount);
 		}
 
 		public Building PlaceBuilding(IBuildingType type, Vector2I position) {

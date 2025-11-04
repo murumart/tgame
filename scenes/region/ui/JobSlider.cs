@@ -6,7 +6,6 @@ namespace scenes.region.ui {
 	public partial class JobSlider : VBoxContainer {
 
 		event Action<int, int> ValueChangedCallbackEvent;
-		void ValueChangedCallback(int ix, int to) => ValueChangedCallbackEvent?.Invoke(ix, to);
 
 		public static readonly PackedScene Packed = GD.Load<PackedScene>("res://scenes/region/ui/job_slider.tscn");
 
@@ -25,12 +24,15 @@ namespace scenes.region.ui {
 
 		public override void _Ready() {
 			Slider.ValueChanged += ValueChanged;
+			Slider.DragEnded += DragEnded;
 			_ready = true;
 		}
 
 		public override void _ExitTree() {
 			_ready = false;
 			Slider.ValueChanged -= ValueChanged;
+			Slider.DragEnded -= DragEnded;
+
 			ValueChangedCallbackEvent -= valueChangedCallback;
 		}
 
@@ -42,6 +44,7 @@ namespace scenes.region.ui {
 			NameLabel.Text = name;
 			Slider.MaxValue = sliderMax;
 			Slider.Value = jobWorkers;
+			lastValue = (int)Slider.Value;
 			this.unitSymbol = unitSymbol;
 		}
 
@@ -56,8 +59,21 @@ namespace scenes.region.ui {
 			int val = (int)to;
 
 			MoneyLabel.Text = "" + val + unitSymbol;
-			ValueChangedCallback(jobIx, val);
+			//ValueChangedCallback(jobIx, val);
 		}
+
+		int lastValue = 0;
+		public void DragEnded(bool valueChanged) {
+			if (!valueChanged) return;
+			int val = (int)Slider.Value;
+			GD.Print($"val {val} last {lastValue}");
+			ValueChangedCallback(jobIx, val - lastValue);
+			lastValue = val;
+		}
+
+		void ValueChangedCallback(int ix, int to) => ValueChangedCallbackEvent?.Invoke(ix, to);
+
+
 	}
 
 }
