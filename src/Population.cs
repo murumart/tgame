@@ -3,7 +3,7 @@ using System;
 public struct Population {
 
 	private int pop;
-	public int Pop {
+	public int Amount {
 		readonly get => pop;
 		set {
 			Debug.Assert(value <= MaxPop, $"People overflow ({value} vs {MaxPop})");
@@ -20,11 +20,11 @@ public struct Population {
 	}
 
 	public Population(ref Population population, int maxPop) : this(maxPop) {
-		Pop = population.Pop;
+		Amount = population.Amount;
 	}
 
 	public readonly bool CanAdd(int amt) {
-		return Pop + amt <= MaxPop && Pop + amt >= 0;
+		return Amount + amt <= MaxPop && Amount + amt >= 0;
 	}
 
 	public readonly bool CanTransfer(ref Population other, int amt) {
@@ -33,10 +33,10 @@ public struct Population {
 	}
 
 	public Population Transfer(ref Population dest, int maxAmt) {
-		int amt = Math.Min(Pop, maxAmt);
-		amt = Math.Min(dest.MaxPop - dest.Pop, amt);
+		int amt = Math.Min(Amount, maxAmt);
+		amt = Math.Min(dest.MaxPop - dest.Amount, amt);
 		pop -= amt;
-		dest.Pop += amt;
+		dest.Amount += amt;
 		return this;
 	}
 

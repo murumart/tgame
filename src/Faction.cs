@@ -48,8 +48,8 @@ public partial class Faction {
 		public RegionFaction(Region region, Faction faction) {
 			this.region = region;
 			this.faction = faction;
-			homelessPopulation = new(100) { Pop = 10 };
-			unemployedPopulation = new(100) { Pop = 10 };
+			homelessPopulation = new(100) { Amount = 10 };
+			unemployedPopulation = new(100) { Amount = 10 };
 
 			// ASSUMING these are wood rock and ... a third thing initially... TODO make sensical
 			resourceStorage.IncreaseCapacity(Registry.Resources.GetAsset(0), 30);
@@ -60,8 +60,9 @@ public partial class Faction {
 			resourceStorage.AddResource(new(Registry.Resources.GetAsset(2), 25));
 
 			var housing = Registry.Buildings.GetAsset(0);
+
 			var starterHouse = PlacePrebuiltBuilding(housing, new(0, 0));
-			starterHouse.ProgressBuild((int)(housing.GetHoursToConstruct() * 60));
+			starterHouse.ProgressBuild((int)(housing.GetHoursToConstruct() * 60), new AnonBuilderJob());
 		}
 
 		public void PassTime(TimeT minutes) {
@@ -72,9 +73,9 @@ public partial class Faction {
 		}
 
 		public int GetPopulationCount() {
-			int count = homelessPopulation.Pop;
+			int count = homelessPopulation.Amount;
 			foreach (var b in buildings.Values) {
-				count += b.Population.Pop;
+				count += b.Population.Amount;
 			}
 			return count;
 		}
@@ -95,7 +96,7 @@ public partial class Faction {
 			return gottenJobs.Where<Job>((j) => !j.Internal);
 		}
 
-		public int GetFreeWorkers() => unemployedPopulation.Pop;
+		public int GetFreeWorkers() => unemployedPopulation.Amount;
 
 		public bool CanEmployWorkers(Job job, int amount) {
 			Debug.Assert(jobs.Contains(job), "This isn't my job...");
@@ -141,6 +142,12 @@ public partial class Faction {
 		}
 
 		public ICollection<Building> GetBuildings() => buildings.Values;
+
+		public bool HasBuilding(Vector2I at) => buildings.ContainsKey(at);
+
+		public Building GetBuilding(Vector2I at) => buildings.GetValueOrDefault(at, null);
+
+		private class AnonBuilderJob : IConstructBuildingJob { public float GetProgressPerMinute() => 1f; }
 
 	}
 

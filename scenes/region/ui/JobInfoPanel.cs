@@ -25,7 +25,7 @@ namespace scenes.region.ui {
 			if (job.NeedsWorkers) {
 				var slider = JobSlider.Instantiate();
 				informationList.AddChild(slider);
-				slider.Setup(workersSelected, jobIndex, job.GetWorkers().Pop, "workers", sliderMax, "");
+				slider.Setup(workersSelected, jobIndex, job.GetWorkers().Amount, "workers", sliderMax, "");
 			}
 
 			titleLabel.Text = job.Title;

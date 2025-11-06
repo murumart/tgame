@@ -30,10 +30,10 @@ namespace scenes.region.ui {
 			infoStr.Clear();
 			var bld = display.Building;
 			if (!display.Building.IsConstructed) {
-				infoStr.Append("Construction progress: ").Append("nithign").Append('%');
+				infoStr.Append("Construction progress: ").Append((int)(display.Building.GetBuildProgress() * 100)).Append('%');
 			} else {
 				if (bld.Type.GetPopulationCapacity() > 0) {
-					infoStr.Append("Residents: ").Append(bld.Population.Pop).Append('/').Append(bld.Population.MaxPop);
+					infoStr.Append("Residents: ").Append(bld.Population.Amount).Append('/').Append(bld.Population.MaxPop);
 				}
 			}
 			infoLabel.Text = infoStr.ToString();

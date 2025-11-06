@@ -12,11 +12,13 @@ namespace scenes.region.ui {
 
 		// one big script to rule all region ui interactions
 
-		public event Action<IBuildingType, Vector2I> BuildRequestedEvent;
+		public event Action<Vector2I> MapClickEvent;
+
+		public event Action<IBuildingType, Vector2I> RequestBuildEvent;
 		public event Func<IBuildingType, bool> GetCanBuildEvent;
 		public event Func<ResourceStorage> GetResourcesEvent;
 
-		public event Func<BuildingView, ICollection<Job>> GetBuildingJobsEvent;
+		public event Func<Building, ICollection<Job>> GetBuildingJobsEvent;
 		public event Action<Building, Job> AddJobRequestedEvent;
 		public event Func<int> GetMaxFreeWorkersEvent;
 		public event Action<Job, int> ChangeJobWorkerCountEvent;
@@ -175,7 +177,10 @@ namespace scenes.region.ui {
 		public void OnLeftMouseClick(Vector2 position, Vector2I tilePosition) {
 			switch (state) {
 				case State.PLACING_BUILD:
-					buildingList.PlacingBuild(tilePosition);
+					buildingList.RequestBuild(tilePosition);
+					break;
+				case State.IDLE:
+					MapClick(tilePosition);
 					break;
 				default:
 					break;
@@ -195,11 +200,10 @@ namespace scenes.region.ui {
 			tilePosLabel.Text = tilePosition.ToString();
 		}
 
-		public void OnBuildingClicked(BuildingView buildingView) {
-			if (state != State.IDLE) return;
+		public void OnBuildingClicked(Building building) {
+			Debug.Assert(state == State.IDLE, "Can't click on buildings outside of idle state");
 			state = State.JOBS_MENU;
-			var jobs = GetBuildingJobs(buildingView);
-			jobsList.Open(buildingView);
+			jobsList.Open(building);
 		}
 
 		void OnStateChanged(State old, State current) {
@@ -233,12 +237,14 @@ namespace scenes.region.ui {
 			buildingList.Reset();
 		}
 
-		public void BuildRequested(IBuildingType a, Vector2I b) => BuildRequestedEvent?.Invoke(a, b);
+		public void MapClick(Vector2I tile) => MapClickEvent?.Invoke(tile);
+
+		public void RequestBuild(IBuildingType a, Vector2I b) => RequestBuildEvent?.Invoke(a, b);
 		public bool GetCanBuild(IBuildingType btype) => GetCanBuildEvent?.Invoke(btype) ?? false;
 		public List<BuildingType> GetBuildingTypes() => GetBuildingTypesEvent?.Invoke();
 		public ResourceStorage GetResources() => GetResourcesEvent?.Invoke();
 
-		public ICollection<Job> GetBuildingJobs(BuildingView view) => GetBuildingJobsEvent?.Invoke(view);
+		public ICollection<Job> GetBuildingJobs(Building building) => GetBuildingJobsEvent?.Invoke(building);
 		public void AddJobRequested(Building building, Job job) => AddJobRequestedEvent?.Invoke(building, job);
 		public int GetMaxFreeWorkers() => GetMaxFreeWorkersEvent?.Invoke() ?? -1;
 		public void ChangeJobWorkerCount(Job job, int amount) => ChangeJobWorkerCountEvent?.Invoke(job, amount);

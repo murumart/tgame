@@ -92,7 +92,7 @@ public class AbsorbFromHomelessPopulationJob : Job {
 
 	TimeT remainderPeopleTransferTime;
 	public override void PassTime(TimeT minutes) {
-		if (building.IsConstructed && faction.HomelessPopulation.Pop > 0) {
+		if (building.IsConstructed && faction.HomelessPopulation.Amount > 0) {
 			/* if (homelessPopulation.CanTransfer(ref building.Population, 1)) {
 				homelessPopulation.Transfer(ref building.Population, 1);
 			} */
@@ -125,7 +125,13 @@ public class AbsorbFromHomelessPopulationJob : Job {
 
 }
 
-public class ConstructBuildingJob : Job {
+public interface IConstructBuildingJob {
+
+	float GetProgressPerMinute();
+
+}
+
+public class ConstructBuildingJob : Job, IConstructBuildingJob {
 
 	public override string Title => "Construct Building";
 
@@ -160,13 +166,16 @@ public class ConstructBuildingJob : Job {
 
 	public override void PassTime(TimeT minutes) {
 		if (building.IsConstructed) return;
-		building.ProgressBuild(minutes * workers.Pop);
+		building.ProgressBuild(minutes, this);
 	}
 
 	public override Job Copy() {
 		return new ConstructBuildingJob(requirements, building);
 	}
 
+	public float GetProgressPerMinute() {
+		return workers.Amount;
+	}
 }
 
 public class FishByHandJob : Job {

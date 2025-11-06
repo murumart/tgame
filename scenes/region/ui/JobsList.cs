@@ -27,13 +27,13 @@ namespace scenes.region.ui {
 		[Export] Button addJobConfirmButton;
 
 		State state;
-		BuildingView buildingView;
+		Building myBuilding;
 
 		List<Job> _extantJobs;
 		List<Job> ExtantJobs {
 			get {
-				Debug.Assert(buildingView != null, "Please open the menu first!!! before getting these data");
-				_extantJobs ??= ui.GetBuildingJobs(buildingView).ToList(); ;
+				Debug.Assert(myBuilding != null, "Please open the menu first!!! before getting these data");
+				_extantJobs ??= ui.GetBuildingJobs(myBuilding).ToList(); ;
 				return _extantJobs;
 			}
 		}
@@ -41,8 +41,8 @@ namespace scenes.region.ui {
 		List<Job> _availableJobs;
 		List<Job> AvailableJobs {
 			get {
-				Debug.Assert(buildingView != null, "Please open the menu first!!! before getting these data");
-				_availableJobs ??= buildingView.Building.Type.GetAvailableJobs().ToList();
+				Debug.Assert(myBuilding != null, "Please open the menu first!!! before getting these data");
+				_availableJobs ??= myBuilding.Type.GetAvailableJobs().ToList();
 				return _availableJobs;
 			}
 		}
@@ -60,12 +60,12 @@ namespace scenes.region.ui {
 			addJobDescription.Text = "";
 		}
 
-		public void Open(BuildingView buildingView) {
-			this.buildingView = buildingView;
+		public void Open(Building myBuilding) {
+			this.myBuilding = myBuilding;
 
-			buildingTitle.Text = "Jobs of " + buildingView.Building.Type.GetName();
+			buildingTitle.Text = "Jobs of " + myBuilding.Type.GetName();
 
-			if (ExtantJobs.Count == 0 && AvailableJobs.Count != 0 && buildingView.Building.IsConstructed) OpenAddJobScreen();
+			if (ExtantJobs.Count == 0 && AvailableJobs.Count != 0 && myBuilding.IsConstructed) OpenAddJobScreen();
 			else OpenViewJobScreen();
 
 			CallDeferred("show");
@@ -75,7 +75,7 @@ namespace scenes.region.ui {
 			Hide();
 			_extantJobs = null;
 			_availableJobs = null;
-			buildingView = null;
+			myBuilding = null;
 			selectedAddJob = -1;
 			addJobConfirmButton.Disabled = true;
 
@@ -117,7 +117,7 @@ namespace scenes.region.ui {
 
 			for (int i = ExtantJobs.Count - 1; i >= 0; i--) {
 				var job = ExtantJobs[i];
-				int sliderMax = ui.GetMaxFreeWorkers() + job.GetWorkers().Pop;
+				int sliderMax = ui.GetMaxFreeWorkers() + job.GetWorkers().Amount;
 				var panel = JobInfoPanel.Packed.Instantiate<JobInfoPanel>();
 				panel.AddToTree(jobsList, false, true);
 				panel.Display(job, i, sliderMax, JobWorkerCountChanged);
@@ -139,7 +139,7 @@ namespace scenes.region.ui {
 		}
 
 		void AddJobConfirmed(long ix) {
-			ui.AddJobRequested(buildingView.Building, AvailableJobs[(int)ix].Copy());
+			ui.AddJobRequested(myBuilding, AvailableJobs[(int)ix].Copy());
 			selectedAddJob = -1;
 			_extantJobs = null;
 			OpenViewJobScreen();
@@ -147,13 +147,13 @@ namespace scenes.region.ui {
 
 		void AddJobConfirmed() {
 			Debug.Assert(selectedAddJob != -1, "Please select a job before confirming!!");
-			Debug.Assert(buildingView.Building.IsConstructed, "Building needs to be constructed before adding job!!!");
+			Debug.Assert(myBuilding.IsConstructed, "Building needs to be constructed before adding job!!!");
 			AddJobConfirmed(selectedAddJob);
 		}
 
 		void ManageTabButtons() {
 			viewJobTabButton.Disabled = ExtantJobs.Count == 0;
-			addJobTabButton.Disabled = AvailableJobs.Count == 0 || !buildingView.Building.IsConstructed;
+			addJobTabButton.Disabled = AvailableJobs.Count == 0 || !myBuilding.IsConstructed;
 
 			if (state == State.VIEW_JOBS) viewJobTabButton.Disabled = true;
 			if (state == State.ADD_JOBS) addJobTabButton.Disabled = true;

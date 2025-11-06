@@ -85,8 +85,8 @@ public partial class BuildingList : PanelContainer {
 		selectedBuildingScene.Modulate = new Color(selectedBuildingScene.Modulate, 0.67f);
 	}
 
-	public void PlacingBuild(Vector2I tpos) {
-		ui.BuildRequested(selectedBuildingType, tpos);
+	public void RequestBuild(Vector2I tpos) {
+		ui.RequestBuild(selectedBuildingType, tpos);
 	}
 
 	public void Update() {

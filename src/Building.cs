@@ -10,7 +10,7 @@ public partial class Building : MapObject, ITimePassing {
 	readonly IBuildingType type; public IBuildingType Type { get => type; }
 
 	Population population; public ref Population Population => ref population;
-	uint constructionProgress; // in minutes
+	float constructionProgress; // in minutes
 	public bool IsConstructed => constructionProgress >= type.GetHoursToConstruct() * 60;
 	public ConstructBuildingJob ConstructionJob;
 
@@ -20,9 +20,13 @@ public partial class Building : MapObject, ITimePassing {
 		this.population = new Population(type.GetPopulationCapacity());
 	}
 
-	public void ProgressBuild(TimeT minutes) {
+	public void ProgressBuild(TimeT minutes, IConstructBuildingJob job) {
 		Debug.Assert(!IsConstructed, "Don't ProgressBuild building that's ready...");
-		constructionProgress += (uint)minutes;
+		constructionProgress += (uint)minutes * job.GetProgressPerMinute();
+	}
+
+	public float GetBuildProgress() {
+		return (constructionProgress / 60) / type.GetHoursToConstruct();
 	}
 
 	public override void PassTime(TimeT minutes) { }

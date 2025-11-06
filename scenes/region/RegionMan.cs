@@ -21,10 +21,10 @@ namespace scenes.region {
 		Region region;
 		RegionFaction regionFaction;
 
-		// setup
 
-		public override void _Ready() {
-			ui.BuildRequestedEvent += OnUIBuildingPlaceRequested;
+		public override void _Ready() { // setup
+			ui.MapClickEvent += MapClick;
+			ui.RequestBuildEvent += OnUIBuildingPlaceRequested;
 			ui.GetBuildingTypesEvent += GetBuildingTypes;
 			ui.GetResourcesEvent += GetResourceStorage;
 			ui.GetCanBuildEvent += CanBuild;
@@ -51,13 +51,14 @@ namespace scenes.region {
 			}
 		}
 
-		public override void _Notification(int what) {
+		public override void _Notification(int what) { // teardown
 			if (what == NotificationPredelete) {
+				ui.MapClickEvent -= MapClick;
 				ui.GetPopulationCountEvent -= regionFaction.GetPopulationCount;
 				ui.GetHomelessPopulationCountEvent -= GetHomelessPopulationCount;
 				ui.GetUnemployedPopulationCountEvent -= GetUnemployedPopulationCount;
 				ui.GetBuildingTypesEvent -= GetBuildingTypes;
-				ui.BuildRequestedEvent -= OnUIBuildingPlaceRequested;
+				ui.RequestBuildEvent -= OnUIBuildingPlaceRequested;
 				ui.GetResourcesEvent -= GetResourceStorage;
 				ui.GetCanBuildEvent -= CanBuild;
 				ui.GetTimeStringEvent -= GetDateTimeString;
@@ -67,7 +68,14 @@ namespace scenes.region {
 				ui.AddJobRequestedEvent -= AddJob;
 				ui.GetMaxFreeWorkersEvent -= GetJobMaxWorkers;
 				ui.ChangeJobWorkerCountEvent -= ChangeJobWorkerCount;
+			}
+		}
 
+		// map clicks
+
+		void MapClick(Vector2I tile) {
+			if (regionFaction.HasBuilding(tile)) {
+				ui.OnBuildingClicked(regionFaction.GetBuilding(tile));
 			}
 		}
 
@@ -99,7 +107,6 @@ namespace scenes.region {
 			view.Position = Camera.TilePosToWorldPos(tilepos);
 			view.Modulate = new Color(1f, 1f, 1f);
 			view.Initialise(building);
-			view.BuildingClicked += ui.OnBuildingClicked;
 		}
 
 		private void OnUIBuildingPlaceRequested(IBuildingType type, Vector2I tilePosition) {
@@ -114,16 +121,25 @@ namespace scenes.region {
 			return list;
 		}
 
-		public int GetHomelessPopulationCount() => regionFaction.HomelessPopulation.Pop;
+		// get information (for UI)
 
-		public int GetUnemployedPopulationCount() => regionFaction.UnemployedPopulation.Pop;
+		public int GetHomelessPopulationCount() => regionFaction.HomelessPopulation.Amount;
+
+		public int GetUnemployedPopulationCount() => regionFaction.UnemployedPopulation.Amount;
 
 		public ResourceStorage GetResourceStorage() {
 			return regionFaction.Resources;
 		}
 
-		public void UiChangeGameSpeed(float to) {
-			GameMan.Singleton.MultiplyGameSpeed(GameMan.GameSpeedChanger.UI, to);
+		public int GetJobMaxWorkers() => regionFaction.GetFreeWorkers();
+
+		public string GetTimeString() => $"{GameMan.Singleton.Game.Time.GetDayHour():00}:{GameMan.Singleton.Game.Time.GetHourMinute():00}";
+		public string GetDateTimeString() => $"{GetTimeString()} {GameMan.Singleton.Game.Time.GetMonthDay():00}/{GameMan.Singleton.Game.Time.GetMonth() + 1:00}";
+
+		// UI action invokes
+
+		public void UiChangeGameSpeed(float by) {
+			GameMan.Singleton.MultiplyGameSpeed(GameMan.GameSpeedChanger.UI, by);
 		}
 
 		public bool UiTogglePause() {
@@ -131,24 +147,19 @@ namespace scenes.region {
 			return GameMan.Singleton.IsPaused;
 		}
 
-		public HashSet<Job> GetBuildingJobs(BuildingView view) {
-			var pos = view.Building.Position;
-			var jobs = regionFaction.GetJobs(pos);
-			return jobs.ToHashSet<Job>();
-		}
-
 		public void AddJob(Building building, Job job) {
 			regionFaction.AddJob(building.Position, job);
 		}
 
-		public int GetJobMaxWorkers() => regionFaction.GetFreeWorkers();
+		public HashSet<Job> GetBuildingJobs(Building building) {
+			var pos = building.Position;
+			var jobs = regionFaction.GetJobs(pos);
+			return jobs.ToHashSet<Job>();
+		}
 
 		public void ChangeJobWorkerCount(Job job, int by) {
 			regionFaction.EmployWorkers(job, by);
 		}
-
-		public string GetTimeString() => $"{GameMan.Singleton.Game.Time.GetDayHour():00}:{GameMan.Singleton.Game.Time.GetHourMinute():00}";
-		public string GetDateTimeString() => $"{GetTimeString()} {GameMan.Singleton.Game.Time.GetMonthDay():00}/{GameMan.Singleton.Game.Time.GetMonth() + 1:00}";
 
 	}
 
