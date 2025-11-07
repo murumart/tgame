@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Text;
 using Godot;
 using static Faction;
@@ -8,28 +7,32 @@ using static Faction;
 
 // abstract jobs
 
-public abstract class Job : ITimePassing {
+public abstract class Job {
 
-	public virtual string Title => "Some kind of job???";
+	public virtual string Title => "Some king of job???";
 	public virtual bool NeedsWorkers => true;
-	public virtual bool Internal => false;
+	public virtual bool IsInternal => false;
 
-
-	public abstract Job Copy();
-
-	public abstract bool CanCreateJob(RegionFaction ctxFaction);
 
 	/// <summary>
 	/// Call before adding job. Do things like consume resources here.
 	/// </summary>
-	/// <param name="ctxFaction"></param>
+	/// <param name="ctxFaction">The faction that will own this job</param>
 	public abstract void Initialise(RegionFaction ctxFaction);
+
+	public abstract Job Copy();
 
 	/// <summary>
 	/// Call before removing job. Can uninitialise things here.
+	/// Workers get removed in RegionFaction.
 	/// </summary>
-	/// <param name="ctxFaction"></param>
-	public abstract void Cancel(RegionFaction ctxFaction);
+	/// <param name="ctxFaction">The faction owning this job</param>
+	public abstract void Deinitialise(RegionFaction ctxFaction);
+
+	public abstract void PassTime(TimeT minutes);
+
+	public virtual bool CanInitialise(RegionFaction ctxFaction) => true;
+	public virtual void CheckDone(RegionFaction regionFaction) { }
 
 	// sandbox methods vv
 
@@ -68,30 +71,42 @@ public abstract class Job : ITimePassing {
 		return sb.ToString();
 	}
 
-	public abstract void PassTime(TimeT minutes);
+
 }
 
 public class JobBox : Job {
 
-	private Job job;
+	private readonly Job job;
+	private readonly MapObject attachment;
 	private Population jobWorkersCopy;
 
 	public override ref Population Workers => ref jobWorkersCopy;
 	public override string Title => job.Title;
 	public override bool NeedsWorkers => job.NeedsWorkers;
 
+	public bool IsDeletable => !job.IsInternal;
 
 	public JobBox(Job job) {
 		this.job = job;
 		this.jobWorkersCopy = job.Workers;
 	}
 
+	public JobBox(Job job, MapObject mapObject) : this(job) {
+		this.attachment = mapObject;
+	}
+
 	public Job Debox() => job;
+	public Vector2I Position {
+		get {
+			Debug.Assert(attachment != null, $"Can't get position of job with no building attachment {job}");
+			return attachment.Position;
+		}
+	}
 
 	public override string GetResourceRequirementDescription() => job.GetResourceRequirementDescription();
 
-	public override void Cancel(RegionFaction ctxFaction) => throw new System.NotImplementedException("Don't do these things on a boxed job!!");
-	public override bool CanCreateJob(RegionFaction ctxFaction) => throw new System.NotImplementedException("Don't do these things on a boxed job!!");
+	public override void Deinitialise(RegionFaction ctxFaction) => throw new System.NotImplementedException("Don't do these things on a boxed job!!");
+	public override bool CanInitialise(RegionFaction ctxFaction) => throw new System.NotImplementedException("Pls Unbox");
 	public override Job Copy() => throw new System.NotImplementedException("Don't do these things on a boxed job!!");
 	public override void Initialise(RegionFaction ctxFaction) => throw new System.NotImplementedException("Don't do these things on a boxed job!!");
 	public override void PassTime(TimeT minutes) => throw new System.NotImplementedException("Don't do these things on a boxed job!!");
@@ -102,29 +117,29 @@ public class JobBox : Job {
 
 public class AbsorbFromHomelessPopulationJob : Job {
 
-	public override bool Internal => true;
+	public override bool IsInternal => true;
 	public override bool NeedsWorkers => false;
+	public bool Paused { get; set; }
 
 	readonly Building building;
-	readonly RegionFaction faction;
+	RegionFaction regionFaction;
 
 
-	public AbsorbFromHomelessPopulationJob(Building building, RegionFaction fac) {
+	public AbsorbFromHomelessPopulationJob(Building building) {
 		this.building = building;
-		this.faction = fac;
 	}
 
 	public void Finish() { }
 
 	TimeT remainderPeopleTransferTime;
 	public override void PassTime(TimeT minutes) {
-		if (building.IsConstructed && faction.HomelessPopulation.Amount > 0) {
+		if (!Paused && building.IsConstructed && regionFaction.HomelessPopulation.Amount > 0) {
 			/* if (homelessPopulation.CanTransfer(ref building.Population, 1)) {
 				homelessPopulation.Transfer(ref building.Population, 1);
 			} */
 			TimeT peopleTransferTime = minutes + remainderPeopleTransferTime;
-			while (peopleTransferTime > 6 && faction.HomelessPopulation.CanTransfer(ref building.Population, 1)) {
-				faction.HomelessPopulation.Transfer(ref building.Population, 1);
+			while (peopleTransferTime > 6 && regionFaction.HomelessPopulation.CanTransfer(ref building.Population, 1)) {
+				regionFaction.HomelessPopulation.Transfer(ref building.Population, 1);
 				peopleTransferTime -= 6;
 			}
 			remainderPeopleTransferTime = peopleTransferTime;
@@ -133,21 +148,15 @@ public class AbsorbFromHomelessPopulationJob : Job {
 		}
 	}
 
-	public override bool CanCreateJob(RegionFaction ctxFaction) {
-		throw new System.NotImplementedException("You can make this job anytime you want ;-))");
-	}
+	public override bool CanInitialise(RegionFaction ctxFaction) => building != null && ctxFaction != null;
 
 	public override void Initialise(RegionFaction ctxFaction) {
-		throw new System.NotImplementedException("You can make this job anytime you want ;-))");
+		this.regionFaction = ctxFaction;
 	}
 
-	public override void Cancel(RegionFaction ctxFaction) {
-		throw new System.NotImplementedException("This doesn't do anything on this job class");
-	}
+	public override void Deinitialise(RegionFaction ctxFaction) => throw new System.NotImplementedException("no..? pause this instead");
 
-	public override Job Copy() {
-		throw new System.NotImplementedException("You shouldn't have to copy this...");
-	}
+	public override Job Copy() => throw new System.NotImplementedException("You shouldn't have to copy this...");
 
 }
 
@@ -174,25 +183,36 @@ public class ConstructBuildingJob : Job, IConstructBuildingJob {
 		workers = new(35);
 	}
 
-	public override bool CanCreateJob(RegionFaction ctxFaction) => ctxFaction.Resources.HasEnoughAll(GetRequirements());
+	public override bool CanInitialise(RegionFaction ctxFaction) => ctxFaction.Resources.HasEnoughAll(GetRequirements());
 
 	public override void Initialise(RegionFaction ctxFaction) {
-		Debug.Assert(CanCreateJob(ctxFaction), "Job cannot be created!!");
+		Debug.Assert(CanInitialise(ctxFaction), "Job cannot be initialised!!");
 		ConsumeRequirements(requirements, ctxFaction);
 	}
 
-	public override void Cancel(RegionFaction ctxFaction) {
-		RefundRequirements(requirements, ctxFaction);
-		requirements.Clear();
+	public override void Deinitialise(RegionFaction ctxFaction) {
+		if (building.IsConstructed) {
+			RefundRequirements(requirements, ctxFaction);
+			requirements.Clear();
+		} else {
+			// TODO remove building if not constructed
+
+		}
 	}
 
 	public override List<ResourceBundle> GetRequirements() => requirements;
 
-
-
 	public override void PassTime(TimeT minutes) {
-		if (building.IsConstructed) return;
+		if (building.IsConstructed) {
+			return;
+		}
 		building.ProgressBuild(minutes, this);
+	}
+
+	public override void CheckDone(RegionFaction regionFaction) {
+		if (building.IsConstructed) {
+			regionFaction.RemoveJob(building.Position, this);
+		}
 	}
 
 	public override Job Copy() {
@@ -202,6 +222,7 @@ public class ConstructBuildingJob : Job, IConstructBuildingJob {
 	public float GetProgressPerMinute() {
 		return workers.Amount;
 	}
+
 }
 
 public class FishByHandJob : Job {
@@ -217,11 +238,9 @@ public class FishByHandJob : Job {
 		workers = new(5);
 	}
 
-	public override void Cancel(RegionFaction ctxFaction) {
-		throw new System.NotImplementedException();
-	}
+	public override void Deinitialise(RegionFaction ctxFaction) { }
 
-	public override bool CanCreateJob(RegionFaction ctxFaction) => true;
+	public override bool CanInitialise(RegionFaction ctxFaction) => true;
 
 	public override Job Copy() => new FishByHandJob();
 

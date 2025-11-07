@@ -6,7 +6,7 @@
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_cgm35"]
 content_margin_left = 2.0
 
-[node name="JobInfopanel" type="HBoxContainer" node_paths=PackedStringArray("infoLabel", "titleLabel", "sidebar", "topbar", "informationList")]
+[node name="JobInfopanel" type="HBoxContainer" node_paths=PackedStringArray("infoLabel", "titleLabel", "sidebar", "topbar", "informationList", "DeleteJobButton")]
 offset_right = 107.0
 offset_bottom = 135.0
 size_flags_horizontal = 3
@@ -17,18 +17,20 @@ titleLabel = NodePath("VBoxContainer2/TopBar/TopBar/Label")
 sidebar = NodePath("SideButtons")
 topbar = NodePath("VBoxContainer2/TopBar")
 informationList = NodePath("VBoxContainer2/JobInfopanel/MarginContainer/InformationList")
+DeleteJobButton = NodePath("SideButtons/XButton")
 
 [node name="SideButtons" type="VBoxContainer" parent="."]
 layout_mode = 2
 theme_override_constants/separation = 1
 
 [node name="Button" type="Button" parent="SideButtons"]
+visible = false
 layout_mode = 2
 focus_mode = 0
 theme_override_font_sizes/font_size = 4
 text = "<-"
 
-[node name="Button2" type="Button" parent="SideButtons"]
+[node name="XButton" type="Button" parent="SideButtons"]
 layout_mode = 2
 focus_mode = 0
 theme_override_font_sizes/font_size = 4
@@ -53,6 +55,7 @@ text = "Work Details"
 label_settings = ExtResource("2_4q80a")
 
 [node name="Button" type="Button" parent="VBoxContainer2/TopBar/TopBar"]
+visible = false
 layout_mode = 2
 focus_mode = 0
 theme_override_font_sizes/font_size = 4

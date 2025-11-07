@@ -26,6 +26,7 @@ namespace scenes.region.ui {
 		[Export] RichTextLabel addJobDescription;
 		[Export] Button addJobConfirmButton;
 
+		bool attachedToBuilding = false;
 		State state;
 		Building myBuilding;
 
@@ -33,7 +34,12 @@ namespace scenes.region.ui {
 		// an alternative is to not do that and set the _* lists to null to regenerate them on next menu open.
 
 		//List<JobBox> _extantJobs;
-		List<JobBox> ExtantJobs => ui.GetBuildingJobs(myBuilding).ToList();
+		List<JobBox> ExtantJobs {
+			get {
+				if (attachedToBuilding) return ui.GetBuildingJobs(myBuilding).ToList();
+				return ui.GetJobs().ToList();
+			}
+		}
 		//{
 		//	get {
 		//		Debug.Assert(myBuilding != null, "Please open the menu first!!! before getting these data");
@@ -43,7 +49,12 @@ namespace scenes.region.ui {
 		//}
 
 		//List<JobBox> _availableJobs;
-		List<JobBox> AvailableJobs => myBuilding.Type.GetAvailableJobs().ToList();
+		List<Job> AvailableJobs {
+			get {
+				if (attachedToBuilding) return myBuilding.Type.GetAvailableJobs().ToList();
+				return new();
+			}
+		}
 		//{
 		//	get {
 		//		Debug.Assert(myBuilding != null, "Please open the menu first!!! before getting these data");
@@ -52,7 +63,6 @@ namespace scenes.region.ui {
 		//	}
 		//}
 		int selectedAddJob = -1;
-
 
 
 		public override void _Ready() {
@@ -65,15 +75,20 @@ namespace scenes.region.ui {
 			addJobDescription.Text = "";
 		}
 
-		public void Open(Building myBuilding) {
-			this.myBuilding = myBuilding;
-
-			buildingTitle.Text = "Jobs of " + myBuilding.Type.GetName();
-
+		public void Open() {
 			if (ExtantJobs.Count == 0 && AvailableJobs.Count != 0 && myBuilding.IsConstructed) OpenAddJobScreen();
 			else OpenViewJobScreen();
 
 			CallDeferred("show");
+		}
+
+		public void Open(Building myBuilding) {
+			attachedToBuilding = true;
+			this.myBuilding = myBuilding;
+
+			buildingTitle.Text = "Jobs of " + myBuilding.Type.GetName();
+
+			Open();
 		}
 
 		public void Close() {
@@ -121,11 +136,12 @@ namespace scenes.region.ui {
 			foreach (var node in jobsList.GetChildren()) node.QueueFree();
 
 			for (int i = ExtantJobs.Count - 1; i >= 0; i--) {
-				var job = ExtantJobs[i];
-				int sliderMax = Math.Min(ui.GetMaxFreeWorkers() + job.Workers.Amount, job.Workers.MaxPop);
+				var box = ExtantJobs[i];
+				int sliderMax = Math.Min(ui.GetMaxFreeWorkers() + box.Workers.Amount, box.Workers.MaxPop);
 				var panel = JobInfoPanel.Packed.Instantiate<JobInfoPanel>();
-				panel.AddToTree(jobsList, false, true);
-				panel.Display(job, i, sliderMax, JobWorkerCountChanged);
+				panel.AddToTree(jobsList, box.IsDeletable, true);
+				panel.Display(ui, box, i, sliderMax, JobWorkerCountChanged);
+				panel.UIRebuildRequested += OpenViewJobScreen;
 			}
 
 			ManageTabButtons();
@@ -144,7 +160,8 @@ namespace scenes.region.ui {
 		}
 
 		void AddJobConfirmed(long ix) {
-			ui.AddJobRequested(myBuilding, AvailableJobs[(int)ix]);
+			if (attachedToBuilding) ui.AddJobRequested(myBuilding, AvailableJobs[(int)ix]);
+			else ui.AddJobRequested(AvailableJobs[(int)ix]);
 			selectedAddJob = -1;
 			//_extantJobs = null;
 			OpenViewJobScreen();

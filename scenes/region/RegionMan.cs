@@ -33,6 +33,7 @@ namespace scenes.region {
 			ui.AddJobRequestedEvent += AddJob;
 			ui.GetMaxFreeWorkersEvent += GetJobMaxWorkers;
 			ui.ChangeJobWorkerCountEvent += ChangeJobWorkerCount;
+			ui.DeleteJobEvent += RemoveJob;
 
 			region = GameMan.Singleton.Game.Map.GetRegion(0);
 			regionFaction = GameMan.Singleton.Game.Map.GetFaction(0).GetOwnedRegionFaction(0);
@@ -93,7 +94,7 @@ namespace scenes.region {
 		public void PlaceBuilding(IBuildingType type, Vector2I tilepos) {
 			Debug.Assert(type != null, "Cant place NULL building type!!");
 			var view = GD.Load<PackedScene>(type.GetScenePath()).Instantiate<BuildingView>();
-			var building = regionFaction.PlaceBuilding(type, tilepos);
+			var building = regionFaction.PlaceBuildingConstructionSite(type, tilepos);
 			DisplayBuilding(view, building, tilepos);
 		}
 
@@ -147,15 +148,19 @@ namespace scenes.region {
 			return GameMan.Singleton.IsPaused;
 		}
 
-		public void AddJob(Building building, JobBox jbox) {
-			regionFaction.AddJob(building.Position, jbox.Debox());
+		public void AddJob(MapObject place, Job job) {
+			regionFaction.AddJob(place.Position, job);
+		}
+
+		public void RemoveJob(JobBox jbox) {
+			regionFaction.RemoveJob(jbox.Position, jbox.Debox());
 		}
 
 		public HashSet<JobBox> GetBuildingJobs(Building building) {
 			var pos = building.Position;
 			var jbox = new HashSet<JobBox>();
 			foreach (var job in regionFaction.GetJobs(pos)) {
-				jbox.Add(new JobBox(job));
+				jbox.Add(new JobBox(job, building));
 			}
 			return jbox;
 		}

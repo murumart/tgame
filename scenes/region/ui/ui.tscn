@@ -111,7 +111,7 @@ custom_minimum_size = Vector2(37, 0)
 layout_mode = 2
 text = "01/01/0000"
 label_settings = ExtResource("1_nfevs")
-horizontal_alignment = 1
+horizontal_alignment = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/VBoxContainer"]
 layout_mode = 2
@@ -169,11 +169,13 @@ a
 [node name="Fat" type="Control" parent="VBoxContainer/Horizon"]
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.75
 mouse_filter = 2
 
 [node name="JobsList" parent="VBoxContainer/Horizon" node_paths=PackedStringArray("ui") instance=ExtResource("3_y7o2c")]
 visible = false
 layout_mode = 2
+size_flags_horizontal = 3
 ui = NodePath("../../..")
 
 [node name="MenuTabs" type="TabContainer" parent="VBoxContainer"]

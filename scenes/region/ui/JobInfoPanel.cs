@@ -5,6 +5,8 @@ namespace scenes.region.ui {
 
 	public partial class JobInfoPanel : Control {
 
+		public event Action UIRebuildRequested;
+
 		public static readonly PackedScene Packed = GD.Load<PackedScene>("res://scenes/region/ui/job_info_panel.tscn");
 
 		[ExportGroup("Nodes")]
@@ -13,24 +15,37 @@ namespace scenes.region.ui {
 		[Export] Control sidebar;
 		[Export] Control topbar;
 		[Export] Container informationList;
+		[Export] public Button DeleteJobButton;
+
+		UI ui;
+		JobBox jobBox;
 
 
 		public void AddToTree(Node parent, bool showSide = false, bool showTop = false) {
 			parent.AddChild(this);
+
+			DeleteJobButton.Pressed += DeleteJob;
 			sidebar.Visible = showSide;
 			topbar.Visible = showTop;
 		}
 
-		public void Display(Job job, int jobIndex, int sliderMax, Action<int, int> workersSelected) {
-			if (job.NeedsWorkers) {
+		public void Display(UI ui, JobBox jbox, int jobIndex, int sliderMax, Action<int, int> workersSelected) {
+			this.ui = ui;
+			jobBox = jbox;
+			if (jbox.NeedsWorkers) {
 				var slider = JobSlider.Instantiate();
 				informationList.AddChild(slider);
-				slider.Setup(workersSelected, jobIndex, job.Workers.Amount, "workers", sliderMax, "");
+				slider.Setup(workersSelected, jobIndex, jbox.Workers.Amount, "workers", sliderMax, "");
 			}
 
-			titleLabel.Text = job.Title;
+			titleLabel.Text = jbox.Title;
 
-			infoLabel.Text = job.GetResourceRequirementDescription();
+			infoLabel.Text = jbox.GetResourceRequirementDescription();
+		}
+
+		void DeleteJob() {
+			ui.DeleteJob(jobBox);
+			UIRebuildRequested?.Invoke();
 		}
 
 	}
