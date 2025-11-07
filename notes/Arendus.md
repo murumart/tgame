@@ -5,21 +5,25 @@
 Eesmärk jõuda prototüübiga võrreldavale tasemele. *Game Loop*. Mängus on olemas:
 
 - [X] aeg jookseb
-	- [ ] saab pausile panna
+	- [X] saab pausile panna
 	- [X] ehitiste ehitamine võtab aega
 	- [ ] fookuses regiooni aeg peaks detailsemalt jooksma
 - [ ] ruutude ui
 	- [X] ui ehitise peale hiirega minnes
 		- [ ] ehitise nimi, inimesed sees, tegevused ehitisega
-- [ ] tegevused ehitisega
-	- [ ] inimeste palkamine ehitamiseks
-	- [ ] inimeste palkamine tööle
+- [X] tegevused ehitisega
+	- [X] inimeste palkamine ehitamiseks
+	- [X] inimeste palkamine tööle
+- [ ] ressursimaardlad
+	- [ ] andmeesitus
+		- [ ] defineerivad tööd, mida nende juures teha saab
+	- [ ] visuaalesitus
 - [X] ressursid
 	- [X] ehitiste ehitamine võtab ressursse
-- [ ] rahvas
+- [X] rahvas
 	- [X] populatsiooniarv UIs
 	- [X] eraldi arvud majades inimeste ning kodutute kohta
-	- [ ] eraldi arvud töös inimeste ning töötute kohta
+	- [X] eraldi arvud töös inimeste ning töötute kohta
 - [ ] tootlus
 - [ ] tootluskvoot
 	- [ ] lihtne gameover: kvoodi täitmata jätmine
@@ -53,6 +57,7 @@ Mäng peab olema mängitav iga verstaposti saabudes.
 	- [ ] populatsioon sööb toitu, kasvab sündidest, kahaneb surmadest
 	- [ ] emamaa peab arvet ressurssidest mida kasutab, saadab nende ning regiooni asukoha põhjal mandaate
 	- [ ] populatsioonist tööliste määramine
+- [ ] kettalt salvestamine ja laadimine (suur teema)
 
 ### 0.2.0
 
