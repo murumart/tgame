@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using Godot;
+using resources.game;
+using resources.game.building_types;
 using scenes.autoload;
 using scenes.region.buildings;
 using scenes.region.ui;
@@ -93,13 +95,13 @@ namespace scenes.region {
 
 		public void PlaceBuilding(IBuildingType type, Vector2I tilepos) {
 			Debug.Assert(type != null, "Cant place NULL building type!!");
-			var view = GD.Load<PackedScene>(type.GetScenePath()).Instantiate<BuildingView>();
+			var view = GD.Load<PackedScene>(DataStorage.GetScenePath(type)).Instantiate<BuildingView>();
 			var building = regionFaction.PlaceBuildingConstructionSite(type, tilepos);
 			DisplayBuilding(view, building, tilepos);
 		}
 
 		public void LoadBuildingView(Building building) {
-			var view = GD.Load<PackedScene>(building.Type.GetScenePath()).Instantiate<BuildingView>();
+			var view = GD.Load<PackedScene>(DataStorage.GetScenePath(building.Type)).Instantiate<BuildingView>();
 			DisplayBuilding(view, building, building.Position);
 		}
 

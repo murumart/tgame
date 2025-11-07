@@ -86,7 +86,7 @@ namespace scenes.region.ui {
 			attachedToBuilding = true;
 			this.myBuilding = myBuilding;
 
-			buildingTitle.Text = "Jobs of " + myBuilding.Type.GetName();
+			buildingTitle.Text = "Jobs of " + myBuilding.Type.Name;
 
 			Open();
 		}

@@ -1,16 +1,20 @@
 using System;
 using System.Collections.Generic;
 using Godot;
-using scenes.map;
 using static Building;
 using static ResourceStorage;
+using resources.game.resource_types;
 
-namespace scenes.region.buildings {
+namespace resources.game.building_types {
 
 	[GlobalClass]
 	public partial class BuildingType : Resource, IBuildingType {
 
-		[Export] string Name;
+		[Export] string name;
+		public string Name => name;
+
+		string IAssetType.AssetTypeName => "building";
+
 		[Export] int PopulationCapacity;
 		[Export] Godot.Collections.Dictionary<ResourceType, int> ResourceCapacities;
 		[Export] Godot.Collections.Dictionary<ResourceType, int> ResourceCosts;
@@ -25,10 +29,6 @@ namespace scenes.region.buildings {
 
 		public int GetPopulationCapacity() {
 			return PopulationCapacity;
-		}
-
-		public new string GetName() { // hiding Resource.GetName ??
-			return Name;
 		}
 
 		public ResourceCapacity[] GetResourceCapacities() {

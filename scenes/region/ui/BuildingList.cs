@@ -1,4 +1,6 @@
 using Godot;
+using resources.game;
+using resources.game.building_types;
 using scenes.region.buildings;
 using scenes.region.ui;
 using System;
@@ -25,7 +27,6 @@ public partial class BuildingList : PanelContainer {
 		}
 	}
 
-
 	public override void _Ready() {
 		itemList.ItemActivated += OnBuildThingConfirmed;
 		itemList.ItemSelected += OnBuildThingSelected;
@@ -36,7 +37,7 @@ public partial class BuildingList : PanelContainer {
 		buildConfirmation.Disabled = false;
 		selectedBuildThingId = which;
 		var btype = (BuildingType)itemList.GetItemMetadata((int)which).Obj;
-		buildConfirmation.Text = "Build " + btype.GetName();
+		buildConfirmation.Text = "Build " + btype.Name;
 		resourceListText.Text = "";
 		var resources = ui.GetResources();
 		foreach (var r in btype.GetResourceRequirements()) {
@@ -74,7 +75,7 @@ public partial class BuildingList : PanelContainer {
 		}
 		Debug.Assert(buildingType != null, "Buuldint type canät be null here....w aht...");
 		Debug.Assert(ui.GetCanBuild(buildingType), "can't build this...");
-		var packedScene = GD.Load<PackedScene>(buildingType.GetScenePath());
+		var packedScene = GD.Load<PackedScene>(DataStorage.GetScenePath(buildingType));
 		Node scene = packedScene.Instantiate();
 		Debug.Assert(scene != null, "building display scene canät be null here....w aht...");
 		Debug.Assert(scene is BuildingView, "trying to build something that doesn't extend BuildingView");
@@ -92,7 +93,7 @@ public partial class BuildingList : PanelContainer {
 	public void Update() {
 		itemList.Clear();
 		foreach (var buildingType in ui.GetBuildingTypes()) {
-			int ix = itemList.AddItem(buildingType.GetName());
+			int ix = itemList.AddItem(buildingType.Name);
 			// storing buildingtype references locally so if we happen to update the buildingtypes list
 			// in between calls here, we should still get the correct buildings that the visual
 			// ItemList was set up with

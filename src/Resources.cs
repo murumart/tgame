@@ -3,9 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using static ResourceStorage;
 
-public interface IResourceType {
+public interface IResourceType : IAssetType {
 
-	public string Name { get; }
+	string IAssetType.AssetTypeName => "resource";
 
 }
 

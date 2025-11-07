@@ -1,11 +1,10 @@
 using Godot;
 using scenes.autoload;
-using System;
 
 namespace scenes.region.buildings {
 
 	[GlobalClass]
-	public partial class BuildingView : Node2D {
+	public partial class BuildingView : MapObjectView {
 
 		// ui things
 		[Export] CollisionObject2D clickDetector;

@@ -35,10 +35,8 @@ public partial class Building : MapObject, ITimePassing {
 
 public partial class Building {
 
-	public interface IBuildingType {
+	public interface IBuildingType : IAssetType {
 
-		string GetName();
-		string GetScenePath();
 		int GetPopulationCapacity();
 		ResourceCapacity[] GetResourceCapacities();
 		ResourceBundle[] GetResourceRequirements();

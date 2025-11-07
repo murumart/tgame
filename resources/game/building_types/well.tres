@@ -6,7 +6,7 @@
 
 [resource]
 script = ExtResource("1_7mu2a")
-Name = "Well"
+name = "Well"
 ResourceCapacities = null
 ResourceCosts = Dictionary[Object, int]({
 ExtResource("1_cgu5r"): 10,

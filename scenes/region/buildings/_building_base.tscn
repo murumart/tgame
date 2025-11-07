@@ -16,5 +16,3 @@ monitorable = false
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Clickarea"]
 polygon = PackedVector2Array(-32, 0, 0, -16, 32, 0, 0, 16)
-
-[node name="RemoteTransform2D" type="RemoteTransform2D" parent="."]

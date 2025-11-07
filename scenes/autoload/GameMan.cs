@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Godot;
+using resources.game;
 
 namespace scenes.autoload {
 
