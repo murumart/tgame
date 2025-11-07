@@ -74,13 +74,17 @@ public abstract class Job : ITimePassing {
 public class JobBox : Job {
 
 	private Job job;
+	private Population jobWorkersCopy;
 
-	public override ref Population Workers => ref job.Workers;
+	public override ref Population Workers => ref jobWorkersCopy;
 	public override string Title => job.Title;
 	public override bool NeedsWorkers => job.NeedsWorkers;
 
 
-	public JobBox(Job job) => this.job = job;
+	public JobBox(Job job) {
+		this.job = job;
+		this.jobWorkersCopy = job.Workers;
+	}
 
 	public Job Debox() => job;
 

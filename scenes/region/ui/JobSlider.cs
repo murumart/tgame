@@ -47,6 +47,7 @@ namespace scenes.region.ui {
 			if (sliderMax <= 0) Slider.Editable = false;
 			lastValue = (int)Slider.Value;
 			this.unitSymbol = unitSymbol;
+			MoneyLabel.Text = "" + lastValue + unitSymbol;
 		}
 
 		public int GetValue() {

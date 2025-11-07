@@ -29,23 +29,28 @@ namespace scenes.region.ui {
 		State state;
 		Building myBuilding;
 
-		List<JobBox> _extantJobs;
-		List<JobBox> ExtantJobs {
-			get {
-				Debug.Assert(myBuilding != null, "Please open the menu first!!! before getting these data");
-				_extantJobs ??= ui.GetBuildingJobs(myBuilding).ToList(); ;
-				return _extantJobs;
-			}
-		}
+		// we're regenerating these lists every time the menu is opened or updated, hopefully not a performance issue!
+		// an alternative is to not do that and set the _* lists to null to regenerate them on next menu open.
 
-		List<JobBox> _availableJobs;
-		List<JobBox> AvailableJobs {
-			get {
-				Debug.Assert(myBuilding != null, "Please open the menu first!!! before getting these data");
-				_availableJobs ??= myBuilding.Type.GetAvailableJobs().ToList();
-				return _availableJobs;
-			}
-		}
+		//List<JobBox> _extantJobs;
+		List<JobBox> ExtantJobs => ui.GetBuildingJobs(myBuilding).ToList();
+		//{
+		//	get {
+		//		Debug.Assert(myBuilding != null, "Please open the menu first!!! before getting these data");
+		//		_extantJobs ??= ui.GetBuildingJobs(myBuilding).ToList(); ;
+		//		return _extantJobs;
+		//	}
+		//}
+
+		//List<JobBox> _availableJobs;
+		List<JobBox> AvailableJobs => myBuilding.Type.GetAvailableJobs().ToList();
+		//{
+		//	get {
+		//		Debug.Assert(myBuilding != null, "Please open the menu first!!! before getting these data");
+		//		_availableJobs ??= myBuilding.Type.GetAvailableJobs().ToList();
+		//		return _availableJobs;
+		//	}
+		//}
 		int selectedAddJob = -1;
 
 
@@ -73,8 +78,8 @@ namespace scenes.region.ui {
 
 		public void Close() {
 			Hide();
-			_extantJobs = null;
-			_availableJobs = null;
+			//_extantJobs = null;
+			//_availableJobs = null;
 			myBuilding = null;
 			selectedAddJob = -1;
 			addJobConfirmButton.Disabled = true;
@@ -129,7 +134,7 @@ namespace scenes.region.ui {
 		void JobWorkerCountChanged(int ix, int by) {
 			GD.Print("worker count changed by ", by);
 			ui.ChangeJobWorkerCount(ExtantJobs[ix], by);
-			OpenViewJobScreen(); // redo all so that we're good....witht the thing
+			OpenViewJobScreen(); // rebuild ui entirely in a lazy unoptimised manner
 		}
 
 		void AddJobSelected(long ix) {
@@ -141,7 +146,7 @@ namespace scenes.region.ui {
 		void AddJobConfirmed(long ix) {
 			ui.AddJobRequested(myBuilding, AvailableJobs[(int)ix]);
 			selectedAddJob = -1;
-			_extantJobs = null;
+			//_extantJobs = null;
 			OpenViewJobScreen();
 		}
 
