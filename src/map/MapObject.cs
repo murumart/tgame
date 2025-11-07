@@ -5,7 +5,21 @@ using Godot;
 using static ResourceStorage;
 
 
-public partial class Building : MapObject, ITimePassing {
+public abstract partial class MapObject {
+
+	protected Vector2I position; public Vector2I Position { get => position; }
+
+
+	public MapObject(Vector2I position) {
+		this.position = position;
+	}
+
+	public abstract void PassTime(TimeT minutes);
+
+}
+
+
+public partial class Building : MapObject {
 
 	readonly IBuildingType type; public IBuildingType Type { get => type; }
 
@@ -54,6 +68,74 @@ public partial class Building {
 		}
 
 		bool TakesTimeToConstruct() => GetHoursToConstruct() > 0;
+
+	}
+
+}
+
+public partial class ResourceSite : MapObject {
+
+	public IResourceSiteType Type { init; get; }
+	readonly List<Well> mineWells; public List<Well> MineWells => mineWells;
+
+
+	public ResourceSite(IResourceSiteType type, Vector2I position) : base(position) {
+		mineWells = type.GetDefaultWells();
+		Type = type;
+	}
+
+	public override void PassTime(TimeT minutes) {
+		foreach (var well in mineWells) {
+			if (well.MinutesPerBunchRegen <= 0) continue;
+			// TODO regenerate materials
+		}
+	}
+
+}
+
+public partial class ResourceSite {
+
+	public interface IResourceSiteType : IAssetType {
+
+		List<Well> GetDefaultWells();
+
+	}
+
+	public class Well {
+
+		public IResourceType ResourceType;
+		public int MinutesPerBunch;
+		public int BunchSize;
+		public int MinutesPerBunchRegen;
+		public int InitialBunches;
+
+		int bunches;
+
+
+		public Well(
+			IResourceType resourceType,
+			int minutesPerBunch,
+			int bunchSize,
+			int minutesPerBunchRegen,
+			int initialBunches
+		) {
+			ResourceType = resourceType;
+			MinutesPerBunch = minutesPerBunch;
+			BunchSize = bunchSize;
+			MinutesPerBunchRegen = minutesPerBunchRegen;
+			InitialBunches = initialBunches;
+
+			bunches = initialBunches;
+		}
+
+		public void Deplete() {
+			Debug.Assert(bunches > 0, "Resource is empty, cannot deplete further");
+			bunches -= 1;
+		}
+
+		public void Regen() {
+			Debug.Assert(bunches < InitialBunches, "Resource capacity is full, cannot generate more resource");
+		}
 
 	}
 

@@ -40,18 +40,7 @@ public class Map : ITimePassing {
 			regionFaction.PassTime(minutes);
 		}
 	}
-	
-}
-
-public abstract partial class MapObject : ITimePassing {
-
-	protected Vector2I position; public Vector2I Position { get => position; }
-
-
-	public MapObject(Vector2I position) {
-		this.position = position;
-	}
-
-	public virtual void PassTime(TimeT minutes) { }
 
 }
+
+

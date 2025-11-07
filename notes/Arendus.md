@@ -2,7 +2,13 @@
 
 ### Oktoober 2025
 
-Eesmärk jõuda prototüübiga võrreldavale tasemele. *Game Loop*. Mängus on olemas:
+Eesmärk jõuda prototüübiga võrreldavale tasemele. *Game Loop*.
+
+### November 2025
+
+Eesmärk jõuda oktoobris plaanitud tasemele(!!). Alustada tööd esimese verstaposti jaoks.
+
+Kriitiline: inimeste määramine tööle, tootluskvoodid emamaalt -- ilma nendeta pole mängu!!
 
 - [X] aeg jookseb
 	- [X] saab pausile panna
@@ -20,6 +26,7 @@ Eesmärk jõuda prototüübiga võrreldavale tasemele. *Game Loop*. Mängus on o
 	- [ ] visuaalesitus
 - [X] ressursid
 	- [X] ehitiste ehitamine võtab ressursse
+	- [ ] ressursside ületootmisel peaks töö peatuma
 - [X] rahvas
 	- [X] populatsiooniarv UIs
 	- [X] eraldi arvud majades inimeste ning kodutute kohta
@@ -27,12 +34,6 @@ Eesmärk jõuda prototüübiga võrreldavale tasemele. *Game Loop*. Mängus on o
 - [ ] tootlus
 - [ ] tootluskvoot
 	- [ ] lihtne gameover: kvoodi täitmata jätmine
-
-### November 2025
-
-Eesmärk jõuda oktoobris plaanitud tasemele(!!). Alustada tööd esimese verstaposti jaoks.
-
-Kriitiline: inimeste määramine tööle, tootluskvoodid emamaalt -- ilma nendeta pole mängu!!
 
 Nõu pidada UI disaini teemal (nüri ning aeganõudev).
 

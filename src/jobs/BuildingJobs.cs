@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Godot;
 using static Faction;
@@ -83,7 +84,7 @@ public class ConstructBuildingJob : Job, IConstructBuildingJob {
 			requirements.Clear();
 		} else {
 			// TODO remove building if not constructed
-
+			throw new NotImplementedException("TODO remove the building if not consturcted");
 		}
 	}
 
