@@ -43,7 +43,8 @@ public partial class Building {
 		ResourceCapacity[] GetResourceCapacities();
 		ResourceBundle[] GetResourceRequirements();
 		float GetHoursToConstruct();
-		IEnumerable<Job> GetAvailableJobs();
+		IEnumerable<JobBox> GetAvailableJobs();
+
 
 		Building CreateBuildingObject(Vector2I position) {
 			return new Building(this, position);

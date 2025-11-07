@@ -147,18 +147,21 @@ namespace scenes.region {
 			return GameMan.Singleton.IsPaused;
 		}
 
-		public void AddJob(Building building, Job job) {
-			regionFaction.AddJob(building.Position, job);
+		public void AddJob(Building building, JobBox jbox) {
+			regionFaction.AddJob(building.Position, jbox.Debox());
 		}
 
-		public HashSet<Job> GetBuildingJobs(Building building) {
+		public HashSet<JobBox> GetBuildingJobs(Building building) {
 			var pos = building.Position;
-			var jobs = regionFaction.GetJobs(pos);
-			return jobs.ToHashSet<Job>();
+			var jbox = new HashSet<JobBox>();
+			foreach (var job in regionFaction.GetJobs(pos)) {
+				jbox.Add(new JobBox(job));
+			}
+			return jbox;
 		}
 
-		public void ChangeJobWorkerCount(Job job, int by) {
-			regionFaction.EmployWorkers(job, by);
+		public void ChangeJobWorkerCount(JobBox jbox, int by) {
+			regionFaction.EmployWorkers(jbox.Debox(), by);
 		}
 
 	}

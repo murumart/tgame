@@ -53,12 +53,12 @@ namespace scenes.region.buildings {
 			return HoursToConstruct;
 		}
 
-		public IEnumerable<Job> GetAvailableJobs() {
-			List<Job> jobs = new();
+		public IEnumerable<JobBox> GetAvailableJobs() {
+			List<JobBox> jobs = new();
 			foreach (string typename in AvailableJobClassNames) {
 				Type type = Type.GetType(typename);
 				Job job = (Job)Activator.CreateInstance(type);
-				jobs.Add(job);
+				jobs.Add(new JobBox(job));
 			}
 			return jobs;
 		}

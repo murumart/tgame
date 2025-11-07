@@ -29,8 +29,8 @@ namespace scenes.region.ui {
 		State state;
 		Building myBuilding;
 
-		List<Job> _extantJobs;
-		List<Job> ExtantJobs {
+		List<JobBox> _extantJobs;
+		List<JobBox> ExtantJobs {
 			get {
 				Debug.Assert(myBuilding != null, "Please open the menu first!!! before getting these data");
 				_extantJobs ??= ui.GetBuildingJobs(myBuilding).ToList(); ;
@@ -38,8 +38,8 @@ namespace scenes.region.ui {
 			}
 		}
 
-		List<Job> _availableJobs;
-		List<Job> AvailableJobs {
+		List<JobBox> _availableJobs;
+		List<JobBox> AvailableJobs {
 			get {
 				Debug.Assert(myBuilding != null, "Please open the menu first!!! before getting these data");
 				_availableJobs ??= myBuilding.Type.GetAvailableJobs().ToList();
@@ -117,7 +117,7 @@ namespace scenes.region.ui {
 
 			for (int i = ExtantJobs.Count - 1; i >= 0; i--) {
 				var job = ExtantJobs[i];
-				int sliderMax = ui.GetMaxFreeWorkers() + job.GetWorkers().Amount;
+				int sliderMax = Math.Min(ui.GetMaxFreeWorkers() + job.Workers.Amount, job.Workers.MaxPop);
 				var panel = JobInfoPanel.Packed.Instantiate<JobInfoPanel>();
 				panel.AddToTree(jobsList, false, true);
 				panel.Display(job, i, sliderMax, JobWorkerCountChanged);
@@ -139,7 +139,7 @@ namespace scenes.region.ui {
 		}
 
 		void AddJobConfirmed(long ix) {
-			ui.AddJobRequested(myBuilding, AvailableJobs[(int)ix].Copy());
+			ui.AddJobRequested(myBuilding, AvailableJobs[(int)ix]);
 			selectedAddJob = -1;
 			_extantJobs = null;
 			OpenViewJobScreen();

@@ -18,10 +18,10 @@ namespace scenes.region.ui {
 		public event Func<IBuildingType, bool> GetCanBuildEvent;
 		public event Func<ResourceStorage> GetResourcesEvent;
 
-		public event Func<Building, ICollection<Job>> GetBuildingJobsEvent;
-		public event Action<Building, Job> AddJobRequestedEvent;
+		public event Func<Building, ICollection<JobBox>> GetBuildingJobsEvent;
+		public event Action<Building, JobBox> AddJobRequestedEvent;
 		public event Func<int> GetMaxFreeWorkersEvent;
-		public event Action<Job, int> ChangeJobWorkerCountEvent;
+		public event Action<JobBox, int> ChangeJobWorkerCountEvent;
 
 		public event Func<int> GetPopulationCountEvent;
 		public event Func<int> GetHomelessPopulationCountEvent;
@@ -244,10 +244,10 @@ namespace scenes.region.ui {
 		public List<BuildingType> GetBuildingTypes() => GetBuildingTypesEvent?.Invoke();
 		public ResourceStorage GetResources() => GetResourcesEvent?.Invoke();
 
-		public ICollection<Job> GetBuildingJobs(Building building) => GetBuildingJobsEvent?.Invoke(building);
-		public void AddJobRequested(Building building, Job job) => AddJobRequestedEvent?.Invoke(building, job);
+		public ICollection<JobBox> GetBuildingJobs(Building building) => GetBuildingJobsEvent?.Invoke(building);
+		public void AddJobRequested(Building building, JobBox job) => AddJobRequestedEvent?.Invoke(building, job);
 		public int GetMaxFreeWorkers() => GetMaxFreeWorkersEvent?.Invoke() ?? -1;
-		public void ChangeJobWorkerCount(Job job, int amount) => ChangeJobWorkerCountEvent?.Invoke(job, amount);
+		public void ChangeJobWorkerCount(JobBox job, int amount) => ChangeJobWorkerCountEvent?.Invoke(job, amount);
 
 		public int GetPopulationCount() => GetPopulationCountEvent?.Invoke() ?? -1;
 		public int GetHomelessPopulationCount() => GetHomelessPopulationCountEvent?.Invoke() ?? -1;

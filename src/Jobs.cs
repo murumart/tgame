@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
@@ -8,8 +9,6 @@ using static Faction;
 // abstract jobs
 
 public abstract class Job : ITimePassing {
-
-	private Population dummyPop;
 
 	public virtual string Title => "Some kind of job???";
 	public virtual bool NeedsWorkers => true;
@@ -34,7 +33,7 @@ public abstract class Job : ITimePassing {
 
 	// sandbox methods vv
 
-	public virtual ref Population GetWorkers() => ref dummyPop;
+	public virtual ref Population Workers => throw new NotImplementedException("No workers on default job class!");
 
 	public virtual List<ResourceBundle> GetRequirements() => null;
 	public virtual List<ResourceBundle> GetRewards() => null;
@@ -70,6 +69,29 @@ public abstract class Job : ITimePassing {
 	}
 
 	public abstract void PassTime(TimeT minutes);
+}
+
+public class JobBox : Job {
+
+	private Job job;
+
+	public override ref Population Workers => ref job.Workers;
+	public override string Title => job.Title;
+	public override bool NeedsWorkers => job.NeedsWorkers;
+
+
+	public JobBox(Job job) => this.job = job;
+
+	public Job Debox() => job;
+
+	public override string GetResourceRequirementDescription() => job.GetResourceRequirementDescription();
+
+	public override void Cancel(RegionFaction ctxFaction) => throw new System.NotImplementedException("Don't do these things on a boxed job!!");
+	public override bool CanCreateJob(RegionFaction ctxFaction) => throw new System.NotImplementedException("Don't do these things on a boxed job!!");
+	public override Job Copy() => throw new System.NotImplementedException("Don't do these things on a boxed job!!");
+	public override void Initialise(RegionFaction ctxFaction) => throw new System.NotImplementedException("Don't do these things on a boxed job!!");
+	public override void PassTime(TimeT minutes) => throw new System.NotImplementedException("Don't do these things on a boxed job!!");
+
 }
 
 // concrete (hard-coded) jobs
@@ -134,6 +156,7 @@ public interface IConstructBuildingJob {
 public class ConstructBuildingJob : Job, IConstructBuildingJob {
 
 	public override string Title => "Construct Building";
+	public override ref Population Workers => ref workers;
 
 	readonly List<ResourceBundle> requirements;
 
@@ -161,7 +184,6 @@ public class ConstructBuildingJob : Job, IConstructBuildingJob {
 
 	public override List<ResourceBundle> GetRequirements() => requirements;
 
-	public override ref Population GetWorkers() => ref workers;
 
 
 	public override void PassTime(TimeT minutes) {
@@ -181,9 +203,15 @@ public class ConstructBuildingJob : Job, IConstructBuildingJob {
 public class FishByHandJob : Job {
 
 	public override string Title => "Fish by Hand";
+	public override ref Population Workers => ref workers;
 
 	ResourceStorage storage;
+	Population workers;
 
+
+	public FishByHandJob() {
+		workers = new(5);
+	}
 
 	public override void Cancel(RegionFaction ctxFaction) {
 		throw new System.NotImplementedException();

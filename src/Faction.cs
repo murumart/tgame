@@ -100,14 +100,14 @@ public partial class Faction {
 
 		public bool CanEmployWorkers(Job job, int amount) {
 			Debug.Assert(jobs.Contains(job), "This isn't my job...");
-			return UnemployedPopulation.CanTransfer(ref job.GetWorkers(), amount);
+			return UnemployedPopulation.CanTransfer(ref job.Workers, amount);
 		}
 
 		public void EmployWorkers(Job job, int amount) {
 			Debug.Assert(jobs.Contains(job), "This isn't my job...");
 			Debug.Assert(CanEmployWorkers(job, amount), "Can't employ these workers!");
 
-			UnemployedPopulation.Transfer(ref job.GetWorkers(), amount);
+			UnemployedPopulation.Transfer(ref job.Workers, amount);
 		}
 
 		public Building PlaceBuilding(IBuildingType type, Vector2I position) {
