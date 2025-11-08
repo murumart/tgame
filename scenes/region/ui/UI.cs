@@ -169,8 +169,9 @@ namespace scenes.region.ui {
 			resourceLabel.Text = "";
 			var resources = GetResourcesEvent?.Invoke();
 			foreach (var p in resources) {
-				resourceLabel.AppendText($"{p.Key.Name} x {p.Value.Amount}/{p.Value.Capacity}\n");
+				resourceLabel.AppendText($"{p.Key.Name} x {p.Value.Amount}\n");
 			}
+			resourceLabel.AppendText($"\ntotal {resources.ItemAmount}/{resources.ItemCapacity}");
 		}
 
 		// utilities

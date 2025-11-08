@@ -25,24 +25,16 @@ public struct ResourceBundle {
 public partial class ResourceStorage : IEnumerable<KeyValuePair<IResourceType, InStorage>> {
 
 	readonly Dictionary<IResourceType, InStorage> storageAmounts = new();
+	public int ItemAmount { get; private set; }
+	public int ItemCapacity { get; private set; }
 
 
-	public void IncreaseCapacity(IResourceType resourceType, int amount) {
-		if (!storageAmounts.ContainsKey(resourceType)) storageAmounts[resourceType] = new();
-		var old = storageAmounts[resourceType];
-		storageAmounts[resourceType] = new(old.Capacity + amount);
+	public void IncreaseCapacity(int amount) {
+		ItemCapacity += amount;
 	}
 
-	public void ReduceCapacity(IResourceType resourceType, int amount) {
-		Debug.Assert(storageAmounts.ContainsKey(resourceType), "cant reduce resource type that's not in storage!!");
-		var old = storageAmounts[resourceType];
-		var amtLimit = Math.Max(old.Capacity - amount, 0);
-		storageAmounts[resourceType] = new(amtLimit, Math.Min(old.Amount, amtLimit));
-	}
-
-	public int GetCapacity(IResourceType resourceType) {
-		if (!storageAmounts.TryGetValue(resourceType, out InStorage stored)) return 0;
-		return stored.Capacity;
+	public void ReduceCapacity(int amount) {
+		ItemCapacity -= amount;
 	}
 
 	public bool HasEnough(ResourceBundle resource) {
@@ -57,21 +49,23 @@ public partial class ResourceStorage : IEnumerable<KeyValuePair<IResourceType, I
 		return true;
 	}
 
-	public bool CanAdd(ResourceBundle resource) {
-		storageAmounts.TryGetValue(resource.Type, out InStorage stored);
-		return stored.Amount + resource.Amount <= stored.Capacity;
-	}
+	public bool CanAdd(int amount) => amount + ItemAmount <= ItemCapacity;
+
+	public bool CanAdd(ResourceBundle resource) => CanAdd(resource.Amount);
 
 	public void AddResource(ResourceBundle resource) {
 		Debug.Assert(CanAdd(resource), "These resources dont fit here.................................");
 		storageAmounts.TryGetValue(resource.Type, out InStorage stored);
 		storageAmounts[resource.Type] = stored.Add(resource);
+		ItemAmount += resource.Amount;
 	}
 
 	public void SubtractResource(ResourceBundle resource) {
 		Debug.Assert(storageAmounts.ContainsKey(resource.Type), "cant subtract resource type that's not in storage!!");
 		storageAmounts.TryGetValue(resource.Type, out InStorage stored);
 		storageAmounts[resource.Type] = stored.Sub(resource);
+		ItemAmount -= resource.Amount;
+		Debug.Assert(ItemAmount > 0, "Item amount in storage went negative?? What the hell..");
 	}
 
 	// enumerating over the object
@@ -89,31 +83,30 @@ public partial class ResourceStorage : IEnumerable<KeyValuePair<IResourceType, I
 public partial class ResourceStorage {
 
 	public struct InStorage {
+
 		public int Amount = 0;
-		public int Capacity = 0;
 
 
-		public InStorage(int capacity, int count) {
-			this.Capacity = capacity;
+		public InStorage(int count) {
 			this.Amount = count;
 		}
 
-		public InStorage(int capacity) {
-			this.Capacity = capacity;
+		public InStorage() {
 			this.Amount = 0;
 		}
 
-		public InStorage Add(ResourceBundle resource) {
-			return new InStorage(Capacity, Amount + resource.Amount);
+		public readonly InStorage Add(ResourceBundle resource) {
+			return new InStorage(Amount + resource.Amount);
 		}
 
-		public InStorage Sub(ResourceBundle resource) {
-			return new InStorage(Capacity, Amount - resource.Amount);
+		public readonly InStorage Sub(ResourceBundle resource) {
+			return new InStorage(Amount - resource.Amount);
 		}
 
 	}
 
 	public struct ResourceCapacity {
+
 		public IResourceType Type;
 		public int Capacity;
 

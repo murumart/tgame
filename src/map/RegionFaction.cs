@@ -14,10 +14,14 @@ public class RegionFaction {
 	readonly List<Job> jobs = new();
 	readonly Dictionary<Vector2I, HashSet<Job>> jobsByPosition = new();
 
-	readonly ResourceStorage resourceStorage = new(); public ResourceStorage Resources { get => resourceStorage; }
+	readonly ResourceStorage resourceStorage = new();
+	public ResourceStorage Resources { get => resourceStorage; }
 
-	Population homelessPopulation; public ref Population HomelessPopulation => ref homelessPopulation;
-	Population unemployedPopulation; public ref Population UnemployedPopulation => ref unemployedPopulation;
+	Population homelessPopulation;
+	public ref Population HomelessPopulation => ref homelessPopulation;
+
+	Population unemployedPopulation;
+	public ref Population UnemployedPopulation => ref unemployedPopulation;
 
 
 	public RegionFaction(Region region, Faction faction) {
@@ -27,9 +31,7 @@ public class RegionFaction {
 		unemployedPopulation = new(100) { Amount = 10 };
 
 		// ASSUMING these are wood rock and ... a third thing initially... TODO make sensical
-		resourceStorage.IncreaseCapacity(Registry.Resources.GetAsset("rock"), 30);
-		resourceStorage.IncreaseCapacity(Registry.Resources.GetAsset("wood"), 30);
-		resourceStorage.IncreaseCapacity(Registry.Resources.GetAsset("fish"), 30);
+		resourceStorage.IncreaseCapacity(300);
 		resourceStorage.AddResource(new(Registry.Resources.GetAsset("rock"), 14));
 		resourceStorage.AddResource(new(Registry.Resources.GetAsset("wood"), 25));
 		resourceStorage.AddResource(new(Registry.Resources.GetAsset("fish"), 25));

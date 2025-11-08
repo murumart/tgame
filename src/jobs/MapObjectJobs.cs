@@ -79,9 +79,9 @@ public class ConstructBuildingJob : MapObjectJob, IConstructBuildingJob {
 
 	public override void Deinitialise(RegionFaction ctxFaction) {
 		if (building.IsConstructed) {
-			RefundRequirements(requirements, ctxFaction);
 			requirements.Clear();
 		} else {
+			RefundRequirements(requirements, ctxFaction);
 			// TODO remove building if not constructed
 			throw new NotImplementedException("TODO remove the building if not consturcted");
 		}

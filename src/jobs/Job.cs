@@ -47,14 +47,35 @@ public abstract class Job {
 	}
 
 	protected static void RefundRequirements(List<ResourceBundle> requirements, RegionFaction ctxFaction) {
-		foreach (var r in requirements) {
-			ctxFaction.Resources.AddResource(r);
-		}
+		var req = new List<ResourceBundle>(requirements);
+
+		AddToStorage(req, ctxFaction.Resources);
 	}
 
 	protected static void ProvideRewards(List<ResourceBundle> rewards, RegionFaction ctxFaction) {
-		foreach (var r in rewards) {
-			ctxFaction.Resources.AddResource(r);
+		var rew = new List<ResourceBundle>(rewards);
+
+		AddToStorage(rew, ctxFaction.Resources);
+	}
+
+	// add to the storage one item at a time so we get a bit of every type in storage
+	// even if it ends up filling up before we can grant anything
+	// TODO this but in a smart mathy way with no loops
+	protected static void AddToStorage(List<ResourceBundle> things, ResourceStorage storage) {
+		while (true) {
+			bool added = false;
+			for (int i = 0; i < things.Count; i++) {
+				if (!storage.CanAdd(1)) {
+					GD.PushWarning("Job rewards can't fit in storage");
+					break;
+				}
+				if (things[i].Amount <= 0) continue;
+
+				storage.AddResource(new(things[i].Type, 1));
+				things[i] = new(things[i].Type, things[i].Amount - 1);
+				added = true;
+			}
+			if (!added) break;
 		}
 	}
 
