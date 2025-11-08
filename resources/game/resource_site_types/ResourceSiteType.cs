@@ -18,7 +18,9 @@ namespace resources.game.resource_site_types {
 		public string AssetTypeName => "resource_site";
 
 		public List<Well> GetDefaultWells() {
-			throw new NotImplementedException();
+			List<Well> list = new();
+			foreach (var item in mineResources) list.Add(item.GetWell());
+			return list;
 		}
 
 		public string GetScenePath() => ScenePath;

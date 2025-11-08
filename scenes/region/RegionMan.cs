@@ -3,6 +3,7 @@ using System.Linq;
 using Godot;
 using resources.game;
 using resources.game.building_types;
+using resources.game.resource_site_types;
 using scenes.autoload;
 using scenes.region.buildings;
 using scenes.region.ui;
@@ -49,8 +50,8 @@ namespace scenes.region {
 			tilemaps.DisplayGround(region);
 
 			camera.Region = region;
-			foreach (var m in regionFaction.GetBuildings()) {
-				LoadBuildingView(m);
+			foreach (var m in region.GetMapObjects()) {
+				LoadMapObjectView(m);
 			}
 		}
 
@@ -97,19 +98,23 @@ namespace scenes.region {
 			Debug.Assert(type != null, "Cant place NULL building type!!");
 			var view = GD.Load<PackedScene>(DataStorage.GetScenePath(type)).Instantiate<BuildingView>();
 			var building = regionFaction.PlaceBuildingConstructionSite(type, tilepos);
-			DisplayBuilding(view, building, tilepos);
+			DisplayMapObject(view, building, tilepos);
 		}
 
-		public void LoadBuildingView(Building building) {
-			var view = GD.Load<PackedScene>(DataStorage.GetScenePath(building.Type)).Instantiate<BuildingView>();
-			DisplayBuilding(view, building, building.Position);
+		public void LoadMapObjectView(MapObject mo) {
+			MapObjectView view = mo switch {
+				Building => GD.Load<PackedScene>(DataStorage.GetScenePath(((Building)mo).Type)).Instantiate<MapObjectView>(),
+				ResourceSite => GD.Load<PackedScene>(DataStorage.GetScenePath(((ResourceSite)mo).Type)).Instantiate<MapObjectView>(),
+				_ => throw new System.Exception("nooooo wrong wrong wrong wrong its all wrong"),
+			};
+
+			DisplayMapObject(view, mo, mo.Position);
 		}
 
-		private void DisplayBuilding(BuildingView view, Building building, Vector2I tilepos) {
+		private void DisplayMapObject(MapObjectView view, MapObject mopbject, Vector2I tilepos) {
 			buildingsParent.AddChild(view);
 			view.Position = Camera.TilePosToWorldPos(tilepos);
 			view.Modulate = new Color(1f, 1f, 1f);
-			view.Initialise(building);
 		}
 
 		private void OnUIBuildingPlaceRequested(IBuildingType type, Vector2I tilePosition) {

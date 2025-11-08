@@ -52,14 +52,14 @@ public partial class Faction {
 			unemployedPopulation = new(100) { Amount = 10 };
 
 			// ASSUMING these are wood rock and ... a third thing initially... TODO make sensical
-			resourceStorage.IncreaseCapacity(Registry.Resources.GetAsset("resource:rock"), 30);
-			resourceStorage.IncreaseCapacity(Registry.Resources.GetAsset("resource:wood"), 30);
-			resourceStorage.IncreaseCapacity(Registry.Resources.GetAsset("resource:fish"), 30);
-			resourceStorage.AddResource(new(Registry.Resources.GetAsset("resource:rock"), 4));
-			resourceStorage.AddResource(new(Registry.Resources.GetAsset("resource:wood"), 25));
-			resourceStorage.AddResource(new(Registry.Resources.GetAsset("resource:fish"), 25));
+			resourceStorage.IncreaseCapacity(Registry.Resources.GetAsset("rock"), 30);
+			resourceStorage.IncreaseCapacity(Registry.Resources.GetAsset("wood"), 30);
+			resourceStorage.IncreaseCapacity(Registry.Resources.GetAsset("fish"), 30);
+			resourceStorage.AddResource(new(Registry.Resources.GetAsset("rock"), 4));
+			resourceStorage.AddResource(new(Registry.Resources.GetAsset("wood"), 25));
+			resourceStorage.AddResource(new(Registry.Resources.GetAsset("fish"), 25));
 
-			var housing = Registry.Buildings.GetAsset("building:housing");
+			var housing = Registry.Buildings.GetAsset("housing");
 			PlacePrebuiltBuilding(housing, new(0, 0));
 		}
 

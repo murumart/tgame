@@ -12,6 +12,11 @@ namespace resources.game.resource_site_types {
 		[Export] int minutesPerBunchRegen;
 		[Export] int initialBunches;
 
+
+		public ResourceSite.Well GetWell() {
+			return new(resourceType, minutesPerBunch, bunchSize, minutesPerBunchRegen, initialBunches);
+		}
+
 	}
 
 }

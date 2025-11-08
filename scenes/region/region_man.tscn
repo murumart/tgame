@@ -50,12 +50,16 @@ ui = NodePath("Ui")
 [node name="Ui" parent="RegionCamera" index="0" node_paths=PackedStringArray("CameraCursor")]
 CameraCursor = NodePath("../Cursor")
 
+[node name="Cursor" parent="RegionCamera" index="1"]
+z_index = 0
+
 [node name="Tilemaps" type="Node2D" parent="." node_paths=PackedStringArray("ground")]
 y_sort_enabled = true
 script = ExtResource("5_pfucr")
 ground = NodePath("Region")
 
 [node name="Region" type="TileMapLayer" parent="Tilemaps"]
+z_index = -1
 y_sort_enabled = true
 tile_set = SubResource("TileSet_tb5r1")
 

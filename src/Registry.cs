@@ -84,7 +84,7 @@ public interface IAssetType {
 
 	string GetIdString() {
 		Debug.Assert(Name != null, $"Asset name is empty! (object: {this}, assettypename: {AssetTypeName})");
-		return (AssetTypeName + ":" + Name).ToSnakeCase();
+		return (Name).ToSnakeCase();
 	}
 
 }

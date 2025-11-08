@@ -54,6 +54,7 @@ namespace resources.game {
 			foreach (var ass in scenics) {
 				var key = ass.GetIdString();
 				Debug.Assert(!scenePaths.ContainsKey(key), $"{key} already has scenePath {scenePaths.GetValueOrDefault(key)}");
+				Debug.Assert(ass.GetScenePath() != null, $"{ass} has no scene path!");
 				scenePaths[key] = ass.GetScenePath();
 			}
 		}

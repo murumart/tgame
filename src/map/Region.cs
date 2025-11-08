@@ -1,5 +1,8 @@
+using System;
 using System.Collections.Generic;
 using Godot;
+using resources.game.resource_site_types;
+using static ResourceSite;
 
 public enum GroundTileType : short {
 	VOID,
@@ -31,14 +34,23 @@ public class Region : ITimePassing {
 
 	public static Region GetTestCircleRegion(int radius) { // debugging
 		var tiles = new Dictionary<Vector2I, GroundTileType>();
+		var rs = new Dictionary<Vector2I, IResourceSiteType>();
 		for (int i = -radius; i <= radius; i++) {
 			for (int j = -radius; j <= radius; j++) {
 				if (i * i + j * j <= radius * radius) {
 					tiles[new Vector2I(i, j)] = GroundTileType.GRASS;
+
+					if (i != 0 || j != 0) {
+						if (GD.Randf() < 0.01f) rs.Add(new Vector2I(i, j), Registry.ResourceSites.GetAsset("boulder"));
+						else if (GD.Randf() < 0.07f) rs.Add(new Vector2I(i, j), Registry.ResourceSites.GetAsset("trees"));
+					}
 				}
 			}
 		}
 		var reg = new Region(tiles);
+		foreach (var kvp in rs) {
+			reg.CreateResourceSiteAndPlace(kvp.Value, kvp.Key);
+		}
 		return reg;
 	}
 
@@ -46,11 +58,22 @@ public class Region : ITimePassing {
 		return !mapObjects.ContainsKey(position);
 	}
 
+	public IEnumerable<MapObject> GetMapObjects() {
+		return mapObjects.Values;
+	}
+
 	public Building CreateBuildingSpotAndPlace(Building.IBuildingType type, Vector2I position) {
 		Debug.Assert(!mapObjects.ContainsKey(position), $"there's already a mapobject at position {position}");
-		var building = type.CreateBuildingObject(position);
+		var building = (Building)type.CreateMapObject(position);
 		mapObjects[position] = building;
 		return building;
+	}
+
+	public ResourceSite CreateResourceSiteAndPlace(ResourceSite.IResourceSiteType type, Vector2I position) {
+		Debug.Assert(!mapObjects.ContainsKey(position), $"there's already a mapobject at position {position}");
+		var mine = (ResourceSite)type.CreateMapObject(position);
+		mapObjects[position] = mine;
+		return mine;
 	}
 
 }

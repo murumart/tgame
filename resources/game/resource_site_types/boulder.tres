@@ -16,4 +16,5 @@ metadata/_custom_type_script = "uid://bnfatrmjew0vy"
 script = ExtResource("1_82k6y")
 name = "boulder"
 mineResources = Array[Object]([SubResource("Resource_bkqwf")])
+ScenePath = "uid://chjsqm7q8bab7"
 metadata/_custom_type_script = "uid://ct2a6sqe1m7mx"

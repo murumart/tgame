@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://cxjh3gpmdx5oj"]
+
+[ext_resource type="PackedScene" uid="uid://v8clymlv5hjm" path="res://scenes/region/resource_mines/_resource_mine_base.tscn" id="1_lcomd"]
+[ext_resource type="Texture2D" uid="uid://b6btq5uil504o" path="res://scenes/region/resource_mines/trees.png" id="2_lcomd"]
+
+[node name="Boulder" instance=ExtResource("1_lcomd")]
+
+[node name="Sprite2D" type="Sprite2D" parent="." index="0"]
+position = Vector2(-27, -31)
+texture = ExtResource("2_lcomd")
+centered = false
