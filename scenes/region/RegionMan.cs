@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Godot;
 using resources.game;
 using resources.game.building_types;
@@ -17,6 +18,7 @@ namespace scenes.region {
 
 		[ExportGroup("Building")]
 		[Export] Node2D buildingsParent;
+		Dictionary<Vector2I, MapObjectView> mapObjectViews = new();
 
 		Region region;
 		RegionFaction regionFaction;
@@ -40,6 +42,8 @@ namespace scenes.region {
 			ui.GetPopulationCountEvent += regionFaction.GetPopulationCount;
 			ui.GetHomelessPopulationCountEvent += GetHomelessPopulationCount;
 			ui.GetUnemployedPopulationCountEvent += GetUnemployedPopulationCount;
+
+			region.MapObjectUpdatedAtEvent += OnRegionMapObjectUpdated;
 
 			ui.PauseRequestedEvent += UiTogglePause;
 			ui.GameSpeedChangeRequestedEvent += UiChangeGameSpeed;
@@ -69,6 +73,8 @@ namespace scenes.region {
 				ui.AddJobRequestedEvent -= AddJob;
 				ui.GetMaxFreeWorkersEvent -= GetJobMaxWorkers;
 				ui.ChangeJobWorkerCountEvent -= ChangeJobWorkerCount;
+
+				region.MapObjectUpdatedAtEvent -= OnRegionMapObjectUpdated;
 			}
 		}
 
@@ -112,6 +118,7 @@ namespace scenes.region {
 
 		private void DisplayMapObject(MapObjectView view, MapObject mopbject, Vector2I tilepos) {
 			buildingsParent.AddChild(view);
+			mapObjectViews[tilepos] = view;
 			view.Position = Camera.TilePosToWorldPos(tilepos);
 			view.Modulate = new Color(1f, 1f, 1f);
 		}
@@ -126,6 +133,20 @@ namespace scenes.region {
 			var list = new List<BuildingType>();
 			foreach (var b in Registry.Buildings.GetAssets()) list.Add((BuildingType)b);
 			return list;
+		}
+
+		void RemoveDisplay(Vector2I tile) {
+			mapObjectViews[tile].QueueFree();
+			mapObjectViews.Remove(tile);
+		}
+
+		// region notifications
+
+		void OnRegionMapObjectUpdated(Vector2I tile) {
+			bool exists = region.HasMapObject(tile, out var ob);
+			if (!exists) {
+				RemoveDisplay(tile);
+			}
 		}
 
 		// get information (for UI)
@@ -156,10 +177,12 @@ namespace scenes.region {
 
 		public void AddJob(MapObject place, MapObjectJob job) {
 			regionFaction.AddMapObjectJob(place.Position, job, place);
+			if (regionFaction.GetJobs(place.Position).Any()) mapObjectViews[place.Position].IconSetShow(MapObjectView.IconSetIcons.HAMMER);
 		}
 
 		public void RemoveJob(JobBox jbox) {
 			regionFaction.RemoveJob(jbox.Position, jbox.Debox());
+			if (!(regionFaction.GetJobs(jbox.Position).Any())) mapObjectViews[jbox.Position].IconSetHide(MapObjectView.IconSetIcons.HAMMER);
 		}
 
 		public HashSet<JobBox> GetMapObjectJobs(MapObject building) {

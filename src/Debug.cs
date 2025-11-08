@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Godot;
 
@@ -9,6 +10,7 @@ internal static class Debug {
 #if TOOLS
 		{
 		if (!cond) {
+			msg = new StackFrame(1).GetMethod().Name + ": " + msg;
 			GD.PrintErr(msg);
 			throw new ApplicationException($"Assertion failed: {msg}");
 		}

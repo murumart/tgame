@@ -82,8 +82,8 @@ public class ConstructBuildingJob : MapObjectJob, IConstructBuildingJob {
 			requirements.Clear();
 		} else {
 			RefundRequirements(requirements, ctxFaction);
-			// TODO remove building if not constructed
-			throw new NotImplementedException("TODO remove the building if not consturcted");
+			ctxFaction.RemoveBuilding(building.Position);
+			building = null;
 		}
 	}
 

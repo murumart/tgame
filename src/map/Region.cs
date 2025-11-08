@@ -11,6 +11,8 @@ public enum GroundTileType : short {
 
 public class Region : ITimePassing {
 
+	public event Action<Vector2I> MapObjectUpdatedAtEvent;
+
 	readonly Dictionary<Vector2I, GroundTileType> groundTiles = new();
 	public Dictionary<Vector2I, GroundTileType> GroundTiles { get => groundTiles; }
 	readonly Dictionary<Vector2I, int> higherTiles = new();
@@ -70,19 +72,29 @@ public class Region : ITimePassing {
 		return mapObjects.TryGetValue(tile, out mapObject);
 	}
 
+	public void RemoveMapObject(Vector2I tile) {
+		Debug.Assert(HasMapObject(tile), $"There is no map object to remove at {tile}");
+		mapObjects.Remove(tile);
+		NotifyMapObjectUpdatedAt(tile);
+	}
+
+	MapObject CreateMapObjectSpotAndPlace(MapObject.IMapObjectType type, Vector2I position) {
+		Debug.Assert(!HasMapObject(position, out var m), $"there's already a mapobject {m} at position {position}");
+		var ob = type.CreateMapObject(position);
+		mapObjects[position] = ob;
+		return ob;
+	}
+
 	public Building CreateBuildingSpotAndPlace(Building.IBuildingType type, Vector2I position) {
-		Debug.Assert(!mapObjects.ContainsKey(position), $"there's already a mapobject at position {position}");
-		var building = (Building)type.CreateMapObject(position);
-		mapObjects[position] = building;
+		var building = (Building)CreateMapObjectSpotAndPlace(type, position);
 		return building;
 	}
 
 	public ResourceSite CreateResourceSiteAndPlace(ResourceSite.IResourceSiteType type, Vector2I position) {
-		Debug.Assert(!mapObjects.ContainsKey(position), $"there's already a mapobject at position {position}");
-		var mine = (ResourceSite)type.CreateMapObject(position);
-		mapObjects[position] = mine;
-		return mine;
+		var resourceSite = (ResourceSite)CreateMapObjectSpotAndPlace(type, position);
+		return resourceSite;
 	}
 
+	public void NotifyMapObjectUpdatedAt(Vector2I at) => MapObjectUpdatedAtEvent?.Invoke(at);
 
 }

@@ -1,17 +1,5 @@
 [gd_scene load_steps=2 format=3 uid="uid://v8clymlv5hjm"]
 
-[ext_resource type="Script" uid="uid://1ii2ptr21cmq" path="res://scenes/region/MapObjectView.cs" id="1_5x3m8"]
+[ext_resource type="PackedScene" uid="uid://dl17gbjn423tk" path="res://scenes/region/_map_object_view_base.tscn" id="1_5x3m8"]
 
-[node name="ResourceMineBase" type="Node2D"]
-script = ExtResource("1_5x3m8")
-metadata/_custom_type_script = "uid://1ii2ptr21cmq"
-
-[node name="Clickarea" type="Area2D" parent="."]
-collision_layer = 8388608
-collision_mask = 0
-input_pickable = false
-monitoring = false
-monitorable = false
-
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Clickarea"]
-polygon = PackedVector2Array(-32, 0, 0, -16, 32, 0, 0, 16)
+[node name="MapObjectViewBase" instance=ExtResource("1_5x3m8")]

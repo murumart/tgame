@@ -23,6 +23,7 @@ public partial class MapObject {
 
 	public interface IMapObjectType {
 
+		MapObject CreateMapObject(Vector2I position);
 		IEnumerable<Job> GetAvailableJobs();
 
 	}
@@ -66,7 +67,7 @@ public partial class Building {
 		ResourceBundle[] GetResourceRequirements();
 		float GetHoursToConstruct();
 
-		Building CreateMapObject(Vector2I position) {
+		MapObject IMapObjectType.CreateMapObject(Vector2I position) {
 			return new Building(this, position);
 		}
 
@@ -110,7 +111,7 @@ public partial class ResourceSite {
 
 		List<Well> GetDefaultWells();
 
-		ResourceSite CreateMapObject(Vector2I position) {
+		MapObject IMapObjectType.CreateMapObject(Vector2I position) {
 			return new ResourceSite(this, position);
 		}
 

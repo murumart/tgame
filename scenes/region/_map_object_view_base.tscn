@@ -1,0 +1,35 @@
+[gd_scene load_steps=3 format=3 uid="uid://dl17gbjn423tk"]
+
+[ext_resource type="Script" uid="uid://1ii2ptr21cmq" path="res://scenes/region/MapObjectView.cs" id="1_cca3c"]
+[ext_resource type="Texture2D" uid="uid://cvr7bw57oxjkx" path="res://resources/visual/theme/hammer.svg" id="2_d5rlf"]
+
+[node name="MapObjectViewBase" type="Node2D" node_paths=PackedStringArray("iconTransformParent", "iconContainer")]
+script = ExtResource("1_cca3c")
+iconTransformParent = NodePath("IconTransform")
+iconContainer = NodePath("IconTransform/IconContainer")
+metadata/_custom_type_script = "uid://1ii2ptr21cmq"
+
+[node name="Clickarea" type="Area2D" parent="."]
+collision_layer = 8388608
+collision_mask = 0
+input_pickable = false
+monitoring = false
+monitorable = false
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Clickarea"]
+polygon = PackedVector2Array(-32, 0, 0, -16, 32, 0, 0, 16)
+
+[node name="IconTransform" type="Node2D" parent="."]
+position = Vector2(0, -32)
+
+[node name="IconContainer" type="HBoxContainer" parent="IconTransform"]
+offset_left = -43.0
+offset_top = -7.0
+offset_right = 43.0
+offset_bottom = 10.0
+alignment = 1
+
+[node name="Hammer" type="TextureRect" parent="IconTransform/IconContainer"]
+layout_mode = 2
+texture = ExtResource("2_d5rlf")
+stretch_mode = 2

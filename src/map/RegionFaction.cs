@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Godot;
@@ -27,6 +28,9 @@ public class RegionFaction {
 	public RegionFaction(Region region, Faction faction) {
 		this.region = region;
 		this.faction = faction;
+
+		region.MapObjectUpdatedAtEvent += OnMapObjectUpdated;
+
 		homelessPopulation = new(100) { Amount = 10 };
 		unemployedPopulation = new(100) { Amount = 10 };
 
@@ -48,6 +52,8 @@ public class RegionFaction {
 		}
 		// building time is passed in Region
 	}
+
+	// managing workers and jobs
 
 	public int GetPopulationCount() {
 		int count = homelessPopulation.Amount;
@@ -118,6 +124,8 @@ public class RegionFaction {
 		UnemployedPopulation.Transfer(ref job.Workers, -job.Workers.Amount);
 	}
 
+	// managing buildings
+
 	public Building PlaceBuildingConstructionSite(IBuildingType type, Vector2I position) {
 		Debug.Assert(!buildings.ContainsKey(position), "There's a lreayd a building here (known by faction)");
 		Debug.Assert(region.CanPlaceBuilding(position), "There's a lreayd a building here (known by region)");
@@ -153,6 +161,12 @@ public class RegionFaction {
 		return resourceStorage.HasEnoughAll(type.GetResourceRequirements());
 	}
 
+	public void RemoveBuilding(Vector2I at) {
+		Debug.Assert(HasBuilding(at), $"There's no building to remove at {at}...");
+		buildings.Remove(at);
+		region.RemoveMapObject(at);
+	}
+
 	public ICollection<Building> GetBuildings() => buildings.Values;
 
 	public bool HasBuilding(Vector2I at) => buildings.ContainsKey(at);
@@ -160,6 +174,12 @@ public class RegionFaction {
 	public Building GetBuilding(Vector2I at) => buildings.GetValueOrDefault(at, null);
 
 	private class AnonBuilderJob : IConstructBuildingJob { public float GetProgressPerMinute() => 1f; }
+
+	void OnMapObjectUpdated(Vector2I at) {
+		if (!region.HasMapObject(at) && HasBuilding(at)) {
+			buildings.Remove(at);
+		}
+	}
 
 }
 

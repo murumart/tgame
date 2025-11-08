@@ -20,7 +20,6 @@ namespace scenes.autoload {
 
 		public static void DisplayInfopanel(BuildingView info) {
 			Singleton.infoPanel.Show();
-			Singleton.infoPanel.Display(info);
 		}
 
 		public static void HideInfopanel() {
