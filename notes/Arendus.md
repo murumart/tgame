@@ -21,12 +21,12 @@ Kriitiline: inimeste määramine tööle, tootluskvoodid emamaalt -- ilma nendet
 	- [X] inimeste palkamine ehitamiseks
 	- [X] inimeste palkamine tööle
 - [ ] ressursimaardlad
-	- [ ] andmeesitus
+	- [X] andmeesitus
 		- [ ] defineerivad tööd, mida nende juures teha saab
 	- [X] visuaalesitus
 - [X] ressursid
 	- [X] ehitiste ehitamine võtab ressursse
-	- [ ] ressursside ületootmisel peaks töö peatuma
+	- [X] ressursside ületootmisel peaks töö peatuma
 - [X] rahvas
 	- [X] populatsiooniarv UIs
 	- [X] eraldi arvud majades inimeste ning kodutute kohta

@@ -228,7 +228,7 @@ namespace scenes.region.ui {
 			}
 			if (current == State.JOBS_MENU) {
 				SetTimeSpeedAltering(false);
-				internalGamePaused = PauseRequested();
+				if (!gamePaused) internalGamePaused = PauseRequested();
 			}
 		}
 

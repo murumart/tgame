@@ -167,13 +167,24 @@ public class RegionFaction {
 		region.RemoveMapObject(at);
 	}
 
+	public void Uproot(Vector2I at) {
+		bool has = region.HasMapObject(at, out var obj);
+		Debug.Assert(has, $"No map object to uproot at {at}");
+		region.RemoveMapObject(at);
+	}
+
 	public ICollection<Building> GetBuildings() => buildings.Values;
 
 	public bool HasBuilding(Vector2I at) => buildings.ContainsKey(at);
 
 	public Building GetBuilding(Vector2I at) => buildings.GetValueOrDefault(at, null);
 
-	private class AnonBuilderJob : IConstructBuildingJob { public float GetProgressPerMinute() => 1f; }
+	private class AnonBuilderJob : ConstructBuildingJob {
+
+		public AnonBuilderJob() : base(null) { }
+		public override float GetWorkTime(TimeT minutes) => minutes;
+
+	}
 
 	void OnMapObjectUpdated(Vector2I at) {
 		if (!region.HasMapObject(at) && HasBuilding(at)) {

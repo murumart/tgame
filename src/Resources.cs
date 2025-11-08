@@ -16,6 +16,7 @@ public struct ResourceBundle {
 
 
 	public ResourceBundle(IResourceType type, int amount) {
+		Debug.Assert(amount >= 0, $"Resource amount cannot be negative (got {amount})");
 		this.Type = type;
 		this.Amount = amount;
 	}

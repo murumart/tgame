@@ -45,9 +45,9 @@ public partial class Building : MapObject {
 		this.population = new Population(type.GetPopulationCapacity());
 	}
 
-	public void ProgressBuild(TimeT minutes, IConstructBuildingJob job) {
+	public void ProgressBuild(TimeT minutes, ConstructBuildingJob job) {
 		Debug.Assert(!IsConstructed, "Don't ProgressBuild building that's ready...");
-		constructionProgress += (uint)minutes * job.GetProgressPerMinute();
+		constructionProgress += job.GetWorkTime(minutes);
 	}
 
 	public float GetBuildProgress() {
@@ -90,6 +90,13 @@ public partial class ResourceSite : MapObject {
 	readonly List<Well> mineWells;
 	public List<Well> MineWells => mineWells;
 
+	public bool IsDepleted {
+		get {
+			foreach (var well in mineWells) if (well.HasBunches) return false;
+			return true;
+		}
+	}
+
 
 	protected ResourceSite(IResourceSiteType type, Vector2I position) : base(position) {
 		mineWells = type.GetDefaultWells();
@@ -120,12 +127,13 @@ public partial class ResourceSite {
 	public class Well {
 
 		public IResourceType ResourceType;
-		public int MinutesPerBunch;
+		public TimeT MinutesPerBunch;
 		public int BunchSize;
-		public int MinutesPerBunchRegen;
+		public TimeT MinutesPerBunchRegen;
 		public int InitialBunches;
 
-		int bunches;
+		public int Bunches { get; private set; }
+		public bool HasBunches => Bunches > 0;
 
 
 		public Well(
@@ -141,16 +149,17 @@ public partial class ResourceSite {
 			MinutesPerBunchRegen = minutesPerBunchRegen;
 			InitialBunches = initialBunches;
 
-			bunches = initialBunches;
+			Bunches = initialBunches;
 		}
 
+
 		public void Deplete() {
-			Debug.Assert(bunches > 0, "Resource is empty, cannot deplete further");
-			bunches -= 1;
+			Debug.Assert(Bunches > 0, "Resource is empty, cannot deplete further");
+			Bunches -= 1;
 		}
 
 		public void Regen() {
-			Debug.Assert(bunches < InitialBunches, "Resource capacity is full, cannot generate more resource");
+			Debug.Assert(Bunches < InitialBunches, "Resource capacity is full, cannot generate more resource");
 		}
 
 	}

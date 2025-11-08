@@ -1,5 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://pfy55aydpy4t"]
+[gd_scene load_steps=3 format=3 uid="uid://pfy55aydpy4t"]
 
+[ext_resource type="Script" uid="uid://yr6q8gjnc8wh" path="res://scenes/region/buildings/BuildingView.cs" id="1_jqyv4"]
 [ext_resource type="PackedScene" uid="uid://dl17gbjn423tk" path="res://scenes/region/_map_object_view_base.tscn" id="1_wdp1e"]
 
 [node name="BuildingBase" instance=ExtResource("1_wdp1e")]
+script = ExtResource("1_jqyv4")

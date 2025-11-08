@@ -12,6 +12,8 @@ public abstract class Job {
 	public virtual bool NeedsWorkers => true;
 	public virtual bool IsInternal => false;
 
+	public virtual ref Population Workers => throw new NotImplementedException("No workers on default job class!");
+	public virtual float GetWorkTime(TimeT minutes) => throw new NotImplementedException();
 
 	/// <summary>
 	/// Call before adding job. Do things like consume resources here.
@@ -35,27 +37,25 @@ public abstract class Job {
 
 	// sandbox methods vv
 
-	public virtual ref Population Workers => throw new NotImplementedException("No workers on default job class!");
-
 	public virtual List<ResourceBundle> GetRequirements() => null;
-	public virtual List<ResourceBundle> GetRewards() => null;
+	public virtual List<ResourceBundle> GetProduction() => null;
 
-	protected static void ConsumeRequirements(List<ResourceBundle> requirements, RegionFaction ctxFaction) {
+	protected static void ConsumeRequirements(List<ResourceBundle> requirements, ResourceStorage resources) {
 		foreach (var r in requirements) {
-			ctxFaction.Resources.SubtractResource(r);
+			resources.SubtractResource(r);
 		}
 	}
 
-	protected static void RefundRequirements(List<ResourceBundle> requirements, RegionFaction ctxFaction) {
+	protected static void RefundRequirements(List<ResourceBundle> requirements, ResourceStorage resources) {
 		var req = new List<ResourceBundle>(requirements);
 
-		AddToStorage(req, ctxFaction.Resources);
+		AddToStorage(req, resources);
 	}
 
-	protected static void ProvideRewards(List<ResourceBundle> rewards, RegionFaction ctxFaction) {
+	protected static void ProvideProduction(List<ResourceBundle> rewards, ResourceStorage resources) {
 		var rew = new List<ResourceBundle>(rewards);
 
-		AddToStorage(rew, ctxFaction.Resources);
+		AddToStorage(rew, resources);
 	}
 
 	// add to the storage one item at a time so we get a bit of every type in storage
@@ -90,6 +90,12 @@ public abstract class Job {
 		}
 		return sb.ToString();
 	}
+
+	public virtual string GetProductionDescription() => "This job produces nothing.";
+
+	public virtual float GetProgressEstimate() => 0.0f;
+
+	public virtual string GetStatusDescription() => $"This job is {(int)(GetProgressEstimate() * 100)}% done.";
 
 }
 
@@ -133,6 +139,9 @@ public class JobBox : Job {
 	}
 
 	public override string GetResourceRequirementDescription() => job.GetResourceRequirementDescription();
+	public override string GetStatusDescription() => job.GetStatusDescription();
+	public override string GetProductionDescription() => job.GetProductionDescription();
+
 
 	public override void Deinitialise(RegionFaction ctxFaction) => throw new System.NotImplementedException("Don't do these things on a boxed job!!");
 	public override bool CanInitialise(RegionFaction ctxFaction) => throw new System.NotImplementedException("Pls Unbox");

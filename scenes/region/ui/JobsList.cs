@@ -172,7 +172,9 @@ namespace scenes.region.ui {
 		void AddJobSelected(long ix) {
 			selectedAddJob = (int)ix;
 			addJobConfirmButton.Disabled = false;
-			addJobDescription.Text = AvailableJobs[selectedAddJob].GetResourceRequirementDescription();
+			addJobDescription.Text =
+				AvailableJobs[selectedAddJob].GetResourceRequirementDescription()
+				+ "\n" + AvailableJobs[selectedAddJob].GetProductionDescription();
 		}
 
 		void AddJobConfirmed(long ix) {

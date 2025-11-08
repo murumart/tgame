@@ -4,7 +4,7 @@ using Godot;
 /// <summary>
 /// It's an integer time unit!! Trust me...
 /// </summary>
-public struct TimeT {
+public readonly struct TimeT {
 
 	private ulong S { init; get; }
 
@@ -60,6 +60,17 @@ public class GameTime : ITimePassing {
 	public int GetHourMinute() => (int)(float)(minutes % MINUTES_PER_HOUR);
 	public int GetDayHour() => (int)(GetHour() % HOURS_PER_DAY);
 	public int GetMonthDay() => (int)(GetDay() % (WEEKS_PER_MONTH * DAYS_PER_WEEK)) + 1;
+
+	public static string FancyTimeString(TimeT minutes) {
+		var hours = minutes / MINUTES_PER_HOUR;
+		var days = hours / DAYS_PER_WEEK;
+		var weeks = days / DAYS_PER_WEEK;
+
+		if (weeks > 0) return "" + weeks + " weeks";
+		if (days > 0) return "" + days + " days";
+		if (hours > 0) return "" + hours + " hours";
+		return "" + minutes + " minutes";
+	}
 
 }
 

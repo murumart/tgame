@@ -40,7 +40,10 @@ namespace scenes.region.ui {
 
 			titleLabel.Text = jbox.Title;
 
-			infoLabel.Text = jbox.GetResourceRequirementDescription();
+			infoLabel.Text =
+				jbox.GetResourceRequirementDescription()
+				+ "\n" + jbox.GetStatusDescription()
+				+ "\n" + jbox.GetProductionDescription();
 		}
 
 		void DeleteJob() {
