@@ -1,10 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Godot;
 using Godot.Collections;
 using resources.game.building_types;
+using resources.game.resource_site_types;
 using resources.game.resource_types;
 using static Building;
+using static ResourceSite;
 
 namespace resources.game {
 
@@ -15,6 +18,7 @@ namespace resources.game {
 
 		[Export] Array<ResourceType> resourceTypes;
 		[Export] Array<BuildingType> buildingTypes;
+		[Export] Array<ResourceSiteType> resourceSiteTypes;
 
 
 		public void RegisterThings() {
@@ -23,14 +27,13 @@ namespace resources.game {
 
 			var buildings = new IBuildingType[buildingTypes.Count];
 			for (int i = 0; i < buildingTypes.Count; i++) buildings[i] = buildingTypes[i];
+			RegisterScenePaths<BuildingType>(buildingTypes);
 
-			foreach (var ass in buildingTypes) {
-				var key = ((IBuildingType)ass).GetIdString();
-				Debug.Assert(!scenePaths.ContainsKey(key), $"{key} already has scenePath {scenePaths.GetValueOrDefault(key)}");
-				scenePaths[key] = ass.GetScenePath();
-			}
+			var mines = new IResourceSiteType[resourceSiteTypes.Count];
+			for (int i = 0; i < resourceSiteTypes.Count; i++) mines[i] = resourceSiteTypes[i];
+			RegisterScenePaths<ResourceSiteType>(resourceSiteTypes);
 
-			Registry.Register(resources, buildings);
+			Registry.Register(resources, buildings, mines);
 
 			GD.Print("REGISTERED FOLLOWING BUILDINGS");
 			foreach (var ass in Registry.Buildings.GetIdAssetPairs()) {
@@ -40,7 +43,19 @@ namespace resources.game {
 			foreach (var ass in Registry.Resources.GetIdAssetPairs()) {
 				GD.PrintT(ass.Key, ass.Value.Name);
 			}
+			GD.Print("REGISTERED FOLLOWING RESOURCE SITES");
+			foreach (var ass in Registry.ResourceSites.GetIdAssetPairs()) {
+				GD.PrintT(ass.Key, ass.Value.Name);
+			}
 
+		}
+
+		static void RegisterScenePaths<U>(IEnumerable<U> scenics) where U : IAssetType, IScenePathetic {
+			foreach (var ass in scenics) {
+				var key = ass.GetIdString();
+				Debug.Assert(!scenePaths.ContainsKey(key), $"{key} already has scenePath {scenePaths.GetValueOrDefault(key)}");
+				scenePaths[key] = ass.GetScenePath();
+			}
 		}
 
 		public static string GetScenePath(IAssetType assetType) {
@@ -55,5 +70,11 @@ namespace resources.game {
 
 	}
 
+
+}
+
+public interface IScenePathetic {
+
+	string GetScenePath();
 
 }

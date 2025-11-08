@@ -8,7 +8,7 @@ using resources.game.resource_types;
 namespace resources.game.building_types {
 
 	[GlobalClass]
-	public partial class BuildingType : Resource, IBuildingType {
+	public partial class BuildingType : Resource, IBuildingType, IScenePathetic {
 
 		[Export] string name;
 		public string Name => name;
@@ -23,9 +23,7 @@ namespace resources.game.building_types {
 		[Export(PropertyHint.File, "*.tscn")] string ScenePath;
 
 
-		public string GetScenePath() {
-			return ScenePath;
-		}
+		public string GetScenePath() => ScenePath;
 
 		public int GetPopulationCapacity() {
 			return PopulationCapacity;

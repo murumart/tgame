@@ -18,7 +18,6 @@ public abstract partial class MapObject {
 
 }
 
-
 public partial class Building : MapObject {
 
 	readonly IBuildingType type; public IBuildingType Type { get => type; }
@@ -57,8 +56,7 @@ public partial class Building {
 		float GetHoursToConstruct();
 		IEnumerable<Job> GetAvailableJobs();
 
-
-		Building CreateBuildingObject(Vector2I position) {
+		Building CreateMapObject(Vector2I position) {
 			return new Building(this, position);
 		}
 
@@ -98,6 +96,10 @@ public partial class ResourceSite {
 	public interface IResourceSiteType : IAssetType {
 
 		List<Well> GetDefaultWells();
+
+		ResourceSite CreateMapObject(Vector2I position) {
+			return new ResourceSite(this, position);
+		}
 
 	}
 

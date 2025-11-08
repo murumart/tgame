@@ -1,9 +1,10 @@
-[gd_resource type="Resource" script_class="DataStorage" load_steps=7 format=3 uid="uid://dca836kv0vsm1"]
+[gd_resource type="Resource" script_class="DataStorage" load_steps=8 format=3 uid="uid://dca836kv0vsm1"]
 
 [ext_resource type="Resource" uid="uid://c613ci251pl2v" path="res://resources/game/building_types/housing.tres" id="1_r67qw"]
 [ext_resource type="Script" uid="uid://05g7rc21q2sd" path="res://resources/game/DataStorage.cs" id="1_wv3fg"]
 [ext_resource type="Resource" uid="uid://dm7cl54id0t35" path="res://resources/game/building_types/well.tres" id="2_km6vq"]
 [ext_resource type="Resource" uid="uid://b8507qbvqvdy8" path="res://resources/game/resource_types/wood.tres" id="3_qonfu"]
+[ext_resource type="Resource" uid="uid://bh5svfg5ua7eb" path="res://resources/game/resource_site_types/boulder.tres" id="3_xflvh"]
 [ext_resource type="Resource" uid="uid://nw83fam2omvi" path="res://resources/game/resource_types/rock.tres" id="4_xflvh"]
 [ext_resource type="Resource" uid="uid://ddqpxr0u07bfp" path="res://resources/game/resource_types/fish.tres" id="5_c2mn5"]
 
@@ -11,4 +12,5 @@
 script = ExtResource("1_wv3fg")
 resourceTypes = Array[Object]([ExtResource("3_qonfu"), ExtResource("4_xflvh"), ExtResource("5_c2mn5")])
 buildingTypes = Array[Object]([ExtResource("1_r67qw"), ExtResource("2_km6vq")])
+resourceSiteTypes = Array[Object]([ExtResource("3_xflvh")])
 metadata/_custom_type_script = "uid://05g7rc21q2sd"

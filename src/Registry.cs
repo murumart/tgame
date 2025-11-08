@@ -2,26 +2,28 @@ using System.Collections.Generic;
 using System.Linq;
 using Godot;
 using static Building;
+using static ResourceSite;
 
 public static class Registry {
 
-	static ResourceTypeRegistry resourceTypeRegistry;
-	static BuildingTypeRegistry buildingTypeRegistry;
-
-	public static ResourceTypeRegistry Resources { get => resourceTypeRegistry; }
-	public static BuildingTypeRegistry Buildings { get => buildingTypeRegistry; }
+	public static AssetTypeRegistry<IResourceType> Resources {get; private set;}
+	public static AssetTypeRegistry<IBuildingType> Buildings {get; private set;}
+	public static AssetTypeRegistry<IResourceSiteType> ResourceSites {get; private set;}
 
 
-	public static void Register(IResourceType[] resourceTypes, IBuildingType[] buildingTypes) {
-		resourceTypeRegistry ??= new();
-		buildingTypeRegistry ??= new();
+	public static void Register(IResourceType[] resourceTypes, IBuildingType[] buildingTypes, IResourceSiteType[] resourceSiteTypes) {
+		Resources = new();
+		Buildings = new();
+		ResourceSites = new();
 
 		Resources.RegisterAssets(resourceTypes);
 		Buildings.RegisterAssets(buildingTypes);
+		ResourceSites.RegisterAssets(resourceSiteTypes);
 	}
+
 }
 
-public abstract class AssetTypeRegistry<T> where T : IAssetType {
+public class AssetTypeRegistry<T> where T : IAssetType {
 
 	protected T[] assetTypes;
 	protected HashSet<T> assetTypesSet;
@@ -35,6 +37,16 @@ public abstract class AssetTypeRegistry<T> where T : IAssetType {
 		assetTypes = new T[assets.Length];
 		assetTypesSet = new();
 		assetDictionary = new Dictionary<string, T>();
+
+		for (int i = 0; i < assets.Length; i++) {
+			var asset = assets[i];
+			assetTypes[i] = asset;
+			assetTypesSet.Add(asset);
+			string key = asset.GetIdString();
+			Debug.Assert(!assetDictionary.ContainsKey(key), $"ID KEY `{key}` ALREADY EXISTS");
+			assetDictionary[asset.GetIdString()] = asset;
+		}
+
 		initted = true;
 	}
 
@@ -45,6 +57,7 @@ public abstract class AssetTypeRegistry<T> where T : IAssetType {
 	}
 
 	public T GetAsset(string id) {
+		InitCheck();
 		bool had = assetDictionary.TryGetValue(id, out T value);
 		Debug.Assert(had, $"Asset '{id}' not found");
 		return value;
@@ -64,44 +77,13 @@ public abstract class AssetTypeRegistry<T> where T : IAssetType {
 
 }
 
-public class ResourceTypeRegistry : AssetTypeRegistry<IResourceType> {
-
-	public override void RegisterAssets(IResourceType[] resourceTypes) {
-		base.RegisterAssets(resourceTypes);
-		for (int i = 0; i < resourceTypes.Length; i++) {
-			var asset = resourceTypes[i];
-			assetTypes[i] = asset;
-			assetTypesSet.Add(asset);
-			string key = asset.GetIdString();
-			Debug.Assert(!assetDictionary.ContainsKey(key), $"ID KEY `{key}` ALREADY EXISTS");
-			assetDictionary[asset.GetIdString()] = asset;
-		}
-	}
-
-}
-
-public class BuildingTypeRegistry : AssetTypeRegistry<IBuildingType> {
-
-	public override void RegisterAssets(IBuildingType[] buildingTypes) {
-		base.RegisterAssets(buildingTypes);
-		for (int i = 0; i < buildingTypes.Length; i++) {
-			var asset = buildingTypes[i];
-			assetTypes[i] = asset;
-			assetTypesSet.Add(asset);
-			string key = asset.GetIdString();
-			Debug.Assert(!assetDictionary.ContainsKey(key), $"ID KEY `{key}` ALREADY EXISTS");
-			assetDictionary[asset.GetIdString()] = asset;
-		}
-	}
-
-}
-
 public interface IAssetType {
 
 	string Name { get; }
 	string AssetTypeName { get; }
 
 	string GetIdString() {
+		Debug.Assert(Name != null, $"Asset name is empty! (object: {this}, assettypename: {AssetTypeName})");
 		return (AssetTypeName + ":" + Name).ToSnakeCase();
 	}
 

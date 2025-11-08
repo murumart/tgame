@@ -7,18 +7,21 @@ using static ResourceSite;
 namespace resources.game.resource_site_types {
 
 	[GlobalClass]
-	public partial class ResourceSiteType : Resource, IResourceSiteType {
+	public partial class ResourceSiteType : Resource, IResourceSiteType, IScenePathetic {
 
+		[Export] string name;
 		[Export] Array<ResourceWell> mineResources;
 		[Export(PropertyHint.File, "*.tscn")] string ScenePath;
 
-		public string Name => throw new NotImplementedException();
+		public string Name => name;
 
-		public string AssetTypeName => throw new NotImplementedException();
+		public string AssetTypeName => "resource_site";
 
 		public List<Well> GetDefaultWells() {
 			throw new NotImplementedException();
 		}
+
+		public string GetScenePath() => ScenePath;
 	}
 
 }

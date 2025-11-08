@@ -1,11 +1,13 @@
 using System;
+using System.Runtime.CompilerServices;
 using Godot;
 
 internal static class Debug {
 	//https://www.reddit.com/r/godot/comments/obxm0i/comment/hj4htrk/
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	internal static void Assert(bool cond, string msg)
 #if TOOLS
-	{
+		{
 		if (!cond) {
 			GD.PrintErr(msg);
 			throw new ApplicationException($"Assertion failed: {msg}");
@@ -15,6 +17,7 @@ internal static class Debug {
 	{}
 #endif
 
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	internal static void PrintWithStack(params object[] vals)
 #if TOOLS
 		{
