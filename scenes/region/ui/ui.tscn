@@ -24,6 +24,7 @@ font_color = Color(0.8352941, 0.8392157, 0.85882354, 1)
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_bjdfm"]
 
 [node name="Ui" type="MarginContainer" node_paths=PackedStringArray("buildButton", "policyButton", "worldButton", "menuTabs", "buildingList", "jobsList", "pauseDisplayPanel", "populationLabel", "timeLabel", "fpsLabel", "tilePosLabel", "gameSpeedLabel", "pauseButton", "normalSpeedButton", "fastSpeedButton", "resourceLabel")]
+z_index = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0

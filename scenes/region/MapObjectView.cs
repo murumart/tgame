@@ -31,6 +31,12 @@ namespace scenes.region {
 			iconTransformParent.Position = tf.Origin;
 		}
 
+		public override void _Notification(int what) {
+			if (what == NotificationPredelete) {
+				iconTransformParent.QueueFree();
+			}
+		}
+
 		public void IconSetShow(IconSetIcons icons) {
 			Icon((int)icons).Show();
 			iconContainer.Show();
