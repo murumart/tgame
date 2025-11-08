@@ -1,14 +1,11 @@
 using System.Collections.Generic;
-using System.Linq;
 using Godot;
 using resources.game;
 using resources.game.building_types;
-using resources.game.resource_site_types;
 using scenes.autoload;
 using scenes.region.buildings;
 using scenes.region.ui;
 using static Building;
-using static Faction;
 
 namespace scenes.region {
 
@@ -32,7 +29,7 @@ namespace scenes.region {
 			ui.GetResourcesEvent += GetResourceStorage;
 			ui.GetCanBuildEvent += CanBuild;
 			ui.GetTimeStringEvent += GetDateTimeString;
-			ui.GetBuildingJobsEvent += GetBuildingJobs;
+			ui.GetMapObjectJobsEvent += GetMapObjectJobs;
 			ui.AddJobRequestedEvent += AddJob;
 			ui.GetMaxFreeWorkersEvent += GetJobMaxWorkers;
 			ui.ChangeJobWorkerCountEvent += ChangeJobWorkerCount;
@@ -68,7 +65,7 @@ namespace scenes.region {
 				ui.GetTimeStringEvent -= GetDateTimeString;
 				ui.PauseRequestedEvent -= UiTogglePause;
 				ui.GameSpeedChangeRequestedEvent -= UiChangeGameSpeed;
-				ui.GetBuildingJobsEvent -= GetBuildingJobs;
+				ui.GetMapObjectJobsEvent -= GetMapObjectJobs;
 				ui.AddJobRequestedEvent -= AddJob;
 				ui.GetMaxFreeWorkersEvent -= GetJobMaxWorkers;
 				ui.ChangeJobWorkerCountEvent -= ChangeJobWorkerCount;
@@ -80,6 +77,8 @@ namespace scenes.region {
 		void MapClick(Vector2I tile) {
 			if (regionFaction.HasBuilding(tile)) {
 				ui.OnBuildingClicked(regionFaction.GetBuilding(tile));
+			} else if (region.HasMapObject(tile, out MapObject mop) && mop is ResourceSite resourceSite) {
+				ui.OnResourceSiteClicked(resourceSite);
 			}
 		}
 
@@ -155,15 +154,15 @@ namespace scenes.region {
 			return GameMan.Singleton.IsPaused;
 		}
 
-		public void AddJob(MapObject place, Job job) {
-			regionFaction.AddJob(place.Position, job);
+		public void AddJob(MapObject place, MapObjectJob job) {
+			regionFaction.AddMapObjectJob(place.Position, job, place);
 		}
 
 		public void RemoveJob(JobBox jbox) {
 			regionFaction.RemoveJob(jbox.Position, jbox.Debox());
 		}
 
-		public HashSet<JobBox> GetBuildingJobs(Building building) {
+		public HashSet<JobBox> GetMapObjectJobs(MapObject building) {
 			var pos = building.Position;
 			var jbox = new HashSet<JobBox>();
 			foreach (var job in regionFaction.GetJobs(pos)) {

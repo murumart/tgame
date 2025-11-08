@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Godot;
-using static Faction;
 
 public class AbsorbFromHomelessPopulationJob : Job {
 
@@ -54,7 +53,7 @@ public interface IConstructBuildingJob {
 
 }
 
-public class ConstructBuildingJob : Job, IConstructBuildingJob {
+public class ConstructBuildingJob : MapObjectJob, IConstructBuildingJob {
 
 	public override string Title => "Construct Building";
 	public override ref Population Workers => ref workers;
@@ -62,19 +61,19 @@ public class ConstructBuildingJob : Job, IConstructBuildingJob {
 	readonly List<ResourceBundle> requirements;
 
 	Population workers;
-	readonly Building building;
+	Building building;
 
 
-	public ConstructBuildingJob(List<ResourceBundle> requirements, Building building) {
+	public ConstructBuildingJob(List<ResourceBundle> requirements) {
 		this.requirements = requirements;
-		this.building = building;
 		workers = new(35);
 	}
 
-	public override bool CanInitialise(RegionFaction ctxFaction) => ctxFaction.Resources.HasEnoughAll(GetRequirements());
+	public override bool CanInitialise(RegionFaction ctxFaction, MapObject building) => ctxFaction.Resources.HasEnoughAll(GetRequirements());
 
-	public override void Initialise(RegionFaction ctxFaction) {
-		Debug.Assert(CanInitialise(ctxFaction), "Job cannot be initialised!!");
+	public override void Initialise(RegionFaction ctxFaction, MapObject mapObject) {
+		Debug.Assert(CanInitialise(ctxFaction, mapObject), "Job cannot be initialised!!");
+		building = (Building)mapObject;
 		ConsumeRequirements(requirements, ctxFaction);
 	}
 
@@ -104,12 +103,13 @@ public class ConstructBuildingJob : Job, IConstructBuildingJob {
 	}
 
 	public override Job Copy() {
-		return new ConstructBuildingJob(requirements, building);
+		return new ConstructBuildingJob(requirements);
 	}
 
 	public float GetProgressPerMinute() {
 		return workers.Amount;
 	}
+
 
 }
 
@@ -138,6 +138,48 @@ public class FishByHandJob : Job {
 
 	public override void PassTime(TimeT minutes) {
 		GD.Print("We fish x", minutes);
+	}
+
+}
+
+public class GatherResourceJob : MapObjectJob {
+
+	public override string Title =>
+		site == null ?
+			(resourceTypeDescription == null ?
+				"Gather Resources"
+			: "Gather " + resourceTypeDescription.Capitalize())
+		: "Gather from " + site.Type.Name;
+
+	public override ref Population Workers => ref workers;
+
+	Population workers;
+	ResourceStorage storage;
+	ResourceSite site;
+	readonly string resourceTypeDescription;
+
+
+	public GatherResourceJob() {
+		workers = new(5);
+	}
+
+	public GatherResourceJob(string resourceTypeDescription) : this() {
+		this.resourceTypeDescription = resourceTypeDescription;
+	}
+
+	public override Job Copy() => new GatherResourceJob(resourceTypeDescription);
+
+	public override void Initialise(RegionFaction ctxFaction, MapObject mapObject) {
+		storage = ctxFaction.Resources;
+		site = (ResourceSite)mapObject;
+	}
+
+	public override void Deinitialise(RegionFaction ctxFaction) {
+		throw new NotImplementedException();
+	}
+
+	public override void PassTime(TimeT minutes) {
+
 	}
 
 }

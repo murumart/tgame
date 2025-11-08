@@ -26,9 +26,9 @@ namespace scenes.region.ui {
 		[Export] RichTextLabel addJobDescription;
 		[Export] Button addJobConfirmButton;
 
-		bool attachedToBuilding = false;
+		bool attachedToMapObject = false;
 		State state;
-		Building myBuilding;
+		MapObject myMapObject;
 
 		// we're regenerating these lists every time the menu is opened or updated, hopefully not a performance issue!
 		// an alternative is to not do that and set the _* lists to null to regenerate them on next menu open.
@@ -36,7 +36,7 @@ namespace scenes.region.ui {
 		//List<JobBox> _extantJobs;
 		List<JobBox> ExtantJobs {
 			get {
-				if (attachedToBuilding) return ui.GetBuildingJobs(myBuilding).ToList();
+				if (attachedToMapObject) return ui.GetMapObjectJobs(myMapObject).ToList();
 				return ui.GetJobs().ToList();
 			}
 		}
@@ -51,7 +51,7 @@ namespace scenes.region.ui {
 		//List<JobBox> _availableJobs;
 		List<Job> AvailableJobs {
 			get {
-				if (attachedToBuilding) return myBuilding.Type.GetAvailableJobs().ToList();
+				if (attachedToMapObject) return myMapObject.Type.GetAvailableJobs().ToList();
 				return new();
 			}
 		}
@@ -76,17 +76,33 @@ namespace scenes.region.ui {
 		}
 
 		public void Open() {
-			if (ExtantJobs.Count == 0 && AvailableJobs.Count != 0 && myBuilding.IsConstructed) OpenAddJobScreen();
-			else OpenViewJobScreen();
+			if (ExtantJobs.Count == 0 && AvailableJobs.Count != 0) {
+				if (myMapObject is Building building && building.IsConstructed) {
+					OpenAddJobScreen();
+				} else {
+					OpenAddJobScreen();
+				}
+			} else {
+				OpenViewJobScreen();
+			}
 
 			CallDeferred("show");
 		}
 
 		public void Open(Building myBuilding) {
-			attachedToBuilding = true;
-			this.myBuilding = myBuilding;
+			attachedToMapObject = true;
+			this.myMapObject = myBuilding;
 
-			buildingTitle.Text = "Jobs of " + myBuilding.Type.Name;
+			buildingTitle.Text = "Jobs in " + myBuilding.Type.Name;
+
+			Open();
+		}
+
+		public void Open(ResourceSite resourceSite) {
+			attachedToMapObject = true;
+			this.myMapObject = resourceSite;
+
+			buildingTitle.Text = "Jobs at " + resourceSite.Type.Name;
 
 			Open();
 		}
@@ -95,7 +111,7 @@ namespace scenes.region.ui {
 			Hide();
 			//_extantJobs = null;
 			//_availableJobs = null;
-			myBuilding = null;
+			myMapObject = null;
 			selectedAddJob = -1;
 			addJobConfirmButton.Disabled = true;
 
@@ -160,8 +176,11 @@ namespace scenes.region.ui {
 		}
 
 		void AddJobConfirmed(long ix) {
-			if (attachedToBuilding) ui.AddJobRequested(myBuilding, AvailableJobs[(int)ix]);
-			else ui.AddJobRequested(AvailableJobs[(int)ix]);
+			if (attachedToMapObject) {
+				ui.AddJobRequested(myMapObject, (MapObjectJob)AvailableJobs[(int)ix]);
+			} else {
+				ui.AddJobRequested(AvailableJobs[(int)ix]);
+			}
 			selectedAddJob = -1;
 			//_extantJobs = null;
 			OpenViewJobScreen();
@@ -169,13 +188,13 @@ namespace scenes.region.ui {
 
 		void AddJobConfirmed() {
 			Debug.Assert(selectedAddJob != -1, "Please select a job before confirming!!");
-			Debug.Assert(myBuilding.IsConstructed, "Building needs to be constructed before adding job!!!");
+			if (myMapObject is Building building) Debug.Assert(building.IsConstructed, "Building needs to be constructed before adding job!!!");
 			AddJobConfirmed(selectedAddJob);
 		}
 
 		void ManageTabButtons() {
 			viewJobTabButton.Disabled = ExtantJobs.Count == 0;
-			addJobTabButton.Disabled = AvailableJobs.Count == 0 || !myBuilding.IsConstructed;
+			addJobTabButton.Disabled = AvailableJobs.Count == 0 || (myMapObject is Building building && !building.IsConstructed);
 
 			if (state == State.VIEW_JOBS) viewJobTabButton.Disabled = true;
 			if (state == State.ADD_JOBS) addJobTabButton.Disabled = true;

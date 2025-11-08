@@ -57,7 +57,6 @@ namespace resources.game.building_types {
 				Type type = Type.GetType(typename);
 				Job job = (Job)Activator.CreateInstance(type);
 				jobs.Add(job);
-				//jobs.Add(new JobBox(job));
 			}
 			return jobs;
 		}

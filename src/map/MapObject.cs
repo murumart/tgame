@@ -8,9 +8,10 @@ using static ResourceStorage;
 public abstract partial class MapObject {
 
 	protected Vector2I position; public Vector2I Position { get => position; }
+	public abstract IMapObjectType Type { get; }
 
 
-	public MapObject(Vector2I position) {
+	protected MapObject(Vector2I position) {
 		this.position = position;
 	}
 
@@ -18,9 +19,19 @@ public abstract partial class MapObject {
 
 }
 
+public partial class MapObject {
+
+	public interface IMapObjectType {
+
+		IEnumerable<Job> GetAvailableJobs();
+
+	}
+
+}
+
 public partial class Building : MapObject {
 
-	readonly IBuildingType type; public IBuildingType Type { get => type; }
+	readonly IBuildingType type; public override IBuildingType Type { get => type; }
 
 	Population population; public ref Population Population => ref population;
 	float constructionProgress; // in minutes
@@ -48,13 +59,12 @@ public partial class Building : MapObject {
 
 public partial class Building {
 
-	public interface IBuildingType : IAssetType {
+	public interface IBuildingType : IAssetType, IMapObjectType {
 
 		int GetPopulationCapacity();
 		ResourceCapacity[] GetResourceCapacities();
 		ResourceBundle[] GetResourceRequirements();
 		float GetHoursToConstruct();
-		IEnumerable<Job> GetAvailableJobs();
 
 		Building CreateMapObject(Vector2I position) {
 			return new Building(this, position);
@@ -73,13 +83,16 @@ public partial class Building {
 
 public partial class ResourceSite : MapObject {
 
-	public IResourceSiteType Type { init; get; }
-	readonly List<Well> mineWells; public List<Well> MineWells => mineWells;
+	private readonly IResourceSiteType type;
+	public override IResourceSiteType Type => type;
+
+	readonly List<Well> mineWells;
+	public List<Well> MineWells => mineWells;
 
 
-	public ResourceSite(IResourceSiteType type, Vector2I position) : base(position) {
+	protected ResourceSite(IResourceSiteType type, Vector2I position) : base(position) {
 		mineWells = type.GetDefaultWells();
-		Type = type;
+		this.type = type;
 	}
 
 	public override void PassTime(TimeT minutes) {
@@ -93,7 +106,7 @@ public partial class ResourceSite : MapObject {
 
 public partial class ResourceSite {
 
-	public interface IResourceSiteType : IAssetType {
+	public interface IResourceSiteType : IAssetType, IMapObjectType {
 
 		List<Well> GetDefaultWells();
 

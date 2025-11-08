@@ -10,12 +10,19 @@ namespace resources.game.resource_site_types {
 	public partial class ResourceSiteType : Resource, IResourceSiteType, IScenePathetic {
 
 		[Export] string name;
+		[Export] string resourceTypeDescription;
 		[Export] Array<ResourceWell> mineResources;
 		[Export(PropertyHint.File, "*.tscn")] string ScenePath;
 
 		public string Name => name;
 
 		public string AssetTypeName => "resource_site";
+
+		public IEnumerable<Job> GetAvailableJobs() {
+			List<MapObjectJob> jobs = new();
+			jobs.Add(new GatherResourceJob(resourceTypeDescription));
+			return jobs;
+		}
 
 		public List<Well> GetDefaultWells() {
 			List<Well> list = new();

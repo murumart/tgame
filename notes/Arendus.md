@@ -23,7 +23,7 @@ Kriitiline: inimeste määramine tööle, tootluskvoodid emamaalt -- ilma nendet
 - [ ] ressursimaardlad
 	- [ ] andmeesitus
 		- [ ] defineerivad tööd, mida nende juures teha saab
-	- [ ] visuaalesitus
+	- [X] visuaalesitus
 - [X] ressursid
 	- [X] ehitiste ehitamine võtab ressursse
 	- [ ] ressursside ületootmisel peaks töö peatuma

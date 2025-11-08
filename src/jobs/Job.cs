@@ -70,6 +70,15 @@ public abstract class Job {
 		return sb.ToString();
 	}
 
+}
+
+public abstract class MapObjectJob : Job {
+
+	public abstract void Initialise(RegionFaction ctxFaction, MapObject mapObject);
+	public override void Initialise(RegionFaction ctxFaction) => throw new NotImplementedException("MapObjectJob requires MapObject argument as well!");
+
+	public virtual bool CanInitialise(RegionFaction ctxFaction, MapObject mapObject) => true;
+	public override bool CanInitialise(RegionFaction ctxFaction) => throw new NotImplementedException("MapObjectJob requires MapObject argument as well!");
 
 }
 

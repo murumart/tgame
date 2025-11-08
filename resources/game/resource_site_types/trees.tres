@@ -16,6 +16,7 @@ metadata/_custom_type_script = "uid://bnfatrmjew0vy"
 [resource]
 script = ExtResource("1_u1nyr")
 name = "trees"
+resourceTypeDescription = "wood"
 mineResources = Array[Object]([SubResource("Resource_f0lo2")])
 ScenePath = "uid://cxjh3gpmdx5oj"
 metadata/_custom_type_script = "uid://ct2a6sqe1m7mx"

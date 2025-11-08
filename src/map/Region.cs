@@ -62,6 +62,14 @@ public class Region : ITimePassing {
 		return mapObjects.Values;
 	}
 
+	public bool HasMapObject(Vector2I tile) {
+		return mapObjects.ContainsKey(tile);
+	}
+
+	public bool HasMapObject(Vector2I tile, out MapObject mapObject) {
+		return mapObjects.TryGetValue(tile, out mapObject);
+	}
+
 	public Building CreateBuildingSpotAndPlace(Building.IBuildingType type, Vector2I position) {
 		Debug.Assert(!mapObjects.ContainsKey(position), $"there's already a mapobject at position {position}");
 		var building = (Building)type.CreateMapObject(position);
@@ -75,5 +83,6 @@ public class Region : ITimePassing {
 		mapObjects[position] = mine;
 		return mine;
 	}
+
 
 }

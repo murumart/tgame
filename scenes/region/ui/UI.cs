@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Godot;
 using resources.game.building_types;
-using scenes.region.buildings;
 using IBuildingType = Building.IBuildingType;
 
 
@@ -19,9 +17,9 @@ namespace scenes.region.ui {
 		public event Func<IBuildingType, bool> GetCanBuildEvent;
 		public event Func<ResourceStorage> GetResourcesEvent;
 
-		public event Func<Building, ICollection<JobBox>> GetBuildingJobsEvent;
+		public event Func<MapObject, ICollection<JobBox>> GetMapObjectJobsEvent;
 		public event Func<ICollection<JobBox>> GetJobsEvent;
-		public event Action<Building, Job> AddJobRequestedEvent;
+		public event Action<MapObject, MapObjectJob> AddJobRequestedEvent;
 		public event Func<int> GetMaxFreeWorkersEvent;
 		public event Action<JobBox, int> ChangeJobWorkerCountEvent;
 		public event Action<JobBox> DeleteJobEvent;
@@ -209,6 +207,12 @@ namespace scenes.region.ui {
 			jobsList.Open(building);
 		}
 
+		public void OnResourceSiteClicked(ResourceSite resourceSite) {
+			Debug.Assert(state == State.IDLE, "Can't click on resourceSite outside of idle state");
+			state = State.JOBS_MENU;
+			jobsList.Open(resourceSite);
+		}
+
 		void OnStateChanged(State old, State current) {
 			if (old != current) {
 				if (old == State.PLACING_BUILD) {
@@ -247,9 +251,9 @@ namespace scenes.region.ui {
 		public List<BuildingType> GetBuildingTypes() => GetBuildingTypesEvent?.Invoke();
 		public ResourceStorage GetResources() => GetResourcesEvent?.Invoke();
 
-		public ICollection<JobBox> GetBuildingJobs(Building building) => GetBuildingJobsEvent?.Invoke(building);
+		public ICollection<JobBox> GetMapObjectJobs(MapObject mapObject) => GetMapObjectJobsEvent?.Invoke(mapObject);
 		public ICollection<JobBox> GetJobs() => GetJobsEvent?.Invoke();
-		public void AddJobRequested(Building building, Job job) => AddJobRequestedEvent?.Invoke(building, job);
+		public void AddJobRequested(MapObject mapObject, MapObjectJob job) => AddJobRequestedEvent?.Invoke(mapObject, job);
 		public void AddJobRequested(Job job) => throw new NotImplementedException("Cant add jobs without building yet");
 		public int GetMaxFreeWorkers() => GetMaxFreeWorkersEvent?.Invoke() ?? -1;
 		public void ChangeJobWorkerCount(JobBox job, int amount) => ChangeJobWorkerCountEvent?.Invoke(job, amount);
