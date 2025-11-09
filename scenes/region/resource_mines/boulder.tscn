@@ -6,6 +6,6 @@
 [node name="Boulder" instance=ExtResource("1_bjeym")]
 
 [node name="Sprite2D" type="Sprite2D" parent="." index="0"]
-position = Vector2(-29, -31)
+position = Vector2(-20, -21)
 texture = ExtResource("2_5cslr")
 centered = false

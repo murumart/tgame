@@ -20,9 +20,9 @@ Kriitiline: inimeste määramine tööle, tootluskvoodid emamaalt -- ilma nendet
 - [X] tegevused ehitisega
 	- [X] inimeste palkamine ehitamiseks
 	- [X] inimeste palkamine tööle
-- [ ] ressursimaardlad
+- [X] ressursimaardlad
 	- [X] andmeesitus
-		- [ ] defineerivad tööd, mida nende juures teha saab
+		- [X] defineerivad tööd, mida nende juures teha saab
 	- [X] visuaalesitus
 - [X] ressursid
 	- [X] ehitiste ehitamine võtab ressursse
@@ -50,14 +50,15 @@ Mäng peab olema mängitav iga verstaposti saabudes.
 	- [ ] eri pooled
 		- [ ] AI käitugu praegu täiesti suvaliselt kus seda on lihtne implementeerida
 - [ ] ruudud millega mängida
-	- [ ] metsad puuraidumiseks
-	- [ ] kivid kiviraidumiseks
+	- [X] metsad puuraidumiseks
+	- [X] kivid kiviraidumiseks
 	- [ ] vesi kala püüdmiseks
 	- [ ] turg äri ajamiseks (suurem teema kui eelnevad!)
+	- [ ] lõke vms esemete hävitamiseks
 - [ ] mängumehaanikad
 	- [ ] populatsioon sööb toitu, kasvab sündidest, kahaneb surmadest
 	- [ ] emamaa peab arvet ressurssidest mida kasutab, saadab nende ning regiooni asukoha põhjal mandaate
-	- [ ] populatsioonist tööliste määramine
+	- [X] populatsioonist tööliste määramine
 - [ ] kettalt salvestamine ja laadimine (suur teema)
 
 ### 0.2.0

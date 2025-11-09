@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://c32xcv1ljr5fq"]
+
+[ext_resource type="PackedScene" uid="uid://pfy55aydpy4t" path="res://scenes/region/buildings/_building_base.tscn" id="1_reqbw"]
+[ext_resource type="Texture2D" uid="uid://f5pcfjqwq7sp" path="res://scenes/region/buildings/loghouse.png" id="2_reqbw"]
+
+[node name="BuildingBase" instance=ExtResource("1_reqbw")]
+
+[node name="Sprite2D" type="Sprite2D" parent="." index="0"]
+position = Vector2(-18, -19)
+texture = ExtResource("2_reqbw")
+centered = false

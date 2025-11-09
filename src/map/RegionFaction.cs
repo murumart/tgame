@@ -36,11 +36,8 @@ public class RegionFaction {
 
 		// ASSUMING these are wood rock and ... a third thing initially... TODO make sensical
 		resourceStorage.IncreaseCapacity(300);
-		resourceStorage.AddResource(new(Registry.Resources.GetAsset("rock"), 14));
-		resourceStorage.AddResource(new(Registry.Resources.GetAsset("wood"), 25));
-		resourceStorage.AddResource(new(Registry.Resources.GetAsset("fish"), 25));
 
-		var housing = Registry.Buildings.GetAsset("housing");
+		var housing = Registry.Buildings.GetAsset("log_cabin");
 		PlacePrebuiltBuilding(housing, new(0, 0));
 	}
 

@@ -2,15 +2,15 @@
 
 [ext_resource type="Script" uid="uid://b5xb3tdf3yoon" path="res://resources/game/building_types/BuildingType.cs" id="1_7mu2a"]
 [ext_resource type="Resource" uid="uid://nw83fam2omvi" path="res://resources/game/resource_types/rock.tres" id="1_cgu5r"]
-[ext_resource type="Resource" uid="uid://b8507qbvqvdy8" path="res://resources/game/resource_types/wood.tres" id="2_7l37s"]
+[ext_resource type="Resource" uid="uid://b8507qbvqvdy8" path="res://resources/game/resource_types/boards.tres" id="2_cgu5r"]
 
 [resource]
 script = ExtResource("1_7mu2a")
-name = "Well"
+name = "well"
 ResourceCapacities = null
 ResourceCosts = Dictionary[Object, int]({
 ExtResource("1_cgu5r"): 10,
-ExtResource("2_7l37s"): 3
+ExtResource("2_cgu5r"): 3
 })
 HoursToConstruct = 12.0
 AvailableJobClassNames = PackedStringArray("FishByHandJob")

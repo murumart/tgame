@@ -19,8 +19,8 @@ namespace scenes.region {
 
 
 		public override void _Ready() {
-			RemoveChild(iconTransformParent);
-			UILayer.AddUiChild(iconTransformParent);
+			//RemoveChild(iconTransformParent);
+			//UILayer.AddUiChild(iconTransformParent);
 			IconSetHide();
 		}
 
@@ -28,7 +28,7 @@ namespace scenes.region {
 			if (!Visible) return;
 			if (!iconContainer.Visible) return;
 			var tf = GetGlobalTransformWithCanvas();
-			iconTransformParent.Position = tf.Origin;
+			iconTransformParent.Scale = tf.Scale.Inverse();
 		}
 
 		public override void _Notification(int what) {
