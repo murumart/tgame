@@ -32,8 +32,8 @@ Kriitiline: inimeste määramine tööle, tootluskvoodid emamaalt -- ilma nendet
 	- [X] eraldi arvud majades inimeste ning kodutute kohta
 	- [X] eraldi arvud töös inimeste ning töötute kohta
 - [X] tootlus
-- [ ] tootluskvoot
-	- [ ] lihtne gameover: kvoodi täitmata jätmine
+- [X] tootluskvoot
+	- [X] lihtne gameover: kvoodi täitmata jätmine
 
 Nõu pidada UI disaini teemal (nüri ning aeganõudev).
 
@@ -80,5 +80,5 @@ Mäng peab olema mängitav iga verstaposti saabudes.
 
 ### Määramata tulevik
 
-- populatsiooni peab palkama, et nad tööd teeks
+- populatsiooni peab palkama (raha eest), et nad tööd teeks
 - populatsiooni heaolu loeb - inimesed lahkuvad kehvast kolooniast
