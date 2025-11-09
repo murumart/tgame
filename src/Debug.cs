@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Godot;
@@ -30,4 +31,10 @@ internal static class Debug {
 #else
 	{}
 #endif
+
+	internal static void PrintInternals(object item) {
+		foreach (PropertyDescriptor item1 in TypeDescriptor.GetProperties(item)) {
+			GD.Print("    " + item1.Name + " = " + item1.GetValue(item));
+		}
+	}
 }

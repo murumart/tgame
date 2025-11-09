@@ -71,7 +71,7 @@ public abstract class Job {
 				}
 				if (things[i].Amount <= 0) continue;
 
-				storage.AddResource(new(things[i].Type, 1));
+				storage.AddResource(new ResourceBundle(things[i].Type, 1));
 				things[i] = new(things[i].Type, things[i].Amount - 1);
 				added = true;
 			}

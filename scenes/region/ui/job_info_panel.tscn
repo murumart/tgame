@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://bit7aavyxpq38"]
 
 [ext_resource type="Script" uid="uid://do5uvuxk7ubbq" path="res://scenes/region/ui/JobInfoPanel.cs" id="1_4q80a"]
-[ext_resource type="LabelSettings" uid="uid://teuhafm0mc0i" path="res://resources/visual/theme/10px.tres" id="2_4q80a"]
+[ext_resource type="LabelSettings" uid="uid://teuhafm0mc0i" path="res://resources/visual/theme/label_styles/10px.tres" id="2_4q80a"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_cgm35"]
 content_margin_left = 2.0

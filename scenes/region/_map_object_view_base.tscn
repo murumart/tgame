@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://dl17gbjn423tk"]
 
 [ext_resource type="Script" uid="uid://1ii2ptr21cmq" path="res://scenes/region/MapObjectView.cs" id="1_cca3c"]
-[ext_resource type="Texture2D" uid="uid://cvr7bw57oxjkx" path="res://resources/visual/theme/hammer.svg" id="2_d5rlf"]
+[ext_resource type="Texture2D" uid="uid://cvr7bw57oxjkx" path="res://resources/visual/theme/icons/hammer.svg" id="2_d5rlf"]
 
 [node name="MapObjectViewBase" type="Node2D" node_paths=PackedStringArray("iconTransformParent", "iconContainer")]
 script = ExtResource("1_cca3c")

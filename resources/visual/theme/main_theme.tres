@@ -1,8 +1,8 @@
-[gd_resource type="Theme" load_steps=8 format=3 uid="uid://beql3um0mpmyd"]
+[gd_resource type="Theme" load_steps=12 format=3 uid="uid://beql3um0mpmyd"]
 
 [ext_resource type="FontVariation" uid="uid://dliky8sbpgnxp" path="res://resources/visual/font/title_font.tres" id="1_70gfe"]
 [ext_resource type="FontVariation" uid="uid://16wjjwlxw4iw" path="res://resources/visual/font/default_font.tres" id="1_rjbnf"]
-[ext_resource type="Texture2D" uid="uid://dlsoj84e70cwb" path="res://resources/visual/theme/circle8x8.svg" id="3_hwdam"]
+[ext_resource type="Texture2D" uid="uid://dlsoj84e70cwb" path="res://resources/visual/theme/icons/circle8x8.svg" id="3_hwdam"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5kvdv"]
 bg_color = Color(0.1882353, 0.21960784, 0.2627451, 0.5019608)
@@ -42,6 +42,42 @@ corner_radius_bottom_left = 6
 expand_margin_top = 1.0
 expand_margin_bottom = 1.0
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4yw10"]
+bg_color = Color(0.42352942, 0.5058824, 0.6313726, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_36fd6"]
+bg_color = Color(0.5882353, 0.6627451, 0.75686276, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dixpj"]
+bg_color = Color(0.2509804, 0.32156864, 0.4509804, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.42352942, 0.5058824, 0.6313726, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_114oo"]
+bg_color = Color(0, 0, 0, 0)
+border_width_left = 2
+border_width_right = 3
+border_color = Color(0.2509804, 0.32156864, 0.4509804, 0.5254902)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
 [resource]
 Button/fonts/font = ExtResource("1_70gfe")
 Control/colors/default_color = Color(0.8352941, 0.8392157, 0.85882354, 1)
@@ -58,6 +94,10 @@ HSlider/icons/tick = null
 HSlider/styles/grabber_area = SubResource("StyleBoxFlat_i0op6")
 HSlider/styles/grabber_area_highlight = SubResource("StyleBoxFlat_3wo1x")
 HSlider/styles/slider = SubResource("StyleBoxFlat_hwdam")
+ScrollBar/styles/grabber = SubResource("StyleBoxFlat_4yw10")
+ScrollBar/styles/grabber_highlight = SubResource("StyleBoxFlat_36fd6")
+ScrollBar/styles/grabber_pressed = SubResource("StyleBoxFlat_dixpj")
+ScrollBar/styles/scroll = SubResource("StyleBoxFlat_114oo")
 VSlider/icons/grabber = null
 VSlider/icons/grabber_disabled = null
 VSlider/icons/grabber_highlight = null

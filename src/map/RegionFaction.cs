@@ -2,12 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Godot;
+using scenes.autoload;
 using static Building;
+using static Document;
 
-public class RegionFaction {
+public class RegionFaction : IEntity {
 
-	readonly Faction faction; public Faction Faction { get => faction; }
-	readonly Region region; public Region Region { get => region; }
+	public event Action<Document> ContractFailedEvent;
+
+	public Faction Faction { get; init; }
+	public Region Region { get; init; }
 
 	readonly HashSet<Vector2I> ownedTiles = new();
 
@@ -24,10 +28,16 @@ public class RegionFaction {
 	Population unemployedPopulation;
 	public ref Population UnemployedPopulation => ref unemployedPopulation;
 
+	public string DocName => ToString();
+	public Briefcase Briefcase { get; init; }
+
+	TimeT time;
+
 
 	public RegionFaction(Region region, Faction faction) {
-		this.region = region;
-		this.faction = faction;
+		Region = region;
+		Faction = faction;
+		Briefcase = new();
 
 		region.MapObjectUpdatedAtEvent += OnMapObjectUpdated;
 
@@ -47,6 +57,7 @@ public class RegionFaction {
 			job.PassTime(minutes);
 			job.CheckDone(this);
 		}
+		time += minutes;
 		// building time is passed in Region
 	}
 
@@ -125,7 +136,7 @@ public class RegionFaction {
 
 	public Building PlaceBuildingConstructionSite(IBuildingType type, Vector2I position) {
 		Debug.Assert(!buildings.ContainsKey(position), "There's a lreayd a building here (known by faction)");
-		Debug.Assert(region.CanPlaceBuilding(position), "There's a lreayd a building here (known by region)");
+		Debug.Assert(Region.CanPlaceBuilding(position), "There's a lreayd a building here (known by region)");
 		Debug.Assert(CanPlaceBuilding(type, position), "Cannot place the building for whatever reason");
 		var building = PlaceBuilding(type, position);
 		if (type.TakesTimeToConstruct() || type.HasResourceRequirements()) {
@@ -144,14 +155,14 @@ public class RegionFaction {
 	}
 
 	Building PlaceBuilding(IBuildingType type, Vector2I position) {
-		var building = region.CreateBuildingSpotAndPlace(type, position);
+		var building = Region.CreateBuildingSpotAndPlace(type, position);
 		if (type.GetPopulationCapacity() > 0) AddJob(position, new AbsorbFromHomelessPopulationJob(building));
 		buildings[position] = building;
 		return building;
 	}
 
 	public bool CanPlaceBuilding(IBuildingType type, Vector2I tilepos) {
-		return CanBuild(type) && region.CanPlaceBuilding(tilepos);
+		return CanBuild(type) && Region.CanPlaceBuilding(tilepos);
 	}
 
 	public bool CanBuild(IBuildingType type) {
@@ -161,13 +172,13 @@ public class RegionFaction {
 	public void RemoveBuilding(Vector2I at) {
 		Debug.Assert(HasBuilding(at), $"There's no building to remove at {at}...");
 		buildings.Remove(at);
-		region.RemoveMapObject(at);
+		Region.RemoveMapObject(at);
 	}
 
 	public void Uproot(Vector2I at) {
-		bool has = region.HasMapObject(at, out var obj);
+		bool has = Region.HasMapObject(at, out var obj);
 		Debug.Assert(has, $"No map object to uproot at {at}");
-		region.RemoveMapObject(at);
+		Region.RemoveMapObject(at);
 	}
 
 	public ICollection<Building> GetBuildings() => buildings.Values;
@@ -184,9 +195,31 @@ public class RegionFaction {
 	}
 
 	void OnMapObjectUpdated(Vector2I at) {
-		if (!region.HasMapObject(at) && HasBuilding(at)) {
+		if (!Region.HasMapObject(at) && HasBuilding(at)) {
 			buildings.Remove(at);
 		}
+	}
+
+	// timing and contracts
+
+	public TimeT GetTime() => time;
+
+	public void UpdateBriefcaseTime(TimeT minutes) {
+		var prevHour = time / 60;
+		var nextHour = (time + minutes) / 60;
+		var diff = nextHour - prevHour;
+
+		for (ulong i = 1; i <= diff; i++) {
+			Briefcase.Check(prevHour * 60 + i * 60);
+		}
+	}
+
+	public void ContractFailure(Document doc, Point fulfillFailure) {
+		ContractFailedEvent?.Invoke(doc);
+	}
+
+	public void ContractSuccess(Document doc) {
+
 	}
 
 }

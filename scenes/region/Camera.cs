@@ -40,8 +40,11 @@ namespace scenes.region {
 				} else if (bEvent.ButtonIndex == MouseButton.Right && evt.IsPressed()) {
 					var wPos = GetCanvasTransform().AffineInverse() * bEvent.Position;
 					ui.OnRightMouseClick(wPos, PosToTilePos(wPos));
+				} else {
+					return;
 				}
-				if (bEvent.ButtonIndex != MouseButton.None) Zoom = new Vector2(zoomSize, zoomSize);
+				Zoom = new Vector2(zoomSize, zoomSize);
+				GetWindow().SetInputAsHandled();
 			}
 		}
 

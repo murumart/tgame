@@ -264,7 +264,7 @@ public class GatherResourceJob : MapObjectJob {
 		bool reproduce = false;
 		foreach (var well in site.MineWells) {
 			float time = well.MinutesPerBunch / MathF.Max(GetWorkTime(1), 1);
-			str += $" * {well.BunchSize} x {well.ResourceType.Name} every {GameTime.FancyTimeString((TimeT)time)}.\n";
+			str += $" * {well.BunchSize} x {well.ResourceType.Name} every {GameTime.GetFancyTimeString((TimeT)time)}.\n";
 			str += $"   This is {100 - ((float)well.Bunches / well.InitialBunches) * 100:0}% depleted.\n";
 			reproduce = reproduce || well.MinutesPerBunchRegen > 0;
 		}
@@ -273,7 +273,7 @@ public class GatherResourceJob : MapObjectJob {
 			str += $"\nSome {(resourceTypeDescription ?? "resources")} can regrow:\n";
 			foreach (var well in site.MineWells) {
 				if (well.MinutesPerBunchRegen > 0) {
-					str += $" * {well.ResourceType.Name.Capitalize()} grows every {GameTime.FancyTimeString(well.MinutesPerBunchRegen)}.";
+					str += $" * {well.ResourceType.Name.Capitalize()} grows every {GameTime.GetFancyTimeString(well.MinutesPerBunchRegen)}.";
 				}
 			}
 		}
@@ -287,7 +287,7 @@ public class GatherResourceJob : MapObjectJob {
 		var well = site.MineWells[wellIx];
 		float timeLeft = well.MinutesPerBunch - timeSpent[wellIx];
 		timeLeft /= GetWorkTime(1);
-		return GameTime.FancyTimeString((TimeT)timeLeft) + " until more " + well.ResourceType.Name + ".";
+		return GameTime.GetFancyTimeString((TimeT)timeLeft) + " until more " + well.ResourceType.Name + ".";
 	}
 
 }

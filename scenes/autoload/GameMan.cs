@@ -30,7 +30,7 @@ namespace scenes.autoload {
 
 			game = new(new Map());
 
-			game.PassTime(60 * 7); // start game at 7:00
+			//game.PassTime(60 * 7); // start game at 7:00
 		}
 
 		double timeAccum;

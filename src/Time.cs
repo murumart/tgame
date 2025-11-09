@@ -29,6 +29,8 @@ public readonly struct TimeT {
 
 public class GameTime : ITimePassing {
 
+	public event Action<TimeT> HourPassedEvent;
+
 	public const float SECS_TO_HOURS = 1.0f / 60.0f;
 
 	public const int MINUTES_PER_HOUR = 60;
@@ -48,7 +50,15 @@ public class GameTime : ITimePassing {
 	}
 
 	public void PassTime(TimeT minutes) {
+		var prevHour = this.minutes / 60;
+		var nextHour = (this.minutes + minutes) / 60;
+		var diff = nextHour - prevHour;
+
 		this.minutes += minutes;
+
+		for (ulong i = 1; i <= diff; i++) {
+			HourPassedEvent?.Invoke(prevHour * 60 + i * 60);
+		}
 	}
 
 	public double GetHour() => minutes / (double)MINUTES_PER_HOUR;
@@ -61,7 +71,7 @@ public class GameTime : ITimePassing {
 	public int GetDayHour() => (int)(GetHour() % HOURS_PER_DAY);
 	public int GetMonthDay() => (int)(GetDay() % (WEEKS_PER_MONTH * DAYS_PER_WEEK)) + 1;
 
-	public static string FancyTimeString(TimeT minutes) {
+	public static string GetFancyTimeString(TimeT minutes) {
 		var hours = minutes / MINUTES_PER_HOUR;
 		var days = hours / DAYS_PER_WEEK;
 		var weeks = days / DAYS_PER_WEEK;

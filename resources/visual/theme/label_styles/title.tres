@@ -1,0 +1,8 @@
+[gd_resource type="LabelSettings" load_steps=2 format=3 uid="uid://ddruam7fh1y7l"]
+
+[ext_resource type="FontVariation" uid="uid://dliky8sbpgnxp" path="res://resources/visual/font/title_font.tres" id="1_fmcex"]
+
+[resource]
+font = ExtResource("1_fmcex")
+font_size = 14
+font_color = Color(0.8352941, 0.8392157, 0.85882354, 1)

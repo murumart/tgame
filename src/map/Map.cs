@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using Godot;
-using static Faction;
 
 public class Map : ITimePassing {
 
@@ -18,6 +16,15 @@ public class Map : ITimePassing {
 			factions.Add(faction);
 			var regionFaction = faction.CreateOwnedFaction(region);
 			regionFactions.Add(regionFaction);
+			// test mandate
+			var mandate = faction.Briefcase.CreateExportMandate(
+				new() { new(Registry.Resources.GetAsset("logs"), 9) },
+				new(),
+				faction,
+				regionFaction,
+				60 * 7 + 120 //GameTime.DAYS_PER_WEEK * GameTime.HOURS_PER_DAY * GameTime.MINUTES_PER_HOUR
+			);
+			regionFaction.Briefcase.AddDocument(mandate);
 		}
 	}
 

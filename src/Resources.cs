@@ -43,7 +43,7 @@ public partial class ResourceStorage : IEnumerable<KeyValuePair<IResourceType, I
 		return resource.Amount <= stored.Amount;
 	}
 
-	public bool HasEnoughAll(ICollection<ResourceBundle> resources) {
+	public bool HasEnoughAll(IEnumerable<ResourceBundle> resources) {
 		foreach (var r in resources) {
 			if (!HasEnough(r)) return false;
 		}
@@ -61,12 +61,36 @@ public partial class ResourceStorage : IEnumerable<KeyValuePair<IResourceType, I
 		ItemAmount += resource.Amount;
 	}
 
+	public void AddResource(IEnumerable<ResourceBundle> resources) {
+		foreach (var bundle in resources) {
+			AddResource(bundle);
+		}
+	}
+
 	public void SubtractResource(ResourceBundle resource) {
 		Debug.Assert(storageAmounts.ContainsKey(resource.Type), "cant subtract resource type that's not in storage!!");
 		storageAmounts.TryGetValue(resource.Type, out InStorage stored);
 		storageAmounts[resource.Type] = stored.Sub(resource);
 		ItemAmount -= resource.Amount;
-		Debug.Assert(ItemAmount > 0, "Item amount in storage went negative?? What the hell..");
+		Debug.Assert(ItemAmount >= 0, "Item amount in storage went negative?? What the hell..");
+		if (storageAmounts[resource.Type].Amount == 0) storageAmounts.Remove(resource.Type);
+	}
+
+	public void SubtractResource(IEnumerable<ResourceBundle> resources) {
+		foreach (var bundle in resources) {
+			SubtractResource(bundle);
+		}
+	}
+
+	public void TransferResources(ResourceStorage target, ResourceBundle resources) {
+		SubtractResource(resources);
+		target.AddResource(resources);
+	}
+
+	public void TransferResources(ResourceStorage target, IEnumerable<ResourceBundle> resources) {
+		foreach (var res in resources) {
+			TransferResources(target, res);
+		}
 	}
 
 	// enumerating over the object

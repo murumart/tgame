@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Godot;
 using resources.game.building_types;
+using static Document;
 using IBuildingType = Building.IBuildingType;
 
 
@@ -24,6 +25,8 @@ namespace scenes.region.ui {
 		public event Action<JobBox, int> ChangeJobWorkerCountEvent;
 		public event Action<JobBox> DeleteJobEvent;
 
+		public event Func<Briefcase> GetBriefcaseEvent;
+
 		public event Func<int> GetPopulationCountEvent;
 		public event Func<int> GetHomelessPopulationCountEvent;
 		public event Func<int> GetUnemployedPopulationCountEvent;
@@ -38,11 +41,13 @@ namespace scenes.region.ui {
 			CHOOSING_BUILD,
 			PLACING_BUILD,
 			JOBS_MENU,
+			AGREEMENTS_MENU,
 		}
 
 		public enum Tab : int {
-			NONE = -1,
+			NONE = -1, // because TabContainer -1 = none selected
 			BUILD,
+			DOCUMENTS,
 		}
 
 		// camera
@@ -50,12 +55,13 @@ namespace scenes.region.ui {
 
 		// bottom bar buttons
 		[Export] public Button buildButton;
-		[Export] public Button policyButton;
-		[Export] public Button worldButton;
+		[Export] public Button agreementsButton;
+		[Export] public Button jobsButton;
 
 		// bottom bar menus menus
 		[Export] public TabContainer menuTabs;
 		[Export] public BuildingList buildingList;
+		[Export] public DocumentsDisplay documentsDisplay;
 
 		// right
 		[Export] public JobsList jobsList;
@@ -93,10 +99,12 @@ namespace scenes.region.ui {
 		bool internalGamePaused = false;
 		bool timeSpeedAlteringDisabled = false;
 
+
 		// overrides and connections
 
 		public override void _Ready() {
-			buildButton.Pressed += OnBuildButtonPressed;
+			buildButton.Pressed += () => OnTabButtonPressed(Tab.BUILD, State.CHOOSING_BUILD);
+			agreementsButton.Pressed += () => OnTabButtonPressed(Tab.DOCUMENTS, State.AGREEMENTS_MENU);
 
 			pauseButton.Pressed += OnPauseButtonPressed;
 			normalSpeedButton.Pressed += OnNormalSpeedButtonPressed;
@@ -109,10 +117,10 @@ namespace scenes.region.ui {
 			UpdateDisplays(); // todo move this to something that doesn't happen every frame... if it becomes a bottleneck
 		}
 
-		void OnBuildButtonPressed() {
-			if (menuTabs.CurrentTab != (int)Tab.BUILD) {
-				state = State.CHOOSING_BUILD;
-				SelectTab(Tab.BUILD);
+		void OnTabButtonPressed(Tab which, State matchingState) {
+			if (menuTabs.CurrentTab != (int)which) {
+				state = matchingState;
+				SelectTab(which);
 			} else {
 				state = State.IDLE;
 				SelectTab(Tab.NONE);
@@ -150,6 +158,8 @@ namespace scenes.region.ui {
 			} else if (which == Tab.BUILD) {
 				buildingList.Update();
 				buildingList.Show();
+			} else if (which == Tab.DOCUMENTS) {
+				documentsDisplay.Display(GetBriefcase());
 			}
 			menuTabs.CurrentTab = (int)which;
 		}
@@ -176,6 +186,12 @@ namespace scenes.region.ui {
 
 		// utilities
 
+		public void HourlyUpdate(TimeT timeInMinutes) {
+			if (menuTabs.CurrentTab == (int)Tab.DOCUMENTS) {
+				documentsDisplay.Display();
+			}
+		}
+
 		public void OnLeftMouseClick(Vector2 position, Vector2I tilePosition) {
 			switch (state) {
 				case State.PLACING_BUILD:
@@ -190,7 +206,7 @@ namespace scenes.region.ui {
 		}
 
 		public void OnRightMouseClick(Vector2 position, Vector2I tilePosition) {
-			if (state == State.PLACING_BUILD) {
+			if (state == State.PLACING_BUILD || state == State.CHOOSING_BUILD) {
 				state = State.IDLE;
 			}
 			if (state == State.JOBS_MENU) {
@@ -216,6 +232,10 @@ namespace scenes.region.ui {
 
 		void OnStateChanged(State old, State current) {
 			if (old != current) {
+				if (old == State.CHOOSING_BUILD) {
+					buildingList.Reset();
+					SelectTab(Tab.NONE);
+				}
 				if (old == State.PLACING_BUILD) {
 					buildingList.Reset();
 					buildingList.SetBuildCursor(null);
@@ -260,6 +280,8 @@ namespace scenes.region.ui {
 		public void ChangeJobWorkerCount(JobBox job, int amount) => ChangeJobWorkerCountEvent?.Invoke(job, amount);
 		public void DeleteJob(JobBox jobBox) => DeleteJobEvent?.Invoke(jobBox);
 
+		public Briefcase GetBriefcase() => GetBriefcaseEvent?.Invoke();
+
 		public int GetPopulationCount() => GetPopulationCountEvent?.Invoke() ?? -1;
 		public int GetHomelessPopulationCount() => GetHomelessPopulationCountEvent?.Invoke() ?? -1;
 		public int GetUnemployedPopulationCount() => GetUnemployedPopulationCountEvent?.Invoke() ?? -1;
@@ -267,6 +289,7 @@ namespace scenes.region.ui {
 
 		public bool PauseRequested() => PauseRequestedEvent?.Invoke() ?? false;
 		public void GameSpeedChangeRequested(float spd) => GameSpeedChangeRequestedEvent?.Invoke(spd);
+
 
 	}
 

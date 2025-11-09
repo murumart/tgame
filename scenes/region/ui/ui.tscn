@@ -1,9 +1,10 @@
-[gd_scene load_steps=8 format=3 uid="uid://cp354pcilqv48"]
+[gd_scene load_steps=9 format=3 uid="uid://cp354pcilqv48"]
 
-[ext_resource type="LabelSettings" uid="uid://v03gdc53ijm1" path="res://resources/visual/theme/half_size.tres" id="1_nfevs"]
+[ext_resource type="LabelSettings" uid="uid://v03gdc53ijm1" path="res://resources/visual/theme/label_styles/half_size.tres" id="1_nfevs"]
 [ext_resource type="Script" uid="uid://cd6mwdns4bcwa" path="res://scenes/region/ui/UI.cs" id="1_vkak1"]
 [ext_resource type="PackedScene" uid="uid://c7ew6g8hdbgfg" path="res://scenes/region/ui/jobs_list.tscn" id="3_y7o2c"]
 [ext_resource type="Script" uid="uid://2xhwk4iyfu73" path="res://scenes/region/ui/BuildingList.cs" id="4_suhma"]
+[ext_resource type="PackedScene" uid="uid://bli7m2dvghbu1" path="res://scenes/region/ui/documents_display.tscn" id="5_iwag8"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_suhma"]
 bg_color = Color(0.6, 0.6, 0.6, 0)
@@ -23,7 +24,7 @@ font_color = Color(0.8352941, 0.8392157, 0.85882354, 1)
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_bjdfm"]
 
-[node name="Ui" type="MarginContainer" node_paths=PackedStringArray("buildButton", "policyButton", "worldButton", "menuTabs", "buildingList", "jobsList", "pauseDisplayPanel", "populationLabel", "timeLabel", "fpsLabel", "tilePosLabel", "gameSpeedLabel", "pauseButton", "normalSpeedButton", "fastSpeedButton", "resourceLabel")]
+[node name="Ui" type="MarginContainer" node_paths=PackedStringArray("buildButton", "agreementsButton", "jobsButton", "menuTabs", "buildingList", "documentsDisplay", "jobsList", "pauseDisplayPanel", "populationLabel", "timeLabel", "fpsLabel", "tilePosLabel", "gameSpeedLabel", "pauseButton", "normalSpeedButton", "fastSpeedButton", "resourceLabel")]
 z_index = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -37,11 +38,12 @@ theme_override_constants/margin_right = 2
 theme_override_constants/margin_bottom = 2
 script = ExtResource("1_vkak1")
 buildButton = NodePath("VBoxContainer/ControlButtons/BuildButton")
-policyButton = NodePath("VBoxContainer/ControlButtons/PolicyButton")
-worldButton = NodePath("VBoxContainer/ControlButtons/WorldButton")
-menuTabs = NodePath("VBoxContainer/MenuTabs")
-buildingList = NodePath("VBoxContainer/MenuTabs/HBoxContainer/BuildingList")
-jobsList = NodePath("VBoxContainer/Horizon/JobsList")
+agreementsButton = NodePath("VBoxContainer/ControlButtons/AgreementsButton")
+jobsButton = NodePath("VBoxContainer/ControlButtons/JobsButton")
+menuTabs = NodePath("VBoxContainer/MarginContainer/MenuTabs")
+buildingList = NodePath("VBoxContainer/MarginContainer/MenuTabs/HBoxContainer/BuildingList")
+documentsDisplay = NodePath("VBoxContainer/MarginContainer/MenuTabs/HBoxContainer2/Agreements")
+jobsList = NodePath("VBoxContainer/MarginContainer/Horizon/JobsList")
 pauseDisplayPanel = NodePath("PausePanel")
 populationLabel = NodePath("VBoxContainer/VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer/poplabel")
 timeLabel = NodePath("VBoxContainer/VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer/TimeLabel")
@@ -51,7 +53,7 @@ gameSpeedLabel = NodePath("VBoxContainer/VBoxContainer/HBoxContainer/HBoxContain
 pauseButton = NodePath("VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer/PauseButton")
 normalSpeedButton = NodePath("VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer/NormalSpeedButton")
 fastSpeedButton = NodePath("VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer/FastButton")
-resourceLabel = NodePath("VBoxContainer/Horizon/ResourcesList")
+resourceLabel = NodePath("VBoxContainer/MarginContainer/Horizon/ResourcesList")
 
 [node name="PausePanel" type="Panel" parent="."]
 visible = false
@@ -149,12 +151,17 @@ focus_mode = 0
 theme_override_font_sizes/font_size = 6
 text = ">>"
 
-[node name="Horizon" type="HBoxContainer" parent="VBoxContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 mouse_filter = 2
 
-[node name="ResourcesList" type="RichTextLabel" parent="VBoxContainer/Horizon"]
+[node name="Horizon" type="HBoxContainer" parent="VBoxContainer/MarginContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="ResourcesList" type="RichTextLabel" parent="VBoxContainer/MarginContainer/Horizon"]
 custom_minimum_size = Vector2(60, 0)
 layout_mode = 2
 mouse_filter = 2
@@ -168,55 +175,55 @@ aa
 a
 "
 
-[node name="Fat" type="Control" parent="VBoxContainer/Horizon"]
+[node name="Fat" type="Control" parent="VBoxContainer/MarginContainer/Horizon"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 1.75
 mouse_filter = 2
 
-[node name="JobsList" parent="VBoxContainer/Horizon" node_paths=PackedStringArray("ui") instance=ExtResource("3_y7o2c")]
+[node name="JobsList" parent="VBoxContainer/MarginContainer/Horizon" node_paths=PackedStringArray("ui") instance=ExtResource("3_y7o2c")]
 visible = false
 layout_mode = 2
 size_flags_horizontal = 3
-ui = NodePath("../../..")
+ui = NodePath("../../../..")
 
-[node name="MenuTabs" type="TabContainer" parent="VBoxContainer"]
+[node name="MenuTabs" type="TabContainer" parent="VBoxContainer/MarginContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_bjdfm")
-current_tab = 0
 tabs_visible = false
 deselect_enabled = true
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/MenuTabs"]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/MarginContainer/MenuTabs"]
+visible = false
 layout_mode = 2
 metadata/_tab_index = 0
 
-[node name="BuildingList" type="PanelContainer" parent="VBoxContainer/MenuTabs/HBoxContainer" node_paths=PackedStringArray("ui", "itemList", "buildConfirmation", "resourceListText")]
-visible = false
+[node name="BuildingList" type="PanelContainer" parent="VBoxContainer/MarginContainer/MenuTabs/HBoxContainer" node_paths=PackedStringArray("ui", "itemList", "buildConfirmation", "resourceListText")]
 custom_minimum_size = Vector2(169, 240)
 layout_mode = 2
 script = ExtResource("4_suhma")
-ui = NodePath("../../../..")
+ui = NodePath("../../../../..")
 itemList = NodePath("MarginContainer/VBoxContainer/BuildMenuList")
 buildConfirmation = NodePath("MarginContainer/VBoxContainer/HBoxContainer/BuildMenuConfirmation")
 resourceListText = NodePath("MarginContainer/VBoxContainer/ResourceList")
 
-[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/MenuTabs/HBoxContainer/BuildingList"]
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/MarginContainer/MenuTabs/HBoxContainer/BuildingList"]
 layout_mode = 2
 theme_override_constants/margin_left = 2
 theme_override_constants/margin_top = 2
 theme_override_constants/margin_right = 2
 theme_override_constants/margin_bottom = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/MenuTabs/HBoxContainer/BuildingList/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/MarginContainer/MenuTabs/HBoxContainer/BuildingList/MarginContainer"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="VBoxContainer/MenuTabs/HBoxContainer/BuildingList/MarginContainer/VBoxContainer"]
+[node name="Label" type="Label" parent="VBoxContainer/MarginContainer/MenuTabs/HBoxContainer/BuildingList/MarginContainer/VBoxContainer"]
 layout_mode = 2
 text = "What to build?"
 
-[node name="BuildMenuList" type="ItemList" parent="VBoxContainer/MenuTabs/HBoxContainer/BuildingList/MarginContainer/VBoxContainer"]
+[node name="BuildMenuList" type="ItemList" parent="VBoxContainer/MarginContainer/MenuTabs/HBoxContainer/BuildingList/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
@@ -225,28 +232,42 @@ item_0/text = "Housing"
 item_1/text = "Well"
 item_2/text = "Idk"
 
-[node name="ResourceList" type="RichTextLabel" parent="VBoxContainer/MenuTabs/HBoxContainer/BuildingList/MarginContainer/VBoxContainer"]
+[node name="ResourceList" type="RichTextLabel" parent="VBoxContainer/MarginContainer/MenuTabs/HBoxContainer/BuildingList/MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.33
 bbcode_enabled = true
 text = "you need my resources. to construct these building aa a a a a a a  aa aaa aaaaa aa aa aaa a a  a aa a a aa a a a aa a aaa a a"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/MenuTabs/HBoxContainer/BuildingList/MarginContainer/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/MarginContainer/MenuTabs/HBoxContainer/BuildingList/MarginContainer/VBoxContainer"]
 layout_mode = 2
 alignment = 2
 
-[node name="BuildMenuConfirmation" type="Button" parent="VBoxContainer/MenuTabs/HBoxContainer/BuildingList/MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="BuildMenuConfirmation" type="Button" parent="VBoxContainer/MarginContainer/MenuTabs/HBoxContainer/BuildingList/MarginContainer/VBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 disabled = true
 text = "select"
 
-[node name="Fat" type="Control" parent="VBoxContainer/MenuTabs/HBoxContainer"]
+[node name="Fat" type="Control" parent="VBoxContainer/MarginContainer/MenuTabs/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 mouse_filter = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer/MarginContainer/MenuTabs"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 1
+
+[node name="Agreements" parent="VBoxContainer/MarginContainer/MenuTabs/HBoxContainer2" node_paths=PackedStringArray("ui") instance=ExtResource("5_iwag8")]
+layout_mode = 2
+ui = NodePath("../../../../..")
+
+[node name="Fat" type="Control" parent="VBoxContainer/MarginContainer/MenuTabs/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.47
 
 [node name="ControlButtons" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
@@ -258,12 +279,11 @@ layout_mode = 2
 focus_mode = 0
 text = "Build"
 
-[node name="PolicyButton" type="Button" parent="VBoxContainer/ControlButtons"]
+[node name="AgreementsButton" type="Button" parent="VBoxContainer/ControlButtons"]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
-disabled = true
-text = "Policy"
+text = "Agreements"
 
 [node name="JobsButton" type="Button" parent="VBoxContainer/ControlButtons"]
 unique_name_in_owner = true

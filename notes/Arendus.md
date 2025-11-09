@@ -31,7 +31,7 @@ Kriitiline: inimeste määramine tööle, tootluskvoodid emamaalt -- ilma nendet
 	- [X] populatsiooniarv UIs
 	- [X] eraldi arvud majades inimeste ning kodutute kohta
 	- [X] eraldi arvud töös inimeste ning töötute kohta
-- [ ] tootlus
+- [X] tootlus
 - [ ] tootluskvoot
 	- [ ] lihtne gameover: kvoodi täitmata jätmine
 
@@ -59,7 +59,6 @@ Mäng peab olema mängitav iga verstaposti saabudes.
 	- [ ] populatsioon sööb toitu, kasvab sündidest, kahaneb surmadest
 	- [ ] emamaa peab arvet ressurssidest mida kasutab, saadab nende ning regiooni asukoha põhjal mandaate
 	- [X] populatsioonist tööliste määramine
-- [ ] kettalt salvestamine ja laadimine (suur teema)
 
 ### 0.2.0
 
@@ -73,6 +72,11 @@ Mäng peab olema mängitav iga verstaposti saabudes.
 	- [ ] AI saadetud rünnakud
 	- [ ] mängija saadetud rünnakud
 - [ ] genereeritud maailm: müra: temperatuur ja niiskus et oleks alus eri bioomideks
+
+### Kasutajakogemus
+
+- [ ] märguanne läheneva tähtajaga dokumendi kohta
+- [ ] kettalt mängu salvestamine ja laadimine (suur teema)
 
 ### Määramata tulevik
 

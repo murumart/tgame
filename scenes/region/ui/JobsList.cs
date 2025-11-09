@@ -75,6 +75,12 @@ namespace scenes.region.ui {
 			addJobDescription.Text = "";
 		}
 
+		public override void _GuiInput(InputEvent evt) {
+			if (evt is InputEventMouseButton) {
+				GetViewport().SetInputAsHandled();
+			}
+		}
+
 		public void Open() {
 			if (ExtantJobs.Count == 0 && AvailableJobs.Count != 0) {
 				if (myMapObject is Building building && building.IsConstructed) {

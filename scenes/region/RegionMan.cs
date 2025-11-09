@@ -7,6 +7,7 @@ using scenes.autoload;
 using scenes.region.buildings;
 using scenes.region.ui;
 using static Building;
+using static Document;
 
 namespace scenes.region {
 
@@ -37,11 +38,16 @@ namespace scenes.region {
 			ui.ChangeJobWorkerCountEvent += ChangeJobWorkerCount;
 			ui.DeleteJobEvent += RemoveJob;
 
+			GameMan.Singleton.Game.Time.HourPassedEvent += HourlyUpdate;
+
 			region = GameMan.Singleton.Game.Map.GetRegion(0);
 			regionFaction = GameMan.Singleton.Game.Map.GetFaction(0).GetOwnedRegionFaction(0);
 			ui.GetPopulationCountEvent += regionFaction.GetPopulationCount;
 			ui.GetHomelessPopulationCountEvent += GetHomelessPopulationCount;
 			ui.GetUnemployedPopulationCountEvent += GetUnemployedPopulationCount;
+			ui.GetBriefcaseEvent += GetBriefcase;
+			GD.Print("registreerin :)");
+			regionFaction.ContractFailedEvent += OnRegionMandateFailed;
 
 			region.MapObjectUpdatedAtEvent += OnRegionMapObjectUpdated;
 
@@ -54,6 +60,8 @@ namespace scenes.region {
 			foreach (var m in region.GetMapObjects()) {
 				LoadMapObjectView(m);
 			}
+
+			GameMan.Singleton.Game.PassTime(60 * 7); // start game at 7:00
 		}
 
 		public override void _Notification(int what) { // teardown
@@ -73,8 +81,14 @@ namespace scenes.region {
 				ui.AddJobRequestedEvent -= AddJob;
 				ui.GetMaxFreeWorkersEvent -= GetJobMaxWorkers;
 				ui.ChangeJobWorkerCountEvent -= ChangeJobWorkerCount;
+				ui.GetBriefcaseEvent -= GetBriefcase;
 
 				region.MapObjectUpdatedAtEvent -= OnRegionMapObjectUpdated;
+				regionFaction.ContractFailedEvent -= OnRegionMandateFailed;
+
+				GameMan.Singleton.Game.Time.HourPassedEvent -= HourlyUpdate;
+
+				ui.QueueFree();
 			}
 		}
 
@@ -140,13 +154,22 @@ namespace scenes.region {
 			mapObjectViews.Remove(tile);
 		}
 
-		// region notifications
+		// notifications
+
+		void HourlyUpdate(TimeT timeInMinutes) {
+			ui.HourlyUpdate(timeInMinutes);
+		}
 
 		void OnRegionMapObjectUpdated(Vector2I tile) {
-			bool exists = region.HasMapObject(tile, out var ob);
+			bool exists = region.HasMapObject(tile);
 			if (!exists) {
 				RemoveDisplay(tile);
 			}
+		}
+
+		void OnRegionMandateFailed(Document doc) {
+			GD.Print("MY MANDATE FAILED:::::: DAMN");
+			GetTree().ChangeSceneToFile("res://scenes/game_over.tscn");
 		}
 
 		// get information (for UI)
@@ -197,6 +220,8 @@ namespace scenes.region {
 		public void ChangeJobWorkerCount(JobBox jbox, int by) {
 			regionFaction.EmployWorkers(jbox.Debox(), by);
 		}
+
+		Briefcase GetBriefcase() => regionFaction.Briefcase;
 
 	}
 

@@ -33,6 +33,12 @@ public partial class BuildingList : PanelContainer {
 		buildConfirmation.Pressed += OnBuildThingConfirmed;
 	}
 
+	public override void _GuiInput(InputEvent evt) {
+			if (evt is InputEventMouseButton) {
+				GetViewport().SetInputAsHandled();
+			}
+		}
+
 	void OnBuildThingSelected(long which) {
 		buildConfirmation.Disabled = false;
 		selectedBuildThingId = which;
