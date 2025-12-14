@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Godot;
-using resources.game.resource_site_types;
 using static ResourceSite;
 
 
@@ -17,8 +16,12 @@ public class Region : ITimePassing {
 
 	readonly List<Region> neighbors = new();
 
+	public Color Color { get; init; } // used for displaying
 
-	public Region() { }
+
+	public Region() {
+		this.Color = new Color(GD.Randf(), GD.Randf(), GD.Randf()).Lightened(0.25f);
+	}
 
 	public Region(Dictionary<Vector2I, GroundTileType> groundTiles) : this() {
 		this.groundTiles = groundTiles;

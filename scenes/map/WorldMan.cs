@@ -9,15 +9,26 @@ namespace scenes.map {
 
 
 		public override void _Ready() {
-			var world = worldGenerator.GenerateWorld();
-			worldRenderer.Draw(world);
+			GenerateNewWorld();
 		}
 
-		public override void _UnhandledKeyInput(InputEvent @event) {
-			if (@event.IsActionPressed("ui_accept")) {
-				var world = worldGenerator.GenerateWorld();
-				worldRenderer.Draw(world);
+		public override void _UnhandledKeyInput(InputEvent evt) {
+			if (evt.IsActionPressed("ui_accept")) {
+				GenerateNewWorld();
 			}
+		}
+
+		void GenerateNewWorld() {
+			World world = new(worldGenerator.WorldWidth, worldGenerator.WorldHeight);
+			worldGenerator.GenerateContinents(world);
+			worldRenderer.Draw(world);
+			worldGenerator.GenerateRegionStarts(world);
+			worldRenderer.DrawRegions(worldGenerator.Regions);
+			var drawRegionsCallable = Callable.From(() => worldRenderer.DrawRegions(worldGenerator.Regions));
+			var tw = CreateTween().SetLoops();
+			tw.TweenInterval(0.5f);
+			tw.TweenCallback(drawRegionsCallable);
+			worldGenerator.GrowRegions(world);
 		}
 
 	}

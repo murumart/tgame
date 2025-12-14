@@ -37,6 +37,10 @@ Kriitiline: inimeste määramine tööle, tootluskvoodid emamaalt -- ilma nendet
 
 Nõu pidada UI disaini teemal (nüri ning aeganõudev).
 
+### Detsember 2025
+
+
+
 ## Verstapostid
 
 Mäng peab olema mängitav iga verstaposti saabudes.

@@ -29,11 +29,12 @@ worldRenderer = NodePath("WorldRenderer")
 [node name="WorldGenerator" type="Node" parent="."]
 script = ExtResource("2_576h7")
 continentNoise = ExtResource("3_mmetw")
-worldWidth = 1024
-worldHeight = 712
+WorldWidth = 1080
+WorldHeight = 720
+RegionCount = 700
 islandCurve = SubResource("Curve_7j5km")
 
-[node name="WorldRenderer" type="Node2D" parent="."]
+[node name="WorldRenderer" type="Sprite2D" parent="."]
 script = ExtResource("4_7j5km")
 
 [node name="DebugRender" type="Sprite2D" parent="."]
