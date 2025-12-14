@@ -4,10 +4,6 @@ using Godot;
 using resources.game.resource_site_types;
 using static ResourceSite;
 
-public enum GroundTileType : short {
-	VOID,
-	GRASS,
-}
 
 public class Region : ITimePassing {
 

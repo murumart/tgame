@@ -14,7 +14,7 @@ namespace scenes.region {
 	public partial class RegionMan : Node {
 
 		[Export] UI ui;
-		[Export] Camera camera;
+		[Export] RegionCamera camera;
 		[Export] Tilemaps tilemaps;
 
 		[ExportGroup("Building")]
@@ -133,7 +133,7 @@ namespace scenes.region {
 		private void DisplayMapObject(MapObjectView view, MapObject mopbject, Vector2I tilepos) {
 			buildingsParent.AddChild(view);
 			mapObjectViews[tilepos] = view;
-			view.Position = Camera.TilePosToWorldPos(tilepos);
+			view.Position = RegionCamera.TilePosToWorldPos(tilepos);
 			view.Modulate = new Color(1f, 1f, 1f);
 		}
 
