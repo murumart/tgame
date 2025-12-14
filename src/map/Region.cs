@@ -8,6 +8,7 @@ public class Region : ITimePassing {
 
 	public event Action<Vector2I> MapObjectUpdatedAtEvent;
 
+	public Vector2I WorldPosition {get; init;}
 	readonly Dictionary<Vector2I, GroundTileType> groundTiles = new();
 	public Dictionary<Vector2I, GroundTileType> GroundTiles { get => groundTiles; }
 	readonly Dictionary<Vector2I, int> higherTiles = new();
@@ -19,12 +20,10 @@ public class Region : ITimePassing {
 	public Color Color { get; init; } // used for displaying
 
 
-	public Region() {
-		this.Color = new Color(GD.Randf(), GD.Randf(), GD.Randf()).Lightened(0.25f);
-	}
-
-	public Region(Dictionary<Vector2I, GroundTileType> groundTiles) : this() {
+	public Region(Vector2I worldPosition, Dictionary<Vector2I, GroundTileType> groundTiles) {
+		WorldPosition = worldPosition;
 		this.groundTiles = groundTiles;
+		this.Color = new Color(GD.Randf(), GD.Randf(), GD.Randf()).Lightened(0.25f);
 	}
 
 	public void PassTime(TimeT minutes) {
@@ -48,7 +47,7 @@ public class Region : ITimePassing {
 				}
 			}
 		}
-		var reg = new Region(tiles);
+		var reg = new Region(Vector2I.Zero, tiles);
 		foreach (var kvp in rs) {
 			reg.CreateResourceSiteAndPlace(kvp.Value, kvp.Key);
 		}

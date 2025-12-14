@@ -15,6 +15,8 @@ namespace scenes.map {
 		[Export] Curve islandCurve;
 
 		Region[] regions;
+		RegionFaction[] regionFactions;
+		Faction[] factions;
 		RandomNumberGenerator rng;
 
 
@@ -22,8 +24,15 @@ namespace scenes.map {
 			rng = new();
 		}
 
+		bool doneGenerating = false;
 		public override void _Process(double delta) {
-			if (!growingRegions) return;
+			if (!growingRegions) {
+				if (!doneGenerating) {
+					doneGenerating = true;
+					finishGenCallback(regions, factions, regionFactions);
+				}
+				return;
+			}
 			GrowingRegions();
 			GrowingRegions();
 			GrowingRegions();
@@ -54,41 +63,53 @@ namespace scenes.map {
 
 		public void GenerateRegionStarts(World world) {
 			regions = new Region[RegionCount];
+			regionFactions = new RegionFaction[RegionCount];
+			factions = new Faction[RegionCount];
 			int regionsMade = 0;
 
 			while (regionsMade < RegionCount) {
-				var region = new Region();
 				var tile = new Vector2I(rng.RandiRange(0, WorldWidth - 1), rng.RandiRange(0, WorldHeight - 1));
 				while (world.GetTile(tile.X, tile.Y) != GroundTileType.GRASS) {
 					tile = new Vector2I(rng.RandiRange(0, WorldWidth - 1), rng.RandiRange(0, WorldHeight - 1));
 				}
-				region.GroundTiles[tile] = GroundTileType.GRASS;
-				regions[regionsMade++] = region;
+				var region = new Region(tile, new());
+				var fac = new Faction();
+				var rfac = fac.CreateOwnedFaction(region);
+				region.GroundTiles[Vector2I.Zero] = GroundTileType.GRASS;
+
+				regions[regionsMade] = region;
+				regionFactions[regionsMade] = rfac;
+				factions[regionsMade] = fac;
+
+				regionsMade++;
+
 			}
 		}
 
 		public Region[] Regions => regions;
-
+		Action<Region[], Faction[], RegionFaction[]> finishGenCallback;
 		bool growingRegions = false;
 		World gWorld;
-		public void GrowRegions(World world) {
+		public void GrowRegions(World world, Action<Region[], Faction[], RegionFaction[]> callback) {
 			growingRegions = true;
+			doneGenerating = false;
+			finishGenCallback = callback;
 			gWorld = world;
 		}
 
 		private void GrowingRegions() {
-			var occupied = new HashSet<Vector2I>();
+			var occupied = new HashSet<Vector2I>(); // coordinates in global space
 			var growthOccurred = false;
 			var sizes = new short[RegionCount];
 			for (int i = 0; i < RegionCount; i++) {
 				var region = regions[i];
 				foreach (var xy in region.GroundTiles.Keys) {
-					occupied.Add(xy);
+					occupied.Add(xy + region.WorldPosition);
 					sizes[i] += 1;
 				}
 			}
 			var dirs = new Vector2I[] { Vector2I.Right, Vector2I.Left, Vector2I.Down, Vector2I.Up };
-			var addKeys = new HashSet<Vector2I>();
+			var addKeys = new HashSet<Vector2I>(); // coordinates in region local space
 			for (int i = 0; i < RegionCount; i++) {
 				addKeys.Clear();
 				var region = regions[i];
@@ -102,12 +123,21 @@ namespace scenes.map {
 			if (!growthOccurred) {
 				growingRegions = false;
 				GD.Print("region growth filled up all space attainable");
+
+				foreach (var region in regions) {
+
+				}
 			}
 		}
 
-		private bool TryGrowRegionTo(Vector2I where, HashSet<Vector2I> occupied, HashSet<Vector2I> addKeys) {
+		private bool TryGrowRegionTo(
+			Vector2I where, // world space
+			HashSet<Vector2I> occupied, // world space
+			HashSet<Vector2I> addKeys, // region space
+			Vector2I regionPosition
+		) {
 			if (gWorld.GetTile(where.X, where.Y) == GroundTileType.GRASS && !occupied.Contains(where)) {
-				addKeys.Add(where);
+				addKeys.Add(where - regionPosition);
 				return true;
 			}
 			return false;
@@ -116,20 +146,25 @@ namespace scenes.map {
 		private bool GrowRegionInDirectionDeterm(HashSet<Vector2I> occupied, HashSet<Vector2I> addKeys, Region region, Vector2I dir) {
 			bool growthOccurred = false;
 			foreach (var xy in region.GroundTiles.Keys) {
-				var move = xy + dir;
-				growthOccurred = TryGrowRegionTo(move, occupied, addKeys) || growthOccurred;
+				var move = xy + dir + region.WorldPosition;
+				growthOccurred = TryGrowRegionTo(move, occupied, addKeys, region.WorldPosition) || growthOccurred;
 			}
 			return growthOccurred;
 		}
 
 
-		private bool GrowRegionInDirectionRandom(HashSet<Vector2I> occupied, HashSet<Vector2I> addKeys, Region region, Vector2I dir) {
+		private bool GrowRegionInDirectionRandom(
+			HashSet<Vector2I> occupied, // global spcae
+			HashSet<Vector2I> addKeys, // region space
+			Region region,
+			Vector2I dir
+		) {
 			var karr = region.GroundTiles.Keys.ToArray();
 			bool growthOccurred = false;
 			for (int i = 0; i < 200; i++) {
 				var rtile = karr[rng.RandiRange(0, karr.Length - 1)];
-				var move = rtile + dir;
-				bool grew = TryGrowRegionTo(move, occupied, addKeys);
+				var move = rtile + dir + region.WorldPosition;
+				bool grew = TryGrowRegionTo(move, occupied, addKeys, region.WorldPosition);
 				if (grew) {
 					growthOccurred = true;
 					break;

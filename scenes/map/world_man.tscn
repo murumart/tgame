@@ -1,10 +1,11 @@
-[gd_scene load_steps=9 format=3 uid="uid://dye16eba5lb31"]
+[gd_scene load_steps=10 format=3 uid="uid://dye16eba5lb31"]
 
-[ext_resource type="Script" uid="uid://3don1v6ha6ia" path="res://scenes/map/WorldMan.cs" id="1_5q00a"]
-[ext_resource type="Script" uid="uid://dr5e3dfpjl6hw" path="res://scenes/map/WorldGenerator.cs" id="2_576h7"]
-[ext_resource type="FastNoiseLite" uid="uid://cf0v3ea3na5un" path="res://scenes/map/noises/continental.tres" id="3_mmetw"]
-[ext_resource type="Script" uid="uid://jdld04xxcpmv" path="res://scenes/map/WorldRenderer.cs" id="4_7j5km"]
-[ext_resource type="Script" uid="uid://dvsrcgoginxgl" path="res://scenes/Camera.cs" id="4_j0gdu"]
+[ext_resource type="Script" uid="uid://3don1v6ha6ia" path="res://scenes/map/WorldMan.cs" id="1_g1pp1"]
+[ext_resource type="PackedScene" uid="uid://dfsyk55h5ioh0" path="res://scenes/region/region_man.tscn" id="2_vqee5"]
+[ext_resource type="Script" uid="uid://dr5e3dfpjl6hw" path="res://scenes/map/WorldGenerator.cs" id="3_n4hhb"]
+[ext_resource type="FastNoiseLite" uid="uid://cf0v3ea3na5un" path="res://scenes/map/noises/continental.tres" id="4_f4k24"]
+[ext_resource type="Script" uid="uid://jdld04xxcpmv" path="res://scenes/map/WorldRenderer.cs" id="5_3biw4"]
+[ext_resource type="Script" uid="uid://dvsrcgoginxgl" path="res://scenes/Camera.cs" id="6_h4q0h"]
 
 [sub_resource type="Curve" id="Curve_7j5km"]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.21091333, 0.051505923), 0.0, 0.0, 0, 0, Vector2(0.38409886, 0.7443265), 0.0, 0.0, 0, 0, Vector2(0.53596926, 0.9231189), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
@@ -18,24 +19,25 @@ colors = PackedColorArray(0, 0.7019608, 0.78431374, 1, 0.05882353, 1, 0, 1)
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_j0gdu"]
 width = 256
 height = 256
-noise = ExtResource("3_mmetw")
+noise = ExtResource("4_f4k24")
 color_ramp = SubResource("Gradient_7j5km")
 
 [node name="WorldMan" type="Node" node_paths=PackedStringArray("worldGenerator", "worldRenderer")]
-script = ExtResource("1_5q00a")
+script = ExtResource("1_g1pp1")
 worldGenerator = NodePath("WorldGenerator")
 worldRenderer = NodePath("WorldRenderer")
+regionScene = ExtResource("2_vqee5")
 
 [node name="WorldGenerator" type="Node" parent="."]
-script = ExtResource("2_576h7")
-continentNoise = ExtResource("3_mmetw")
+script = ExtResource("3_n4hhb")
+continentNoise = ExtResource("4_f4k24")
 WorldWidth = 1080
 WorldHeight = 720
 RegionCount = 700
 islandCurve = SubResource("Curve_7j5km")
 
 [node name="WorldRenderer" type="Sprite2D" parent="."]
-script = ExtResource("4_7j5km")
+script = ExtResource("5_3biw4")
 
 [node name="DebugRender" type="Sprite2D" parent="."]
 visible = false
@@ -43,4 +45,4 @@ texture = SubResource("NoiseTexture2D_j0gdu")
 centered = false
 
 [node name="Camera" type="Camera2D" parent="."]
-script = ExtResource("4_j0gdu")
+script = ExtResource("6_h4q0h")

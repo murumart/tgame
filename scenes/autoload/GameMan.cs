@@ -19,7 +19,7 @@ namespace scenes.autoload {
 		}
 
 		Dictionary<GameSpeedChanger, float> gameSpeedMults = new();
-		float gameSpeed = 1f;
+		float gameSpeed;
 		bool paused = false; public bool IsPaused { get => paused; }
 
 
@@ -28,7 +28,7 @@ namespace scenes.autoload {
 
 			dataRegistry.RegisterThings();
 
-			game = new(new Map());
+			NewGame(Map.GetDebugMap());
 
 			//game.PassTime(60 * 7); // start game at 7:00
 		}
@@ -55,6 +55,10 @@ namespace scenes.autoload {
 
 		public void TogglePause() {
 			paused = !paused;
+		}
+
+		public void NewGame(Map map) {
+			game = new Game(map);
 		}
 
 	}

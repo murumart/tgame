@@ -34,7 +34,7 @@ public partial class WorldRenderer : Sprite2D {
 		foreach (var region in regions) {
 			Color color = new(region.Color, 0.5f);
 			foreach (var px in region.GroundTiles.Keys) {
-				image.SetPixelv(px, color);
+				image.SetPixelv(px + region.WorldPosition, color);
 			}
 		}
 		(Texture as ImageTexture).Update(image);
