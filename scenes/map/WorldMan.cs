@@ -29,10 +29,14 @@ namespace scenes.map {
 
 		public override void _Process(double delta) {
 			var mousePos = new Vector2I((int)canvasAccess.GetGlobalMousePosition().X, (int)canvasAccess.GetGlobalMousePosition().Y);
+			worldUI.ResourceDisplay.Display(tilepos: mousePos);
 			if (map != null) {
 				map.TileOwners.TryGetValue(mousePos, out Region atMouse);
-				worldUI.ResourceDisplay.Display(tilepos: mousePos, region: atMouse);
+				worldUI.ResourceDisplay.Display(region: atMouse);
 				worldRenderer.DrawRegionHighlight(atMouse);
+				if (Input.IsMouseButtonPressed(MouseButton.Left) && atMouse != null) {
+					RegionClicked(atMouse);
+				}
 			}
 		}
 
@@ -40,13 +44,16 @@ namespace scenes.map {
 			worldUI.QueueFree();
 		}
 
+		void RegionClicked(Region region) {
+
+		}
+
+		// #region worldgen
 		World world;
-		void GenerateNewWorld() {
+		async void GenerateNewWorld() {
 			world = new(worldGenerator.WorldWidth, worldGenerator.WorldHeight);
 			worldGenerator.GenerateContinents(world);
 			worldRenderer.Draw(world);
-			worldGenerator.GenerateRegionStarts(world);
-			worldRenderer.DrawRegions(worldGenerator.Regions);
 
 			// displaying region growth dynamically
 			var drawRegionsCallable = Callable.From(() => worldRenderer.DrawRegions(worldGenerator.Regions));
@@ -54,12 +61,12 @@ namespace scenes.map {
 			tw.TweenInterval(0.05f);
 			tw.TweenCallback(drawRegionsCallable);
 
-			worldGenerator.GrowRegions(world, DoneGenerating);
-		}
+			var map = await worldGenerator.GenerateRegions(world);
 
-		void DoneGenerating(Map map) {
+			GD.Print("map is ", map);
 			this.map = map;
 		}
+		// #endregion worldgen
 
 		void SetupGame(Map map) {
 			GameMan.Singleton.NewGame(map);

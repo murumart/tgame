@@ -1,7 +1,8 @@
-using System;
 using Godot;
 
 public partial class WorldRenderer : Node {
+
+	ColorPalette palette = GD.Load<ColorPalette>("uid://cr4o125t00hli");
 
 	[Export] Sprite2D groundSprite;
 	[Export] Sprite2D regionSprite;
@@ -17,8 +18,8 @@ public partial class WorldRenderer : Node {
 		for (int x = 0; x < world.Width; x++) {
 			for (int y = 0; y < world.Height; y++) {
 				Color color = world.GetTile(x, y) switch {
-					GroundTileType.GRASS => Colors.SeaGreen,
-					GroundTileType.WATER => Colors.SkyBlue,
+					GroundTileType.GRASS => palette.Colors[16],
+					GroundTileType.WATER => palette.Colors[27],
 					_ => new(0, 0, 0),
 				};
 				//DrawRect(new Rect2(x, y, 1, 1), col);
@@ -38,10 +39,9 @@ public partial class WorldRenderer : Node {
 
 	public void DrawRegions(Region[] regions) {
 		var image = (regionSprite.Texture as ImageTexture).GetImage();
-		foreach (var region in regions) {
-			Color color = new(region.Color, 0.5f);
+		foreach (var region in regions) {;
 			foreach (var px in region.GroundTiles.Keys) {
-				image.SetPixelv(px + region.WorldPosition, color);
+				image.SetPixelv(px + region.WorldPosition, region.Color);
 			}
 		}
 		(regionSprite.Texture as ImageTexture).Update(image);
@@ -50,10 +50,11 @@ public partial class WorldRenderer : Node {
 	public void DrawRegionHighlight(Region region) {
 		var image = (highlightSprite.Texture as ImageTexture).GetImage();
 		image.Fill(Colors.Transparent);
-		if (region == null) return;
-		var color = Colors.White;
-		foreach (var px in region.GroundTiles.Keys) {
-			image.SetPixelv(px + region.WorldPosition, color);
+		if (region != null) {
+			var color = Colors.White;
+			foreach (var px in region.GroundTiles.Keys) {
+				image.SetPixelv(px + region.WorldPosition, color);
+			}
 		}
 		(highlightSprite.Texture as ImageTexture).Update(image);
 	}

@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Godot;
 
 namespace scenes.map {
 
 	public partial class WorldGenerator : Node {
+
+		readonly Vector2I[] GrowDirs = { Vector2I.Right, Vector2I.Left, Vector2I.Down, Vector2I.Up };
 
 		[Export] FastNoiseLite continentNoise;
 
@@ -14,10 +17,10 @@ namespace scenes.map {
 		[Export] int RegionCount;
 		[Export] Curve islandCurve;
 
-		Region[] regions;
+		Region[] regions; public Region[] Regions => regions;
 		RegionFaction[] regionFactions;
 		Faction[] factions;
-		Map map;
+
 		RandomNumberGenerator rng;
 
 
@@ -26,22 +29,7 @@ namespace scenes.map {
 		}
 
 		public override void _Process(double delta) {
-			if (!growingRegions) {
-				if (!doneGenerating) {
-					CreateMapObjects();
-					DoneGenerating();
-				}
-				return;
-			}
-			GrowingRegions();
-			GrowingRegions();
-			GrowingRegions();
-			GrowingRegions();
-			GrowingRegions();
-			GrowingRegions();
-			GrowingRegions();
-			GrowingRegions();
-			GrowingRegions();
+
 		}
 
 		public void GenerateContinents(World world) {
@@ -61,23 +49,39 @@ namespace scenes.map {
 			}
 		}
 
-		public void GenerateRegionStarts(World world) {
-			regions = new Region[RegionCount];
-			regionFactions = new RegionFaction[RegionCount];
-			factions = new Faction[RegionCount];
-			var startPoses = new HashSet<Vector2I>();
+		public async Task<Map> GenerateRegions(World world) {
+			return await GenerateRegions(world, RegionCount);
+		}
+
+		public async Task<Map> GenerateRegions(World world, int regionCount) {
+			var occupied = GenerateRegionStarts(world, regionCount); // coordinates in global space
+
+			await GrowRegions(world, occupied);
+
+			Map map = CreateMap();
+
+			return map;
+		}
+
+		public Dictionary<Vector2I, Region> GenerateRegionStarts(World world, int regionCount) {
+			regions = new Region[regionCount];
+			regionFactions = new RegionFaction[regionCount];
+			factions = new Faction[regionCount];
+			var regionEdgeTiles = new List<Vector2I>[regionCount];
+			var startPoses = new Dictionary<Vector2I, Region>();
 			int regionsMade = 0;
 
-			while (regionsMade < RegionCount) {
+			while (regionsMade < regionCount) {
 				var tile = new Vector2I(rng.RandiRange(0, WorldWidth - 1), rng.RandiRange(0, WorldHeight - 1));
 				while (
 					world.GetTile(tile.X, tile.Y) != GroundTileType.GRASS
-					&& !startPoses.Contains(tile)
+					|| startPoses.ContainsKey(tile)
 				) {
 					tile = new Vector2I(rng.RandiRange(0, WorldWidth - 1), rng.RandiRange(0, WorldHeight - 1));
 				}
-				startPoses.Add(tile);
+				Debug.Assert(!startPoses.ContainsKey(tile), "Two regions can't start on the same tile!");
 				var region = new Region(tile, new());
+				startPoses.Add(tile, region);
 				var fac = new Faction();
 				var rfac = fac.CreateOwnedFaction(region);
 				region.GroundTiles[Vector2I.Zero] = GroundTileType.GRASS;
@@ -87,75 +91,63 @@ namespace scenes.map {
 				factions[regionsMade] = fac;
 
 				regionsMade++;
-
 			}
+			return startPoses;
 		}
 
-		public Region[] Regions => regions;
-		Action<Map> finishGenCallback;
-		bool growingRegions = false;
-		World gWorld;
-		public void GrowRegions(World world, Action<Map> callback) {
-			growingRegions = true;
-			doneGenerating = false;
-			finishGenCallback = callback;
-			gWorld = world;
-		}
 
-		private void GrowingRegions() {
-			if (!growingRegions) return;
-			var occupied = new Dictionary<Vector2I, Region>(); // coordinates in global space
-			var growthOccurred = false;
-			var sizes = new short[RegionCount];
-			for (int i = 0; i < RegionCount; i++) {
-				var region = regions[i];
-				foreach (var xy in region.GroundTiles.Keys) {
-					var wpos =  xy + region.WorldPosition;
-					Debug.Assert(!occupied.ContainsKey(wpos), "That tile is already occupied!!");
-					occupied.Add(wpos, region);
-					sizes[i] += 1;
+		public async Task GrowRegions(World world, Dictionary<Vector2I, Region> occupied) {
+
+			var tw = CreateTween().SetLoops(0);
+			var growCallback = Callable.From(() => {
+				var grew = GrowAllRegionsOneStep(occupied, world);
+				if (!grew) {
+					tw.EmitSignal("finished");
+					tw.Stop();
 				}
-			}
-			var dirs = new Vector2I[] { Vector2I.Right, Vector2I.Left, Vector2I.Down, Vector2I.Up };
-			var addKeys = new HashSet<Vector2I>(); // coordinates in region local space
+			});
+
+			tw.TweenInterval(0.06);
+			tw.TweenCallback(growCallback);
+
+			await ToSignal(tw, "finished");
+
+		}
+
+		private bool GrowAllRegionsOneStep(Dictionary<Vector2I, Region> occupied, World world) {
+			var growthOccurred = false;
+			//for (int i = 0; i < RegionCount; i++) {
+			//	var region = regions[i];
+			//	foreach (var xy in region.GroundTiles.Keys) {
+			//		var wpos = xy + region.WorldPosition;
+			//		Debug.Assert(!occupied.ContainsKey(wpos), $"Collecting occupied tiles failed: {wpos} is already occupied");
+			//		occupied.Add(wpos, region);
+			//	}
+			//}
+
 			for (int i = 0; i < RegionCount; i++) {
+				var addKeys = new HashSet<Vector2I>(); // coordinates in region local space
 				addKeys.Clear();
 				var region = regions[i];
-				foreach (var dir in dirs) {
-					growthOccurred = GrowRegionInDirectionRandom(occupied, addKeys, region, dir) || growthOccurred;
+				foreach (var dir in GrowDirs) {
+					growthOccurred = GrowRegionInDirectionRandom(occupied, addKeys, region, dir, world) || growthOccurred;
 				}
 				foreach (var k in addKeys) {
+					Debug.Assert(!region.GroundTiles.ContainsKey(k), $"region {region} already owns the local tile {k}");
 					region.GroundTiles.Add(k, GroundTileType.GRASS);
 				}
 			}
 			if (!growthOccurred) {
-				growingRegions = false;
 				GD.Print("region growth filled up all space attainable");
 			}
+			return growthOccurred;
 		}
 
-		private (Region, bool) TryGrowRegionTo(
-			Region region,
-			Vector2I where, // world space
-			Dictionary<Vector2I, Region> occupied, // world space
-			HashSet<Vector2I> addKeys, // region space
-			Vector2I regionPosition
-		) {
-			occupied.TryGetValue(where, out Region there);
-			if (there == null && gWorld.GetTile(where.X, where.Y) == GroundTileType.GRASS) {
-				addKeys.Add(where - regionPosition);
-				Debug.Assert(!occupied.ContainsKey(where), "That tile is already occupied!!");
-				occupied.Add(where, region);
-				return (null, true);
-			}
-			return (there, false);
-		}
-
-		private bool GrowRegionInDirectionDeterm(Dictionary<Vector2I, Region> occupied, HashSet<Vector2I> addKeys, Region region, Vector2I dir) {
+		private bool GrowRegionInDirectionDeterm(Dictionary<Vector2I, Region> occupied, HashSet<Vector2I> addKeys, Region region, Vector2I dir, World world) {
 			bool growthOccurred = false;
 			foreach (var xy in region.GroundTiles.Keys) {
 				var move = xy + dir + region.WorldPosition;
-				var (neighbor, grew) = TryGrowRegionTo(region, move, occupied, addKeys, region.WorldPosition);
+				var (neighbor, grew) = TryGrowRegionTo(region, move, occupied, addKeys, world);
 				growthOccurred = growthOccurred || grew;
 				if (!growthOccurred && neighbor != region) region.AddNeighbor(neighbor);
 			}
@@ -166,25 +158,42 @@ namespace scenes.map {
 			Dictionary<Vector2I, Region> occupied, // global spcae
 			HashSet<Vector2I> addKeys, // region space
 			Region region,
-			Vector2I dir
+			Vector2I dir,
+			World world
 		) {
 			var karr = region.GroundTiles.Keys.ToArray();
-			bool growthOccurred = false;
-			for (int i = 0; i < 1; i++) {
+			for (int i = 0; i < 100; i++) {
 				var rtile = karr[rng.RandiRange(0, karr.Length - 1)];
-				var move = rtile + dir + region.WorldPosition;
-				var (neighbor, grew) = TryGrowRegionTo(region, move, occupied, addKeys, region.WorldPosition);
+				var move = rtile + region.WorldPosition + dir;
+				var (neighbor, grew) = TryGrowRegionTo(region, move, occupied, addKeys, world);
 				if (grew) region.AddNeighbor(neighbor);
 				if (grew) {
-					growthOccurred = true;
-					break;
+					return true;
 				}
 			}
-			return growthOccurred;
+			return false;
 		}
 
-		private void CreateMapObjects() {
-			map = new(regions, factions, regionFactions);
+		private (Region, bool) TryGrowRegionTo(
+			Region region,
+			Vector2I where, // world space
+			Dictionary<Vector2I, Region> occupied, // world space
+			HashSet<Vector2I> addKeys, // region space
+			World world
+		) {
+			occupied.TryGetValue(where, out Region there);
+			var local = where - region.WorldPosition;
+			if (there == null && world.GetTile(where.X, where.Y) == GroundTileType.GRASS && !addKeys.Contains(local)) {
+				addKeys.Add(local);
+				Debug.Assert(!occupied.ContainsKey(where), "Tile I thought was good to grow onto is already occupied!!");
+				occupied.Add(where, region);
+				return (null, true);
+			}
+			return (there, false);
+		}
+
+		Map CreateMap() {
+			Map map = new(regions, factions, regionFactions);
 
 			foreach (Region region in regions) {
 				foreach (Vector2I pos in region.GroundTiles.Keys) {
@@ -194,13 +203,9 @@ namespace scenes.map {
 					else if (GD.Randf() < 0.003f) region.CreateResourceSiteAndPlace(Registry.ResourceSites.GetAsset("clay_pit"), pos);
 				}
 			}
+			return map;
 		}
 
-		bool doneGenerating = false;
-		private void DoneGenerating() {
-			doneGenerating = true;
-			finishGenCallback(map);
-		}
 	}
 
 }

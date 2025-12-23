@@ -46,7 +46,6 @@ namespace scenes.region {
 			ui.GetHomelessPopulationCountEvent += GetHomelessPopulationCount;
 			ui.GetUnemployedPopulationCountEvent += GetUnemployedPopulationCount;
 			ui.GetBriefcaseEvent += GetBriefcase;
-			GD.Print("registreerin :)");
 			regionFaction.ContractFailedEvent += OnRegionMandateFailed;
 
 			region.MapObjectUpdatedAtEvent += OnRegionMapObjectUpdated;

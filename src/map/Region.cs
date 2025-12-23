@@ -8,7 +8,7 @@ public class Region : ITimePassing {
 
 	public event Action<Vector2I> MapObjectUpdatedAtEvent;
 
-	public Vector2I WorldPosition {get; init;}
+	public Vector2I WorldPosition { get; init; }
 	readonly Dictionary<Vector2I, GroundTileType> groundTiles = new();
 	public Dictionary<Vector2I, GroundTileType> GroundTiles { get => groundTiles; }
 	readonly Dictionary<Vector2I, int> higherTiles = new();
@@ -98,5 +98,9 @@ public class Region : ITimePassing {
 	}
 
 	public void NotifyMapObjectUpdatedAt(Vector2I at) => MapObjectUpdatedAtEvent?.Invoke(at);
+
+	public override string ToString() {
+		return $"Reg{WorldPosition}";
+	}
 
 }
