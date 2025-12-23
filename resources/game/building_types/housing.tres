@@ -10,8 +10,8 @@ name = "housing"
 PopulationCapacity = 12
 ResourceCapacities = Dictionary[Object, int]({})
 ResourceCosts = Dictionary[Object, int]({
-ExtResource("1_qdsi6"): 25,
-ExtResource("2_qet2r"): 5
+ExtResource("1_qdsi6"): 45,
+ExtResource("2_qet2r"): 20
 })
 HoursToConstruct = 60.0
 ScenePath = "uid://dyw8xmwwkvu5m"

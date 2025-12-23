@@ -1,17 +1,27 @@
 using System.Collections.Generic;
 using System.Linq;
+using Godot;
 
 public class Map : ITimePassing {
 
-	protected readonly List<Region> regions = new();
-	protected readonly List<Faction> factions = new();
-	protected readonly List<RegionFaction> regionFactions = new();
+	protected readonly List<Region> regions;
+	protected readonly List<Faction> factions;
+	protected readonly List<RegionFaction> regionFactions;
+
+	public Dictionary<Vector2I, Region> TileOwners { get; init; }
 
 
 	public Map(ICollection<Region> regions, ICollection<Faction> factions, ICollection<RegionFaction> regionFactions) {
 		this.regions = regions.ToList();
 		this.factions = factions.ToList();
 		this.regionFactions = regionFactions.ToList();
+
+		TileOwners = new();
+		foreach (Region region in regions) {
+			foreach (Vector2I pos in region.GroundTiles.Keys) {
+				TileOwners[pos] = region;
+			}
+		}
 	}
 
 	public Region GetRegion(int ix) {

@@ -38,8 +38,7 @@ namespace scenes.map {
 			worldGenerator.GrowRegions(world, SetupGame);
 		}
 
-		void SetupGame(Region[] regions, Faction[] factions, RegionFaction[] regionFactions) {
-			var map = new Map(regions.ToList(), factions.ToList(), regionFactions.ToList());
+		void SetupGame(Map map) {
 			GameMan.Singleton.NewGame(map);
 			GD.Print("game set up.");
 

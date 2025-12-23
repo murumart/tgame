@@ -17,6 +17,7 @@ namespace scenes.map {
 		Region[] regions;
 		RegionFaction[] regionFactions;
 		Faction[] factions;
+		Map map;
 		RandomNumberGenerator rng;
 
 
@@ -24,12 +25,11 @@ namespace scenes.map {
 			rng = new();
 		}
 
-		bool doneGenerating = false;
 		public override void _Process(double delta) {
 			if (!growingRegions) {
 				if (!doneGenerating) {
-					doneGenerating = true;
-					finishGenCallback(regions, factions, regionFactions);
+					CreateMapObjects();
+					DoneGenerating();
 				}
 				return;
 			}
@@ -87,10 +87,10 @@ namespace scenes.map {
 		}
 
 		public Region[] Regions => regions;
-		Action<Region[], Faction[], RegionFaction[]> finishGenCallback;
+		Action<Map> finishGenCallback;
 		bool growingRegions = false;
 		World gWorld;
-		public void GrowRegions(World world, Action<Region[], Faction[], RegionFaction[]> callback) {
+		public void GrowRegions(World world, Action<Map> callback) {
 			growingRegions = true;
 			doneGenerating = false;
 			finishGenCallback = callback;
@@ -166,7 +166,7 @@ namespace scenes.map {
 			for (int i = 0; i < 5; i++) {
 				var rtile = karr[rng.RandiRange(0, karr.Length - 1)];
 				var move = rtile + dir + region.WorldPosition;
-				var (neighbor, grew)= TryGrowRegionTo(move, occupied, addKeys, region.WorldPosition);
+				var (neighbor, grew) = TryGrowRegionTo(move, occupied, addKeys, region.WorldPosition);
 				if (grew) region.AddNeighbor(neighbor);
 				if (grew) {
 					growthOccurred = true;
@@ -176,6 +176,24 @@ namespace scenes.map {
 			return growthOccurred;
 		}
 
+		private void CreateMapObjects() {
+			map = new(regions, factions, regionFactions);
+
+			foreach (Region region in regions) {
+				foreach (Vector2I pos in region.GroundTiles.Keys) {
+					if (pos == Vector2I.Zero) continue; // starter house position
+					if (GD.Randf() < 0.01f) region.CreateResourceSiteAndPlace(Registry.ResourceSites.GetAsset("boulder"), pos);
+					else if (GD.Randf() < 0.07f) region.CreateResourceSiteAndPlace(Registry.ResourceSites.GetAsset("trees"), pos);
+					else if (GD.Randf() < 0.003f) region.CreateResourceSiteAndPlace(Registry.ResourceSites.GetAsset("clay_pit"), pos);
+				}
+			}
+		}
+
+		bool doneGenerating = false;
+		private void DoneGenerating() {
+			doneGenerating = true;
+			finishGenCallback(map);
+		}
 	}
 
 }
