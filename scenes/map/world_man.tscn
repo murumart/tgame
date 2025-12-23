@@ -31,13 +31,20 @@ regionScene = ExtResource("2_vqee5")
 [node name="WorldGenerator" type="Node" parent="."]
 script = ExtResource("3_n4hhb")
 continentNoise = ExtResource("4_f4k24")
-WorldWidth = 1080
-WorldHeight = 720
-RegionCount = 700
+WorldWidth = 800
+WorldHeight = 600
+RegionCount = 450
 islandCurve = SubResource("Curve_7j5km")
 
-[node name="WorldRenderer" type="Sprite2D" parent="."]
+[node name="WorldRenderer" type="Node" parent="." node_paths=PackedStringArray("groundSprite", "regionSprite")]
 script = ExtResource("5_3biw4")
+groundSprite = NodePath("Ground")
+regionSprite = NodePath("Regions")
+
+[node name="Ground" type="Sprite2D" parent="WorldRenderer"]
+
+[node name="Regions" type="Sprite2D" parent="WorldRenderer"]
+modulate = Color(1, 1, 1, 0.92941177)
 
 [node name="DebugRender" type="Sprite2D" parent="."]
 visible = false

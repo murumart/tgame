@@ -32,7 +32,7 @@ namespace scenes.map {
 			// displaying region growth dynamically
 			var drawRegionsCallable = Callable.From(() => worldRenderer.DrawRegions(worldGenerator.Regions));
 			var tw = CreateTween().SetLoops();
-			tw.TweenInterval(0.5f);
+			tw.TweenInterval(0.05f);
 			tw.TweenCallback(drawRegionsCallable);
 
 			worldGenerator.GrowRegions(world, SetupGame);

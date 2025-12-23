@@ -15,7 +15,7 @@ public class Region : ITimePassing {
 
 	readonly Dictionary<Vector2I, MapObject> mapObjects = new();
 
-	readonly List<Region> neighbors = new();
+	readonly HashSet<Region> neighbors = new();
 
 	public Color Color { get; init; } // used for displaying
 
@@ -52,6 +52,10 @@ public class Region : ITimePassing {
 			reg.CreateResourceSiteAndPlace(kvp.Value, kvp.Key);
 		}
 		return reg;
+	}
+
+	public bool AddNeighbor(Region neighbor) {
+		return neighbors.Add(neighbor);
 	}
 
 	public bool CanPlaceBuilding(Vector2I position) {
