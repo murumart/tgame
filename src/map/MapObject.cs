@@ -63,7 +63,7 @@ public partial class Building {
 	public interface IBuildingType : IAssetType, IMapObjectType {
 
 		int GetPopulationCapacity();
-		ResourceCapacity[] GetResourceCapacities();
+		//ResourceCapacity[] GetResourceCapacities();
 		ResourceBundle[] GetResourceRequirements();
 		float GetHoursToConstruct();
 
@@ -77,6 +77,8 @@ public partial class Building {
 		}
 
 		bool TakesTimeToConstruct() => GetHoursToConstruct() > 0;
+
+		CraftJob[] GetCraftJobs();
 
 	}
 

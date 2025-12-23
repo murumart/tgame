@@ -68,14 +68,14 @@ public class ConstructBuildingJob : MapObjectJob {
 	public override void Initialise(RegionFaction ctxFaction, MapObject mapObject) {
 		Debug.Assert(CanInitialise(ctxFaction, mapObject), "Job cannot be initialised!!");
 		building = (Building)mapObject;
-		ConsumeRequirements(requirements, ctxFaction.Resources);
+		ConsumeRequirements(requirements.ToArray(), ctxFaction.Resources);
 	}
 
 	public override void Deinitialise(RegionFaction ctxFaction) {
 		if (building.IsConstructed) {
 			requirements.Clear();
 		} else {
-			RefundRequirements(requirements, ctxFaction.Resources);
+			RefundRequirements(requirements.ToArray(), ctxFaction.Resources);
 			ctxFaction.RemoveBuilding(building.Position);
 			building = null;
 		}
@@ -193,9 +193,7 @@ public class GatherResourceJob : MapObjectJob {
 		timeSpent = new float[site.MineWells.Count];
 	}
 
-	public override void Deinitialise(RegionFaction ctxFaction) {
-
-	}
+	public override void Deinitialise(RegionFaction ctxFaction) { }
 
 	public override float GetWorkTime(TimeT minutes) => minutes * MathF.Pow(workers.Amount, 0.7f);
 
@@ -215,7 +213,7 @@ public class GatherResourceJob : MapObjectJob {
 		}
 
 		if (grant.Count != 0) {
-			ProvideProduction(grant, storage);
+			ProvideProduction(grant.ToArray(), storage);
 			grant.Clear();
 		}
 	}
@@ -288,6 +286,92 @@ public class GatherResourceJob : MapObjectJob {
 		float timeLeft = well.MinutesPerBunch - timeSpent[wellIx];
 		timeLeft /= GetWorkTime(1);
 		return GameTime.GetFancyTimeString((TimeT)timeLeft) + " until more " + well.ResourceType.Name + ".";
+	}
+
+}
+
+public class CraftJob : MapObjectJob {
+
+	public override string Title => $"Craft {outputDescription}";
+	public override ref Population Workers => ref workers;
+
+	Population workers;
+	ResourceStorage storage;
+	Building building;
+
+	float timeSpent = 0f;
+
+	readonly ResourceBundle[] inputs;
+	readonly ResourceBundle[] outputs;
+	readonly string outputDescription;
+	readonly TimeT timeTaken;
+
+
+	public CraftJob(ResourceBundle[] inputs, ResourceBundle[] outputs, TimeT timeTaken, int maxWorkers, string outputDescription) {
+		this.inputs = inputs;
+		this.outputs = outputs;
+		this.timeTaken = timeTaken;
+		this.workers = new(maxWorkers);
+		this.outputDescription = outputDescription;
+	}
+
+	public override Job Copy() => new CraftJob(inputs, outputs, timeTaken, workers.MaxPop, outputDescription);
+
+	public override void Initialise(RegionFaction ctxFaction, MapObject mapObject) {
+		storage = ctxFaction.Resources;
+		Debug.Assert(mapObject is Building, "Crafting only happens at buildings? ");
+		building = (Building)mapObject;
+	}
+
+	public override void Deinitialise(RegionFaction ctxFaction) { }
+
+	public override void PassTime(TimeT minutes) {
+		timeSpent += GetWorkTime(minutes);
+		while (timeSpent > timeTaken) {
+			timeSpent -= timeTaken;
+			if (storage.HasEnoughAll(inputs)) {
+				storage.SubtractResources(inputs);
+				Job.ProvideProduction(outputs, storage);
+			}
+		}
+	}
+
+	public override float GetWorkTime(TimeT minutes) => minutes * MathF.Pow(workers.Amount, 0.5f);
+
+	public override string GetProductionDescription() {
+		var str = $"The workers produce:\n";
+		if (workers.Amount <= 0) str += "Nothing, as long as there's no workers. But it could produce:\n";
+
+		foreach (var thing in outputs) {
+			str += $" * {thing.Type.Name} x {thing.Amount}.\n";
+		}
+
+		str += "...with the required inputs:\n";
+		foreach (var thing in inputs) {
+			str += $" * {thing.Type.Name} x {thing.Amount}.\n";
+		}
+
+		str += $"It takes {GameTime.GetFancyTimeString(timeTaken)} to complete one set of {outputDescription}.";
+
+		return str;
+	}
+
+	public override string GetStatusDescription() {
+		if (workers.Amount <= 0) return "";
+		float timeLeft = timeTaken - timeSpent;
+		timeLeft /= GetWorkTime(1);
+		return GameTime.GetFancyTimeString((TimeT)timeLeft) + " until more " + outputDescription + ".";
+	}
+
+
+	public interface ICraftingJobDef {
+
+		public ResourceBundle[] Inputs { get; }
+		public ResourceBundle[] Outputs { get; }
+		public TimeT TimeTaken { get; }
+
+		public CraftJob GetJob();
+
 	}
 
 }

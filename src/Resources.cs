@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using static ResourceStorage;
@@ -61,7 +60,7 @@ public partial class ResourceStorage : IEnumerable<KeyValuePair<IResourceType, I
 		ItemAmount += resource.Amount;
 	}
 
-	public void AddResource(IEnumerable<ResourceBundle> resources) {
+	public void AddResources(IEnumerable<ResourceBundle> resources) {
 		foreach (var bundle in resources) {
 			AddResource(bundle);
 		}
@@ -76,7 +75,7 @@ public partial class ResourceStorage : IEnumerable<KeyValuePair<IResourceType, I
 		if (storageAmounts[resource.Type].Amount == 0) storageAmounts.Remove(resource.Type);
 	}
 
-	public void SubtractResource(IEnumerable<ResourceBundle> resources) {
+	public void SubtractResources(IEnumerable<ResourceBundle> resources) {
 		foreach (var bundle in resources) {
 			SubtractResource(bundle);
 		}

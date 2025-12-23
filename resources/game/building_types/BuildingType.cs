@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Godot;
+using resouces.game.building_types.crafting;
+using resources.game.resource_types;
 using static Building;
 using static ResourceStorage;
-using resources.game.resource_types;
 
 namespace resources.game.building_types {
 
@@ -16,8 +18,9 @@ namespace resources.game.building_types {
 		string IAssetType.AssetTypeName => "building";
 
 		[Export] int PopulationCapacity;
-		[Export] Godot.Collections.Dictionary<ResourceType, int> ResourceCapacities;
+		//[Export] Godot.Collections.Dictionary<ResourceType, int> ResourceCapacities;
 		[Export] Godot.Collections.Dictionary<ResourceType, int> ResourceCosts;
+		[Export] Godot.Collections.Array<CraftingJobDef> CraftingJobs;
 		[Export] float HoursToConstruct = 1f;
 		[Export] string[] AvailableJobClassNames = Array.Empty<string>();
 		[Export(PropertyHint.File, "*.tscn")] string ScenePath;
@@ -29,14 +32,14 @@ namespace resources.game.building_types {
 			return PopulationCapacity;
 		}
 
-		public ResourceCapacity[] GetResourceCapacities() {
-			var arr = new ResourceCapacity[ResourceCapacities.Count];
-			int i = 0;
-			foreach (var pair in ResourceCapacities) {
-				arr[i++] = new ResourceCapacity(pair.Key, pair.Value);
-			}
-			return arr;
-		}
+		//public ResourceCapacity[] GetResourceCapacities() {
+		//	var arr = new ResourceCapacity[ResourceCapacities.Count];
+		//	int i = 0;
+		//	foreach (var pair in ResourceCapacities) {
+		//		arr[i++] = new ResourceCapacity(pair.Key, pair.Value);
+		//	}
+		//	return arr;
+		//}
 
 		public ResourceBundle[] GetResourceRequirements() {
 			var arr = new ResourceBundle[ResourceCosts.Count];
@@ -53,12 +56,20 @@ namespace resources.game.building_types {
 
 		public IEnumerable<Job> GetAvailableJobs() {
 			List<Job> jobs = new();
+			if (CraftingJobs != null && CraftingJobs.Count != 0) {
+				jobs.AddRange(GetCraftJobs());
+			}
 			foreach (string typename in AvailableJobClassNames) {
 				Type type = Type.GetType(typename);
 				Job job = (Job)Activator.CreateInstance(type);
 				jobs.Add(job);
 			}
 			return jobs;
+		}
+
+		public CraftJob[] GetCraftJobs() {
+			if (CraftingJobs.Count == 0) return null;
+			return CraftingJobs.Select(def => def.GetJob()).ToArray();
 		}
 
 	}

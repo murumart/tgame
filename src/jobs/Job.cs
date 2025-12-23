@@ -40,31 +40,31 @@ public abstract class Job {
 	public virtual List<ResourceBundle> GetRequirements() => null;
 	public virtual List<ResourceBundle> GetProduction() => null;
 
-	protected static void ConsumeRequirements(List<ResourceBundle> requirements, ResourceStorage resources) {
+	protected static void ConsumeRequirements(ResourceBundle[] requirements, ResourceStorage resources) {
 		foreach (var r in requirements) {
 			resources.SubtractResource(r);
 		}
 	}
 
-	protected static void RefundRequirements(List<ResourceBundle> requirements, ResourceStorage resources) {
-		var req = new List<ResourceBundle>(requirements);
+	protected static void RefundRequirements(ResourceBundle[] requirements, ResourceStorage resources) {
+		var req = requirements.Clone() as ResourceBundle[]; // clone because AddToStorage edits the array
 
 		AddToStorage(req, resources);
 	}
 
-	protected static void ProvideProduction(List<ResourceBundle> rewards, ResourceStorage resources) {
-		var rew = new List<ResourceBundle>(rewards);
+	protected static void ProvideProduction(ResourceBundle[] rewards, ResourceStorage resources) {
+		var rew = rewards.Clone() as ResourceBundle[]; // clone because AddToStorage edits the array
 
 		AddToStorage(rew, resources);
 	}
 
 	// add to the storage one item at a time so we get a bit of every type in storage
-	// even if it ends up filling up before we can grant anything
-	// TODO this but in a smart mathy way with no loops
-	protected static void AddToStorage(List<ResourceBundle> things, ResourceStorage storage) {
+	// even if it ends up filling up before we can grant everything
+	// TODO this but in a smarter way with less brutish loops
+	protected static void AddToStorage(ResourceBundle[] things, ResourceStorage storage){
 		while (true) {
 			bool added = false;
-			for (int i = 0; i < things.Count; i++) {
+			for (int i = 0; i < things.Length; i++) {
 				if (!storage.CanAdd(1)) {
 					GD.PushWarning("Job rewards can't fit in storage");
 					break;
