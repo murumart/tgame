@@ -62,6 +62,7 @@ namespace scenes.map {
 			tw.TweenCallback(drawRegionsCallable);
 
 			var map = await worldGenerator.GenerateRegions(world);
+			tw.Stop();
 
 			GD.Print("map is ", map);
 			this.map = map;

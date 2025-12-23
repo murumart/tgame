@@ -18,8 +18,8 @@ public partial class WorldRenderer : Node {
 		for (int x = 0; x < world.Width; x++) {
 			for (int y = 0; y < world.Height; y++) {
 				Color color = world.GetTile(x, y) switch {
-					GroundTileType.GRASS => palette.Colors[16],
-					GroundTileType.WATER => palette.Colors[27],
+					GroundTileType.Grass => palette.Colors[16],
+					GroundTileType.Ocean => palette.Colors[27],
 					_ => new(0, 0, 0),
 				};
 				//DrawRect(new Rect2(x, y, 1, 1), col);
@@ -38,6 +38,7 @@ public partial class WorldRenderer : Node {
 	}
 
 	public void DrawRegions(Region[] regions) {
+		if (regions == null) return;
 		var image = (regionSprite.Texture as ImageTexture).GetImage();
 		foreach (var region in regions) {;
 			foreach (var px in region.GroundTiles.Keys) {

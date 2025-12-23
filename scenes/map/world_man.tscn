@@ -21,8 +21,8 @@ offsets = PackedFloat32Array(0, 0.57101446)
 colors = PackedColorArray(0, 0.7019608, 0.78431374, 1, 0.05882353, 1, 0, 1)
 
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_j0gdu"]
-width = 256
-height = 256
+width = 1280
+height = 840
 noise = ExtResource("4_f4k24")
 color_ramp = SubResource("Gradient_7j5km")
 
@@ -37,9 +37,10 @@ canvasAccess = NodePath("DebugRender")
 [node name="WorldGenerator" type="Node" parent="."]
 script = ExtResource("3_n4hhb")
 continentNoise = ExtResource("4_f4k24")
-WorldWidth = 800
-WorldHeight = 600
-RegionCount = 450
+WorldWidth = 1280
+WorldHeight = 840
+LandRegionCount = 700
+SeaRegionCount = 80
 islandCurve = SubResource("Curve_7j5km")
 
 [node name="WorldRenderer" type="Node" parent="." node_paths=PackedStringArray("groundSprite", "regionSprite", "highlightSprite")]
@@ -52,7 +53,7 @@ highlightSprite = NodePath("Highlight")
 centered = false
 
 [node name="Regions" type="Sprite2D" parent="WorldRenderer"]
-modulate = Color(1, 1, 1, 0.5372549)
+modulate = Color(1, 1, 1, 0.2784314)
 centered = false
 
 [node name="Highlight" type="Sprite2D" parent="WorldRenderer"]
