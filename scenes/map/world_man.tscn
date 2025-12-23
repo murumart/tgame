@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://dye16eba5lb31"]
+[gd_scene load_steps=11 format=3 uid="uid://dye16eba5lb31"]
 
 [ext_resource type="Script" uid="uid://3don1v6ha6ia" path="res://scenes/map/WorldMan.cs" id="1_g1pp1"]
 [ext_resource type="PackedScene" uid="uid://dfsyk55h5ioh0" path="res://scenes/region/region_man.tscn" id="2_vqee5"]
@@ -6,6 +6,7 @@
 [ext_resource type="FastNoiseLite" uid="uid://cf0v3ea3na5un" path="res://scenes/map/noises/continental.tres" id="4_f4k24"]
 [ext_resource type="Script" uid="uid://jdld04xxcpmv" path="res://scenes/map/WorldRenderer.cs" id="5_3biw4"]
 [ext_resource type="Script" uid="uid://dvsrcgoginxgl" path="res://scenes/Camera.cs" id="6_h4q0h"]
+[ext_resource type="PackedScene" uid="uid://oq1d8aheub65" path="res://scenes/map/ui/world_ui.tscn" id="7_vqee5"]
 
 [sub_resource type="Curve" id="Curve_7j5km"]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.21091333, 0.051505923), 0.0, 0.0, 0, 0, Vector2(0.38409886, 0.7443265), 0.0, 0.0, 0, 0, Vector2(0.53596926, 0.9231189), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
@@ -22,11 +23,12 @@ height = 256
 noise = ExtResource("4_f4k24")
 color_ramp = SubResource("Gradient_7j5km")
 
-[node name="WorldMan" type="Node" node_paths=PackedStringArray("worldGenerator", "worldRenderer")]
+[node name="WorldMan" type="Node" node_paths=PackedStringArray("worldGenerator", "worldRenderer", "worldUI")]
 script = ExtResource("1_g1pp1")
 worldGenerator = NodePath("WorldGenerator")
 worldRenderer = NodePath("WorldRenderer")
 regionScene = ExtResource("2_vqee5")
+worldUI = NodePath("WorldUI")
 
 [node name="WorldGenerator" type="Node" parent="."]
 script = ExtResource("3_n4hhb")
@@ -53,3 +55,5 @@ centered = false
 
 [node name="Camera" type="Camera2D" parent="."]
 script = ExtResource("6_h4q0h")
+
+[node name="WorldUI" parent="." instance=ExtResource("7_vqee5")]

@@ -9,9 +9,12 @@ namespace scenes.map {
 		[Export] WorldGenerator worldGenerator;
 		[Export] WorldRenderer worldRenderer;
 		[Export] PackedScene regionScene;
+		[Export] WorldUI worldUI;
 
 
 		public override void _Ready() {
+			RemoveChild(worldUI);
+			UILayer.AddUIChild(worldUI);
 			GenerateNewWorld();
 		}
 
@@ -19,6 +22,10 @@ namespace scenes.map {
 			if (evt.IsActionPressed("ui_accept")) {
 				GenerateNewWorld();
 			}
+		}
+
+		public override void _ExitTree() {
+			worldUI.QueueFree();
 		}
 
 		World world;

@@ -17,7 +17,7 @@ namespace scenes.region {
 
 		public override void _Ready() {
 			RemoveChild(ui);
-			UILayer.Singleton.AddChild(ui);
+			UILayer.AddUIChild(ui);
 		}
 
 		public override void _Process(double delta) {

@@ -67,11 +67,8 @@ namespace scenes.region.ui {
 		[Export] public JobsList jobsList;
 
 		// top bar
+		[Export] ResourceDisplay resourceDisplay;
 		[Export] public Panel pauseDisplayPanel;
-		[Export] public Label populationLabel;
-		[Export] public Label timeLabel;
-		[Export] public Label fpsLabel; // debug
-		[Export] public Label tilePosLabel; // debug
 
 		// top bar bottom
 		[Export] public Label gameSpeedLabel;
@@ -167,11 +164,10 @@ namespace scenes.region.ui {
 		// display
 
 		void UpdateDisplays() {
-			fpsLabel.Text = "fps: " + Engine.GetFramesPerSecond().ToString();
-			populationLabel.Text = $"pop: {GetPopulationCount()} ({GetHomelessPopulationCount()} homeless, {GetUnemployedPopulationCount()} unemployed)";
+			resourceDisplay.Display(population: GetPopulationCount(), homelessPopulation: GetHomelessPopulationCount(), unemployedPopulation: GetUnemployedPopulationCount());
+			resourceDisplay.Display(timeString: GetTimeString());
 			DisplayResources();
 			SetGameSpeedLabelText();
-			timeLabel.Text = GetTimeString();
 			pauseDisplayPanel.Visible = gamePaused || gameSpeed == 0f || internalGamePaused;
 		}
 
@@ -215,7 +211,7 @@ namespace scenes.region.ui {
 		}
 
 		public void OnTileHighlighted(Vector2I tilePosition, Region region) {
-			tilePosLabel.Text = tilePosition.ToString();
+			resourceDisplay.Display(tilepos: tilePosition);
 		}
 
 		public void OnBuildingClicked(Building building) {

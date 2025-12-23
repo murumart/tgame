@@ -1,7 +1,7 @@
 [gd_scene load_steps=9 format=3 uid="uid://cp354pcilqv48"]
 
-[ext_resource type="LabelSettings" uid="uid://v03gdc53ijm1" path="res://resources/visual/theme/label_styles/half_size.tres" id="1_nfevs"]
 [ext_resource type="Script" uid="uid://cd6mwdns4bcwa" path="res://scenes/region/ui/UI.cs" id="1_vkak1"]
+[ext_resource type="PackedScene" uid="uid://bfswljwjyhmyy" path="res://scenes/ui/resource_display.tscn" id="2_iwag8"]
 [ext_resource type="PackedScene" uid="uid://c7ew6g8hdbgfg" path="res://scenes/region/ui/jobs_list.tscn" id="3_y7o2c"]
 [ext_resource type="Script" uid="uid://2xhwk4iyfu73" path="res://scenes/region/ui/BuildingList.cs" id="4_suhma"]
 [ext_resource type="PackedScene" uid="uid://bli7m2dvghbu1" path="res://scenes/region/ui/documents_display.tscn" id="5_iwag8"]
@@ -24,7 +24,7 @@ font_color = Color(0.8352941, 0.8392157, 0.85882354, 1)
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_bjdfm"]
 
-[node name="Ui" type="MarginContainer" node_paths=PackedStringArray("buildButton", "agreementsButton", "jobsButton", "menuTabs", "buildingList", "documentsDisplay", "jobsList", "pauseDisplayPanel", "populationLabel", "timeLabel", "fpsLabel", "tilePosLabel", "gameSpeedLabel", "pauseButton", "normalSpeedButton", "fastSpeedButton", "resourceLabel")]
+[node name="Ui" type="MarginContainer" node_paths=PackedStringArray("buildButton", "agreementsButton", "jobsButton", "menuTabs", "buildingList", "documentsDisplay", "jobsList", "resourceDisplay", "pauseDisplayPanel", "gameSpeedLabel", "pauseButton", "normalSpeedButton", "fastSpeedButton", "resourceLabel")]
 z_index = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -44,11 +44,8 @@ menuTabs = NodePath("VBoxContainer/MarginContainer/MenuTabs")
 buildingList = NodePath("VBoxContainer/MarginContainer/MenuTabs/HBoxContainer/BuildingList")
 documentsDisplay = NodePath("VBoxContainer/MarginContainer/MenuTabs/HBoxContainer2/Agreements")
 jobsList = NodePath("VBoxContainer/MarginContainer/Horizon/JobsList")
+resourceDisplay = NodePath("VBoxContainer/VBoxContainer/ResourceDisplay")
 pauseDisplayPanel = NodePath("PausePanel")
-populationLabel = NodePath("VBoxContainer/VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer/poplabel")
-timeLabel = NodePath("VBoxContainer/VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer/TimeLabel")
-fpsLabel = NodePath("VBoxContainer/VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer/Fpslabel")
-tilePosLabel = NodePath("VBoxContainer/VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer/Tileposlabel")
 gameSpeedLabel = NodePath("VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer/Label")
 pauseButton = NodePath("VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer/PauseButton")
 normalSpeedButton = NodePath("VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer/NormalSpeedButton")
@@ -69,52 +66,8 @@ mouse_filter = 2
 layout_mode = 2
 theme_override_constants/separation = 1
 
-[node name="ResourceDisplay" type="PanelContainer" parent="VBoxContainer/VBoxContainer"]
+[node name="ResourceDisplay" parent="VBoxContainer/VBoxContainer" instance=ExtResource("2_iwag8")]
 layout_mode = 2
-
-[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/VBoxContainer/ResourceDisplay"]
-layout_mode = 2
-theme_override_constants/margin_left = 2
-theme_override_constants/margin_top = 2
-theme_override_constants/margin_right = 2
-theme_override_constants/margin_bottom = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/VBoxContainer/ResourceDisplay/MarginContainer"]
-layout_mode = 2
-alignment = 1
-
-[node name="poplabel" type="Label" parent="VBoxContainer/VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer"]
-layout_mode = 2
-text = "pop: -9099"
-label_settings = ExtResource("1_nfevs")
-
-[node name="Label2" type="Label" parent="VBoxContainer/VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer"]
-layout_mode = 2
-text = "silver: -blaab"
-label_settings = ExtResource("1_nfevs")
-
-[node name="Fpslabel" type="Label" parent="VBoxContainer/VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer"]
-layout_mode = 2
-text = "fps: "
-label_settings = ExtResource("1_nfevs")
-
-[node name="Tileposlabel" type="Label" parent="VBoxContainer/VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer"]
-layout_mode = 2
-text = "fps: "
-label_settings = ExtResource("1_nfevs")
-
-[node name="Fat" type="Control" parent="VBoxContainer/VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-mouse_filter = 2
-
-[node name="TimeLabel" type="Label" parent="VBoxContainer/VBoxContainer/ResourceDisplay/MarginContainer/HBoxContainer"]
-custom_minimum_size = Vector2(37, 0)
-layout_mode = 2
-text = "01/01/0000"
-label_settings = ExtResource("1_nfevs")
-horizontal_alignment = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/VBoxContainer"]
 layout_mode = 2

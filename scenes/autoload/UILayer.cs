@@ -8,13 +8,13 @@ namespace scenes.autoload {
 		[Export] HoverInfoPanel infoPanel;
 
 		static UILayer singleton;
-		public static UILayer Singleton { get => singleton; }
+		static UILayer Singleton { get => singleton; }
 
 		public override void _Ready() {
 			singleton = this;
 		}
 
-		public static void AddUiChild(Node node) {
+		public static void AddUIChild(Node node) {
 			Singleton.AddChild(node);
 		}
 
