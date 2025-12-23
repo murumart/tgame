@@ -19,7 +19,9 @@ public class Map : ITimePassing {
 		TileOwners = new();
 		foreach (Region region in regions) {
 			foreach (Vector2I pos in region.GroundTiles.Keys) {
-				TileOwners[pos] = region;
+				var wpos = pos + region.WorldPosition;
+				Debug.Assert(!TileOwners.ContainsKey(wpos), $"The tile {wpos} is contested and wrong please behave");
+				TileOwners[wpos] = region;
 			}
 		}
 	}
@@ -50,7 +52,7 @@ public class Map : ITimePassing {
 		List<Faction> factions = new();
 		List<RegionFaction> regionFactions = new();
 		for (int i = 0; i < 10; i++) {
-			var region = Region.GetTestCircleRegion(12);
+			var region = Region.GetTestCircleRegion(12, new(i * 50, 0));
 			regions.Add(region);
 			var faction = new Faction();
 			factions.Add(faction);

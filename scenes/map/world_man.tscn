@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://dye16eba5lb31"]
+[gd_scene load_steps=12 format=3 uid="uid://dye16eba5lb31"]
 
 [ext_resource type="Script" uid="uid://3don1v6ha6ia" path="res://scenes/map/WorldMan.cs" id="1_g1pp1"]
 [ext_resource type="PackedScene" uid="uid://dfsyk55h5ioh0" path="res://scenes/region/region_man.tscn" id="2_vqee5"]
@@ -12,6 +12,9 @@
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.21091333, 0.051505923), 0.0, 0.0, 0, 0, Vector2(0.38409886, 0.7443265), 0.0, 0.0, 0, 0, Vector2(0.53596926, 0.9231189), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
 point_count = 5
 
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_vqee5"]
+blend_mode = 1
+
 [sub_resource type="Gradient" id="Gradient_7j5km"]
 interpolation_mode = 1
 offsets = PackedFloat32Array(0, 0.57101446)
@@ -23,12 +26,13 @@ height = 256
 noise = ExtResource("4_f4k24")
 color_ramp = SubResource("Gradient_7j5km")
 
-[node name="WorldMan" type="Node" node_paths=PackedStringArray("worldGenerator", "worldRenderer", "worldUI")]
+[node name="WorldMan" type="Node" node_paths=PackedStringArray("worldGenerator", "worldRenderer", "worldUI", "canvasAccess")]
 script = ExtResource("1_g1pp1")
 worldGenerator = NodePath("WorldGenerator")
 worldRenderer = NodePath("WorldRenderer")
 regionScene = ExtResource("2_vqee5")
 worldUI = NodePath("WorldUI")
+canvasAccess = NodePath("DebugRender")
 
 [node name="WorldGenerator" type="Node" parent="."]
 script = ExtResource("3_n4hhb")
@@ -38,15 +42,23 @@ WorldHeight = 600
 RegionCount = 450
 islandCurve = SubResource("Curve_7j5km")
 
-[node name="WorldRenderer" type="Node" parent="." node_paths=PackedStringArray("groundSprite", "regionSprite")]
+[node name="WorldRenderer" type="Node" parent="." node_paths=PackedStringArray("groundSprite", "regionSprite", "highlightSprite")]
 script = ExtResource("5_3biw4")
 groundSprite = NodePath("Ground")
 regionSprite = NodePath("Regions")
+highlightSprite = NodePath("Highlight")
 
 [node name="Ground" type="Sprite2D" parent="WorldRenderer"]
+centered = false
 
 [node name="Regions" type="Sprite2D" parent="WorldRenderer"]
 modulate = Color(1, 1, 1, 0.92941177)
+centered = false
+
+[node name="Highlight" type="Sprite2D" parent="WorldRenderer"]
+modulate = Color(1, 1, 1, 0.26666668)
+material = SubResource("CanvasItemMaterial_vqee5")
+centered = false
 
 [node name="DebugRender" type="Sprite2D" parent="."]
 visible = false

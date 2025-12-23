@@ -5,6 +5,7 @@ public partial class WorldRenderer : Node {
 
 	[Export] Sprite2D groundSprite;
 	[Export] Sprite2D regionSprite;
+	[Export] Sprite2D highlightSprite;
 
 	World world;
 
@@ -16,8 +17,8 @@ public partial class WorldRenderer : Node {
 		for (int x = 0; x < world.Width; x++) {
 			for (int y = 0; y < world.Height; y++) {
 				Color color = world.GetTile(x, y) switch {
-					GroundTileType.GRASS => new(0, 1, 0),
-					GroundTileType.WATER => new(0, 0.5f, 1),
+					GroundTileType.GRASS => Colors.SeaGreen,
+					GroundTileType.WATER => Colors.SkyBlue,
 					_ => new(0, 0, 0),
 				};
 				//DrawRect(new Rect2(x, y, 1, 1), col);
@@ -27,6 +28,7 @@ public partial class WorldRenderer : Node {
 		}
 		groundSprite.Texture = ImageTexture.CreateFromImage(image);
 		regionSprite.Texture = ImageTexture.CreateFromImage(regionImage);
+		highlightSprite.Texture = ImageTexture.CreateFromImage(regionImage);
 	}
 
 	public void Draw(World world) {
@@ -43,6 +45,17 @@ public partial class WorldRenderer : Node {
 			}
 		}
 		(regionSprite.Texture as ImageTexture).Update(image);
+	}
+
+	public void DrawRegionHighlight(Region region) {
+		var image = (highlightSprite.Texture as ImageTexture).GetImage();
+		image.Fill(Colors.Transparent);
+		if (region == null) return;
+		var color = Colors.White;
+		foreach (var px in region.GroundTiles.Keys) {
+			image.SetPixelv(px + region.WorldPosition, color);
+		}
+		(highlightSprite.Texture as ImageTexture).Update(image);
 	}
 
 }

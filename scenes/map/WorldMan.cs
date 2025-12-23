@@ -10,6 +10,9 @@ namespace scenes.map {
 		[Export] WorldRenderer worldRenderer;
 		[Export] PackedScene regionScene;
 		[Export] WorldUI worldUI;
+		[Export] Node2D canvasAccess;
+
+		Map map;
 
 
 		public override void _Ready() {
@@ -21,6 +24,15 @@ namespace scenes.map {
 		public override void _UnhandledKeyInput(InputEvent evt) {
 			if (evt.IsActionPressed("ui_accept")) {
 				GenerateNewWorld();
+			}
+		}
+
+		public override void _Process(double delta) {
+			var mousePos = new Vector2I((int)canvasAccess.GetGlobalMousePosition().X, (int)canvasAccess.GetGlobalMousePosition().Y);
+			if (map != null) {
+				map.TileOwners.TryGetValue(mousePos, out Region atMouse);
+				worldUI.ResourceDisplay.Display(tilepos: mousePos, region: atMouse);
+				worldRenderer.DrawRegionHighlight(atMouse);
 			}
 		}
 
@@ -42,7 +54,11 @@ namespace scenes.map {
 			tw.TweenInterval(0.05f);
 			tw.TweenCallback(drawRegionsCallable);
 
-			worldGenerator.GrowRegions(world, SetupGame);
+			worldGenerator.GrowRegions(world, DoneGenerating);
+		}
+
+		void DoneGenerating(Map map) {
+			this.map = map;
 		}
 
 		void SetupGame(Map map) {

@@ -32,7 +32,7 @@ public class Region : ITimePassing {
 		}
 	}
 
-	public static Region GetTestCircleRegion(int radius) { // debugging
+	public static Region GetTestCircleRegion(int radius, Vector2I center) { // debugging
 		var tiles = new Dictionary<Vector2I, GroundTileType>();
 		var rs = new Dictionary<Vector2I, IResourceSiteType>();
 		for (int i = -radius; i <= radius; i++) {
@@ -47,7 +47,7 @@ public class Region : ITimePassing {
 				}
 			}
 		}
-		var reg = new Region(Vector2I.Zero, tiles);
+		var reg = new Region(center, tiles);
 		foreach (var kvp in rs) {
 			reg.CreateResourceSiteAndPlace(kvp.Value, kvp.Key);
 		}
