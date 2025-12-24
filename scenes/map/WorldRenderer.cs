@@ -13,16 +13,20 @@ public partial class WorldRenderer : Node {
 
 	void DrawContinents() {
 		if (world == null) return;
-		Image image = Image.CreateEmpty(world.Width, world.Height, false, Image.Format.Rgba4444);
-		Image regionImage = Image.CreateEmpty(world.Width, world.Height, false, Image.Format.Rgba4444);
-		for (int x = 0; x < world.Width; x++) {
-			for (int y = 0; y < world.Height; y++) {
+		Image image = Image.CreateEmpty(world.Longitude, world.Latitude, false, Image.Format.Rgba4444);
+		Image regionImage = Image.CreateEmpty(world.Longitude, world.Latitude, false, Image.Format.Rgba4444);
+		for (int x = 0; x < world.Longitude; x++) {
+			for (int y = 0; y < world.Latitude; y++) {
 				Color color = world.GetTile(x, y) switch {
 					GroundTileType.Grass => palette.Colors[16],
 					GroundTileType.Ocean => palette.Colors[27],
 					_ => new(0, 0, 0),
 				};
-				//DrawRect(new Rect2(x, y, 1, 1), col);
+				float ele = world.GetElevation(x, y) * 0.5f;
+
+				if (ele >= 0) color = color.Lightened(ele);
+				else color = color.Darkened(-ele);
+
 				image.SetPixel(x, y, color);
 			}
 

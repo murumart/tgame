@@ -53,7 +53,7 @@ highlightSprite = NodePath("Highlight")
 centered = false
 
 [node name="Regions" type="Sprite2D" parent="WorldRenderer"]
-modulate = Color(1, 1, 1, 0.2784314)
+modulate = Color(1, 1, 1, 0.38431373)
 centered = false
 
 [node name="Highlight" type="Sprite2D" parent="WorldRenderer"]

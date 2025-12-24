@@ -42,7 +42,9 @@ namespace scenes.map {
 
 					float distanceSqFromCentre = centre.DistanceSquaredTo(vec) / (float)(Math.Pow(WorldWidth / 2, 2) + Math.Pow(WorldHeight / 2, 2));
 					sample -= islandCurve.SampleBaked(distanceSqFromCentre);
+					sample = Mathf.Clamp(sample, -1f, 1f);
 
+					world.SetElevation(x, y, sample);
 					if (sample > 0) world.SetTile(x, y, GroundTileType.Grass);
 					else world.SetTile(x, y, GroundTileType.Ocean);
 				}
@@ -100,12 +102,12 @@ namespace scenes.map {
 			var tileType = !sea ? GroundTileType.Grass : GroundTileType.Ocean;
 
 			while (regionsMade < regionCount) {
-				var tile = new Vector2I(rng.RandiRange(0, world.Width - 1), rng.RandiRange(0, world.Height - 1));
+				var tile = new Vector2I(rng.RandiRange(0, world.Longitude - 1), rng.RandiRange(0, world.Latitude - 1));
 				while (
 					world.GetTile(tile.X, tile.Y) != tileType
 					|| startPoses.ContainsKey(tile)
 				) {
-					tile = new Vector2I(rng.RandiRange(0, world.Width - 1), rng.RandiRange(0, world.Height - 1));
+					tile = new Vector2I(rng.RandiRange(0, world.Longitude - 1), rng.RandiRange(0, world.Latitude - 1));
 				}
 				Debug.Assert(!startPoses.ContainsKey(tile), "Two regions can't start on the same tile!");
 				var region = new Region(tile, new());
@@ -162,28 +164,28 @@ namespace scenes.map {
 			//}
 
 			for (int x = 0; x < iterations; x++) for (int i = 0; i < regions.Length; i++) {
-				var addKeys = new HashSet<Vector2I>(); // coordinates in region local space
-				addKeys.Clear();
-				var region = regions[i];
-				var tileType = !sea ? GroundTileType.Grass : GroundTileType.Ocean;
-				var freeEdges = freeEdgeTiles[region];
-				if (freeEdges.Count == 0) continue;
-				for (int dirIx = 0; dirIx < 4; dirIx++) {
-					growthOccurred = GrowRegionInDirectionRandom(occupied, addKeys, freeEdges, region, dirIx, world, tileType) || growthOccurred;
-					if (freeEdges.Count == 0) break;
+					var addKeys = new HashSet<Vector2I>(); // coordinates in region local space
+					addKeys.Clear();
+					var region = regions[i];
+					var tileType = !sea ? GroundTileType.Grass : GroundTileType.Ocean;
+					var freeEdges = freeEdgeTiles[region];
+					if (freeEdges.Count == 0) continue;
+					for (int dirIx = 0; dirIx < 4; dirIx++) {
+						growthOccurred = GrowRegionInDirectionRandomly(occupied, addKeys, freeEdges, region, dirIx, world, tileType) || growthOccurred;
+						if (freeEdges.Count == 0) break;
+					}
+					foreach (var k in addKeys) {
+						Debug.Assert(!region.GroundTiles.ContainsKey(k), $"region {region} already owns the local tile {k}");
+						region.GroundTiles.Add(k, tileType);
+					}
 				}
-				foreach (var k in addKeys) {
-					Debug.Assert(!region.GroundTiles.ContainsKey(k), $"region {region} already owns the local tile {k}");
-					region.GroundTiles.Add(k, tileType);
-				}
-			}
 			if (!growthOccurred) {
 				GD.Print("region growth filled up all space attainable");
 			}
 			return growthOccurred;
 		}
 
-		private bool GrowRegionInDirectionRandom(
+		private bool GrowRegionInDirectionRandomly(
 			Dictionary<Vector2I, Region> occupied, // global spcae
 			HashSet<Vector2I> addKeys, // region space
 			List<(Vector2I, byte)> freeEdgeTiles, // local space
@@ -194,7 +196,29 @@ namespace scenes.map {
 		) {
 			var (vectorDirectionTryingToGrowIn, directionTryingToGrowIn) = GrowDirs[dirIx];
 
-			int i = rng.RandiRange(0, freeEdgeTiles.Count - 1);
+			// choose weighted randomly based on index. Not Doing This Right Now. The sorting part is hideously slow (so should cache and carry more things).
+			//freeEdgeTiles.Sort((a, b) => {
+			//var (localpos1, _) = a;
+			//var (localpos2, _) = b;
+			//var global1 = localpos1 + region.WorldPosition;
+			//var global2 = localpos1 + region.WorldPosition;
+			//var moveGlobal1 = global1 + vectorDirectionTryingToGrowIn;
+			//var moveGlobal2 = global2 + vectorDirectionTryingToGrowIn;
+			//var grad1 = world.GetElevation(moveGlobal1.X, moveGlobal1.Y) - world.GetElevation(global1.X, global1.Y);
+			//var grad2 = world.GetElevation(moveGlobal2.X, moveGlobal2.Y) - world.GetElevation(global2.X, global2.Y);
+			//return (grad1).CompareTo(grad2);
+			//});
+
+			//var sumOfProbabilities = 0.5f * freeEdgeTiles.Count * (1 + freeEdgeTiles.Count);
+			//var random = rng.Randf() * sumOfProbabilities;
+			//var at = 0f;
+			//int i = 0;
+			//for (; i < freeEdgeTiles.Count; i++) {
+			//	at += freeEdgeTiles.Count - i;
+			//	if (random < at) break;
+			//}
+
+			int i = rng.RandiRange(0, freeEdgeTiles.Count - 1); // completely random choice
 			{
 				var (localPos, directionsThatAreFree) = freeEdgeTiles[i];
 				if ((directionTryingToGrowIn & directionsThatAreFree) == 0) return false;
@@ -202,6 +226,8 @@ namespace scenes.map {
 				var moveLocal = localPos + vectorDirectionTryingToGrowIn;
 				var moveGlobal = region.WorldPosition + moveLocal;
 				var (neighbor, grew) = TryGrowRegionTo(region, moveGlobal, occupied, addKeys, world, allowedTile);
+				region.AddNeighbor(neighbor);
+				neighbor?.AddNeighbor(region);
 
 				directionsThatAreFree &= (byte)~directionTryingToGrowIn;
 				if (grew) {
