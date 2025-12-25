@@ -16,7 +16,7 @@ namespace scenes.map {
 		[Export] public int WorldHeight;
 		[Export] int LandRegionCount;
 		[Export] int SeaRegionCount;
-		[Export] int FactionCount;
+		[Export] int AggressiveFactionCount;
 		[Export] Curve islandCurve;
 		[Export] Curve populationLandTileCurve;
 
@@ -25,6 +25,7 @@ namespace scenes.map {
 		RandomNumberGenerator rng;
 
 		public bool Generating { get; private set; }
+
 
 		public override void _Ready() {
 			rng = new();
@@ -48,7 +49,6 @@ namespace scenes.map {
 					sample = Mathf.Clamp(sample, -1f, 1f);
 
 					world.SetElevation(x, y, sample);
-
 				}
 			}
 
@@ -95,7 +95,7 @@ namespace scenes.map {
 				}
 			}
 
-			War(regionsLand);
+			War(regionsLand, AggressiveFactionCount);
 
 			Map map = new(regionsLand);
 
@@ -264,16 +264,25 @@ namespace scenes.map {
 			return (there, false);
 		}
 
-		private void War(Region[] regions) {
+		enum Behavior {
+			Occupy,
+			Annex,
+			Max
+		}
+
+		private void War(Region[] regions, int aggressiveRegionCount) {
+			const int MAX_POP = 1000;
 			// all regions get initial populations
 			foreach (Region region in regions) {
 				var faction = new Faction(
 					region,
-					maxPop: 1000,
+					maxPop: MAX_POP,
 					initialPopulation: (int)populationLandTileCurve.SampleBaked(region.LandTileCount)
 				);
 			}
+			// TODO implement while not tired
 		}
+
 	}
 
 }

@@ -49,6 +49,7 @@ WorldWidth = 640
 WorldHeight = 420
 LandRegionCount = 350
 SeaRegionCount = 40
+AggressiveFactionCount = 80
 islandCurve = SubResource("Curve_7j5km")
 populationLandTileCurve = SubResource("Curve_vqee5")
 

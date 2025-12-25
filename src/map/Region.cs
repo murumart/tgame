@@ -17,7 +17,7 @@ public class Region {
 
 	readonly Dictionary<Vector2I, MapObject> mapObjects = new();
 
-	readonly HashSet<Region> neighbors = new();
+	readonly HashSet<Region> neighbors = new(); public ICollection<Region> Neighbors => neighbors;
 
 	public Color Color { get; init; } // used for displaying
 

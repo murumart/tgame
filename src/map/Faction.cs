@@ -130,6 +130,23 @@ public class Faction : IEntity {
 		UnemployedPopulation.Transfer(ref job.Workers, -job.Workers.Amount);
 	}
 
+	public void DecreasePopulation(int by) {
+		Debug.Assert(by > 0, "I need to subtract this value.");
+		var reduction = Mathf.Min(homelessPopulation.Amount, by);
+		homelessPopulation.Amount -= reduction;
+		by -= reduction;
+
+		reduction = Mathf.Min(unemployedPopulation.Amount, by);
+		unemployedPopulation.Amount -= reduction;
+		by -= reduction;
+
+		foreach (var b in buildings.Values) {
+			reduction = Mathf.Min(b.Population.Amount, by);
+			b.Population.Amount -= by;
+			by -= reduction;
+		}
+	}
+
 	// *** MANAGING BUILDINGS ***
 
 	public Building PlaceBuildingConstructionSite(IBuildingType type, Vector2I position) {
