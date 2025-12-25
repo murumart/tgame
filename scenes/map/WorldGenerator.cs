@@ -58,11 +58,8 @@ namespace scenes.map {
 		public async Task<Map> GenerateRegions(World world, int regionCountLand, int regionCountSea) {
 			Dictionary<Vector2I, Region> landOccupied; // coordinates in global space
 			landOccupied = GenerateRegionStarts(world, regionCountLand);
-			Dictionary<Vector2I, Region> seaOccupied; // coordinates in global space
-			seaOccupied = GenerateRegionStarts(world, regionCountSea, sea: true);
 
 			Region[] regionsLand = landOccupied.Values.ToArray();
-			Region[] regionsSea = seaOccupied.Values.ToArray();
 
 			Dictionary<Region, List<(Vector2I, byte)>> freeEdgeTiles = new();
 
@@ -74,12 +71,6 @@ namespace scenes.map {
 			await GrowRegions(world, regionsLand, landOccupied, freeEdgeTiles);
 
 			freeEdgeTiles.Clear();
-			foreach (var reg in regionsSea) {
-				freeEdgeTiles[reg] = new() { (Vector2I.Zero, 0b1111) };
-			}
-
-			GD.Print("Growing sea regions");
-			await GrowRegions(world, regionsSea, seaOccupied, freeEdgeTiles, sea: true);
 
 			foreach (Region region in regionsLand) {
 				foreach (Vector2I pos in region.GroundTiles.Keys) {
@@ -90,7 +81,7 @@ namespace scenes.map {
 				}
 			}
 
-			Map map = CreateMap(regionsLand.Concat(regionsSea).ToArray(), [], []);
+			Map map = CreateMap(regionsLand, [], []);
 
 			return map;
 		}
