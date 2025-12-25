@@ -4,14 +4,15 @@ using Godot;
 using static ResourceSite;
 
 
-public class Region : ITimePassing {
+public class Region {
 
 	public event Action<Vector2I> MapObjectUpdatedAtEvent;
 
+	readonly int worldIndex;
+
 	public Vector2I WorldPosition { get; init; }
-	readonly Dictionary<Vector2I, GroundTileType> groundTiles = new();
-	public Dictionary<Vector2I, GroundTileType> GroundTiles { get => groundTiles; }
-	readonly Dictionary<Vector2I, int> higherTiles = new();
+	public readonly Dictionary<Vector2I, GroundTileType> GroundTiles = new();
+	public RegionFaction LocalFaction { get; private set; }
 
 	readonly Dictionary<Vector2I, MapObject> mapObjects = new();
 
@@ -20,10 +21,11 @@ public class Region : ITimePassing {
 	public Color Color { get; init; } // used for displaying
 
 
-	public Region(Vector2I worldPosition, Dictionary<Vector2I, GroundTileType> groundTiles) {
+	public Region(int index, Vector2I worldPosition, Dictionary<Vector2I, GroundTileType> groundTiles) {
+		this.worldIndex = index;
 		WorldPosition = worldPosition;
-		this.groundTiles = groundTiles;
-		this.Color = new Color(GD.Randf(), GD.Randf(), GD.Randf()).Lightened(0.25f);
+		GroundTiles = groundTiles;
+		this.Color = Color.FromHsv(GD.Randf(), (float)GD.RandRange(0.75, 1.0), 1.0f);
 	}
 
 	public void PassTime(TimeT minutes) {
@@ -32,30 +34,12 @@ public class Region : ITimePassing {
 		}
 	}
 
-	public static Region GetTestCircleRegion(int radius, Vector2I center) { // debugging
-		var tiles = new Dictionary<Vector2I, GroundTileType>();
-		var rs = new Dictionary<Vector2I, IResourceSiteType>();
-		for (int i = -radius; i <= radius; i++) {
-			for (int j = -radius; j <= radius; j++) {
-				if (i * i + j * j <= radius * radius) {
-					tiles[new Vector2I(i, j)] = GroundTileType.Grass;
-
-					if (i != 0 || j != 0) {
-						if (GD.Randf() < 0.01f) rs.Add(new Vector2I(i, j), Registry.ResourceSites.GetAsset("boulder"));
-						else if (GD.Randf() < 0.07f) rs.Add(new Vector2I(i, j), Registry.ResourceSites.GetAsset("trees"));
-					}
-				}
-			}
-		}
-		var reg = new Region(center, tiles);
-		foreach (var kvp in rs) {
-			reg.CreateResourceSiteAndPlace(kvp.Value, kvp.Key);
-		}
-		return reg;
-	}
-
 	public bool AddNeighbor(Region neighbor) {
 		return neighbors.Add(neighbor);
+	}
+
+	public void SetLocalFaction(RegionFaction regionFaction) {
+		LocalFaction = regionFaction;
 	}
 
 	public bool CanPlaceBuilding(Vector2I position) {
@@ -101,6 +85,28 @@ public class Region : ITimePassing {
 
 	public override string ToString() {
 		return $"Reg{WorldPosition}";
+	}
+
+	public static Region GetTestCircleRegion(int index, int radius, Vector2I center) { // debugging
+		var tiles = new Dictionary<Vector2I, GroundTileType>();
+		var rs = new Dictionary<Vector2I, IResourceSiteType>();
+		for (int i = -radius; i <= radius; i++) {
+			for (int j = -radius; j <= radius; j++) {
+				if (i * i + j * j <= radius * radius) {
+					tiles[new Vector2I(i, j)] = GroundTileType.Grass;
+
+					if (i != 0 || j != 0) {
+						if (GD.Randf() < 0.01f) rs.Add(new Vector2I(i, j), Registry.ResourceSites.GetAsset("boulder"));
+						else if (GD.Randf() < 0.07f) rs.Add(new Vector2I(i, j), Registry.ResourceSites.GetAsset("trees"));
+					}
+				}
+			}
+		}
+		var reg = new Region(index, center, tiles);
+		foreach (var kvp in rs) {
+			reg.CreateResourceSiteAndPlace(kvp.Value, kvp.Key);
+		}
+		return reg;
 	}
 
 }

@@ -57,7 +57,6 @@ elevationGradient = SubResource("Gradient_7j5km")
 centered = false
 
 [node name="Regions" type="Sprite2D" parent="WorldRenderer"]
-visible = false
 modulate = Color(1.288109, 1.288109, 1.288109, 1)
 material = SubResource("CanvasItemMaterial_n4hhb")
 centered = false

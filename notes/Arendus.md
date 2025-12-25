@@ -51,6 +51,7 @@ Mäng peab olema mängitav iga verstaposti saabudes.
 	- [ ] müra: kõrgus, sügavus, et oleks vahe mere ja maa vahel
 	- [ ] müra: jõed (hallid alad)
 	- [ ] regioonideks jaotamine (voronoi? mingisugune juhuslik "paint bucket"?)
+		- [ ] 
 	- [ ] eri pooled
 		- [ ] AI käitugu praegu täiesti suvaliselt kus seda on lihtne implementeerida
 - [ ] ruudud millega mängida

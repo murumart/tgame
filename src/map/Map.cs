@@ -11,7 +11,7 @@ public class Map : ITimePassing {
 	public Dictionary<Vector2I, Region> TileOwners { get; init; }
 
 
-	public Map(ICollection<Region> regions, ICollection<Faction> factions, ICollection<RegionFaction> regionFactions) {
+	public Map(ICollection<Region> regions, ICollection<Faction> factions) {
 		this.regions = regions.ToList();
 		this.factions = factions.ToList();
 		this.regionFactions = regionFactions.ToList();
@@ -52,7 +52,7 @@ public class Map : ITimePassing {
 		List<Faction> factions = new();
 		List<RegionFaction> regionFactions = new();
 		for (int i = 0; i < 10; i++) {
-			var region = Region.GetTestCircleRegion(12, new(i * 50, 0));
+			var region = Region.GetTestCircleRegion(i, 12, new(i * 50, 0));
 			regions.Add(region);
 			var faction = new Faction();
 			factions.Add(faction);
@@ -69,7 +69,7 @@ public class Map : ITimePassing {
 			regionFaction.Briefcase.AddDocument(mandate);
 		}
 
-		return new Map(regions, factions, regionFactions);
+		return new Map(regions, factions);
 	}
 
 }

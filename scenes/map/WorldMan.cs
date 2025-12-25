@@ -18,6 +18,8 @@ namespace scenes.map {
 		public override void _Ready() {
 			RemoveChild(worldUI);
 			UILayer.AddUIChild(worldUI);
+			worldUI.SelectRegion(null);
+			worldUI.RegionPlayRequested += SetupGame;
 			GenerateNewWorld();
 		}
 
@@ -33,8 +35,8 @@ namespace scenes.map {
 			if (map != null) {
 				map.TileOwners.TryGetValue(mousePos, out Region atMouse);
 				worldUI.ResourceDisplay.Display(region: atMouse);
-				worldRenderer.DrawRegionHighlight(atMouse);
-				if (Input.IsMouseButtonPressed(MouseButton.Left) && atMouse != null) {
+				worldRenderer.DrawRegionHighlight(atMouse, worldUI.SelectedRegion);
+				if (Input.IsActionJustPressed("left_click") && atMouse != null) {
 					RegionClicked(atMouse);
 				}
 			}
@@ -45,13 +47,14 @@ namespace scenes.map {
 		}
 
 		void RegionClicked(Region region) {
-
+			worldUI.SelectRegion(region);
 		}
 
 		// #region worldgen
 		World world;
 		async void GenerateNewWorld() {
 			this.map = null;
+			worldUI.SelectRegion(null);
 			world = new(worldGenerator.WorldWidth, worldGenerator.WorldHeight);
 			worldGenerator.GenerateContinents(world);
 			worldRenderer.Draw(world);
@@ -71,8 +74,8 @@ namespace scenes.map {
 		}
 		// #endregion worldgen
 
-		void SetupGame(Map map) {
-			GameMan.Singleton.NewGame(map);
+		void SetupGame() {
+			GameMan.Singleton.NewGame(worldUI.SelectedRegion, map);
 			GD.Print("game set up.");
 
 			EnterGame();

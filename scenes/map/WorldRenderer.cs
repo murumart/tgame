@@ -69,13 +69,19 @@ public partial class WorldRenderer : Node {
 		UpdateImage(image, regionSprite);
 	}
 
-	public void DrawRegionHighlight(Region region) {
+	public void DrawRegionHighlight(Region hovered, Region highlighted) {
 		var image = GetImage(highlightSprite);
 		image.Fill(Colors.Transparent);
-		if (region != null) {
+		if (hovered != null) {
 			var color = Colors.White;
-			foreach (var px in region.GroundTiles.Keys) {
-				image.SetPixelv(px + region.WorldPosition, color);
+			foreach (var px in hovered.GroundTiles.Keys) {
+				image.SetPixelv(px + hovered.WorldPosition, color);
+			}
+		}
+		if (highlighted != null && hovered != highlighted) {
+			var color = Colors.Gray;
+			foreach (var px in highlighted.GroundTiles.Keys) {
+				image.SetPixelv(px + highlighted.WorldPosition, color);
 			}
 		}
 		UpdateImage(image, highlightSprite);

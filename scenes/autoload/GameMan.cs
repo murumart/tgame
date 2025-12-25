@@ -28,7 +28,8 @@ namespace scenes.autoload {
 
 			dataRegistry.RegisterThings();
 
-			NewGame(Map.GetDebugMap());
+			var map = Map.GetDebugMap();
+			NewGame(map.GetRegion(0), map);
 
 			//game.PassTime(60 * 7); // start game at 7:00
 		}
@@ -57,8 +58,8 @@ namespace scenes.autoload {
 			paused = !paused;
 		}
 
-		public void NewGame(Map map) {
-			game = new Game(map);
+		public void NewGame(Region playRegion, Map map) {
+			game = new Game(playRegion, map);
 		}
 
 	}

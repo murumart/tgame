@@ -40,7 +40,7 @@ namespace scenes.region {
 
 			GameMan.Singleton.Game.Time.HourPassedEvent += HourlyUpdate;
 
-			region = GameMan.Singleton.Game.Map.GetRegion(0);
+			region = GameMan.Singleton.Game.PlayRegion;
 			regionFaction = GameMan.Singleton.Game.Map.GetFaction(0).GetOwnedRegionFaction(0);
 			ui.GetPopulationCountEvent += regionFaction.GetPopulationCount;
 			ui.GetHomelessPopulationCountEvent += GetHomelessPopulationCount;

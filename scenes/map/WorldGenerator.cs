@@ -92,7 +92,7 @@ namespace scenes.map {
 				}
 			}
 
-			Map map = CreateMap(regionsLand, [], []);
+			Map map = new(regionsLand, []);
 
 			Generating = false;
 			return map;
@@ -113,10 +113,10 @@ namespace scenes.map {
 					tile = new Vector2I(rng.RandiRange(0, world.Longitude - 1), rng.RandiRange(0, world.Latitude - 1));
 				}
 				Debug.Assert(!startPoses.ContainsKey(tile), "Two regions can't start on the same tile!");
-				var region = new Region(tile, new());
+				var region = new Region(regionsMade, tile, new());
 				startPoses.Add(tile, region);
 
-				region.GroundTiles[Vector2I.Zero] = tileType;
+				region.GroundTiles[Vector2I.Zero] = world.GetTile(tile.X, tile.Y);
 
 				regionsMade++;
 			}
@@ -189,7 +189,7 @@ namespace scenes.map {
 					}
 					foreach (var k in addKeys) {
 						Debug.Assert(!region.GroundTiles.ContainsKey(k), $"region {region} already owns the local tile {k}");
-						region.GroundTiles.Add(k, tileType);
+						region.GroundTiles.Add(k, world.GetTile(k.X + region.WorldPosition.X, k.Y + region.WorldPosition.Y));
 					}
 					if (freeEdges.Count == 0) break;
 				}
@@ -259,12 +259,9 @@ namespace scenes.map {
 			return (there, false);
 		}
 
-		Map CreateMap(Region[] regions, Faction[] factions, RegionFaction[] regionFactions) {
-			Map map = new(regions, factions, regionFactions);
+		private void War(Region[] regions) {
 
-			return map;
 		}
-
 	}
 
 }
