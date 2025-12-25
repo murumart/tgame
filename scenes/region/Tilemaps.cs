@@ -44,7 +44,7 @@ namespace scenes.region {
 
 		public static GroundCellType MatchTileTypeToCell(GroundTileType tile) {
 			return tile switch {
-				GroundTileType.VOID => VOID,
+				GroundTileType.Void => VOID,
 				GroundTileType.Grass => GRASS,
 				_ => throw new Exception($"Can't match {tile} to CellType")
 			};

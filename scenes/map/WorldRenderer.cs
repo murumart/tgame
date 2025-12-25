@@ -7,33 +7,50 @@ public partial class WorldRenderer : Node {
 	[Export] Sprite2D groundSprite;
 	[Export] Sprite2D regionSprite;
 	[Export] Sprite2D highlightSprite;
+	[Export] Gradient elevationGradient;
 
 	World world;
 
 
+	public void ResetImages() {
+		GD.Print("reset images");
+		Image worldImage = Image.CreateEmpty(world.Longitude, world.Latitude, false, Image.Format.Rgba4444);
+		Image regionImage = Image.CreateEmpty(world.Longitude, world.Latitude, false, Image.Format.Rgba4444);
+		regionImage.Fill(Colors.White);
+		Image highlightImage = Image.CreateEmpty(world.Longitude, world.Latitude, false, Image.Format.Rgba4444);
+		groundSprite.Texture = ImageTexture.CreateFromImage(worldImage);
+		regionSprite.Texture = ImageTexture.CreateFromImage(regionImage);
+		highlightSprite.Texture = ImageTexture.CreateFromImage(highlightImage);
+	}
+
+	Image GetImage(Sprite2D sprite) {
+		var image = (sprite.Texture as ImageTexture).GetImage();
+		return image;
+	}
+
+	void UpdateImage(Image image, Sprite2D sprite) {
+		(sprite.Texture as ImageTexture).Update(image);
+	}
+
 	void DrawContinents() {
 		if (world == null) return;
-		Image image = Image.CreateEmpty(world.Longitude, world.Latitude, false, Image.Format.Rgba4444);
-		Image regionImage = Image.CreateEmpty(world.Longitude, world.Latitude, false, Image.Format.Rgba4444);
+		ResetImages();
+		var worldImage = GetImage(groundSprite);
 		for (int x = 0; x < world.Longitude; x++) {
 			for (int y = 0; y < world.Latitude; y++) {
-				Color color = world.GetTile(x, y) switch {
-					GroundTileType.Grass => palette.Colors[16],
-					GroundTileType.Ocean => palette.Colors[27],
-					_ => new(0, 0, 0),
-				};
-				float ele = world.GetElevation(x, y) * 0.5f;
+				const float eleColorThreshold = 0.02f;
+				const float ldarkAmount = 0.15f;
+				float ele = world.GetElevation(x, y);
+				float eleAbove = world.GetElevation(x - 1, y + 1);
+				Color color = elevationGradient.Sample(ele * 0.5f + 0.5f);
+				if (eleAbove - ele > eleColorThreshold) color = color.Darkened(ldarkAmount);
+				else if (eleAbove - ele < -eleColorThreshold) color = color.Lightened(ldarkAmount);
 
-				if (ele >= 0) color = color.Lightened(ele);
-				else color = color.Darkened(-ele);
-
-				image.SetPixel(x, y, color);
+				worldImage.SetPixel(x, y, color);
 			}
 
 		}
-		groundSprite.Texture = ImageTexture.CreateFromImage(image);
-		regionSprite.Texture = ImageTexture.CreateFromImage(regionImage);
-		highlightSprite.Texture = ImageTexture.CreateFromImage(regionImage);
+		UpdateImage(worldImage, groundSprite);
 	}
 
 	public void Draw(World world) {
@@ -43,17 +60,17 @@ public partial class WorldRenderer : Node {
 
 	public void DrawRegions(Region[] regions) {
 		if (regions == null) return;
-		var image = (regionSprite.Texture as ImageTexture).GetImage();
-		foreach (var region in regions) {;
+		var image = GetImage(regionSprite);
+		foreach (var region in regions) {
 			foreach (var px in region.GroundTiles.Keys) {
-				image.SetPixelv(px + region.WorldPosition, region.Color);
+				image.SetPixelv(px + region.WorldPosition, region.Color.Lightened(0.5f));
 			}
 		}
-		(regionSprite.Texture as ImageTexture).Update(image);
+		UpdateImage(image, regionSprite);
 	}
 
 	public void DrawRegionHighlight(Region region) {
-		var image = (highlightSprite.Texture as ImageTexture).GetImage();
+		var image = GetImage(highlightSprite);
 		image.Fill(Colors.Transparent);
 		if (region != null) {
 			var color = Colors.White;
@@ -61,7 +78,7 @@ public partial class WorldRenderer : Node {
 				image.SetPixelv(px + region.WorldPosition, color);
 			}
 		}
-		(highlightSprite.Texture as ImageTexture).Update(image);
+		UpdateImage(image, highlightSprite);
 	}
 
 }

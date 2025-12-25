@@ -22,7 +22,7 @@ namespace scenes.map {
 		}
 
 		public override void _UnhandledKeyInput(InputEvent evt) {
-			if (evt.IsActionPressed("ui_accept")) {
+			if (evt.IsActionPressed("ui_accept") && !worldGenerator.Generating) {
 				GenerateNewWorld();
 			}
 		}
@@ -51,6 +51,7 @@ namespace scenes.map {
 		// #region worldgen
 		World world;
 		async void GenerateNewWorld() {
+			this.map = null;
 			world = new(worldGenerator.WorldWidth, worldGenerator.WorldHeight);
 			worldGenerator.GenerateContinents(world);
 			worldRenderer.Draw(world);
@@ -66,6 +67,7 @@ namespace scenes.map {
 
 			GD.Print("map is ", map);
 			this.map = map;
+			drawRegionsCallable.Call();
 		}
 		// #endregion worldgen
 

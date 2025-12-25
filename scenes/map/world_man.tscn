@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://dye16eba5lb31"]
+[gd_scene load_steps=13 format=3 uid="uid://dye16eba5lb31"]
 
 [ext_resource type="Script" uid="uid://3don1v6ha6ia" path="res://scenes/map/WorldMan.cs" id="1_g1pp1"]
 [ext_resource type="PackedScene" uid="uid://dfsyk55h5ioh0" path="res://scenes/region/region_man.tscn" id="2_vqee5"]
@@ -12,13 +12,16 @@
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.21091333, 0.051505923), 0.0, 0.0, 0, 0, Vector2(0.38409886, 0.7443265), 0.0, 0.0, 0, 0, Vector2(0.53596926, 0.9231189), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
 point_count = 5
 
+[sub_resource type="Gradient" id="Gradient_7j5km"]
+interpolation_mode = 2
+offsets = PackedFloat32Array(0, 0.26648352, 0.49725273, 0.5, 0.7032967)
+colors = PackedColorArray(0.2509804, 0.32156864, 0.4509804, 1, 0.42352942, 0.5058824, 0.6313726, 1, 0.42352942, 0.5058824, 0.6313726, 1, 0.5058824, 0.5803922, 0.2784314, 1, 0.6509804, 0.6901961, 0.30980393, 1)
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_n4hhb"]
+blend_mode = 3
+
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_vqee5"]
 blend_mode = 1
-
-[sub_resource type="Gradient" id="Gradient_7j5km"]
-interpolation_mode = 1
-offsets = PackedFloat32Array(0, 0.57101446)
-colors = PackedColorArray(0, 0.7019608, 0.78431374, 1, 0.05882353, 1, 0, 1)
 
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_j0gdu"]
 width = 1280
@@ -48,12 +51,15 @@ script = ExtResource("5_3biw4")
 groundSprite = NodePath("Ground")
 regionSprite = NodePath("Regions")
 highlightSprite = NodePath("Highlight")
+elevationGradient = SubResource("Gradient_7j5km")
 
 [node name="Ground" type="Sprite2D" parent="WorldRenderer"]
 centered = false
 
 [node name="Regions" type="Sprite2D" parent="WorldRenderer"]
-modulate = Color(1, 1, 1, 0.38431373)
+visible = false
+modulate = Color(1.288109, 1.288109, 1.288109, 1)
+material = SubResource("CanvasItemMaterial_n4hhb")
 centered = false
 
 [node name="Highlight" type="Sprite2D" parent="WorldRenderer"]

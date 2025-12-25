@@ -1,7 +1,7 @@
 using System;
 
 public enum GroundTileType : short {
-	VOID,
+	Void,
 	Grass,
 	Ocean,
 }
@@ -27,8 +27,8 @@ public class World {
 	}
 
 	public GroundTileType GetTile(int x, int y) {
-		if (x < 0 || x >= Longitude) return GroundTileType.VOID;
-		if (y < 0 || y >= Latitude) return GroundTileType.VOID;
+		if (x < 0 || x >= Longitude) return GroundTileType.Void;
+		if (y < 0 || y >= Latitude) return GroundTileType.Void;
 		return Ground[x + y * Longitude];
 	}
 
