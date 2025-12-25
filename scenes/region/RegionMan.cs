@@ -22,7 +22,7 @@ namespace scenes.region {
 		Dictionary<Vector2I, MapObjectView> mapObjectViews = new();
 
 		Region region;
-		RegionFaction regionFaction;
+		Faction regionFaction;
 
 
 		public override void _Ready() { // setup
@@ -41,7 +41,7 @@ namespace scenes.region {
 			GameMan.Singleton.Game.Time.HourPassedEvent += HourlyUpdate;
 
 			region = GameMan.Singleton.Game.PlayRegion;
-			regionFaction = GameMan.Singleton.Game.Map.GetFaction(0).GetOwnedRegionFaction(0);
+			regionFaction = region.LocalFaction;
 			ui.GetPopulationCountEvent += regionFaction.GetPopulationCount;
 			ui.GetHomelessPopulationCountEvent += GetHomelessPopulationCount;
 			ui.GetUnemployedPopulationCountEvent += GetUnemployedPopulationCount;

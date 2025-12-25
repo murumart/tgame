@@ -6,7 +6,8 @@ public partial class Document {
 
 	public Type type { get; init; }
 	public TimeT Expires { get; init; }
-	public IEntity[] Parties { get; init; }
+	public IEntity SideA {get; init;}
+	public IEntity SideB {get; init;}
 
 	bool passed;
 	public bool Passed => passed;
@@ -16,10 +17,11 @@ public partial class Document {
 	public string Title { get; private set; }
 
 
-	private Document(Type type, TimeT expires, IEntity[] parties) {
+	private Document(Type type, TimeT expires, IEntity sideA, IEntity sideB) {
 		this.type = type;
 		Expires = expires;
-		Parties = parties;
+		SideA = sideA;
+		SideB = sideB;
 	}
 
 	private void Pass() => passed = true;
@@ -148,13 +150,11 @@ partial class Document {
 				if (time >= doc.Expires) {
 					var fulfillFailure = doc.GetFulfillingFailure();
 					if (fulfillFailure != null) {
-						foreach (var party in doc.Parties) {
-							party.ContractFailure(doc, fulfillFailure);
-						}
+						doc.SideA.ContractFailure(doc, fulfillFailure);
+						doc.SideB.ContractFailure(doc, fulfillFailure);
 					} else {
-						foreach (var party in doc.Parties) {
-							party.ContractSuccess(doc);
-						}
+						doc.SideA.ContractSuccess(doc);
+						doc.SideB.ContractSuccess(doc);
 						doc.Fulfill();
 					}
 					doc.Pass();
@@ -184,11 +184,11 @@ partial class Document {
 			List<ResourceBundle> requirements,
 			List<ResourceBundle> rewards,
 			Faction parentFaction,
-			RegionFaction regionFaction,
+			Faction regionFaction,
 			TimeT due
 		) {
 			var type = Type.MANDATE_CONTRACT;
-			var doc = new Document(type, due, new IEntity[] { parentFaction, regionFaction }) {
+			var doc = new Document(type, due, parentFaction, regionFaction) {
 
 				Points = new Point[] {
 					new(regionFaction, Point.Type.PROVIDES_RESOURCES_TO, parentFaction) { Resources = requirements },

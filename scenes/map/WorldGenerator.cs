@@ -92,7 +92,7 @@ namespace scenes.map {
 				}
 			}
 
-			Map map = new(regionsLand, []);
+			Map map = new(regionsLand);
 
 			Generating = false;
 			return map;

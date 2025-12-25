@@ -12,7 +12,7 @@ public class Region {
 
 	public Vector2I WorldPosition { get; init; }
 	public readonly Dictionary<Vector2I, GroundTileType> GroundTiles = new();
-	public RegionFaction LocalFaction { get; private set; }
+	public Faction LocalFaction { get; private set; }
 
 	readonly Dictionary<Vector2I, MapObject> mapObjects = new();
 
@@ -32,13 +32,14 @@ public class Region {
 		foreach (MapObject ob in mapObjects.Values) {
 			ob.PassTime(minutes);
 		}
+		LocalFaction.PassTime(minutes);
 	}
 
 	public bool AddNeighbor(Region neighbor) {
 		return neighbors.Add(neighbor);
 	}
 
-	public void SetLocalFaction(RegionFaction regionFaction) {
+	public void SetLocalFaction(Faction regionFaction) {
 		LocalFaction = regionFaction;
 	}
 

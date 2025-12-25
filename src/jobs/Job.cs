@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Godot;
-using static Faction;
 
 // abstract jobs
 
@@ -19,7 +18,7 @@ public abstract class Job {
 	/// Call before adding job. Do things like consume resources here.
 	/// </summary>
 	/// <param name="ctxFaction">The faction that will own this job</param>
-	public abstract void Initialise(RegionFaction ctxFaction);
+	public abstract void Initialise(Faction ctxFaction);
 
 	public abstract Job Copy();
 
@@ -28,12 +27,12 @@ public abstract class Job {
 	/// Workers get removed in RegionFaction.
 	/// </summary>
 	/// <param name="ctxFaction">The faction owning this job</param>
-	public abstract void Deinitialise(RegionFaction ctxFaction);
+	public abstract void Deinitialise(Faction ctxFaction);
 
 	public abstract void PassTime(TimeT minutes);
 
-	public virtual bool CanInitialise(RegionFaction ctxFaction) => true;
-	public virtual void CheckDone(RegionFaction regionFaction) { }
+	public virtual bool CanInitialise(Faction ctxFaction) => true;
+	public virtual void CheckDone(Faction regionFaction) { }
 
 	// sandbox methods vv
 
@@ -101,11 +100,11 @@ public abstract class Job {
 
 public abstract class MapObjectJob : Job {
 
-	public abstract void Initialise(RegionFaction ctxFaction, MapObject mapObject);
-	public override void Initialise(RegionFaction ctxFaction) => throw new NotImplementedException("MapObjectJob requires MapObject argument as well!");
+	public abstract void Initialise(Faction ctxFaction, MapObject mapObject);
+	public override void Initialise(Faction ctxFaction) => throw new NotImplementedException("MapObjectJob requires MapObject argument as well!");
 
-	public virtual bool CanInitialise(RegionFaction ctxFaction, MapObject mapObject) => true;
-	public override bool CanInitialise(RegionFaction ctxFaction) => throw new NotImplementedException("MapObjectJob requires MapObject argument as well!");
+	public virtual bool CanInitialise(Faction ctxFaction, MapObject mapObject) => true;
+	public override bool CanInitialise(Faction ctxFaction) => throw new NotImplementedException("MapObjectJob requires MapObject argument as well!");
 
 }
 
@@ -143,10 +142,10 @@ public class JobBox : Job {
 	public override string GetProductionDescription() => job.GetProductionDescription();
 
 
-	public override void Deinitialise(RegionFaction ctxFaction) => throw new System.NotImplementedException("Don't do these things on a boxed job!!");
-	public override bool CanInitialise(RegionFaction ctxFaction) => throw new System.NotImplementedException("Pls Unbox");
+	public override void Deinitialise(Faction ctxFaction) => throw new System.NotImplementedException("Don't do these things on a boxed job!!");
+	public override bool CanInitialise(Faction ctxFaction) => throw new System.NotImplementedException("Pls Unbox");
 	public override Job Copy() => throw new System.NotImplementedException("Don't do these things on a boxed job!!");
-	public override void Initialise(RegionFaction ctxFaction) => throw new System.NotImplementedException("Don't do these things on a boxed job!!");
+	public override void Initialise(Faction ctxFaction) => throw new System.NotImplementedException("Don't do these things on a boxed job!!");
 	public override void PassTime(TimeT minutes) => throw new System.NotImplementedException("Don't do these things on a boxed job!!");
 
 }

@@ -9,7 +9,7 @@ public class AbsorbFromHomelessPopulationJob : Job {
 	public bool Paused { get; set; }
 
 	readonly Building building;
-	RegionFaction regionFaction;
+	Faction regionFaction;
 
 
 	public AbsorbFromHomelessPopulationJob(Building building) {
@@ -35,13 +35,13 @@ public class AbsorbFromHomelessPopulationJob : Job {
 		}
 	}
 
-	public override bool CanInitialise(RegionFaction ctxFaction) => building != null && ctxFaction != null;
+	public override bool CanInitialise(Faction ctxFaction) => building != null && ctxFaction != null;
 
-	public override void Initialise(RegionFaction ctxFaction) {
+	public override void Initialise(Faction ctxFaction) {
 		this.regionFaction = ctxFaction;
 	}
 
-	public override void Deinitialise(RegionFaction ctxFaction) => throw new System.NotImplementedException("no..? pause this instead");
+	public override void Deinitialise(Faction ctxFaction) => throw new System.NotImplementedException("no..? pause this instead");
 
 	public override Job Copy() => throw new System.NotImplementedException("You shouldn't have to copy this...");
 
@@ -63,15 +63,15 @@ public class ConstructBuildingJob : MapObjectJob {
 		workers = new(35);
 	}
 
-	public override bool CanInitialise(RegionFaction ctxFaction, MapObject building) => ctxFaction.Resources.HasEnoughAll(GetRequirements());
+	public override bool CanInitialise(Faction ctxFaction, MapObject building) => ctxFaction.Resources.HasEnoughAll(GetRequirements());
 
-	public override void Initialise(RegionFaction ctxFaction, MapObject mapObject) {
+	public override void Initialise(Faction ctxFaction, MapObject mapObject) {
 		Debug.Assert(CanInitialise(ctxFaction, mapObject), "Job cannot be initialised!!");
 		building = (Building)mapObject;
 		ConsumeRequirements(requirements.ToArray(), ctxFaction.Resources);
 	}
 
-	public override void Deinitialise(RegionFaction ctxFaction) {
+	public override void Deinitialise(Faction ctxFaction) {
 		if (building.IsConstructed) {
 			requirements.Clear();
 		} else {
@@ -90,7 +90,7 @@ public class ConstructBuildingJob : MapObjectJob {
 		building.ProgressBuild(minutes, this);
 	}
 
-	public override void CheckDone(RegionFaction regionFaction) {
+	public override void CheckDone(Faction regionFaction) {
 		if (building.IsConstructed) {
 			regionFaction.RemoveJob(building.Position, this);
 		}
@@ -141,13 +141,13 @@ public class FishByHandJob : Job {
 		workers = new(5);
 	}
 
-	public override void Deinitialise(RegionFaction ctxFaction) { }
+	public override void Deinitialise(Faction ctxFaction) { }
 
-	public override bool CanInitialise(RegionFaction ctxFaction) => true;
+	public override bool CanInitialise(Faction ctxFaction) => true;
 
 	public override Job Copy() => new FishByHandJob();
 
-	public override void Initialise(RegionFaction ctxFaction) {
+	public override void Initialise(Faction ctxFaction) {
 		storage = ctxFaction.Resources;
 	}
 
@@ -187,13 +187,13 @@ public class GatherResourceJob : MapObjectJob {
 
 	public override Job Copy() => new GatherResourceJob(resourceTypeDescription);
 
-	public override void Initialise(RegionFaction ctxFaction, MapObject mapObject) {
+	public override void Initialise(Faction ctxFaction, MapObject mapObject) {
 		storage = ctxFaction.Resources;
 		site = (ResourceSite)mapObject;
 		timeSpent = new float[site.MineWells.Count];
 	}
 
-	public override void Deinitialise(RegionFaction ctxFaction) { }
+	public override void Deinitialise(Faction ctxFaction) { }
 
 	public override float GetWorkTime(TimeT minutes) => minutes * MathF.Pow(workers.Amount, 0.7f);
 
@@ -218,7 +218,7 @@ public class GatherResourceJob : MapObjectJob {
 		}
 	}
 
-	public override void CheckDone(RegionFaction regionFaction) {
+	public override void CheckDone(Faction regionFaction) {
 		foreach (var item in site.MineWells) {
 			if (item.HasBunches) return;
 		}
@@ -317,13 +317,13 @@ public class CraftJob : MapObjectJob {
 
 	public override Job Copy() => new CraftJob(inputs, outputs, timeTaken, workers.MaxPop, outputDescription);
 
-	public override void Initialise(RegionFaction ctxFaction, MapObject mapObject) {
+	public override void Initialise(Faction ctxFaction, MapObject mapObject) {
 		storage = ctxFaction.Resources;
 		Debug.Assert(mapObject is Building, "Crafting only happens at buildings? ");
 		building = (Building)mapObject;
 	}
 
-	public override void Deinitialise(RegionFaction ctxFaction) { }
+	public override void Deinitialise(Faction ctxFaction) { }
 
 	public override void PassTime(TimeT minutes) {
 		timeSpent += GetWorkTime(minutes);
