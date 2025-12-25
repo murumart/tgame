@@ -1,9 +1,12 @@
 using System;
 
-public enum GroundTileType : short {
-	Void,
-	Grass,
-	Ocean,
+[Flags]
+public enum GroundTileType : byte {
+	Void  = 0b00000000,
+	Grass = 0b00000001,
+	Sand  = 0b00000010,
+	Land  = 0b01111111,
+	Ocean = 0b10000000,
 }
 
 public class World {

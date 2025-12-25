@@ -14,9 +14,11 @@ namespace resources.game.resource_site_types {
 		[Export] Array<ResourceWell> mineResources;
 		[Export(PropertyHint.File, "*.tscn")] string ScenePath;
 
+		public string AssetName => name;
 		public string Name => name;
 
 		public string AssetTypeName => "resource_site";
+
 
 		public IEnumerable<Job> GetAvailableJobs() {
 			List<MapObjectJob> jobs = new();

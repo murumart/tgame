@@ -121,7 +121,7 @@ public class ConstructBuildingJob : MapObjectJob {
 
 	public override string GetProductionDescription() {
 		if (building != null) {
-			return $"A {building.Type.Name} will be constructed.";
+			return $"A {building.Type.AssetName} will be constructed.";
 		}
 		return "";
 	}
@@ -164,7 +164,7 @@ public class GatherResourceJob : MapObjectJob {
 			(resourceTypeDescription == null ?
 				"Gather Resources"
 			: "Gather " + resourceTypeDescription.Capitalize())
-		: "Gather from " + site.Type.Name;
+		: "Gather from " + site.Type.AssetName;
 
 	public override ref Population Workers => ref workers;
 
@@ -257,12 +257,12 @@ public class GatherResourceJob : MapObjectJob {
 		if (site == null) {
 			return Title;
 		}
-		var str = $"The {site.Type.Name} produces:\n";
+		var str = $"The {site.Type.AssetName} produces:\n";
 		if (workers.Amount <= 0) str += "Nothing, as long as there's no workers. But it could produce:\n";
 		bool reproduce = false;
 		foreach (var well in site.MineWells) {
 			float time = well.MinutesPerBunch / MathF.Max(GetWorkTime(1), 1);
-			str += $" * {well.BunchSize} x {well.ResourceType.Name} every {GameTime.GetFancyTimeString((TimeT)time)}.\n";
+			str += $" * {well.BunchSize} x {well.ResourceType.AssetName} every {GameTime.GetFancyTimeString((TimeT)time)}.\n";
 			str += $"   This is {100 - ((float)well.Bunches / well.InitialBunches) * 100:0}% depleted.\n";
 			reproduce = reproduce || well.MinutesPerBunchRegen > 0;
 		}
@@ -271,7 +271,7 @@ public class GatherResourceJob : MapObjectJob {
 			str += $"\nSome {(resourceTypeDescription ?? "resources")} can regrow:\n";
 			foreach (var well in site.MineWells) {
 				if (well.MinutesPerBunchRegen > 0) {
-					str += $" * {well.ResourceType.Name.Capitalize()} grows every {GameTime.GetFancyTimeString(well.MinutesPerBunchRegen)}.";
+					str += $" * {well.ResourceType.AssetName.Capitalize()} grows every {GameTime.GetFancyTimeString(well.MinutesPerBunchRegen)}.";
 				}
 			}
 		}
@@ -285,7 +285,7 @@ public class GatherResourceJob : MapObjectJob {
 		var well = site.MineWells[wellIx];
 		float timeLeft = well.MinutesPerBunch - timeSpent[wellIx];
 		timeLeft /= GetWorkTime(1);
-		return GameTime.GetFancyTimeString((TimeT)timeLeft) + " until more " + well.ResourceType.Name + ".";
+		return GameTime.GetFancyTimeString((TimeT)timeLeft) + " until more " + well.ResourceType.AssetName + ".";
 	}
 
 }
@@ -343,12 +343,12 @@ public class CraftJob : MapObjectJob {
 		if (workers.Amount <= 0) str += "Nothing, as long as there's no workers. But it could produce:\n";
 
 		foreach (var thing in outputs) {
-			str += $" * {thing.Type.Name} x {thing.Amount}.\n";
+			str += $" * {thing.Type.AssetName} x {thing.Amount}.\n";
 		}
 
 		str += "...with the required inputs:\n";
 		foreach (var thing in inputs) {
-			str += $" * {thing.Type.Name} x {thing.Amount}.\n";
+			str += $" * {thing.Type.AssetName} x {thing.Amount}.\n";
 		}
 
 		str += $"It takes {GameTime.GetFancyTimeString(timeTaken)} to complete one set of {outputDescription}.";

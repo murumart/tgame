@@ -1,6 +1,9 @@
+using System;
 using Godot;
 
 public partial class Camera : Camera2D {
+
+	public event Action<Vector2I> ClickedMouseEvent;
 
 	const float SPEED = 360.0f;
 	const float ACCEL = 60.0f;
@@ -26,6 +29,7 @@ public partial class Camera : Camera2D {
 	}
 
 	protected virtual bool MouseButtonInput(InputEventMouseButton evt) {
+
 		bool consumed = false;
 		if (evt.ButtonIndex == MouseButton.WheelUp) {
 			ScrollInput(true);
@@ -33,6 +37,10 @@ public partial class Camera : Camera2D {
 		} else if (evt.ButtonIndex == MouseButton.WheelDown) {
 			ScrollInput(false);
 			consumed = true;
+		} else if (evt.ButtonIndex == MouseButton.Left && evt.IsPressed()) {
+			var wPos = GetCanvasTransform().AffineInverse() * evt.Position;
+			ClickedMouseEvent?.Invoke((Vector2I)wPos);
+			return true;
 		}
 		Zoom = new Vector2(zoomSize, zoomSize);
 		if (consumed) GetWindow().SetInputAsHandled();

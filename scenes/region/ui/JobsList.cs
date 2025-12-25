@@ -99,7 +99,7 @@ namespace scenes.region.ui {
 			attachedToMapObject = true;
 			this.myMapObject = myBuilding;
 
-			buildingTitle.Text = "Jobs in " + myBuilding.Type.Name;
+			buildingTitle.Text = "Jobs in " + myBuilding.Type.AssetName;
 
 			Open();
 		}
@@ -108,7 +108,7 @@ namespace scenes.region.ui {
 			attachedToMapObject = true;
 			this.myMapObject = resourceSite;
 
-			buildingTitle.Text = "Jobs at " + resourceSite.Type.Name;
+			buildingTitle.Text = "Jobs at " + resourceSite.Type.AssetName;
 
 			Open();
 		}

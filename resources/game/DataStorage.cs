@@ -37,15 +37,15 @@ namespace resources.game {
 
 			GD.Print("REGISTERED FOLLOWING BUILDINGS");
 			foreach (var ass in Registry.Buildings.GetIdAssetPairs()) {
-				GD.PrintT(ass.Key, ass.Value.Name, $"scenePath {scenePaths.GetValueOrDefault(ass.Key)}");
+				GD.PrintT(ass.Key, ass.Value.AssetName, $"scenePath {scenePaths.GetValueOrDefault(ass.Key)}");
 			}
 			GD.Print("REGISTERED FOLLOWING RESOURCES");
 			foreach (var ass in Registry.Resources.GetIdAssetPairs()) {
-				GD.PrintT(ass.Key, ass.Value.Name);
+				GD.PrintT(ass.Key, ass.Value.AssetName);
 			}
 			GD.Print("REGISTERED FOLLOWING RESOURCE SITES");
 			foreach (var ass in Registry.ResourceSites.GetIdAssetPairs()) {
-				GD.PrintT(ass.Key, ass.Value.Name);
+				GD.PrintT(ass.Key, ass.Value.AssetName);
 			}
 
 		}

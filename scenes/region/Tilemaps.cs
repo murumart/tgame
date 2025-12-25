@@ -38,6 +38,10 @@ namespace scenes.region {
 			SourceId = 1,
 			AtlasCoords = new Vector2I(1, 0),
 		};
+		public readonly static GroundCellType WATER = new() {
+			SourceId = 1,
+			AtlasCoords = new Vector2I(2, 0),
+		};
 
 		public int SourceId;
 		public Vector2I AtlasCoords;
@@ -46,6 +50,8 @@ namespace scenes.region {
 			return tile switch {
 				GroundTileType.Void => VOID,
 				GroundTileType.Grass => GRASS,
+				GroundTileType.Sand => SAND,
+				GroundTileType.Ocean => WATER,
 				_ => throw new Exception($"Can't match {tile} to CellType")
 			};
 		}

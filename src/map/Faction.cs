@@ -43,18 +43,18 @@ public class Faction : IEntity {
 	TimeT time;
 
 
-	public Faction(Region region) {
+	public Faction(Region region, int initialPopulation = 10, int maxPop = 100, int storageCapacity = 300) {
 		Region = region;
 		Briefcase = new();
 
 		region.MapObjectUpdatedAtEvent += OnMapObjectUpdated;
 
-		homelessPopulation = new(100) { Amount = 10 };
-		unemployedPopulation = new(100) { Amount = 10 };
+		homelessPopulation = new(maxPop) { Amount = initialPopulation };
+		unemployedPopulation = new(maxPop) { Amount = initialPopulation };
 
 		Region.SetLocalFaction(this);
 
-		resourceStorage.IncreaseCapacity(300);
+		resourceStorage.IncreaseCapacity(storageCapacity);
 		var housing = Registry.Buildings.GetAsset("log_cabin");
 		PlacePrebuiltBuilding(housing, new(0, 0));
 	}
@@ -145,6 +145,7 @@ public class Faction : IEntity {
 		return building;
 	}
 
+	// for initialising the world and such
 	Building PlacePrebuiltBuilding(IBuildingType type, Vector2I position) {
 		Debug.Assert(!buildings.ContainsKey(position), "There's a lreayd a building here");
 		var building = PlaceBuilding(type, position);

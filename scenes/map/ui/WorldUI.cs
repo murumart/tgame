@@ -1,4 +1,7 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Godot;
 
@@ -29,11 +32,19 @@ public partial class WorldUI : Control {
 		}
 		selectedRegion = region;
 		regionTitleLabel.Text = region.ToString();
+		var things = string.Join(", ", region.GetMapObjects().Select(a => ((IAssetType)a.Type).AssetName).Distinct());
 		regionInfoLabel.Text =
-			$"Land tiles: {region.GroundTiles.Values.Where((a) => a == GroundTileType.Grass).Count()}\n"
-			+ $"Sea tiles: {region.GroundTiles.Values.Where((a) => a == GroundTileType.Ocean).Count()}"
+			$"Land tiles: {region.LandTileCount}\n"
+			+ $"Sea tiles: {region.OceanTileCount}\n"
+			+ $"Population: {(region.LocalFaction == null ? "Uninhabited" : region.LocalFaction.GetPopulationCount())}\n"
+			+ $"Map objects: {things}"
 		;
 		regionPlayButton.Disabled = false;
+	}
+
+	class AnonymousMapbjectComparer : IEqualityComparer<MapObject> {
+		public bool Equals(MapObject x, MapObject y) => x.Type == y.Type;
+		public int GetHashCode([DisallowNull] MapObject obj) => obj.GetHashCode();
 	}
 
 }

@@ -43,11 +43,11 @@ public partial class BuildingList : PanelContainer {
 		buildConfirmation.Disabled = false;
 		selectedBuildThingId = which;
 		var btype = (BuildingType)itemList.GetItemMetadata((int)which).Obj;
-		buildConfirmation.Text = "Build " + btype.Name;
+		buildConfirmation.Text = "Build " + btype.AssetName;
 		resourceListText.Text = "";
 		var resources = ui.GetResources();
 		foreach (var r in btype.GetResourceRequirements()) {
-			var str = $"{r.Type.Name} x {r.Amount}";
+			var str = $"{r.Type.AssetName} x {r.Amount}";
 			if (!resources.HasEnough(r)) {
 				str = "[color=red]" + str + "[/color]";
 				buildConfirmation.Disabled = true;
@@ -99,7 +99,7 @@ public partial class BuildingList : PanelContainer {
 	public void Update() {
 		itemList.Clear();
 		foreach (var buildingType in ui.GetBuildingTypes()) {
-			int ix = itemList.AddItem(buildingType.Name);
+			int ix = itemList.AddItem(buildingType.AssetName);
 			// storing buildingtype references locally so if we happen to update the buildingtypes list
 			// in between calls here, we should still get the correct buildings that the visual
 			// ItemList was set up with

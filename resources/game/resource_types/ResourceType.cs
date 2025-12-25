@@ -9,7 +9,7 @@ namespace resources.game.resource_types {
 
 
 		[Export] string name;
-		public string Name => name;
+		public string AssetName => name;
 
 	}
 

@@ -18,6 +18,7 @@ namespace scenes.map {
 		[Export] int SeaRegionCount;
 		[Export] int FactionCount;
 		[Export] Curve islandCurve;
+		[Export] Curve populationLandTileCurve;
 
 		public Region[] Regions;
 
@@ -54,8 +55,9 @@ namespace scenes.map {
 			for (int x = 0; x < world.Longitude; x++) {
 				for (int y = 0; y < world.Latitude; y++) {
 					var ele = world.GetElevation(x, y);
-					if (ele >= 0) world.SetTile(x, y, GroundTileType.Grass);
-					else world.SetTile(x, y, GroundTileType.Ocean);
+					if (ele < 0) world.SetTile(x, y, GroundTileType.Ocean);
+					else if (ele < 0.02) world.SetTile(x, y, GroundTileType.Sand);
+					else world.SetTile(x, y, GroundTileType.Grass);
 				}
 			}
 			Generating = false;
@@ -85,12 +87,15 @@ namespace scenes.map {
 
 			foreach (Region region in regionsLand) {
 				foreach (Vector2I pos in region.GroundTiles.Keys) {
-					if (pos == Vector2I.Zero) continue; // starter house position
+					if (pos == Vector2I.Zero) continue; // starter house position..
+					if ((region.GroundTiles[pos] & GroundTileType.Land) == 0) continue;
 					if (GD.Randf() < 0.01f) region.CreateResourceSiteAndPlace(Registry.ResourceSites.GetAsset("boulder"), pos);
 					else if (GD.Randf() < 0.07f) region.CreateResourceSiteAndPlace(Registry.ResourceSites.GetAsset("trees"), pos);
 					else if (GD.Randf() < 0.003f) region.CreateResourceSiteAndPlace(Registry.ResourceSites.GetAsset("clay_pit"), pos);
 				}
 			}
+
+			War(regionsLand);
 
 			Map map = new(regionsLand);
 
@@ -260,7 +265,14 @@ namespace scenes.map {
 		}
 
 		private void War(Region[] regions) {
-
+			// all regions get initial populations
+			foreach (Region region in regions) {
+				var faction = new Faction(
+					region,
+					maxPop: 1000,
+					initialPopulation: (int)populationLandTileCurve.SampleBaked(region.LandTileCount)
+				);
+			}
 		}
 	}
 

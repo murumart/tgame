@@ -79,12 +79,12 @@ public class AssetTypeRegistry<T> where T : IAssetType {
 
 public interface IAssetType {
 
-	string Name { get; }
+	string AssetName { get; }
 	string AssetTypeName { get; }
 
 	string GetIdString() {
-		Debug.Assert(Name != null, $"Asset name is empty! (object: {this}, assettypename: {AssetTypeName})");
-		return (Name).ToSnakeCase();
+		Debug.Assert(AssetName != null, $"Asset name is empty! (object: {this}, assettypename: {AssetTypeName})");
+		return (AssetName).ToSnakeCase();
 	}
 
 }

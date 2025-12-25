@@ -5,7 +5,6 @@ using Godot;
 using resouces.game.building_types.crafting;
 using resources.game.resource_types;
 using static Building;
-using static ResourceStorage;
 
 namespace resources.game.building_types {
 
@@ -13,7 +12,7 @@ namespace resources.game.building_types {
 	public partial class BuildingType : Resource, IBuildingType, IScenePathetic {
 
 		[Export] string name;
-		public string Name => name;
+		public string AssetName => name;
 
 		string IAssetType.AssetTypeName => "building";
 

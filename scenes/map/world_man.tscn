@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://dye16eba5lb31"]
+[gd_scene load_steps=14 format=3 uid="uid://dye16eba5lb31"]
 
 [ext_resource type="Script" uid="uid://3don1v6ha6ia" path="res://scenes/map/WorldMan.cs" id="1_g1pp1"]
 [ext_resource type="PackedScene" uid="uid://dfsyk55h5ioh0" path="res://scenes/region/region_man.tscn" id="2_vqee5"]
@@ -11,6 +11,11 @@
 [sub_resource type="Curve" id="Curve_7j5km"]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.21091333, 0.051505923), 0.0, 0.0, 0, 0, Vector2(0.38409886, 0.7443265), 0.0, 0.0, 0, 0, Vector2(0.53596926, 0.9231189), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
 point_count = 5
+
+[sub_resource type="Curve" id="Curve_vqee5"]
+_limits = [0.0, 500.0, 0.0, 1200.0]
+_data = [Vector2(0, 0), 0.0, 0.14618681, 0, 0, Vector2(1200, 100.24988), 0.06626855, 0.0, 0, 0]
+point_count = 2
 
 [sub_resource type="Gradient" id="Gradient_7j5km"]
 interpolation_mode = 2
@@ -29,22 +34,23 @@ height = 840
 noise = ExtResource("4_f4k24")
 color_ramp = SubResource("Gradient_7j5km")
 
-[node name="WorldMan" type="Node" node_paths=PackedStringArray("worldGenerator", "worldRenderer", "worldUI", "canvasAccess")]
+[node name="WorldMan" type="Node2D" node_paths=PackedStringArray("worldGenerator", "worldRenderer", "worldUI", "camera")]
 script = ExtResource("1_g1pp1")
 worldGenerator = NodePath("WorldGenerator")
 worldRenderer = NodePath("WorldRenderer")
 regionScene = ExtResource("2_vqee5")
 worldUI = NodePath("WorldUI")
-canvasAccess = NodePath("DebugRender")
+camera = NodePath("Camera")
 
 [node name="WorldGenerator" type="Node" parent="."]
 script = ExtResource("3_n4hhb")
 continentNoise = ExtResource("4_f4k24")
-WorldWidth = 1280
-WorldHeight = 840
-LandRegionCount = 700
-SeaRegionCount = 80
+WorldWidth = 640
+WorldHeight = 420
+LandRegionCount = 350
+SeaRegionCount = 40
 islandCurve = SubResource("Curve_7j5km")
+populationLandTileCurve = SubResource("Curve_vqee5")
 
 [node name="WorldRenderer" type="Node" parent="." node_paths=PackedStringArray("groundSprite", "regionSprite", "highlightSprite")]
 script = ExtResource("5_3biw4")

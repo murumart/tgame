@@ -84,7 +84,7 @@ public abstract class Job {
 		if (resourceReqs != null) {
 			sb.Append("Required Resources:\n");
 			foreach (ResourceBundle res in resourceReqs) {
-				sb.Append("  ").Append(res.Type.Name).Append(" x ").Append(res.Amount).Append('\n');
+				sb.Append("  ").Append(res.Type.AssetName).Append(" x ").Append(res.Amount).Append('\n');
 			}
 		}
 		return sb.ToString();

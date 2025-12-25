@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Godot;
 using static ResourceSite;
 
@@ -19,6 +20,9 @@ public class Region {
 	readonly HashSet<Region> neighbors = new();
 
 	public Color Color { get; init; } // used for displaying
+
+	public int LandTileCount => GroundTiles.Values.Where(t => (t & GroundTileType.Land) != 0).Count();
+	public int OceanTileCount => GroundTiles.Values.Where(t => t == GroundTileType.Ocean).Count();
 
 
 	public Region(int index, Vector2I worldPosition, Dictionary<Vector2I, GroundTileType> groundTiles) {

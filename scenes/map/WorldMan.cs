@@ -4,13 +4,13 @@ using scenes.autoload;
 
 namespace scenes.map {
 
-	public partial class WorldMan : Node {
+	public partial class WorldMan : Node2D {
 
 		[Export] WorldGenerator worldGenerator;
 		[Export] WorldRenderer worldRenderer;
 		[Export] PackedScene regionScene;
 		[Export] WorldUI worldUI;
-		[Export] Node2D canvasAccess;
+		[Export] Camera camera;
 
 		Map map;
 
@@ -20,25 +20,28 @@ namespace scenes.map {
 			UILayer.AddUIChild(worldUI);
 			worldUI.SelectRegion(null);
 			worldUI.RegionPlayRequested += SetupGame;
+			camera.ClickedMouseEvent += MouseClicked;
 			GenerateNewWorld();
 		}
 
-		public override void _UnhandledKeyInput(InputEvent evt) {
+		void MouseClicked(Vector2I pos) {
+			if (map == null) return;
+			if (!map.TileOwners.TryGetValue(pos, out Region region)) return;
+			worldUI.SelectRegion(region);
+		}
+
+		public override void _UnhandledInput(InputEvent evt) {
 			if (evt.IsActionPressed("ui_accept") && !worldGenerator.Generating) {
 				GenerateNewWorld();
 			}
 		}
 
 		public override void _Process(double delta) {
-			var mousePos = new Vector2I((int)canvasAccess.GetGlobalMousePosition().X, (int)canvasAccess.GetGlobalMousePosition().Y);
+			var mousePos = new Vector2I((int)GetGlobalMousePosition().X, (int)GetGlobalMousePosition().Y);
 			worldUI.ResourceDisplay.Display(tilepos: mousePos);
 			if (map != null) {
-				map.TileOwners.TryGetValue(mousePos, out Region atMouse);
-				worldUI.ResourceDisplay.Display(region: atMouse);
-				worldRenderer.DrawRegionHighlight(atMouse, worldUI.SelectedRegion);
-				if (Input.IsActionJustPressed("left_click") && atMouse != null) {
-					RegionClicked(atMouse);
-				}
+				map.TileOwners.TryGetValue(mousePos, out Region region);
+				worldRenderer.DrawRegionHighlight(region, worldUI.SelectedRegion);
 			}
 		}
 

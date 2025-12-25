@@ -102,7 +102,7 @@ partial class Document {
 			return type switch {
 				Type.PROVIDES_RESOURCES_TO => Resources.Count == 0 ? "" :
 					$"* {sideA.DocName} provides the following resources to {sideB.DocName}:"
-					+ "\n" + Resources.Aggregate("", (s, r) => s + "\n - " + r.Type.Name + " x " + r.Amount),
+					+ "\n" + Resources.Aggregate("", (s, r) => s + "\n - " + r.Type.AssetName + " x " + r.Amount),
 				Type.PROVIDES_WORKERS_TO => $"* {sideA.DocName} provides {amount} workers to {sideB.DocName}, or less according to the recipient's available living space",
 				_ => throw new System.NotImplementedException(),
 			};

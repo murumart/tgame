@@ -18,6 +18,7 @@ namespace scenes.region {
 		public override void _Ready() {
 			RemoveChild(ui);
 			UILayer.AddUIChild(ui);
+			ClickedMouseEvent += (ac) => ui.OnLeftMouseClick(ac, PosToTilePos(ac));
 		}
 
 		public override void _Process(double delta) {
@@ -27,11 +28,7 @@ namespace scenes.region {
 
 		protected override bool MouseButtonInput(InputEventMouseButton evt) {
 			if (base.MouseButtonInput(evt)) return true;
-			if (evt.ButtonIndex == MouseButton.Left && evt.IsPressed()) {
-				var wPos = GetCanvasTransform().AffineInverse() * evt.Position;
-				ui.OnLeftMouseClick(wPos, PosToTilePos(wPos));
-				return true;
-			} else if (evt.ButtonIndex == MouseButton.Right && evt.IsPressed()) {
+			if (evt.ButtonIndex == MouseButton.Right && evt.IsPressed()) {
 				var wPos = GetCanvasTransform().AffineInverse() * evt.Position;
 				ui.OnRightMouseClick(wPos, PosToTilePos(wPos));
 				return true;
