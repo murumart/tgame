@@ -7,7 +7,7 @@ using static ResourceSite;
 
 public class Region {
 
-	public event Action<Vector2I> MapObjectUpdatedAtEvent;
+	public event Action<Vector2I> MapObjectUpdatedAtEvent; public void NotifyMapObjectUpdateAt(Vector2I p) => MapObjectUpdatedAtEvent?.Invoke(p);
 
 	readonly int worldIndex;
 
@@ -66,7 +66,7 @@ public class Region {
 	public void RemoveMapObject(Vector2I tile) {
 		Debug.Assert(HasMapObject(tile), $"There is no map object to remove at {tile}");
 		mapObjects.Remove(tile);
-		NotifyMapObjectUpdatedAt(tile);
+		NotifyMapObjectUpdateAt(tile);
 	}
 
 	MapObject CreateMapObjectSpotAndPlace(MapObject.IMapObjectType type, Vector2I position) {
@@ -85,8 +85,6 @@ public class Region {
 		var resourceSite = (ResourceSite)CreateMapObjectSpotAndPlace(type, position);
 		return resourceSite;
 	}
-
-	public void NotifyMapObjectUpdatedAt(Vector2I at) => MapObjectUpdatedAtEvent?.Invoke(at);
 
 	public override string ToString() {
 		return $"Reg{WorldPosition}";

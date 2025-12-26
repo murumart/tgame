@@ -48,10 +48,10 @@ Mäng peab olema mängitav iga verstaposti saabudes.
 ### 0.1.0
 
 - [ ] genereeritud maailm
-	- [ ] müra: kõrgus, sügavus, et oleks vahe mere ja maa vahel
+	- [X] müra: kõrgus, sügavus, et oleks vahe mere ja maa vahel
 	- [ ] müra: jõed (hallid alad)
-	- [ ] regioonideks jaotamine (voronoi? mingisugune juhuslik "paint bucket"?)
-		- [ ] 
+	- [X] regioonideks jaotamine (voronoi? mingisugune juhuslik "paint bucket"?)
+		- [ ]
 	- [ ] eri pooled
 		- [ ] AI käitugu praegu täiesti suvaliselt kus seda on lihtne implementeerida
 - [ ] ruudud millega mängida

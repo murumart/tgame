@@ -5,7 +5,8 @@ namespace scenes.region {
 
 	public partial class Tilemaps : Node2D {
 
-		[Export] TileMapLayer ground;
+		[Export] TileMapLayer ground; public TileMapLayer Ground => ground;
+
 
 		public override void _Ready() {
 
@@ -22,6 +23,7 @@ namespace scenes.region {
 			var elapsedMs = watch.ElapsedMilliseconds;
 			GD.Print("TILEMAPS: displaying ground took " + elapsedMs + " ms");
 		}
+
 	}
 
 	class GroundCellType {
@@ -46,6 +48,7 @@ namespace scenes.region {
 		public int SourceId;
 		public Vector2I AtlasCoords;
 
+
 		public static GroundCellType MatchTileTypeToCell(GroundTileType tile) {
 			return tile switch {
 				GroundTileType.Void => VOID,
@@ -55,6 +58,7 @@ namespace scenes.region {
 				_ => throw new Exception($"Can't match {tile} to CellType")
 			};
 		}
+
 	}
 
 }

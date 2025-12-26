@@ -9,7 +9,7 @@ namespace scenes.region {
 		readonly static Vector2I TILE_SIZE = new(64, 32);
 
 		[Export] Node2D cursor;
-		[Export] TileMapLayer regionTiles;
+		[Export] RegionDisplay regionDisplay;
 		[Export] UI ui;
 
 		public Region Region;
@@ -18,7 +18,7 @@ namespace scenes.region {
 		public override void _Ready() {
 			RemoveChild(ui);
 			UILayer.AddUIChild(ui);
-			ClickedMouseEvent += (ac) => ui.OnLeftMouseClick(ac, PosToTilePos(ac));
+			ClickedMouseEvent += (ac) => ui.OnLeftMouseClick(ac, regionDisplay.LocalToTile(ac));
 		}
 
 		public override void _Process(double delta) {
@@ -30,7 +30,7 @@ namespace scenes.region {
 			if (base.MouseButtonInput(evt)) return true;
 			if (evt.ButtonIndex == MouseButton.Right && evt.IsPressed()) {
 				var wPos = GetCanvasTransform().AffineInverse() * evt.Position;
-				ui.OnRightMouseClick(wPos, PosToTilePos(wPos));
+				ui.OnRightMouseClick(wPos, regionDisplay.LocalToTile(wPos));
 				return true;
 			}
 			return false;
@@ -38,8 +38,7 @@ namespace scenes.region {
 
 		private Vector2I lastTilePos;
 		private void MouseHighlight() {
-			var localMousePos = regionTiles.GetLocalMousePosition();
-			var tilepos = regionTiles.LocalToMap(localMousePos);
+			var tilepos = regionDisplay.GetMouseHoveredTilePos();
 			cursor.GlobalPosition = TilePosToWorldPos(tilepos);
 			if (tilepos != lastTilePos) {
 				lastTilePos = tilepos;
@@ -67,9 +66,6 @@ namespace scenes.region {
 			return tilecenter;
 		}
 
-		public Vector2I PosToTilePos(Vector2 pos) {
-			return regionTiles.LocalToMap(pos);
-		}
 	}
 
 }

@@ -21,6 +21,8 @@ public interface IEntity {
 public class Faction : IEntity {
 
 	public event Action<Document> ContractFailedEvent;
+	public event Action<Job> JobAddedEvent;
+	public event Action<Job> JobRemovedEvent;
 
 	public Region Region { get; init; }
 
@@ -69,39 +71,32 @@ public class Faction : IEntity {
 		return count;
 	}
 
+	public void AddMapObjectJob(MapObjectJob job, MapObject mapObject) {
+		RegisterJob(mapObject.Position, job);
+
+		Debug.Assert(job.CanInitialise(this, mapObject), "Job cannot be initialised!");
+		job.Initialise(this, mapObject);
+		JobAddedEvent?.Invoke(job);
+	}
+
 	void RegisterJob(Vector2I position, Job job) {
 		Debug.Assert(job is not JobBox, "Debox the job before adding it! Can't add boxed job");
 		Debug.Assert(!(jobsByPosition.ContainsKey(position) && jobsByPosition[position].Contains(job)), $"Job object ({job}) at {position} exists ");
 		if (!jobsByPosition.ContainsKey(position)) jobsByPosition[position] = new();
 		jobsByPosition[position].Add(job);
-		AddJobWithoutPosition(job);
-	}
-
-	public void AddJob(Vector2I position, Job job) {
-		RegisterJob(position, job);
-
-		Debug.Assert(job.CanInitialise(this), "Job cannot be initialised!");
-		job.Initialise(this);
-	}
-
-	public void AddMapObjectJob(Vector2I position, MapObjectJob job, MapObject mapObject) {
-		RegisterJob(position, job);
-
-		Debug.Assert(job.CanInitialise(this, mapObject), "Job cannot be initialised!");
-		job.Initialise(this, mapObject);
-	}
-
-	void AddJobWithoutPosition(Job job) {
 		jobs.Add(job);
 	}
 
-	public void RemoveJob(Vector2I position, Job job) {
-		Debug.Assert(jobsByPosition.ContainsKey(position) && jobsByPosition[position].Contains(job), $"Can't remove job ({job}) that doesn't exist here ({position})?? Hello?");
-
+	public void RemoveJob(Job job) {
+		if (job is MapObjectJob mopjob) {
+			Debug.Assert(jobsByPosition.ContainsKey(mopjob.Position) && jobsByPosition[mopjob.Position].Contains(job), $"Can't remove job ({job}) that doesn't exist here ({mopjob.Position})?? Hello?");
+			jobsByPosition[mopjob.Position].Remove(job);
+		}
+		Debug.Assert(jobs.Contains(job), "Dont have this job, can't remove it");
 		UnemployWorkers(job);
 		job.Deinitialise(this);
-		jobsByPosition[position].Remove(job);
 		jobs.Remove(job);
+		JobRemovedEvent?.Invoke(job);
 	}
 
 	public IEnumerable<Job> GetJobs(Vector2I position) {
@@ -131,7 +126,7 @@ public class Faction : IEntity {
 	}
 
 	public void DecreasePopulation(int by) {
-		Debug.Assert(by > 0, "I need to subtract this value.");
+		Debug.Assert(by > 0, "Need a positive value to subtract");
 		var reduction = Mathf.Min(homelessPopulation.Amount, by);
 		homelessPopulation.Amount -= reduction;
 		by -= reduction;
@@ -156,7 +151,7 @@ public class Faction : IEntity {
 		var building = PlaceBuilding(type, position);
 		if (type.TakesTimeToConstruct() || type.HasResourceRequirements()) {
 			var job = new ConstructBuildingJob(type.GetResourceRequirements().ToList());
-			AddMapObjectJob(position, job, building);
+			AddMapObjectJob(job, building);
 			building.ConstructionJob = job;
 		}
 		return building;
@@ -172,7 +167,7 @@ public class Faction : IEntity {
 
 	Building PlaceBuilding(IBuildingType type, Vector2I position) {
 		var building = Region.CreateBuildingSpotAndPlace(type, position);
-		if (type.GetPopulationCapacity() > 0) AddJob(position, new AbsorbFromHomelessPopulationJob(building));
+		if (type.GetPopulationCapacity() > 0) AddMapObjectJob(new AbsorbFromHomelessPopulationJob(), building);
 		buildings[position] = building;
 		return building;
 	}

@@ -23,7 +23,7 @@ namespace scenes.region.ui {
 		public event Action<MapObject, MapObjectJob> AddJobRequestedEvent;
 		public event Func<int> GetMaxFreeWorkersEvent;
 		public event Action<JobBox, int> ChangeJobWorkerCountEvent;
-		public event Action<JobBox> DeleteJobEvent;
+		public event Action<Job> DeleteJobEvent;
 
 		public event Func<Briefcase> GetBriefcaseEvent;
 
@@ -274,7 +274,7 @@ namespace scenes.region.ui {
 		public void AddJobRequested(Job job) => throw new NotImplementedException("Cant add jobs without building yet");
 		public int GetMaxFreeWorkers() => GetMaxFreeWorkersEvent?.Invoke() ?? -1;
 		public void ChangeJobWorkerCount(JobBox job, int amount) => ChangeJobWorkerCountEvent?.Invoke(job, amount);
-		public void DeleteJob(JobBox jobBox) => DeleteJobEvent?.Invoke(jobBox);
+		public void DeleteJob(JobBox jobBox) => DeleteJobEvent?.Invoke(jobBox.Unbox());
 
 		public Briefcase GetBriefcase() => GetBriefcaseEvent?.Invoke();
 

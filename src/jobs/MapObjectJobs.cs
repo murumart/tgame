@@ -2,19 +2,17 @@ using System;
 using System.Collections.Generic;
 using Godot;
 
-public class AbsorbFromHomelessPopulationJob : Job {
+public class AbsorbFromHomelessPopulationJob : MapObjectJob {
 
 	public override bool IsInternal => true;
 	public override bool NeedsWorkers => false;
 	public bool Paused { get; set; }
 
-	readonly Building building;
+	public override Vector2I Position => building.Position;
+
+	Building building;
 	Faction regionFaction;
 
-
-	public AbsorbFromHomelessPopulationJob(Building building) {
-		this.building = building;
-	}
 
 	public void Finish() { }
 
@@ -35,10 +33,12 @@ public class AbsorbFromHomelessPopulationJob : Job {
 		}
 	}
 
-	public override bool CanInitialise(Faction ctxFaction) => building != null && ctxFaction != null;
+	public override bool CanInitialise(Faction ctxFaction) => throw new NotImplementedException();
+	public override bool CanInitialise(Faction ctxFaction, MapObject mapObject) => mapObject != null && mapObject is Building && ctxFaction != null;
 
-	public override void Initialise(Faction ctxFaction) {
+	public override void Initialise(Faction ctxFaction, MapObject mapObject) {
 		this.regionFaction = ctxFaction;
+		this.building = mapObject as Building;
 	}
 
 	public override void Deinitialise(Faction ctxFaction) => throw new System.NotImplementedException("no..? pause this instead");
@@ -51,6 +51,8 @@ public class ConstructBuildingJob : MapObjectJob {
 
 	public override string Title => "Construct Building";
 	public override ref Population Workers => ref workers;
+
+	public override Vector2I Position => building.Position;
 
 	readonly List<ResourceBundle> requirements;
 
@@ -92,7 +94,7 @@ public class ConstructBuildingJob : MapObjectJob {
 
 	public override void CheckDone(Faction regionFaction) {
 		if (building.IsConstructed) {
-			regionFaction.RemoveJob(building.Position, this);
+			regionFaction.RemoveJob(this);
 		}
 	}
 
@@ -168,6 +170,8 @@ public class GatherResourceJob : MapObjectJob {
 
 	public override ref Population Workers => ref workers;
 
+	public override Vector2I Position => site.Position;
+
 	Population workers;
 	ResourceStorage storage;
 	ResourceSite site;
@@ -223,7 +227,7 @@ public class GatherResourceJob : MapObjectJob {
 			if (item.HasBunches) return;
 		}
 
-		regionFaction.RemoveJob(site.Position, this);
+		regionFaction.RemoveJob(this);
 		regionFaction.Uproot(site.Position);
 		site = null;
 	}
@@ -294,6 +298,8 @@ public class CraftJob : MapObjectJob {
 
 	public override string Title => $"Craft {outputDescription}";
 	public override ref Population Workers => ref workers;
+
+	public override Vector2I Position => building.Position;
 
 	Population workers;
 	ResourceStorage storage;

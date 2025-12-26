@@ -60,7 +60,7 @@ public abstract class Job {
 	// add to the storage one item at a time so we get a bit of every type in storage
 	// even if it ends up filling up before we can grant everything
 	// TODO this but in a smarter way with less brutish loops
-	protected static void AddToStorage(ResourceBundle[] things, ResourceStorage storage){
+	protected static void AddToStorage(ResourceBundle[] things, ResourceStorage storage) {
 		while (true) {
 			bool added = false;
 			for (int i = 0; i < things.Length; i++) {
@@ -100,6 +100,8 @@ public abstract class Job {
 
 public abstract class MapObjectJob : Job {
 
+	public abstract Vector2I Position { get; }
+
 	public abstract void Initialise(Faction ctxFaction, MapObject mapObject);
 	public override void Initialise(Faction ctxFaction) => throw new NotImplementedException("MapObjectJob requires MapObject argument as well!");
 
@@ -120,6 +122,7 @@ public class JobBox : Job {
 
 	public bool IsDeletable => !job.IsInternal;
 
+
 	public JobBox(Job job) {
 		this.job = job;
 		this.jobWorkersCopy = job.Workers;
@@ -129,7 +132,7 @@ public class JobBox : Job {
 		this.attachment = mapObject;
 	}
 
-	public Job Debox() => job;
+	public Job Unbox() => job;
 	public Vector2I Position {
 		get {
 			Debug.Assert(attachment != null, $"Can't get position of job with no building attachment {job}");
@@ -140,7 +143,6 @@ public class JobBox : Job {
 	public override string GetResourceRequirementDescription() => job.GetResourceRequirementDescription();
 	public override string GetStatusDescription() => job.GetStatusDescription();
 	public override string GetProductionDescription() => job.GetProductionDescription();
-
 
 	public override void Deinitialise(Faction ctxFaction) => throw new System.NotImplementedException("Don't do these things on a boxed job!!");
 	public override bool CanInitialise(Faction ctxFaction) => throw new System.NotImplementedException("Pls Unbox");
