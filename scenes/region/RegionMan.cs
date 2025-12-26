@@ -55,6 +55,23 @@ namespace scenes.region {
 			GameMan.Singleton.Game.PassTime(60 * 7); // start game at 7:00
 
 			regionDisplay.LoadRegion(region);
+			HashSet<Region> secondLevel = new();
+			foreach (var neighbor in region.Neighbors) {
+				var rdisp = RegionDisplay.Instantiate();
+				otherDisplaysParent.AddChild(rdisp);
+				rdisp.Modulate = new Color(0.4f, 0.4f, 0.4f).Lerp(neighbor.Color, 0.1f);
+				rdisp.Position = Tilemaps.TilePosToWorldPos(neighbor.WorldPosition - region.WorldPosition) - Tilemaps.TILE_SIZE / 2 + Vector2.Down * 0.25f * Tilemaps.TILE_SIZE.Y;
+				rdisp.LoadRegion(neighbor);
+				foreach (var n in neighbor.Neighbors) if (n != region && !region.Neighbors.Contains(n)) secondLevel.Add(n);
+			}
+			foreach (var neighbor in secondLevel) {
+				var rdisp = RegionDisplay.Instantiate();
+				otherDisplaysParent.AddChild(rdisp);
+				rdisp.Modulate = new Color(0.1f, 0.1f, 0.1f).Lerp(region.Color, 0.1f);
+				rdisp.Position = Tilemaps.TilePosToWorldPos(neighbor.WorldPosition - region.WorldPosition) - Tilemaps.TILE_SIZE / 2 + Vector2.Down * 0.5f * Tilemaps.TILE_SIZE.Y;
+				rdisp.LoadRegion(neighbor);
+			}
+			secondLevel = null;
 		}
 
 		public override void _Notification(int what) { // teardown
@@ -130,7 +147,7 @@ namespace scenes.region {
 			ui.HourlyUpdate(timeInMinutes);
 		}
 
-		void OnRegionMapObjectUpdated(Vector2I tile) {}
+		void OnRegionMapObjectUpdated(Vector2I tile) { }
 
 		void OnRegionMandateFailed(Document doc) {
 			GD.Print("MY MANDATE FAILED:::::: DAMN");

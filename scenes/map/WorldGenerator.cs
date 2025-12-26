@@ -225,8 +225,10 @@ namespace scenes.map {
 				var moveLocal = localPos + vectorDirectionTryingToGrowIn;
 				var moveGlobal = region.WorldPosition + moveLocal;
 				var (neighbor, grew) = TryGrowRegionTo(region, moveGlobal, occupied, addKeys, world, allowedTile);
-				region.AddNeighbor(neighbor);
-				neighbor?.AddNeighbor(region);
+				if (neighbor != null && neighbor != region) {
+					region.AddNeighbor(neighbor);
+					neighbor.AddNeighbor(region);
+				}
 
 				directionsThatAreFree &= (byte)~directionTryingToGrowIn;
 				if (grew) {

@@ -8,11 +8,11 @@
 script = ExtResource("1_qi5r4")
 ui = NodePath("RegionCamera/Ui")
 camera = NodePath("RegionCamera")
-regionDisplay = NodePath("RegionDisplay")
-otherDisplaysParent = NodePath("OtherDisplays")
+regionDisplay = NodePath("Ysort/RegionDisplay")
+otherDisplaysParent = NodePath("Ysort/OtherDisplays")
 
 [node name="RegionCamera" parent="." node_paths=PackedStringArray("regionDisplay") instance=ExtResource("4_du6xo")]
-regionDisplay = NodePath("../RegionDisplay")
+regionDisplay = NodePath("../Ysort/RegionDisplay")
 
 [node name="Ui" parent="RegionCamera" index="0" node_paths=PackedStringArray("CameraCursor")]
 CameraCursor = NodePath("../Cursor")
@@ -20,8 +20,13 @@ CameraCursor = NodePath("../Cursor")
 [node name="Cursor" parent="RegionCamera" index="1"]
 z_index = 0
 
-[node name="RegionDisplay" parent="." instance=ExtResource("3_pmx41")]
+[node name="Ysort" type="Node2D" parent="."]
+y_sort_enabled = true
 
-[node name="OtherDisplays" type="Node2D" parent="."]
+[node name="RegionDisplay" parent="Ysort" instance=ExtResource("3_pmx41")]
+y_sort_enabled = true
+
+[node name="OtherDisplays" type="Node2D" parent="Ysort"]
+y_sort_enabled = true
 
 [editable path="RegionCamera"]

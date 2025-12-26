@@ -34,6 +34,7 @@ tile_size = Vector2i(64, 32)
 sources/1 = SubResource("TileSetAtlasSource_s3w5i")
 
 [node name="RegionDisplay" type="Node2D" node_paths=PackedStringArray("tilemaps", "buildingsParent")]
+y_sort_enabled = true
 script = ExtResource("1_yylbx")
 tilemaps = NodePath("Tilemaps")
 buildingsParent = NodePath("Tilemaps/Buildings")

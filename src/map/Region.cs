@@ -40,6 +40,8 @@ public class Region {
 	}
 
 	public bool AddNeighbor(Region neighbor) {
+		Debug.Assert(neighbor != null, "Don't add useless null neighbors");
+		Debug.Assert(neighbor != this, "I am not my own neighbro");
 		return neighbors.Add(neighbor);
 	}
 

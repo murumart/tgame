@@ -5,6 +5,8 @@ namespace scenes.region {
 
 	public partial class Tilemaps : Node2D {
 
+		public readonly static Vector2I TILE_SIZE = new(64, 32);
+
 		[Export] TileMapLayer ground; public TileMapLayer Ground => ground;
 
 
@@ -22,6 +24,26 @@ namespace scenes.region {
 			watch.Stop();
 			var elapsedMs = watch.ElapsedMilliseconds;
 			GD.Print("TILEMAPS: displaying ground took " + elapsedMs + " ms");
+		}
+
+		// matches Godot's TileLayout.DIAMOND_DOWN
+		public static Vector2 TilePosToWorldPos(Vector2I tilePos) {
+			var halfTs = TILE_SIZE / 2;
+			return new Vector2(
+				halfTs.X + tilePos.X * halfTs.X - tilePos.Y * halfTs.X,
+				halfTs.Y + tilePos.X * halfTs.Y + tilePos.Y * halfTs.Y
+			);
+		}
+
+		// matches Godot's TileLayout.STACKED
+		public static Vector2 TilePosToWorldPosStackedMode(Vector2I tilePos) {
+			var halfTs = TILE_SIZE / 2;
+			var tilecenter = new Vector2(tilePos.X, tilePos.Y / 2) * TILE_SIZE + halfTs;
+			if (tilePos.Y % 2 != 0) {
+				tilecenter.X += halfTs.X;
+				tilecenter.Y += (tilePos.Y > 0) ? halfTs.Y : -halfTs.Y;
+			}
+			return tilecenter;
 		}
 
 	}

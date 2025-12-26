@@ -15,7 +15,10 @@ namespace scenes.region {
 
 		bool valid = false;
 
+
 		// setup
+
+		public static RegionDisplay Instantiate() => (RegionDisplay)GD.Load<PackedScene>("uid://cpeaxmkgldt5g").Instantiate();
 
 		public override void _Notification(int notif) {
 			switch (notif) {
@@ -67,7 +70,7 @@ namespace scenes.region {
 			var view = LoadMapObjectView(mopbject);
 			buildingsParent.AddChild(view);
 			mapObjectViews[mopbject.Position] = view;
-			view.Position = RegionCamera.TilePosToWorldPos(mopbject.Position);
+			view.Position = Tilemaps.TilePosToWorldPos(mopbject.Position);
 			view.Modulate = new Color(1f, 1f, 1f);
 		}
 
@@ -89,11 +92,13 @@ namespace scenes.region {
 		void OnRegionJobAdded(Job job) {
 			GD.Print("job added ", job);
 			if (job is MapObjectJob mopjob) {
-				if (!mapObjectViews.ContainsKey(mopjob.Position) && mopjob is ConstructBuildingJob) {
+				if (!mapObjectViews.ContainsKey(mopjob.Position) && mopjob is ConstructBuildingJob or AbsorbFromHomelessPopulationJob) {
 					Callable.From(() => OnRegionJobAdded(mopjob)).CallDeferred();
 					return;
 				}
-				mapObjectViews[mopjob.Position].IconSetShow(MapObjectView.IconSetIcons.HAMMER);}
+				Debug.Assert(mapObjectViews.ContainsKey(mopjob.Position), $"Don't have the building object that the {job} is being attached to");
+				mapObjectViews[mopjob.Position].IconSetShow(MapObjectView.IconSetIcons.HAMMER);
+			}
 		}
 
 		void OnRegionJobRemoved(Job job) {
