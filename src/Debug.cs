@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Godot;
+using Environment = System.Environment;
 
 internal static class Debug {
 	//https://www.reddit.com/r/godot/comments/obxm0i/comment/hj4htrk/
@@ -11,7 +12,8 @@ internal static class Debug {
 #if TOOLS
 		{
 		if (!cond) {
-			msg = new StackFrame(1).GetMethod().Name + ": " + msg;
+			var sf = new StackFrame(1);
+			msg = $"{sf.GetFileName()}:{sf.GetFileLineNumber()}:{sf.GetFileColumnNumber()} : {sf.GetMethod().DeclaringType}::{sf.GetMethod().Name}: " + msg;
 			GD.PrintErr(msg);
 			throw new ApplicationException($"Assertion failed: {msg}");
 		}

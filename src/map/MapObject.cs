@@ -34,7 +34,7 @@ public partial class Building : MapObject {
 
 	readonly IBuildingType type; public override IBuildingType Type { get => type; }
 
-	Population population; public ref Population Population => ref population;
+	public Group Population;
 	float constructionProgress; // in minutes
 	public bool IsConstructed => constructionProgress >= type.GetHoursToConstruct() * 60;
 	public ConstructBuildingJob ConstructionJob;
@@ -42,7 +42,7 @@ public partial class Building : MapObject {
 
 	protected Building(IBuildingType type, Vector2I position) : base(position) {
 		this.type = type;
-		this.population = new Population(type.GetPopulationCapacity());
+		this.Population = new(type.GetPopulationCapacity());
 	}
 
 	public void ProgressBuild(TimeT minutes, ConstructBuildingJob job) {

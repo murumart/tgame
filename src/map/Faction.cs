@@ -33,11 +33,10 @@ public class Faction : IEntity {
 	readonly ResourceStorage resourceStorage = new();
 	public ResourceStorage Resources { get => resourceStorage; }
 
-	Population homelessPopulation;
-	public ref Population HomelessPopulation => ref homelessPopulation;
+	public readonly Population Population;
 
-	Population unemployedPopulation;
-	public ref Population UnemployedPopulation => ref unemployedPopulation;
+	public int HomelessPopulation => Population.HomelessCount;
+	public int UnemployedPopulation => Population.UnemployedCount;
 
 	public string DocName => ToString();
 	public Briefcase Briefcase { get; init; }
@@ -51,8 +50,8 @@ public class Faction : IEntity {
 
 		region.MapObjectUpdatedAtEvent += OnMapObjectUpdated;
 
-		homelessPopulation = new(maxPop) { Amount = initialPopulation };
-		unemployedPopulation = new(maxPop) { Amount = initialPopulation };
+		Population = new();
+		Population.Manifest(initialPopulation);
 
 		Region.SetLocalFaction(this);
 
@@ -63,13 +62,7 @@ public class Faction : IEntity {
 
 	// *** MANAGING WORKERS AND JOBS ***
 
-	public int GetPopulationCount() {
-		int count = homelessPopulation.Amount;
-		foreach (var b in buildings.Values) {
-			count += b.Population.Amount;
-		}
-		return count;
-	}
+	public int GetPopulationCount() => Population.Count;
 
 	public void AddMapObjectJob(MapObjectJob job, MapObject mapObject) {
 		RegisterJob(mapObject.Position, job);
@@ -104,42 +97,39 @@ public class Faction : IEntity {
 		return gottenJobs?.Where<Job>((j) => !j.IsInternal) ?? new List<Job>();
 	}
 
-	public int GetFreeWorkers() => unemployedPopulation.Amount;
+	public int GetFreeWorkers() => Population.UnemployedCount;
 
 	public bool CanEmployWorkers(Job job, int amount) {
 		Debug.Assert(jobs.Contains(job), "This isn't my job...");
-		return UnemployedPopulation.CanTransfer(ref job.Workers, amount);
+		return UnemployedPopulation > 0 && job.Workers.CanAdd(amount);
+	}
+
+	public bool CanUnemployWorkers(Job job, int amount) {
+		Debug.Assert(jobs.Contains(job), "This isnt ,y job...");
+		return job.Workers.Count >= amount;
 	}
 
 	public void EmployWorkers(Job job, int amount) {
 		Debug.Assert(jobs.Contains(job), "This isn't my job...");
+		if (amount < 0) {
+			Debug.Assert(CanUnemployWorkers(job, -amount), "Can't employ these workers!");
+			Population.Unemploy(job, -amount);
+			return;
+		}
 		Debug.Assert(CanEmployWorkers(job, amount), "Can't employ these workers!");
 
-		UnemployedPopulation.Transfer(ref job.Workers, amount);
+		Population.Employ(job, amount);
 	}
 
 	public void UnemployWorkers(Job job) {
 		Debug.Assert(jobs.Contains(job), "This isn't my job...");
-		Debug.Assert(CanEmployWorkers(job, -job.Workers.Amount), "Can't unemploy these workers!");
+		Debug.Assert(CanUnemployWorkers(job, job.Workers.Count), "Can't unemploy these workers!");
 
-		UnemployedPopulation.Transfer(ref job.Workers, -job.Workers.Amount);
+		Population.Unemploy(job, job.Workers.Count);
 	}
 
 	public void DecreasePopulation(int by) {
-		Debug.Assert(by > 0, "Need a positive value to subtract");
-		var reduction = Mathf.Min(homelessPopulation.Amount, by);
-		homelessPopulation.Amount -= reduction;
-		by -= reduction;
-
-		reduction = Mathf.Min(unemployedPopulation.Amount, by);
-		unemployedPopulation.Amount -= reduction;
-		by -= reduction;
-
-		foreach (var b in buildings.Values) {
-			reduction = Mathf.Min(b.Population.Amount, by);
-			b.Population.Amount -= by;
-			by -= reduction;
-		}
+		throw new NotImplementedException();
 	}
 
 	// *** MANAGING BUILDINGS ***

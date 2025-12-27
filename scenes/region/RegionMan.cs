@@ -156,9 +156,9 @@ namespace scenes.region {
 
 		// get information (for UI)
 
-		public int GetHomelessPopulationCount() => faction.HomelessPopulation.Amount;
+		public int GetHomelessPopulationCount() => faction.HomelessPopulation;
 
-		public int GetUnemployedPopulationCount() => faction.UnemployedPopulation.Amount;
+		public int GetUnemployedPopulationCount() => faction.UnemployedPopulation;
 
 		public ResourceStorage GetResourceStorage() {
 			return faction.Resources;

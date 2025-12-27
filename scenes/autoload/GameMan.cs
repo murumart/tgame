@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Godot;
 using resources.game;
+using Environment = System.Environment;
 
 namespace scenes.autoload {
 
@@ -24,14 +25,24 @@ namespace scenes.autoload {
 
 
 		public override void _Ready() {
+			AppDomain.CurrentDomain.UnhandledException += OnUnhandled;
 			singleton = this;
 
 			dataRegistry.RegisterThings();
 
+
 			var map = Map.GetDebugMap();
 			NewGame(map.GetRegion(0), map);
 
+			GD.Print("GameMan is set up");
+
 			//game.PassTime(60 * 7); // start game at 7:00
+		}
+
+		void OnUnhandled(object sender, UnhandledExceptionEventArgs e) {
+			GD.PrintErr("Groaning in pain and dying");
+			GetTree().Quit(1);
+			Environment.Exit(1);
 		}
 
 		double timeAccum;

@@ -11,7 +11,7 @@ public abstract class Job {
 	public virtual bool NeedsWorkers => true;
 	public virtual bool IsInternal => false;
 
-	public virtual ref Population Workers => throw new NotImplementedException("No workers on default job class!");
+	public virtual Group Workers => throw new NotImplementedException("No workers on default job class!");
 	public virtual float GetWorkTime(TimeT minutes) => throw new NotImplementedException();
 
 	/// <summary>
@@ -114,9 +114,8 @@ public class JobBox : Job {
 
 	private readonly Job job;
 	private readonly MapObject attachment;
-	private Population jobWorkersCopy;
 
-	public override ref Population Workers => ref jobWorkersCopy;
+	public override Group Workers => job.Workers;
 	public override string Title => job.Title;
 	public override bool NeedsWorkers => job.NeedsWorkers;
 
@@ -125,7 +124,6 @@ public class JobBox : Job {
 
 	public JobBox(Job job) {
 		this.job = job;
-		this.jobWorkersCopy = job.Workers;
 	}
 
 	public JobBox(Job job, MapObject mapObject) : this(job) {

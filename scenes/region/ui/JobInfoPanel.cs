@@ -35,7 +35,7 @@ namespace scenes.region.ui {
 			if (jbox.NeedsWorkers) {
 				var slider = JobSlider.Instantiate();
 				informationList.AddChild(slider);
-				slider.Setup(workersSelected, jobIndex, jbox.Workers.Amount, "workers", sliderMax, "");
+				slider.Setup(workersSelected, jobIndex, jbox.Workers.Count, "workers", sliderMax, "");
 			}
 
 			titleLabel.Text = jbox.Title;

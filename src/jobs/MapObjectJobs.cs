@@ -18,13 +18,10 @@ public class AbsorbFromHomelessPopulationJob : MapObjectJob {
 
 	TimeT remainderPeopleTransferTime;
 	public override void PassTime(TimeT minutes) {
-		if (!Paused && building.IsConstructed && regionFaction.HomelessPopulation.Amount > 0) {
-			/* if (homelessPopulation.CanTransfer(ref building.Population, 1)) {
-				homelessPopulation.Transfer(ref building.Population, 1);
-			} */
+		if (!Paused && building.IsConstructed && regionFaction.HomelessPopulation > 0) {
 			TimeT peopleTransferTime = minutes + remainderPeopleTransferTime;
-			while (peopleTransferTime > 6 && regionFaction.HomelessPopulation.CanTransfer(ref building.Population, 1)) {
-				regionFaction.HomelessPopulation.Transfer(ref building.Population, 1);
+			while (peopleTransferTime > 6 && building.Population.RoomLeft > 0 && regionFaction.HomelessPopulation > 0) {
+				regionFaction.Population.House(building, 1);
 				peopleTransferTime -= 6;
 			}
 			remainderPeopleTransferTime = peopleTransferTime;
@@ -50,13 +47,13 @@ public class AbsorbFromHomelessPopulationJob : MapObjectJob {
 public class ConstructBuildingJob : MapObjectJob {
 
 	public override string Title => "Construct Building";
-	public override ref Population Workers => ref workers;
+	public override Group Workers => workers;
 
 	public override Vector2I Position => building.Position;
 
 	readonly List<ResourceBundle> requirements;
 
-	Population workers;
+	readonly Group workers;
 	Building building;
 
 
@@ -105,7 +102,7 @@ public class ConstructBuildingJob : MapObjectJob {
 	}
 
 	public override float GetWorkTime(TimeT minutes) {
-		return minutes * Mathf.Pow(workers.Amount, 0.7f);
+		return minutes * Mathf.Pow(workers.Count, 0.7f);
 	}
 
 	public override string GetStatusDescription() {
@@ -133,10 +130,10 @@ public class ConstructBuildingJob : MapObjectJob {
 public class FishByHandJob : Job {
 
 	public override string Title => "Fish by Hand";
-	public override ref Population Workers => ref workers;
+	public override Group Workers => workers;
 
 	ResourceStorage storage;
-	Population workers;
+	readonly Group workers;
 
 
 	public FishByHandJob() {
@@ -168,11 +165,11 @@ public class GatherResourceJob : MapObjectJob {
 			: "Gather " + resourceTypeDescription.Capitalize())
 		: "Gather from " + site.Type.AssetName;
 
-	public override ref Population Workers => ref workers;
+	public override Group Workers => workers;
 
 	public override Vector2I Position => site.Position;
 
-	Population workers;
+	readonly Group workers;
 	ResourceStorage storage;
 	ResourceSite site;
 	readonly string resourceTypeDescription;
@@ -199,7 +196,7 @@ public class GatherResourceJob : MapObjectJob {
 
 	public override void Deinitialise(Faction ctxFaction) { }
 
-	public override float GetWorkTime(TimeT minutes) => minutes * MathF.Pow(workers.Amount, 0.7f);
+	public override float GetWorkTime(TimeT minutes) => minutes * MathF.Pow(workers.Count, 0.7f);
 
 	public override void PassTime(TimeT minutes) {
 		float ts = GetWorkTime(minutes);
@@ -262,7 +259,7 @@ public class GatherResourceJob : MapObjectJob {
 			return Title;
 		}
 		var str = $"The {site.Type.AssetName} produces:\n";
-		if (workers.Amount <= 0) str += "Nothing, as long as there's no workers. But it could produce:\n";
+		if (workers.Count <= 0) str += "Nothing, as long as there's no workers. But it could produce:\n";
 		bool reproduce = false;
 		foreach (var well in site.MineWells) {
 			float time = well.MinutesPerBunch / MathF.Max(GetWorkTime(1), 1);
@@ -284,7 +281,7 @@ public class GatherResourceJob : MapObjectJob {
 	}
 
 	public override string GetStatusDescription() {
-		if (workers.Amount <= 0) return "";
+		if (workers.Count <= 0) return "";
 		int wellIx = GetClosestWell();
 		var well = site.MineWells[wellIx];
 		float timeLeft = well.MinutesPerBunch - timeSpent[wellIx];
@@ -297,11 +294,11 @@ public class GatherResourceJob : MapObjectJob {
 public class CraftJob : MapObjectJob {
 
 	public override string Title => $"Craft {outputDescription}";
-	public override ref Population Workers => ref workers;
+	public override Group Workers => workers;
 
 	public override Vector2I Position => building.Position;
 
-	Population workers;
+	readonly Group workers;
 	ResourceStorage storage;
 	Building building;
 
@@ -321,7 +318,7 @@ public class CraftJob : MapObjectJob {
 		this.outputDescription = outputDescription;
 	}
 
-	public override Job Copy() => new CraftJob(inputs, outputs, timeTaken, workers.MaxPop, outputDescription);
+	public override Job Copy() => new CraftJob(inputs, outputs, timeTaken, workers.Capacity, outputDescription);
 
 	public override void Initialise(Faction ctxFaction, MapObject mapObject) {
 		storage = ctxFaction.Resources;
@@ -342,11 +339,11 @@ public class CraftJob : MapObjectJob {
 		}
 	}
 
-	public override float GetWorkTime(TimeT minutes) => minutes * MathF.Pow(workers.Amount, 0.5f);
+	public override float GetWorkTime(TimeT minutes) => minutes * MathF.Pow(workers.Count, 0.5f);
 
 	public override string GetProductionDescription() {
 		var str = $"The workers produce:\n";
-		if (workers.Amount <= 0) str += "Nothing, as long as there's no workers. But it could produce:\n";
+		if (workers.Count <= 0) str += "Nothing, as long as there's no workers. But it could produce:\n";
 
 		foreach (var thing in outputs) {
 			str += $" * {thing.Type.AssetName} x {thing.Amount}.\n";
@@ -363,7 +360,7 @@ public class CraftJob : MapObjectJob {
 	}
 
 	public override string GetStatusDescription() {
-		if (workers.Amount <= 0) return "";
+		if (workers.Count <= 0) return "";
 		float timeLeft = timeTaken - timeSpent;
 		timeLeft /= GetWorkTime(1);
 		return GameTime.GetFancyTimeString((TimeT)timeLeft) + " until more " + outputDescription + ".";

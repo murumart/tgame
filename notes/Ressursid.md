@@ -13,6 +13,33 @@ Ruudud, millele saab panna ressursse tootvaid töid. Mingid looduslikud elemendi
 * Saviauk
 	- toodang: savi
 
+## Inimesed
+
+### Andmestruktuur
+
+![alt text](men.png)
+
+Inimesi peab saama tööle panna ja töölt ära võtta. Neid võib juurde tulla ning ära minna. Õnnetuste korral peaks neid surema, ning elus püsimiseks peaks nad sööma. Nende kirjeldus mälus peaks neid tegevusi võimaldama. Lisaks on eeldus, et inimesi on mängus ühel hetkel palju (tuhandetes). Lahendus peaks ka sellega hakkama saama.
+
+**Kui inimene on lihtsalt väärtus**:
+
+* lihtne kujutada arvu või listina: igal tööl oma list, igal majal oma list...
+* probleem: andmete õigsuse tagamine.
+  * kui on eraldi listid "inimesed, kes pole tööl" ja "inimesed, kellel pole kodu", siis on kogu inimeste arv segane - kui inimesi tuleb juurde, tuleb nad lisada mõlemasse listi
+
+**Kui iga inimene on eraldi objekt**:
+
+* lihtne omadusi salvestada, hoida liste viidetena
+* võimalik probleem: suurem mälukasutus, *cache locality* puudub
+* võimalik probleem: vähem kontrolli API üle, kui on tarvis ümber kirjutada
+* nullviidad
+
+**Kui inimene on objekt sõnastikus ning ligipääs id kaudu**
+
+* lihtne omaduste salvestamine objektidesse
+* parem kontroll api ning viitade üle
+* probleem: suurem mälukasutus *cache locality* puudub
+* keerulisem üles seada
 
 ## Oskused
 
