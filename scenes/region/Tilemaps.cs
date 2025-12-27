@@ -23,7 +23,7 @@ namespace scenes.region {
 			}
 			watch.Stop();
 			var elapsedMs = watch.ElapsedMilliseconds;
-			GD.Print("TILEMAPS: displaying ground took " + elapsedMs + " ms");
+			GD.Print("Tilemaps::DisplayGround : displaying ground took " + elapsedMs + " ms");
 		}
 
 		// matches Godot's TileLayout.DIAMOND_DOWN

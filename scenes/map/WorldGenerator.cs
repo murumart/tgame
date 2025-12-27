@@ -80,7 +80,7 @@ namespace scenes.map {
 				freeEdgeTiles[reg] = new() { (Vector2I.Zero, 0b1111) };
 			}
 
-			GD.Print("Growing land regions");
+			GD.Print("WorldGenerator::GenerateRegions : Growing land regions");
 			await GrowRegions(world, regionsLand, landOccupied, freeEdgeTiles);
 
 			freeEdgeTiles.Clear();
@@ -200,7 +200,7 @@ namespace scenes.map {
 				}
 			}
 			if (!growthOccurred) {
-				GD.Print("region growth filled up all space attainable");
+				GD.Print("WorldGenerator::GrowAllRegionsOneStep : region growth filled up all space attainable");
 			}
 			return growthOccurred;
 		}

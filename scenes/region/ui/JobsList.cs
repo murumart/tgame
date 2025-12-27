@@ -151,7 +151,7 @@ namespace scenes.region.ui {
 		}
 
 		void OpenViewJobScreen() {
-			GD.Print("opening jobs");
+			GD.Print("JobsList::OpenViewJobScreen : opening jobs");
 			state = State.VIEW_JOBS;
 			tabs.CurrentTab = (int)state;
 
@@ -170,7 +170,7 @@ namespace scenes.region.ui {
 		}
 
 		void JobWorkerCountChanged(int ix, int by) {
-			GD.Print("worker count changed by ", by);
+			GD.Print("JobsList::JobWorkerCountChanged : worker count changed by ", by);
 			ui.ChangeJobWorkerCount(ExtantJobs[ix], by);
 			OpenViewJobScreen(); // rebuild ui entirely in a lazy unoptimised manner
 		}

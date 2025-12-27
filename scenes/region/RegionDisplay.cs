@@ -90,7 +90,7 @@ namespace scenes.region {
 		}
 
 		void OnRegionJobAdded(Job job) {
-			GD.Print("job added ", job);
+			GD.Print("RegionDisplay::OnRegionJobAdded : job added ", job);
 			if (job is MapObjectJob mopjob) {
 				if (!mapObjectViews.ContainsKey(mopjob.Position) && mopjob is ConstructBuildingJob or AbsorbFromHomelessPopulationJob) {
 					Callable.From(() => OnRegionJobAdded(mopjob)).CallDeferred();

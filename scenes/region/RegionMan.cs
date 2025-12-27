@@ -150,7 +150,7 @@ namespace scenes.region {
 		void OnRegionMapObjectUpdated(Vector2I tile) { }
 
 		void OnRegionMandateFailed(Document doc) {
-			GD.Print("MY MANDATE FAILED:::::: DAMN");
+			GD.Print("RegionMan::OnRegionMandateFailed : MY MANDATE FAILED:::::: DAMN");
 			GetTree().ChangeSceneToFile("res://scenes/game_over.tscn");
 		}
 

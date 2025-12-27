@@ -71,7 +71,7 @@ namespace scenes.map {
 			var map = await worldGenerator.GenerateRegions(world);
 			tw.Stop();
 
-			GD.Print("map is ", map);
+			GD.Print("WorldMan::GenerateNewWorld : map is ", map);
 			this.map = map;
 			drawRegionsCallable.Call();
 		}
@@ -79,7 +79,7 @@ namespace scenes.map {
 
 		void SetupGame() {
 			GameMan.Singleton.NewGame(worldUI.SelectedRegion, map);
-			GD.Print("game set up.");
+			GD.Print("WorldMan::SetupGame : game set up.");
 
 			EnterGame();
 		}

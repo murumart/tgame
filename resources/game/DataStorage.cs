@@ -35,15 +35,15 @@ namespace resources.game {
 
 			Registry.Register(resources, buildings, mines);
 
-			GD.Print("REGISTERED FOLLOWING BUILDINGS");
+			GD.Print("DataStorage::RegisterThings : REGISTERED FOLLOWING BUILDINGS");
 			foreach (var ass in Registry.Buildings.GetIdAssetPairs()) {
 				GD.PrintT(ass.Key, ass.Value.AssetName, $"scenePath {scenePaths.GetValueOrDefault(ass.Key)}");
 			}
-			GD.Print("REGISTERED FOLLOWING RESOURCES");
+			GD.Print("DataStorage::RegisterThings : REGISTERED FOLLOWING RESOURCES");
 			foreach (var ass in Registry.Resources.GetIdAssetPairs()) {
 				GD.PrintT(ass.Key, ass.Value.AssetName);
 			}
-			GD.Print("REGISTERED FOLLOWING RESOURCE SITES");
+			GD.Print("DataStorage::RegisterThings : REGISTERED FOLLOWING RESOURCE SITES");
 			foreach (var ass in Registry.ResourceSites.GetIdAssetPairs()) {
 				GD.PrintT(ass.Key, ass.Value.AssetName);
 			}

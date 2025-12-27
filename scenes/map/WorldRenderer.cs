@@ -13,7 +13,7 @@ public partial class WorldRenderer : Node {
 
 
 	public void ResetImages() {
-		GD.Print("reset images");
+		GD.Print("WorldRenderer::ResetImages : reset images");
 		Image worldImage = Image.CreateEmpty(world.Longitude, world.Latitude, false, Image.Format.Rgba4444);
 		Image regionImage = Image.CreateEmpty(world.Longitude, world.Latitude, false, Image.Format.Rgba4444);
 		regionImage.Fill(Colors.White);

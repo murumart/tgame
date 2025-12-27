@@ -67,10 +67,15 @@ public class Population {
 
 	class TablePerson {
 
-		ulong id;
+		public readonly ulong id;
 		public Building livesAt = null;
 		public Job worksAt = null;
 		public bool isAlive = true;
+
+
+		public TablePerson(ulong id) {
+			this.id = id;
+		}
 
 	}
 
@@ -117,7 +122,8 @@ public class Population {
 
 	public void Manifest(int amount) {
 		for (int i = 0; i < amount; i++) {
-			individs[personId++] = new();
+			var id = personId++;
+			individs[id] = new(id);
 		}
 	}
 

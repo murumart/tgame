@@ -68,7 +68,7 @@ namespace scenes.region.ui {
 		public void DragEnded(bool valueChanged) {
 			if (!valueChanged) return;
 			int val = (int)Slider.Value;
-			GD.Print($"val {val} last {lastValue}");
+			GD.Print($"JobSlider::DragEnded : val {val} last {lastValue}");
 			ValueChangedCallback(jobIx, val - lastValue);
 			lastValue = val;
 		}

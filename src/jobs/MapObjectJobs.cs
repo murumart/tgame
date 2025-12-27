@@ -111,7 +111,7 @@ public class ConstructBuildingJob : MapObjectJob {
 		hoursLeft /= speed;
 		float mins = hoursLeft - (int)hoursLeft;
 		hoursLeft -= mins;
-		GD.Print($"{GetProgressEstimate()} {building.Type.GetHoursToConstruct()} {hoursLeft} {speed}");
+		GD.Print($"ConstructBuildingJob::GetStatusDescription : {GetProgressEstimate()} {building.Type.GetHoursToConstruct()} {hoursLeft} {speed}");
 		var str2 = "The construction will take ";
 		if (hoursLeft > 0) str2 += $"{hoursLeft:0} more hours.";
 		else str2 += $"{mins * 60:0} more minutes.";
@@ -151,7 +151,7 @@ public class FishByHandJob : Job {
 	}
 
 	public override void PassTime(TimeT minutes) {
-		GD.Print("We fish x", minutes);
+		GD.Print("FishByHandJob::PassTime : We fish x", minutes);
 	}
 
 }

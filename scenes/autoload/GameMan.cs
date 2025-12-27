@@ -34,13 +34,13 @@ namespace scenes.autoload {
 			var map = Map.GetDebugMap();
 			NewGame(map.GetRegion(0), map);
 
-			GD.Print("GameMan is set up");
+			GD.Print("GameMan::_Ready : GameMan is set up");
 
 			//game.PassTime(60 * 7); // start game at 7:00
 		}
 
 		void OnUnhandled(object sender, UnhandledExceptionEventArgs e) {
-			GD.PrintErr("Groaning in pain and dying");
+			GD.PrintErr("GameMan::OnUnhandled : Groaning in pain and dying");
 			GetTree().Quit(1);
 			Environment.Exit(1);
 		}
