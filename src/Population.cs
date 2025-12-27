@@ -47,7 +47,6 @@ public class Population {
 			get {
 				if (dirty) {
 					dirtyAccesses++;
-					GD.Print("value is dirty, calgulating");
 					value = getval();
 					dirty = false;
 				}
