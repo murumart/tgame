@@ -33,6 +33,7 @@ namespace scenes.region.ui {
 			this.ui = ui;
 			jobBox = jbox;
 			if (jbox.NeedsWorkers) {
+				Debug.Assert(sliderMax >= 0, "Can't have negative slider values when needing workers");
 				var slider = JobSlider.Instantiate();
 				informationList.AddChild(slider);
 				slider.Setup(workersSelected, jobIndex, jbox.Workers.Count, "workers", sliderMax, "");

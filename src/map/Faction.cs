@@ -86,15 +86,15 @@ public class Faction : IEntity {
 			jobsByPosition[mopjob.Position].Remove(job);
 		}
 		Debug.Assert(jobs.Contains(job), "Dont have this job, can't remove it");
-		UnemployWorkers(job);
-		job.Deinitialise(this);
+		if (job.NeedsWorkers) UnemployWorkers(job);
 		jobs.Remove(job);
 		JobRemovedEvent?.Invoke(job);
+		job.Deinitialise(this);
 	}
 
 	public IEnumerable<Job> GetJobs(Vector2I position) {
-		var had = jobsByPosition.TryGetValue(position, out HashSet<Job> gottenJobs);
-		return gottenJobs?.Where<Job>((j) => !j.IsInternal) ?? new List<Job>();
+		jobsByPosition.TryGetValue(position, out HashSet<Job> gottenJobs);
+		return gottenJobs?.ToList() ?? new List<Job>();
 	}
 
 	public int GetFreeWorkers() => Population.UnemployedCount;
@@ -122,6 +122,7 @@ public class Faction : IEntity {
 	}
 
 	public void UnemployWorkers(Job job) {
+		if (job.Workers.Count == 0) return; // noone was ever assigned
 		Debug.Assert(jobs.Contains(job), "This isn't my job...");
 		Debug.Assert(CanUnemployWorkers(job, job.Workers.Count), "Can't unemploy these workers!");
 
@@ -173,6 +174,9 @@ public class Faction : IEntity {
 	public void RemoveBuilding(Vector2I at) {
 		Debug.Assert(HasBuilding(at), $"There's no building to remove at {at}...");
 		buildings.Remove(at);
+		foreach (var job in GetJobs(at)) {
+			RemoveJob(job);
+		}
 		Region.RemoveMapObject(at);
 	}
 

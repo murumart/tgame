@@ -33,35 +33,19 @@ namespace scenes.region.ui {
 		// we're regenerating these lists every time the menu is opened or updated, hopefully not a performance issue!
 		// an alternative is to not do that and set the _* lists to null to regenerate them on next menu open.
 
-		//List<JobBox> _extantJobs;
 		List<JobBox> ExtantJobs {
 			get {
 				if (attachedToMapObject) return ui.GetMapObjectJobs(myMapObject).ToList();
 				return ui.GetJobs().ToList();
 			}
 		}
-		//{
-		//	get {
-		//		Debug.Assert(myBuilding != null, "Please open the menu first!!! before getting these data");
-		//		_extantJobs ??= ui.GetBuildingJobs(myBuilding).ToList(); ;
-		//		return _extantJobs;
-		//	}
-		//}
 
-		//List<JobBox> _availableJobs;
 		List<Job> AvailableJobs {
 			get {
 				if (attachedToMapObject) return myMapObject.Type.GetAvailableJobs().ToList();
 				return new();
 			}
 		}
-		//{
-		//	get {
-		//		Debug.Assert(myBuilding != null, "Please open the menu first!!! before getting these data");
-		//		_availableJobs ??= myBuilding.Type.GetAvailableJobs().ToList();
-		//		return _availableJobs;
-		//	}
-		//}
 		int selectedAddJob = -1;
 
 
@@ -151,7 +135,7 @@ namespace scenes.region.ui {
 		}
 
 		void OpenViewJobScreen() {
-			GD.Print("JobsList::OpenViewJobScreen : opening jobs");
+			GD.Print("JobsList::OpenViewJobScreen : opening extant jobs list");
 			state = State.VIEW_JOBS;
 			tabs.CurrentTab = (int)state;
 
@@ -159,7 +143,8 @@ namespace scenes.region.ui {
 
 			for (int i = ExtantJobs.Count - 1; i >= 0; i--) {
 				var box = ExtantJobs[i];
-				int sliderMax = Math.Min(ui.GetMaxFreeWorkers() + box.Workers.Count, box.Workers.Capacity);
+				int sliderMax = -1;
+				if (box.NeedsWorkers) sliderMax = Math.Min(ui.GetMaxFreeWorkers() + box.Workers.Count, box.Workers.Capacity);
 				var panel = JobInfoPanel.Packed.Instantiate<JobInfoPanel>();
 				panel.AddToTree(jobsList, box.IsDeletable, true);
 				panel.Display(ui, box, i, sliderMax, JobWorkerCountChanged);

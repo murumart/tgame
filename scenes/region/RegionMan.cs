@@ -55,12 +55,14 @@ namespace scenes.region {
 			GameMan.Singleton.Game.PassTime(60 * 7); // start game at 7:00
 
 			regionDisplay.LoadRegion(region);
+
+			// show also neighboring regions and neighbors' neighbors
 			HashSet<Region> secondLevel = new();
 			foreach (var neighbor in region.Neighbors) {
 				var rdisp = RegionDisplay.Instantiate();
 				otherDisplaysParent.AddChild(rdisp);
-				rdisp.Modulate = new Color(0.4f, 0.4f, 0.4f).Lerp(neighbor.Color, 0.1f);
-				rdisp.Position = Tilemaps.TilePosToWorldPos(neighbor.WorldPosition - region.WorldPosition) - Tilemaps.TILE_SIZE / 2 + Vector2.Down * 0.25f * Tilemaps.TILE_SIZE.Y;
+				rdisp.Modulate = new Color(0.3f, 0.3f, 0.3f).Lerp(neighbor.Color, 0.05f);
+				rdisp.Position = Tilemaps.TilePosToWorldPos(neighbor.WorldPosition - region.WorldPosition) - Tilemaps.TILE_SIZE / 2;
 				rdisp.LoadRegion(neighbor);
 				foreach (var n in neighbor.Neighbors) if (n != region && !region.Neighbors.Contains(n)) secondLevel.Add(n);
 			}
@@ -68,10 +70,15 @@ namespace scenes.region {
 				var rdisp = RegionDisplay.Instantiate();
 				otherDisplaysParent.AddChild(rdisp);
 				rdisp.Modulate = new Color(0.1f, 0.1f, 0.1f).Lerp(region.Color, 0.1f);
-				rdisp.Position = Tilemaps.TilePosToWorldPos(neighbor.WorldPosition - region.WorldPosition) - Tilemaps.TILE_SIZE / 2 + Vector2.Down * 0.5f * Tilemaps.TILE_SIZE.Y;
+				rdisp.Position = Tilemaps.TilePosToWorldPos(neighbor.WorldPosition - region.WorldPosition) - Tilemaps.TILE_SIZE / 2;
 				rdisp.LoadRegion(neighbor);
 			}
 			secondLevel = null;
+
+			foreach (var r in Registry.Resources.GetAssets()) {
+					GD.Print("RegionMan::_Ready : adding resource ", r);
+					faction.Resources.AddResource(new(r, 50));
+			}
 		}
 
 		public override void _Notification(int what) { // teardown

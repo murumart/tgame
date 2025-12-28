@@ -4,6 +4,7 @@ using Godot;
 
 public class AbsorbFromHomelessPopulationJob : MapObjectJob {
 
+	public override string Title => "House homeless";
 	public override bool IsInternal => true;
 	public override bool NeedsWorkers => false;
 	public bool Paused { get; set; }
@@ -38,16 +39,33 @@ public class AbsorbFromHomelessPopulationJob : MapObjectJob {
 		this.building = mapObject as Building;
 	}
 
-	public override void Deinitialise(Faction ctxFaction) => throw new System.NotImplementedException("no..? pause this instead");
+	public override void Deinitialise(Faction ctxFaction) {
+		building = null;
+		regionFaction = null;
+	}
 
 	public override Job Copy() => throw new System.NotImplementedException("You shouldn't have to copy this...");
 
+	public override float GetProgressEstimate() => building.Population.Count / (float)building.Population.Capacity;
+
+	public override string GetStatusDescription() {
+		if (building.GetBuildProgress() < 1) return "";
+		return $"This housing is {(int)(GetProgressEstimate() * 100)}% full.";
+	}
+
+	public override string GetProductionDescription() {
+		if (building.GetBuildProgress() < 1) return "For people to move in, the building needs to be finished.";
+		if (GetProgressEstimate() < 1) return "People without housing will move in here.";
+		return "";
+
+	}
 }
 
 public class ConstructBuildingJob : MapObjectJob {
 
 	public override string Title => "Construct Building";
 	public override Group Workers => workers;
+	public bool Valid => building != null;
 
 	public override Vector2I Position => building.Position;
 
@@ -76,7 +94,7 @@ public class ConstructBuildingJob : MapObjectJob {
 		} else {
 			RefundRequirements(requirements.ToArray(), ctxFaction.Resources);
 			ctxFaction.RemoveBuilding(building.Position);
-			building = null;
+			//building = null;
 		}
 	}
 

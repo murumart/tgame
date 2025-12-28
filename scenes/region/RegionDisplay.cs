@@ -71,7 +71,9 @@ namespace scenes.region {
 			buildingsParent.AddChild(view);
 			mapObjectViews[mopbject.Position] = view;
 			view.Position = Tilemaps.TilePosToWorldPos(mopbject.Position);
-			view.Modulate = new Color(1f, 1f, 1f);
+			if (mopbject is Building building) {
+				if (building.GetBuildProgress() < 1) view.Modulate = new Color(1f, 1f, 1f, 0.5f);
+			}
 		}
 
 		void RemoveDisplay(Vector2I tile) {
@@ -102,9 +104,13 @@ namespace scenes.region {
 		}
 
 		void OnRegionJobRemoved(Job job) {
-
 			if (job is MapObjectJob mopjob) {
-				if (!(region.LocalFaction.GetJobs(mopjob.Position).Any())) mapObjectViews[mopjob.Position].IconSetHide(MapObjectView.IconSetIcons.HAMMER);
+				if (!mapObjectViews.TryGetValue(mopjob.Position, out MapObjectView view)) return; // the building view has already been removed
+				if (!(region.LocalFaction.GetJobs(mopjob.Position).Where(j => !j.IsInternal).Any())) view.IconSetHide(MapObjectView.IconSetIcons.HAMMER);
+				var building = region.LocalFaction.GetBuilding(mopjob.Position);
+				if (building != null && view != null) {
+					view.Modulate = Colors.White;
+				}
 			}
 		}
 

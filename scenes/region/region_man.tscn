@@ -24,7 +24,6 @@ z_index = 0
 y_sort_enabled = true
 
 [node name="RegionDisplay" parent="Ysort" instance=ExtResource("3_pmx41")]
-y_sort_enabled = true
 
 [node name="OtherDisplays" type="Node2D" parent="Ysort"]
 y_sort_enabled = true
