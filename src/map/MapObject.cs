@@ -63,9 +63,9 @@ public partial class Building {
 	public interface IBuildingType : IAssetType, IMapObjectType {
 
 		int GetPopulationCapacity();
-		//ResourceCapacity[] GetResourceCapacities();
 		ResourceBundle[] GetResourceRequirements();
 		float GetHoursToConstruct();
+		string GetDescription();
 
 		MapObject IMapObjectType.CreateMapObject(Vector2I position) {
 			return new Building(this, position);

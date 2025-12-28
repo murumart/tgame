@@ -23,6 +23,7 @@ metadata/_custom_type_script = "uid://c3n4csk46p0uc"
 [resource]
 script = ExtResource("3_wr3si")
 name = "kiln"
+description = "Converts clay to bricks, using logs as fuel."
 ResourceCosts = Dictionary[Object, int]({
 ExtResource("1_77qvn"): 8,
 ExtResource("2_drxcw"): 5

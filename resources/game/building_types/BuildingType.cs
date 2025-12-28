@@ -13,6 +13,7 @@ namespace resources.game.building_types {
 
 		[Export] string name;
 		public string AssetName => name;
+		[Export(PropertyHint.MultilineText)] string description;
 
 		string IAssetType.AssetTypeName => "building";
 
@@ -71,6 +72,7 @@ namespace resources.game.building_types {
 			return CraftingJobs.Select(def => def.GetJob()).ToArray();
 		}
 
+		public string GetDescription() => description;
 	}
 
 }

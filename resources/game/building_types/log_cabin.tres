@@ -6,11 +6,12 @@
 [resource]
 script = ExtResource("3_o2yxb")
 name = "log cabin"
+description = "Simple housing for 5 people."
 PopulationCapacity = 5
-ResourceCapacities = Dictionary[Object, int]({})
 ResourceCosts = Dictionary[Object, int]({
 ExtResource("1_6c64w"): 20
 })
+CraftingJobs = null
 HoursToConstruct = 30.0
 ScenePath = "uid://c32xcv1ljr5fq"
 metadata/_custom_type_script = "uid://b5xb3tdf3yoon"

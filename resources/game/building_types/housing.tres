@@ -8,6 +8,7 @@
 [resource]
 script = ExtResource("1_dxtrb")
 name = "housing"
+description = "Houses 12 people."
 PopulationCapacity = 12
 ResourceCosts = Dictionary[Object, int]({
 ExtResource("1_qdsi6"): 45,

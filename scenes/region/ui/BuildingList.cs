@@ -44,7 +44,7 @@ public partial class BuildingList : PanelContainer {
 		selectedBuildThingId = which;
 		var btype = (BuildingType)itemList.GetItemMetadata((int)which).Obj;
 		buildConfirmation.Text = "Build " + btype.AssetName;
-		resourceListText.Text = "";
+		resourceListText.Text = btype.GetDescription() + '\n';
 		var resources = ui.GetResources();
 		foreach (var r in btype.GetResourceRequirements()) {
 			var str = $"{r.Type.AssetName} x {r.Amount}";
@@ -52,7 +52,7 @@ public partial class BuildingList : PanelContainer {
 				str = "[color=red]" + str + "[/color]";
 				buildConfirmation.Disabled = true;
 			}
-			resourceListText.AppendText(str + "\n");
+			resourceListText.AppendText(str + '\n');
 		}
 	}
 
