@@ -62,8 +62,10 @@ public partial class WorldRenderer : Node {
 		if (regions == null) return;
 		var image = GetImage(regionSprite);
 		foreach (var region in regions) {
+			var color = region.Color.Lightened(0.5f);
+			if (region.LocalFaction != null && region.LocalFaction.HasOwningFaction()) color = region.LocalFaction.GetOwningFaction().Region.Color.Darkened(0.25f);
 			foreach (var px in region.GroundTiles.Keys) {
-				image.SetPixelv(px + region.WorldPosition, region.Color.Lightened(0.5f));
+				image.SetPixelv(px + region.WorldPosition, color);
 			}
 		}
 		UpdateImage(image, regionSprite);
@@ -77,6 +79,13 @@ public partial class WorldRenderer : Node {
 			foreach (var px in hovered.GroundTiles.Keys) {
 				image.SetPixelv(px + hovered.WorldPosition, color);
 			}
+			if (hovered.LocalFaction.HasOwningFaction()) {
+				var owner = hovered.LocalFaction.GetOwningFaction().Region;
+				foreach (var px in owner.GroundTiles.Keys) {
+					color = (px.X * px.Y) % 2 == 0 ? Colors.Blue : Colors.White;
+					image.SetPixelv(px + owner.WorldPosition, color);
+				}
+			}
 		}
 		if (highlighted != null && hovered != highlighted) {
 			var color = Colors.Gray;
@@ -84,6 +93,7 @@ public partial class WorldRenderer : Node {
 				image.SetPixelv(px + highlighted.WorldPosition, color);
 			}
 		}
+
 		UpdateImage(image, highlightSprite);
 	}
 

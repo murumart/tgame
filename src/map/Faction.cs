@@ -229,6 +229,22 @@ public class Faction : IEntity {
 		}
 	}
 
+	public void MakeFactionSubservient(Faction faction) {
+		var doc = Briefcase.CreateOwningRelationship(this, faction);
+		Debug.Assert(!faction.HasOwningFaction(), "This faction is already owned by another faction");
+		faction.Briefcase.AddDocument(Point.Type.Owns, doc);
+	}
+
+	public bool HasOwningFaction() {
+		return Briefcase.ContainsPointType(Point.Type.Owns) && Briefcase.GetOwnerDocument().SideB == this;
+	}
+
+	// this is meant to be called by the subservient faction
+	// check first with HasOwningFaction
+	public Faction GetOwningFaction() {
+		return Briefcase.GetOwnerDocument().SideA;
+	}
+
 	public void ContractFailure(Document doc, Point fulfillFailure) {
 		ContractFailedEvent?.Invoke(doc);
 	}
@@ -238,15 +254,15 @@ public class Faction : IEntity {
 
 		// placeholder!! TODO hold place with something better
 		const float MULTIPLY_RESOURCE_COSTS_EVERY_SUCCESS_BY = 1.1f;
-		if (doc.type == Document.Type.MandateContract && this == doc.SideA) {
+		if (doc.ContainsPointType(Document.Point.Type.ProvidesResourcesTo) && this == doc.SideA) {
 			var newdoc = Briefcase.CreateExportMandate(
 				doc.Points[0].Resources.Select((j) => new ResourceBundle(j.Type, (int)Math.Round(j.Amount * MULTIPLY_RESOURCE_COSTS_EVERY_SUCCESS_BY))).ToList(),
 				doc.Points[1].Resources,
 				this,
-				(Faction)other, // trust in the cast
+				other,
 				GetTime() + GameTime.DAYS_PER_WEEK * GameTime.HOURS_PER_DAY * GameTime.MINUTES_PER_HOUR
 			);
-			((Faction)other).Briefcase.AddDocument(newdoc);
+			(other).Briefcase.AddDocument(Document.Point.Type.ProvidesResourcesTo, newdoc);
 		}
 	}
 

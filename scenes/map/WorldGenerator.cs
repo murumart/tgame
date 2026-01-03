@@ -95,7 +95,7 @@ namespace scenes.map {
 				}
 			}
 
-			War(regionsLand, AggressiveFactionCount);
+			await War(regionsLand, AggressiveFactionCount);
 
 			Map map = new(regionsLand);
 
@@ -272,7 +272,7 @@ namespace scenes.map {
 			Max
 		}
 
-		private void War(Region[] regions, int aggressiveRegionCount) {
+		async Task War(Region[] regions, int aggressiveRegionCount) {
 			const int MAX_POP = 1000;
 			// all regions get initial populations
 			foreach (Region region in regions) {
@@ -282,7 +282,39 @@ namespace scenes.map {
 					initialPopulation: (int)populationLandTileCurve.SampleBaked(region.LandTileCount)
 				);
 			}
-			// TODO implement while not tired
+
+			var aggressors = regions.Where(r => r.LocalFaction.GetPopulationCount() > 20).OrderByDescending(r => r.LocalFaction.GetPopulationCount()).Take(aggressiveRegionCount);
+			GD.Print($"WorldGenerator::War : aggressors {aggressors.ToArray()}");
+			var subs = new Dictionary<Region, HashSet<Region>>();
+			var taken = new HashSet<Region>();
+			foreach (var ag in aggressors) subs[ag] = new();
+
+			int actions = 10;
+			while (actions-- > 0) {
+				foreach (var ag in aggressors) {
+					int attackingPop = ag.LocalFaction.GetPopulationCount() + subs[ag].Select(s => s.LocalFaction.GetPopulationCount()).Sum();
+					foreach (var sub in subs[ag]) {
+						WarlikeExpand(subs[ag].ToList().ToHashSet(), taken, sub, attackingPop, ag);
+					}
+					WarlikeExpand(subs[ag], taken, ag, attackingPop, ag);
+				}
+				await ToSignal(GetTree().CreateTimer(0.5), "timeout");
+			}
+		}
+
+		void WarlikeExpand(HashSet<Region> subs, HashSet<Region> taken, Region attacker, int attackingPop, Region owner) {
+			foreach (var n in attacker.Neighbors) {
+				if (subs.Contains(n)) continue;
+				if (taken.Contains(n)) continue;
+				if (n.LocalFaction.GetPopulationCount() > attackingPop / 3) {
+
+				} else {
+					subs.Add(n);
+					taken.Add(n);
+
+					owner.LocalFaction.MakeFactionSubservient(n.LocalFaction);
+				}
+			}
 		}
 
 	}

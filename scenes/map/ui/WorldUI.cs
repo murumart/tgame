@@ -34,12 +34,13 @@ public partial class WorldUI : Control {
 		regionTitleLabel.Text = region.ToString();
 		var things = string.Join(", ", region.GetMapObjects().Select(a => ((IAssetType)a.Type).AssetName).Distinct());
 		regionInfoLabel.Text =
-			$"Land tiles: {region.LandTileCount}\n"
+			$"Property of: {(region.LocalFaction.HasOwningFaction() ? region.LocalFaction.GetOwningFaction() : "Sovereign")}\n"
+			+ $"Land tiles: {region.LandTileCount}\n"
 			+ $"Sea tiles: {region.OceanTileCount}\n"
 			+ $"Population: {(region.LocalFaction == null ? "Uninhabited" : region.LocalFaction.GetPopulationCount())}\n"
 			+ $"Map objects: {things}"
 		;
-		regionPlayButton.Disabled = false;
+		regionPlayButton.Disabled = !region.LocalFaction.HasOwningFaction();
 	}
 
 	class AnonymousMapbjectComparer : IEqualityComparer<MapObject> {

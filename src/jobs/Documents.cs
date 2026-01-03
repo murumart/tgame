@@ -4,10 +4,11 @@ using System.Linq;
 
 public partial class Document {
 
-	public Type type { get; init; }
+	public DocType Type { get; init; }
 	public TimeT Expires { get; init; }
-	public IEntity SideA {get; init;}
-	public IEntity SideB {get; init;}
+	public Faction SideA { get; init; }
+	public Faction SideB { get; init; }
+	public string FluffText { get; init; }
 
 	bool passed;
 	public bool Passed => passed;
@@ -17,30 +18,29 @@ public partial class Document {
 	public string Title { get; private set; }
 
 
-	private Document(Type type, TimeT expires, IEntity sideA, IEntity sideB) {
-		this.type = type;
+	private Document(DocType type, TimeT expires, Faction sideA, Faction sideB, string fluffText) {
+		Type = type;
 		Expires = expires;
 		SideA = sideA;
 		SideB = sideB;
+		FluffText = fluffText;
 	}
 
 	private void Pass() => passed = true;
 
 	public string GetText() {
-		var str = type switch {
-			Type.MandateContract => "Contract to produce resources for the motherland.",
-			_ => throw new System.NotImplementedException(),
-		} + '\n';
+		var str = FluffText + '\n';
 
 		foreach (var point in Points) {
 			str += point.GetDescription() + '\n';
 		}
 
-		str += type switch {
-			Type.MandateContract =>
+		str += Type switch {
+			DocType.DeadlineContract =>
 				Expires >= Points[0].SideA.GetTime()
 					? $"The contract must be fulfilled in {(GameTime.GetFancyTimeString(Expires - Points[0].SideA.GetTime()))}."
 					: $"The contract has " + (Fulfilled ? "been completed." : "failed."),
+			DocType.NoDeadlineContract => "",
 			_ => throw new System.NotImplementedException(),
 		} + '\n'; ;
 
@@ -104,6 +104,7 @@ partial class Document {
 					$"* {sideA.DocName} provides the following resources to {sideB.DocName}:"
 					+ "\n" + Resources.Aggregate("", (s, r) => s + "\n - " + r.Type.AssetName + " x " + r.Amount),
 				Type.ProvidesWorkersTo => $"* {sideA.DocName} provides {amount} workers to {sideB.DocName}, or less according to the recipient's available living space",
+				Type.Owns => $"* {sideA.DocName} owns {sideB.DocName}",
 				_ => throw new System.NotImplementedException(),
 			};
 		}
@@ -114,9 +115,10 @@ partial class Document {
 
 partial class Document {
 
-	public enum Type {
+	public enum DocType {
 
-		MandateContract,
+		DeadlineContract,
+		NoDeadlineContract,
 
 	}
 
@@ -124,6 +126,7 @@ partial class Document {
 
 		public enum Type {
 
+			Owns,
 			ProvidesResourcesTo,
 			ProvidesWorkersTo,
 
@@ -131,13 +134,15 @@ partial class Document {
 
 	}
 
+	public bool ContainsPointType(Point.Type type) => Points.Any(p => p.PType == type);
+
 }
 
 partial class Document {
 
 	public class Briefcase {
 
-		readonly Dictionary<Document.Type, List<Document>> documents;
+		readonly Dictionary<Document.Point.Type, List<Document>> documents;
 
 
 		public Briefcase() {
@@ -162,6 +167,8 @@ partial class Document {
 			}
 		}
 
+		public bool ContainsPointType(Point.Type type) => documents.ContainsKey(type);
+
 		public IEnumerable<Document> GetActiveDocuments() {
 			List<Document> list = new();
 			foreach (var doclist in documents.Values) foreach (var doc in doclist) if (!doc.Passed) list.Add(doc);
@@ -174,9 +181,9 @@ partial class Document {
 			return list;
 		}
 
-		public void AddDocument(Document document) {
-			if (!documents.ContainsKey(document.type)) documents[document.type] = new();
-			List<Document> list = documents[document.type];
+		public void AddDocument(Document.Point.Type ptype, Document document) {
+			if (!documents.ContainsKey(ptype)) documents[ptype] = new();
+			List<Document> list = documents[ptype];
 			list.Add(document);
 		}
 
@@ -187,8 +194,8 @@ partial class Document {
 			Faction regionFaction,
 			TimeT due
 		) {
-			var type = Type.MandateContract;
-			var doc = new Document(type, due, parentFaction, regionFaction) {
+			var ptype = Document.Point.Type.ProvidesResourcesTo;
+			var doc = new Document(DocType.DeadlineContract, due, parentFaction, regionFaction, "Contract to produce resources for the motherland.") {
 
 				Points = new Point[] {
 					new(regionFaction, Point.Type.ProvidesResourcesTo, parentFaction) { Resources = requirements },
@@ -196,15 +203,37 @@ partial class Document {
 				}
 			};
 
-			if (!documents.ContainsKey(type)) documents[type] = new();
-			List<Document> list = documents[type];
+			if (!documents.ContainsKey(ptype)) documents[ptype] = new();
+			List<Document> list = documents[ptype];
 			doc.Title = "Export Mandate #" + list.Count;
 			list.Add(doc);
 
 			return doc;
 		}
 
+		public Document CreateOwningRelationship(Faction ownerFaction, Faction ownedFaction) {
+			var doc = new Document(
+				DocType.NoDeadlineContract,
+				(TimeT)GameTime.SECS_TO_HOURS
+					* GameTime.HOURS_PER_DAY
+					* GameTime.DAYS_PER_WEEK
+					* GameTime.WEEKS_PER_MONTH
+					* GameTime.MONTHS_PER_YEAR
+					* 500,
+				ownerFaction,
+				ownedFaction,
+				"Contract proving this region is owned by another."
+			) {
+				Points = new Point[] {
+					new(ownerFaction, Point.Type.Owns, ownedFaction),
+				}
+			};
 
+			AddDocument(Point.Type.Owns, doc);
+			return doc;
+		}
+
+		public Document GetOwnerDocument() => documents[Point.Type.Owns][0];
 	}
 
 }
