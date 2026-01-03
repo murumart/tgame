@@ -238,7 +238,7 @@ public class Faction : IEntity {
 
 		// placeholder!! TODO hold place with something better
 		const float MULTIPLY_RESOURCE_COSTS_EVERY_SUCCESS_BY = 1.1f;
-		if (doc.type == Document.Type.MANDATE_CONTRACT && this == doc.SideA) {
+		if (doc.type == Document.Type.MandateContract && this == doc.SideA) {
 			var newdoc = Briefcase.CreateExportMandate(
 				doc.Points[0].Resources.Select((j) => new ResourceBundle(j.Type, (int)Math.Round(j.Amount * MULTIPLY_RESOURCE_COSTS_EVERY_SUCCESS_BY))).ToList(),
 				doc.Points[1].Resources,

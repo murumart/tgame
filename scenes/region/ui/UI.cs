@@ -37,17 +37,17 @@ namespace scenes.region.ui {
 		public event Action<float> GameSpeedChangeRequestedEvent;
 
 		public enum State {
-			IDLE,
-			CHOOSING_BUILD,
-			PLACING_BUILD,
-			JOBS_MENU,
-			AGREEMENTS_MENU,
+			Idle,
+			ChoosingBuild,
+			PlacingBuild,
+			JobsMenu,
+			AgreementsMenu,
 		}
 
 		public enum Tab : int {
-			NONE = -1, // because TabContainer -1 = none selected
-			BUILD,
-			DOCUMENTS,
+			None = -1, // because TabContainer -1 = none selected
+			Build,
+			Documents,
 		}
 
 		// camera
@@ -100,8 +100,8 @@ namespace scenes.region.ui {
 		// overrides and connections
 
 		public override void _Ready() {
-			buildButton.Pressed += () => OnTabButtonPressed(Tab.BUILD, State.CHOOSING_BUILD);
-			agreementsButton.Pressed += () => OnTabButtonPressed(Tab.DOCUMENTS, State.AGREEMENTS_MENU);
+			buildButton.Pressed += () => OnTabButtonPressed(Tab.Build, State.ChoosingBuild);
+			agreementsButton.Pressed += () => OnTabButtonPressed(Tab.Documents, State.AgreementsMenu);
 
 			pauseButton.Pressed += OnPauseButtonPressed;
 			normalSpeedButton.Pressed += OnNormalSpeedButtonPressed;
@@ -119,8 +119,8 @@ namespace scenes.region.ui {
 				state = matchingState;
 				SelectTab(which);
 			} else {
-				state = State.IDLE;
-				SelectTab(Tab.NONE);
+				state = State.Idle;
+				SelectTab(Tab.None);
 			}
 		}
 
@@ -149,13 +149,13 @@ namespace scenes.region.ui {
 		// menu activites
 
 		public void SelectTab(Tab which) {
-			if (which == Tab.NONE) {
+			if (which == Tab.None) {
 				// reset some things
 				buildingList.Reset();
-			} else if (which == Tab.BUILD) {
+			} else if (which == Tab.Build) {
 				buildingList.Update();
 				buildingList.Show();
-			} else if (which == Tab.DOCUMENTS) {
+			} else if (which == Tab.Documents) {
 				documentsDisplay.Display(GetBriefcase());
 			}
 			menuTabs.CurrentTab = (int)which;
@@ -183,17 +183,17 @@ namespace scenes.region.ui {
 		// utilities
 
 		public void HourlyUpdate(TimeT timeInMinutes) {
-			if (menuTabs.CurrentTab == (int)Tab.DOCUMENTS) {
+			if (menuTabs.CurrentTab == (int)Tab.Documents) {
 				documentsDisplay.Display();
 			}
 		}
 
 		public void OnLeftMouseClick(Vector2 position, Vector2I tilePosition) {
 			switch (state) {
-				case State.PLACING_BUILD:
+				case State.PlacingBuild:
 					buildingList.RequestBuild(tilePosition);
 					break;
-				case State.IDLE:
+				case State.Idle:
 					MapClick(tilePosition);
 					break;
 				default:
@@ -202,11 +202,11 @@ namespace scenes.region.ui {
 		}
 
 		public void OnRightMouseClick(Vector2 position, Vector2I tilePosition) {
-			if (state == State.PLACING_BUILD || state == State.CHOOSING_BUILD) {
-				state = State.IDLE;
+			if (state == State.PlacingBuild || state == State.ChoosingBuild) {
+				state = State.Idle;
 			}
-			if (state == State.JOBS_MENU) {
-				state = State.IDLE;
+			if (state == State.JobsMenu) {
+				state = State.Idle;
 			}
 		}
 
@@ -215,34 +215,34 @@ namespace scenes.region.ui {
 		}
 
 		public void OnBuildingClicked(Building building) {
-			Debug.Assert(state == State.IDLE, "Can't click on buildings outside of idle state");
-			state = State.JOBS_MENU;
+			Debug.Assert(state == State.Idle, "Can't click on buildings outside of idle state");
+			state = State.JobsMenu;
 			jobsList.Open(building);
 		}
 
 		public void OnResourceSiteClicked(ResourceSite resourceSite) {
-			Debug.Assert(state == State.IDLE, "Can't click on resourceSite outside of idle state");
-			state = State.JOBS_MENU;
+			Debug.Assert(state == State.Idle, "Can't click on resourceSite outside of idle state");
+			state = State.JobsMenu;
 			jobsList.Open(resourceSite);
 		}
 
 		void OnStateChanged(State old, State current) {
 			if (old != current) {
-				if (old == State.CHOOSING_BUILD) {
+				if (old == State.ChoosingBuild) {
 					buildingList.Reset();
-					SelectTab(Tab.NONE);
+					SelectTab(Tab.None);
 				}
-				if (old == State.PLACING_BUILD) {
+				if (old == State.PlacingBuild) {
 					buildingList.Reset();
 					buildingList.SetBuildCursor(null);
 				}
-				if (old == State.JOBS_MENU) {
+				if (old == State.JobsMenu) {
 					jobsList.Close();
 					SetTimeSpeedAltering(true);
 					if (!gamePaused) internalGamePaused = PauseRequested();
 				}
 			}
-			if (current == State.JOBS_MENU) {
+			if (current == State.JobsMenu) {
 				SetTimeSpeedAltering(false);
 				if (!gamePaused) internalGamePaused = PauseRequested();
 			}
@@ -256,7 +256,7 @@ namespace scenes.region.ui {
 		}
 
 		void Reset() {
-			state = State.IDLE;
+			state = State.Idle;
 			menuTabs.CurrentTab = -1;
 			buildingList.Reset();
 		}

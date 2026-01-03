@@ -10,8 +10,8 @@ namespace scenes.region.ui {
 	public partial class JobsList : Control {
 
 		public enum State : int {
-			VIEW_JOBS,
-			ADD_JOBS,
+			ViewJobs,
+			AddJobs,
 		}
 
 		[Export] UI ui;
@@ -109,19 +109,19 @@ namespace scenes.region.ui {
 		}
 
 		void AddJobClicked() {
-			if (state == State.VIEW_JOBS) {
+			if (state == State.ViewJobs) {
 				OpenAddJobScreen();
 			}
 		}
 
 		void ViewJobsClicked() {
-			if (state == State.ADD_JOBS) {
+			if (state == State.AddJobs) {
 				OpenViewJobScreen();
 			}
 		}
 
 		void OpenAddJobScreen() {
-			state = State.ADD_JOBS;
+			state = State.AddJobs;
 			tabs.CurrentTab = (int)state;
 
 			addJobItemList.Clear();
@@ -136,7 +136,7 @@ namespace scenes.region.ui {
 
 		void OpenViewJobScreen() {
 			GD.Print("JobsList::OpenViewJobScreen : opening extant jobs list");
-			state = State.VIEW_JOBS;
+			state = State.ViewJobs;
 			tabs.CurrentTab = (int)state;
 
 			foreach (var node in jobsList.GetChildren()) node.QueueFree();
@@ -189,8 +189,8 @@ namespace scenes.region.ui {
 			viewJobTabButton.Disabled = ExtantJobs.Count == 0;
 			addJobTabButton.Disabled = AvailableJobs.Count == 0 || (myMapObject is Building building && !building.IsConstructed);
 
-			if (state == State.VIEW_JOBS) viewJobTabButton.Disabled = true;
-			if (state == State.ADD_JOBS) addJobTabButton.Disabled = true;
+			if (state == State.ViewJobs) viewJobTabButton.Disabled = true;
+			if (state == State.AddJobs) addJobTabButton.Disabled = true;
 		}
 
 	}

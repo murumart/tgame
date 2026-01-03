@@ -99,14 +99,14 @@ namespace scenes.region {
 					return;
 				}
 				Debug.Assert(mapObjectViews.ContainsKey(mopjob.Position), $"Don't have the building object that the {job} is being attached to");
-				mapObjectViews[mopjob.Position].IconSetShow(MapObjectView.IconSetIcons.HAMMER);
+				mapObjectViews[mopjob.Position].IconSetShow(MapObjectView.IconSetIcons.Hammer);
 			}
 		}
 
 		void OnRegionJobRemoved(Job job) {
 			if (job is MapObjectJob mopjob) {
 				if (!mapObjectViews.TryGetValue(mopjob.Position, out MapObjectView view)) return; // the building view has already been removed
-				if (!(region.LocalFaction.GetJobs(mopjob.Position).Where(j => !j.IsInternal).Any())) view.IconSetHide(MapObjectView.IconSetIcons.HAMMER);
+				if (!(region.LocalFaction.GetJobs(mopjob.Position).Where(j => !j.IsInternal).Any())) view.IconSetHide(MapObjectView.IconSetIcons.Hammer);
 				var building = region.LocalFaction.GetBuilding(mopjob.Position);
 				if (building != null && view != null) {
 					view.Modulate = Colors.White;

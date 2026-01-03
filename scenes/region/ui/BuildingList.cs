@@ -66,7 +66,7 @@ public partial class BuildingList : PanelContainer {
 		if (!ui.GetCanBuild(btype)) return;
 		SetBuildCursor(btype);
 		selectedBuildThingId = -1;
-		ui.SelectTab(UI.Tab.NONE);
+		ui.SelectTab(UI.Tab.None);
 	}
 
 	public void SetBuildCursor(IBuildingType buildingType) {
@@ -88,7 +88,7 @@ public partial class BuildingList : PanelContainer {
 		ui.CameraCursor.AddChild(scene);
 		selectedBuildingScene = scene as BuildingView;
 		selectedBuildingType = buildingType;
-		ui.state = UI.State.PLACING_BUILD;
+		ui.state = UI.State.PlacingBuild;
 		selectedBuildingScene.Modulate = new Color(selectedBuildingScene.Modulate, 0.67f);
 	}
 

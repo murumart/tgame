@@ -28,7 +28,7 @@ public partial class Document {
 
 	public string GetText() {
 		var str = type switch {
-			Type.MANDATE_CONTRACT => "Contract to produce resources for the motherland.",
+			Type.MandateContract => "Contract to produce resources for the motherland.",
 			_ => throw new System.NotImplementedException(),
 		} + '\n';
 
@@ -37,7 +37,7 @@ public partial class Document {
 		}
 
 		str += type switch {
-			Type.MANDATE_CONTRACT =>
+			Type.MandateContract =>
 				Expires >= Points[0].SideA.GetTime()
 					? $"The contract must be fulfilled in {(GameTime.GetFancyTimeString(Expires - Points[0].SideA.GetTime()))}."
 					: $"The contract has " + (Fulfilled ? "been completed." : "failed."),
@@ -81,7 +81,7 @@ partial class Document {
 
 		public bool CanBeFulfilled() {
 			switch (type) {
-				case Type.PROVIDES_RESOURCES_TO: {
+				case Type.ProvidesResourcesTo: {
 						return sideA.Resources.HasEnoughAll(Resources);
 					}
 			}
@@ -90,7 +90,7 @@ partial class Document {
 
 		public void Fulfill() {
 			switch (type) {
-				case Type.PROVIDES_RESOURCES_TO: {
+				case Type.ProvidesResourcesTo: {
 						sideA.Resources.TransferResources(sideB.Resources, Resources);
 						return;
 					}
@@ -100,10 +100,10 @@ partial class Document {
 
 		public string GetDescription() {
 			return type switch {
-				Type.PROVIDES_RESOURCES_TO => Resources.Count == 0 ? "" :
+				Type.ProvidesResourcesTo => Resources.Count == 0 ? "" :
 					$"* {sideA.DocName} provides the following resources to {sideB.DocName}:"
 					+ "\n" + Resources.Aggregate("", (s, r) => s + "\n - " + r.Type.AssetName + " x " + r.Amount),
-				Type.PROVIDES_WORKERS_TO => $"* {sideA.DocName} provides {amount} workers to {sideB.DocName}, or less according to the recipient's available living space",
+				Type.ProvidesWorkersTo => $"* {sideA.DocName} provides {amount} workers to {sideB.DocName}, or less according to the recipient's available living space",
 				_ => throw new System.NotImplementedException(),
 			};
 		}
@@ -116,7 +116,7 @@ partial class Document {
 
 	public enum Type {
 
-		MANDATE_CONTRACT,
+		MandateContract,
 
 	}
 
@@ -124,8 +124,8 @@ partial class Document {
 
 		public enum Type {
 
-			PROVIDES_RESOURCES_TO,
-			PROVIDES_WORKERS_TO,
+			ProvidesResourcesTo,
+			ProvidesWorkersTo,
 
 		}
 
@@ -187,12 +187,12 @@ partial class Document {
 			Faction regionFaction,
 			TimeT due
 		) {
-			var type = Type.MANDATE_CONTRACT;
+			var type = Type.MandateContract;
 			var doc = new Document(type, due, parentFaction, regionFaction) {
 
 				Points = new Point[] {
-					new(regionFaction, Point.Type.PROVIDES_RESOURCES_TO, parentFaction) { Resources = requirements },
-					new(parentFaction, Point.Type.PROVIDES_RESOURCES_TO, regionFaction) { Resources = rewards },
+					new(regionFaction, Point.Type.ProvidesResourcesTo, parentFaction) { Resources = requirements },
+					new(parentFaction, Point.Type.ProvidesResourcesTo, regionFaction) { Resources = rewards },
 				}
 			};
 

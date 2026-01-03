@@ -9,8 +9,8 @@ namespace scenes.region {
 	public partial class MapObjectView : Node2D {
 
 		public enum IconSetIcons: int {
-			HAMMER,
-			MAX,
+			Hammer,
+			Max
 		}
 
 		[Export] Node2D iconTransformParent;
