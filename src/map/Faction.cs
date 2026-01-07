@@ -232,11 +232,11 @@ public class Faction : IEntity {
 	public void MakeFactionSubservient(Faction faction) {
 		var doc = Briefcase.CreateOwningRelationship(this, faction);
 		Debug.Assert(!faction.HasOwningFaction(), "This faction is already owned by another faction");
-		faction.Briefcase.AddDocument(Point.Type.Owns, doc);
+		faction.Briefcase.AddDocument(Point.Type.HasColony, doc);
 	}
 
 	public bool HasOwningFaction() {
-		return Briefcase.ContainsPointType(Point.Type.Owns) && Briefcase.GetOwnerDocument().SideB == this;
+		return Briefcase.ContainsPointType(Point.Type.HasColony) && Briefcase.GetOwnerDocument().SideB == this;
 	}
 
 	// this is meant to be called by the subservient faction

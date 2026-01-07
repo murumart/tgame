@@ -104,7 +104,7 @@ partial class Document {
 					$"* {sideA.DocName} provides the following resources to {sideB.DocName}:"
 					+ "\n" + Resources.Aggregate("", (s, r) => s + "\n - " + r.Type.AssetName + " x " + r.Amount),
 				Type.ProvidesWorkersTo => $"* {sideA.DocName} provides {amount} workers to {sideB.DocName}, or less according to the recipient's available living space",
-				Type.Owns => $"* {sideA.DocName} owns {sideB.DocName}",
+				Type.HasColony => $"* {sideB.DocName} is a colony of {sideA.DocName}",
 				_ => throw new System.NotImplementedException(),
 			};
 		}
@@ -126,7 +126,7 @@ partial class Document {
 
 		public enum Type {
 
-			Owns,
+			HasColony,
 			ProvidesResourcesTo,
 			ProvidesWorkersTo,
 
@@ -222,18 +222,18 @@ partial class Document {
 					* 500,
 				ownerFaction,
 				ownedFaction,
-				"Contract proving this region is owned by another."
+				"A colonial ownership contract."
 			) {
 				Points = new Point[] {
-					new(ownerFaction, Point.Type.Owns, ownedFaction),
+					new(ownerFaction, Point.Type.HasColony, ownedFaction),
 				}
 			};
 
-			AddDocument(Point.Type.Owns, doc);
+			AddDocument(Point.Type.HasColony, doc);
 			return doc;
 		}
 
-		public Document GetOwnerDocument() => documents[Point.Type.Owns][0];
+		public Document GetOwnerDocument() => documents[Point.Type.HasColony][0];
 	}
 
 }
