@@ -42,7 +42,7 @@ public partial class Building : MapObject {
 
 	protected Building(IBuildingType type, Vector2I globalPosition) : base(globalPosition) {
 		this.type = type;
-		this.Population = new(type.GetPopulationCapacity());
+		if (type.GetPopulationCapacity() > 0) this.Population = new(type.GetPopulationCapacity());
 	}
 
 	public void ProgressBuild(TimeT minutes, ConstructBuildingJob job) {

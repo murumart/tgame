@@ -1,5 +1,6 @@
-[gd_resource type="Resource" script_class="DataStorage" load_steps=17 format=3 uid="uid://dca836kv0vsm1"]
+[gd_resource type="Resource" script_class="DataStorage" load_steps=18 format=3 uid="uid://dca836kv0vsm1"]
 
+[ext_resource type="Resource" uid="uid://cxf4vhnsk21kq" path="res://resources/game/building_types/marketplace.tres" id="1_8bhaa"]
 [ext_resource type="Resource" uid="uid://c613ci251pl2v" path="res://resources/game/building_types/housing.tres" id="1_r67qw"]
 [ext_resource type="Script" uid="uid://05g7rc21q2sd" path="res://resources/game/DataStorage.cs" id="1_wv3fg"]
 [ext_resource type="Resource" uid="uid://dm7cl54id0t35" path="res://resources/game/building_types/well.tres" id="2_km6vq"]
@@ -20,6 +21,6 @@
 [resource]
 script = ExtResource("1_wv3fg")
 resourceTypes = Array[Object]([ExtResource("4_xflvh"), ExtResource("6_cosqq"), ExtResource("5_c2mn5"), ExtResource("8_0g2bt"), ExtResource("10_dyo1l"), ExtResource("11_8wepv"), ExtResource("12_7f1xh")])
-buildingTypes = Array[Object]([ExtResource("3_0g2bt"), ExtResource("1_r67qw"), ExtResource("3_o7ste"), ExtResource("2_km6vq"), ExtResource("4_h1ebs")])
+buildingTypes = Array[Object]([ExtResource("1_8bhaa"), ExtResource("3_0g2bt"), ExtResource("1_r67qw"), ExtResource("3_o7ste"), ExtResource("2_km6vq"), ExtResource("4_h1ebs")])
 resourceSiteTypes = Array[Object]([ExtResource("3_xflvh"), ExtResource("4_c2mn5"), ExtResource("6_7f1xh")])
 metadata/_custom_type_script = "uid://05g7rc21q2sd"

@@ -82,8 +82,8 @@ public class Faction : IEntity {
 
 	public void RemoveJob(Job job) {
 		if (job is MapObjectJob mopjob) {
-			Debug.Assert(jobsByPosition.ContainsKey(mopjob.Position) && jobsByPosition[mopjob.Position].Contains(job), $"Can't remove job ({job}) that doesn't exist here ({mopjob.Position})?? Hello?");
-			jobsByPosition[mopjob.Position].Remove(job);
+			Debug.Assert(jobsByPosition.ContainsKey(mopjob.GlobalPosition) && jobsByPosition[mopjob.GlobalPosition].Contains(job), $"Can't remove job ({job}) that doesn't exist here ({mopjob.GlobalPosition})?? Hello?");
+			jobsByPosition[mopjob.GlobalPosition].Remove(job);
 		}
 		Debug.Assert(jobs.Contains(job), "Dont have this job, can't remove it");
 		if (job.NeedsWorkers) UnemployWorkers(job);

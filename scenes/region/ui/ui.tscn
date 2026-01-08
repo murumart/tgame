@@ -180,6 +180,7 @@ text = "What to build?"
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
+allow_search = false
 item_count = 3
 item_0/text = "Housing"
 item_1/text = "Well"

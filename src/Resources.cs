@@ -121,6 +121,9 @@ public partial class ResourceStorage {
 			return new InStorage(Amount - resource.Amount);
 		}
 
+		public readonly override string ToString() {
+			return $"{Amount}";
+		}
 	}
 
 	public struct ResourceCapacity {

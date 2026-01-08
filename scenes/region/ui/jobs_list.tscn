@@ -94,6 +94,7 @@ horizontal_alignment = 1
 [node name="AvailableJobsList" type="ItemList" parent="Vbox/JobScrolll/TabContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+allow_search = false
 item_count = 8
 max_columns = 2
 same_column_width = true

@@ -98,22 +98,24 @@ namespace scenes.region {
 		void OnRegionJobAdded(Job job) {
 			GD.Print("RegionDisplay::OnRegionJobAdded : job added ", job);
 			if (job is MapObjectJob mopjob) {
-				if (!mapObjectViews.ContainsKey(mopjob.Position) && mopjob is ConstructBuildingJob or AbsorbFromHomelessPopulationJob) {
+				if (!mapObjectViews.ContainsKey(mopjob.GlobalPosition - region.WorldPosition) && mopjob is ConstructBuildingJob or AbsorbFromHomelessPopulationJob) {
 					Callable.From(() => OnRegionJobAdded(mopjob)).CallDeferred();
 					return;
 				}
-				Debug.Assert(mapObjectViews.ContainsKey(mopjob.Position), $"Don't have the building object that the {job} is being attached to");
-				mapObjectViews[mopjob.Position].IconSetShow(MapObjectView.IconSetIcons.Hammer);
+				Debug.Assert(mapObjectViews.ContainsKey(mopjob.GlobalPosition - region.WorldPosition), $"Don't have the building object that the {job} is being attached to");
+				mapObjectViews[mopjob.GlobalPosition - region.WorldPosition].IconSetShow(MapObjectView.IconSetIcons.Hammer);
 			}
 		}
 
 		void OnRegionJobRemoved(Job job) {
 			if (job is MapObjectJob mopjob) {
-				if (!mapObjectViews.TryGetValue(mopjob.Position, out MapObjectView view)) return; // the building view has already been removed
-				if (!(region.LocalFaction.GetJobs(mopjob.Position ).Where(j => !j.IsInternal).Any())) view.IconSetHide(MapObjectView.IconSetIcons.Hammer);
-				var building = region.LocalFaction.GetBuilding(mopjob.Position);
-				if (building != null && view != null) {
-					view.Modulate = Colors.White;
+				if (!mapObjectViews.TryGetValue(mopjob.GlobalPosition - region.WorldPosition, out MapObjectView view)) return; // the building view has already been removed
+				if (!(region.LocalFaction.GetJobs(mopjob.GlobalPosition - region.WorldPosition).Where(j => !j.IsInternal).Any())) view.IconSetHide(MapObjectView.IconSetIcons.Hammer);
+				if (region.LocalFaction.HasBuilding(mopjob.GlobalPosition - region.WorldPosition)) {
+					var building = region.LocalFaction.GetBuilding(mopjob.GlobalPosition - region.WorldPosition);
+					if (building != null && view != null) {
+						view.Modulate = Colors.White;
+					}
 				}
 			}
 		}
