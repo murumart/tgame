@@ -112,6 +112,15 @@ public partial class ResourceSite : MapObject {
 		}
 	}
 
+	// get a list of the resources. don't use these bundles in actual gameplay, only for display
+	public void GetResourcesAvailableAtPristineNaturalStart(Dictionary<IResourceType, ResourceBundle> resourceDict) {
+		foreach (var well in MineWells) {
+			var type = well.ResourceType;
+			if (!resourceDict.ContainsKey(type)) resourceDict[type] = new(type, 0);
+			resourceDict[type] = new(type, resourceDict[type].Amount + well.InitialBunches * well.BunchSize);
+		}
+	}
+
 }
 
 public partial class ResourceSite {

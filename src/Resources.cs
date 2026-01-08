@@ -20,22 +20,16 @@ public struct ResourceBundle {
 		this.Amount = amount;
 	}
 
+	public override readonly string ToString() => $"{Type.AssetName} x {Amount}";
+
 }
 
 public partial class ResourceStorage : IEnumerable<KeyValuePair<IResourceType, InStorage>> {
 
 	readonly Dictionary<IResourceType, InStorage> storageAmounts = new();
 	public int ItemAmount { get; private set; }
-	public int ItemCapacity { get; private set; }
+	//public int ItemCapacity { get; private set; }
 
-
-	public void IncreaseCapacity(int amount) {
-		ItemCapacity += amount;
-	}
-
-	public void ReduceCapacity(int amount) {
-		ItemCapacity -= amount;
-	}
 
 	public bool HasEnough(ResourceBundle resource) {
 		if (!storageAmounts.TryGetValue(resource.Type, out InStorage stored)) return false;
@@ -49,7 +43,7 @@ public partial class ResourceStorage : IEnumerable<KeyValuePair<IResourceType, I
 		return true;
 	}
 
-	public bool CanAdd(int amount) => amount + ItemAmount <= ItemCapacity;
+	public bool CanAdd(int _amount) => true;
 
 	public bool CanAdd(ResourceBundle resource) => CanAdd(resource.Amount);
 

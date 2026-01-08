@@ -7,7 +7,8 @@ using static ResourceSite;
 
 public class Region {
 
-	public event Action<Vector2I> MapObjectUpdatedAtEvent; public void NotifyMapObjectUpdateAt(Vector2I p) => MapObjectUpdatedAtEvent?.Invoke(p);
+	public event Action<Vector2I> MapObjectUpdatedAtEvent;
+	public void NotifyMapObjectUpdateAt(Vector2I p) => MapObjectUpdatedAtEvent?.Invoke(p);
 
 	readonly int worldIndex;
 
@@ -24,12 +25,26 @@ public class Region {
 	public int LandTileCount => GroundTiles.Values.Where(t => (t & GroundTileType.Land) != 0).Count();
 	public int OceanTileCount => GroundTiles.Values.Where(t => t == GroundTileType.Ocean).Count();
 
+	public readonly Field<ResourceBundle[]> NaturalResources;
+
 
 	public Region(int index, Vector2I worldPosition, Dictionary<Vector2I, GroundTileType> groundTiles) {
 		this.worldIndex = index;
 		WorldPosition = worldPosition;
 		GroundTiles = groundTiles;
 		this.Color = Color.FromHsv(GD.Randf(), (float)GD.RandRange(0.75, 1.0), 1.0f);
+
+		NaturalResources = new(() => {
+			var dict = new Dictionary<IResourceType, ResourceBundle>();
+
+			foreach (var mo in this.mapObjects.Values) {
+				if (mo is ResourceSite rs) {
+					rs.GetResourcesAvailableAtPristineNaturalStart(dict);
+				}
+			}
+
+			return dict.Values.ToArray();
+		});
 	}
 
 	public void PassTime(TimeT minutes) {
@@ -69,12 +84,14 @@ public class Region {
 		Debug.Assert(HasMapObject(tile), $"There is no map object to remove at {tile}");
 		mapObjects.Remove(tile);
 		NotifyMapObjectUpdateAt(tile);
+		NaturalResources.Touch();
 	}
 
 	MapObject CreateMapObjectSpotAndPlace(MapObject.IMapObjectType type, Vector2I position) {
 		Debug.Assert(!HasMapObject(position, out var m), $"there's already a mapobject {m} at position {position}");
 		var ob = type.CreateMapObject(position);
 		mapObjects[position] = ob;
+		NaturalResources.Touch();
 		return ob;
 	}
 

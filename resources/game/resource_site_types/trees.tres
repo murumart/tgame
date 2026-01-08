@@ -10,7 +10,7 @@ resourceType = ExtResource("1_3e1l0")
 minutesPerBunch = 60
 bunchSize = 3
 minutesPerBunchRegen = 17280
-initialBunches = 100
+initialBunches = 40
 metadata/_custom_type_script = "uid://bnfatrmjew0vy"
 
 [resource]

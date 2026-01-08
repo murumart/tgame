@@ -9,7 +9,7 @@ script = ExtResource("1_pgbn8")
 resourceType = ExtResource("1_1r0go")
 minutesPerBunch = 75
 bunchSize = 3
-initialBunches = 120
+initialBunches = 33
 metadata/_custom_type_script = "uid://bnfatrmjew0vy"
 
 [resource]

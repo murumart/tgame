@@ -36,33 +36,6 @@ public readonly struct Person {
 
 public class Population {
 
-	class Field<T> {
-
-		static int dirtyAccesses = 0;
-		static int touches = 0;
-
-		bool dirty = true;
-		T value;
-		public T Value {
-			get {
-				if (dirty) {
-					dirtyAccesses++;
-					value = getval();
-					dirty = false;
-				}
-				return value;
-			}
-		}
-		readonly Func<T> getval;
-
-		public Field(Func<T> get) { this.getval = get; }
-		public void Touch() {
-			dirty = true;
-			touches++;
-		}
-
-	}
-
 	static ulong personId = 0;
 
 	class TablePerson {

@@ -75,10 +75,11 @@ namespace scenes.region {
 			}
 			secondLevel = null;
 
-			foreach (var r in Registry.Resources.GetAssets()) {
-					GD.Print("RegionMan::_Ready : adding resource ", r);
-					faction.Resources.AddResource(new(r, 50));
-			}
+			// DEBUG add assets
+			//foreach (var r in Registry.Resources.GetAssets()) {
+			//		GD.Print("RegionMan::_Ready : adding resource ", r);
+			//		faction.Resources.AddResource(new(r, 50));
+			//}
 		}
 
 		public override void _Notification(int what) { // teardown

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Godot;
@@ -6,9 +7,9 @@ using static ResourceSite;
 
 public static class Registry {
 
-	public static AssetTypeRegistry<IResourceType> Resources {get; private set;}
-	public static AssetTypeRegistry<IBuildingType> Buildings {get; private set;}
-	public static AssetTypeRegistry<IResourceSiteType> ResourceSites {get; private set;}
+	public static AssetTypeRegistry<IResourceType> Resources { get; private set; }
+	public static AssetTypeRegistry<IBuildingType> Buildings { get; private set; }
+	public static AssetTypeRegistry<IResourceSiteType> ResourceSites { get; private set; }
 
 
 	public static void Register(IResourceType[] resourceTypes, IBuildingType[] buildingTypes, IResourceSiteType[] resourceSiteTypes) {
@@ -85,6 +86,35 @@ public interface IAssetType {
 	string GetIdString() {
 		Debug.Assert(AssetName != null, $"Asset name is empty! (object: {this}, assettypename: {AssetTypeName})");
 		return (AssetName).ToSnakeCase();
+	}
+
+}
+
+// Stores a value and a function for calculating that value.
+// Don't have to recompute the value each time
+public class Field<T> {
+
+	// DEBUG
+	static int dirtyAccesses = 0; static int touches = 0;
+
+	bool dirty = true;
+	T value;
+	public T Value {
+		get {
+			if (dirty) {
+				dirtyAccesses++;
+				value = getval();
+				dirty = false;
+			}
+			return value;
+		}
+	}
+	readonly Func<T> getval;
+
+	public Field(Func<T> get) { this.getval = get; }
+	public void Touch() {
+		dirty = true;
+		touches++;
 	}
 
 }

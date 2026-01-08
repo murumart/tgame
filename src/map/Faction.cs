@@ -44,7 +44,9 @@ public class Faction : IEntity {
 	TimeT time;
 
 
-	public Faction(Region region, int initialPopulation = 10, int maxPop = 100, int storageCapacity = 300) {
+	public Faction(Region region, int initialPopulation = 10, int maxPop = 100) {
+		maxPop = -1; // UNUSED
+
 		Region = region;
 		Briefcase = new();
 
@@ -55,7 +57,6 @@ public class Faction : IEntity {
 
 		Region.SetLocalFaction(this);
 
-		resourceStorage.IncreaseCapacity(storageCapacity);
 		var housing = Registry.Buildings.GetAsset("log_cabin");
 		PlacePrebuiltBuilding(housing, new(0, 0));
 	}

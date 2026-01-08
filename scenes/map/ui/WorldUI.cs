@@ -38,6 +38,7 @@ public partial class WorldUI : Control {
 			+ $"Land tiles: {region.LandTileCount}\n"
 			+ $"Sea tiles: {region.OceanTileCount}\n"
 			+ $"Population: {(region.LocalFaction == null ? "Uninhabited" : region.LocalFaction.GetPopulationCount())}\n"
+			+ $"Natural Resources: {string.Join(", ", region.NaturalResources.Value.Select(a => a.ToString()))}\n"
 			+ $"Map objects: {things}"
 		;
 		regionPlayButton.Disabled = !region.LocalFaction.HasOwningFaction();

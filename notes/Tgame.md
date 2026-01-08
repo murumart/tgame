@@ -1,7 +1,7 @@
 
 # <MÄNGU NIMI>
 
-Linnaehitusmäng, mille taustal toimub strateegiamäng.
+Linnaehitusmäng, mille kulgu juhib arvutist jutuvestja.
 
 ## "Disainisambad"
 
@@ -13,37 +13,19 @@ Mängija peab saama läbi viia mõttekaid käike ning neid rahulikult kaaluda.
 
 Mäng jookseb reaalajas, aga oma järgmiste käikude kavandamiseks saab mängu pausile panna. Juhtuvad asjad, mis mängijat sunnivad oma plaani muutma, kuid on ka hetked rahunemiseks ning enda loodud masinavärgi vaatlemiseks.
 
-### 2. Elav maailm
+### 2. 
 
-**Mängija mängib oma mängu, ülejäänud maailm mängib enda oma. See peab olema arusaadav ning arvestatav.**
+**Pinge**
 
-Mängija peab aru saama, et ta pole maailmas ainuke "mõistuslik" olend.
+### 3. 
 
-Niisamuti kui mängija loodab tulu teenida, loodavad ka seda kõik teised osapooled maailmas. Nende käitumine mõjutab mängijat olulisel määral.
 
-### 3. Mõjukas mängija
-
-**Mängija peab saama oma tegevusega maailma mõjutada ka väljaspool mänguala. Kohalik tootlus mõjutab turgu, sidemeid, sõdu.**
-
-Mängija peab tundma ennast maailma osana ning võimelisena seda muutma.
-
-Näiteks turule suure hulga odava toidu paiskamine võiks loogiliselt vähendada teiste toidutootjate tulu ning suunata toiduostjaid endi eelarveid ümber hindama. Kui nüüd see kraan kinni keerata, satuks mõni eelmine ostja hätta, mõni tuleks ähvardustega mängija jutule.
 
 ## Mängumehaanikad
 
 ### Kolooniaehitus ning -haldus
 
 Mängija planeerib ehitisi, milledesse palkab tööle inimesi. Inimesed toodavad esemeid vastavalt oma tööle ning töökohale, mis asub ehitises ("pagarikoda") või mõnes kohas mängualal ("karjäär").
-
-### Diplomaatia
-
-Kolooniana peab suhtlema emamaaga, kes sätib kvoodi mingi asja tootmiseks ning saadab selle täitmisel esemete vastu raha ning suuremad ootused. Kaubandus saab toimuda ka teiste ümbritsevate riikidega.
-
-Emamaaga oleks võimalik rääkida enda autonoomia teemal ning järjest rohkem seda saada, kuni saavutatakse iseseisvus. Emamaa ründaks siis oma vägedega mängija regiooni.
-
-### Automaat-RTS
-
-Ümbritsevad riigid haldavad samuti kolooniaid/linnu. Samad dünaamikad, mis mängija linna ning emamaa vahel. Riigid kauplevad, kemplevad, sõdivad vastavalt arvutustele.
 
 ## Omadused
 
@@ -57,7 +39,7 @@ Mängijale nähtav kaart on ruudustik. Mõõtkava on selline, et üks ruut mahut
 
 ### Tööd
 
-Lai süsteem asjade korraldamiseks enda maatükil. Tööle palgatakse inimesed ning nende hulgast ja palgast sõltub töö efektiivsus.
+Süsteem asjade korraldamiseks enda maatükil. Tööle palgatakse inimesed ning nende hulgast ja palgast sõltub töö efektiivsus.
 
 Maja ehitamine - kui kiiresti maja ehitatakse. Pagarikojas küpsetamine - kui palju leiba toodetakse. Metsas puuraidumine - kui palju puitu kätte saadakse ja kui kiiresti.
 
