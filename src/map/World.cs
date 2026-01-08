@@ -9,6 +9,19 @@ public enum GroundTileType : byte {
 	Ocean = 0b10000000,
 }
 
+public static class GroundTileTypeEx {
+	public static string UIString(this GroundTileType t) {
+		return t switch {
+			GroundTileType.Void => "...",
+			GroundTileType.Grass => "grass",
+			GroundTileType.Sand => "sand",
+			GroundTileType.Land => "??all land",
+			GroundTileType.Ocean => "sea",
+			_ => throw new NotImplementedException(),
+		};
+	}
+}
+
 public class World {
 
 	public int Longitude { get; init; }

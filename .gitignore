@@ -8,3 +8,7 @@
 # what
 *.csproj.old.*
 *.csproj.old
+
+# tracing
+*.nettrace
+*.speedscope.*

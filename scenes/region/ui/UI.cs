@@ -211,7 +211,7 @@ namespace scenes.region.ui {
 		}
 
 		public void OnTileHighlighted(Vector2I tilePosition, Region region) {
-			resourceDisplay.Display(tilepos: tilePosition);
+			resourceDisplay.Display(inRegionTilepos: (tilePosition, region));
 		}
 
 		public void OnBuildingClicked(Building building) {
