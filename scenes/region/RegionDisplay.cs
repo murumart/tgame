@@ -49,12 +49,14 @@ namespace scenes.region {
 			region.MapObjectUpdatedAtEvent += OnRegionMapObjectUpdated;
 			region.LocalFaction.JobAddedEvent += OnRegionJobAdded;
 			region.LocalFaction.JobRemovedEvent += OnRegionJobRemoved;
+			region.TileChangedAtEvent += OnTileChanged;
 		}
 
 		void DisconnectEvents() {
 			region.MapObjectUpdatedAtEvent -= OnRegionMapObjectUpdated;
 			region.LocalFaction.JobAddedEvent -= OnRegionJobAdded;
 			region.LocalFaction.JobRemovedEvent -= OnRegionJobRemoved;
+			region.TileChangedAtEvent -= OnTileChanged;
 		}
 
 		MapObjectView LoadMapObjectView(MapObject mo) {
@@ -69,8 +71,8 @@ namespace scenes.region {
 		public void DisplayMapObject(MapObject mopbject) {
 			var view = LoadMapObjectView(mopbject);
 			buildingsParent.AddChild(view);
-			mapObjectViews[mopbject.Position] = view;
-			view.Position = Tilemaps.TilePosToWorldPos(mopbject.Position);
+			mapObjectViews[mopbject.GlobalPosition - region.WorldPosition] = view;
+			view.Position = Tilemaps.TilePosToWorldPos(mopbject.GlobalPosition - region.WorldPosition);
 			if (mopbject is Building building) {
 				if (building.GetBuildProgress() < 1) view.Modulate = new Color(1f, 1f, 1f, 0.5f);
 			}
@@ -88,6 +90,8 @@ namespace scenes.region {
 			bool exists = region.HasMapObject(tile);
 			if (!exists) {
 				RemoveDisplay(tile);
+			} else if (!mapObjectViews.ContainsKey(tile)) {
+				DisplayMapObject(region.GetMapObject(tile));
 			}
 		}
 
@@ -106,12 +110,16 @@ namespace scenes.region {
 		void OnRegionJobRemoved(Job job) {
 			if (job is MapObjectJob mopjob) {
 				if (!mapObjectViews.TryGetValue(mopjob.Position, out MapObjectView view)) return; // the building view has already been removed
-				if (!(region.LocalFaction.GetJobs(mopjob.Position).Where(j => !j.IsInternal).Any())) view.IconSetHide(MapObjectView.IconSetIcons.Hammer);
+				if (!(region.LocalFaction.GetJobs(mopjob.Position ).Where(j => !j.IsInternal).Any())) view.IconSetHide(MapObjectView.IconSetIcons.Hammer);
 				var building = region.LocalFaction.GetBuilding(mopjob.Position);
 				if (building != null && view != null) {
 					view.Modulate = Colors.White;
 				}
 			}
+		}
+
+		void OnTileChanged(Vector2I at) {
+			tilemaps.DisplayGround(region);
 		}
 
 		// misc..

@@ -7,12 +7,12 @@ using static ResourceStorage;
 
 public abstract partial class MapObject {
 
-	protected Vector2I position; public Vector2I Position { get => position; }
+	protected Vector2I position; public Vector2I GlobalPosition { get => position; }
 	public abstract IMapObjectType Type { get; }
 
 
-	protected MapObject(Vector2I position) {
-		this.position = position;
+	protected MapObject(Vector2I globalPosition) {
+		this.position = globalPosition;
 	}
 
 	public abstract void PassTime(TimeT minutes);
@@ -23,7 +23,7 @@ public partial class MapObject {
 
 	public interface IMapObjectType {
 
-		MapObject CreateMapObject(Vector2I position);
+		MapObject CreateMapObject(Vector2I globalPosition);
 		IEnumerable<Job> GetAvailableJobs();
 
 	}
@@ -40,7 +40,7 @@ public partial class Building : MapObject {
 	public ConstructBuildingJob ConstructionJob;
 
 
-	protected Building(IBuildingType type, Vector2I position) : base(position) {
+	protected Building(IBuildingType type, Vector2I globalPosition) : base(globalPosition) {
 		this.type = type;
 		this.Population = new(type.GetPopulationCapacity());
 	}

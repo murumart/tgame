@@ -134,7 +134,7 @@ public class JobBox : Job {
 	public Vector2I Position {
 		get {
 			Debug.Assert(attachment != null, $"Can't get position of job with no building attachment {job}");
-			return attachment.Position;
+			return attachment.GlobalPosition;
 		}
 	}
 

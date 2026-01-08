@@ -9,7 +9,7 @@ public class AbsorbFromHomelessPopulationJob : MapObjectJob {
 	public override bool NeedsWorkers => false;
 	public bool Paused { get; set; }
 
-	public override Vector2I Position => building.Position;
+	public override Vector2I Position => building.GlobalPosition;
 
 	Building building;
 	Faction regionFaction;
@@ -67,7 +67,7 @@ public class ConstructBuildingJob : MapObjectJob {
 	public override Group Workers => workers;
 	public bool Valid => building != null;
 
-	public override Vector2I Position => building.Position;
+	public override Vector2I Position => building.GlobalPosition;
 
 	readonly List<ResourceBundle> requirements;
 
@@ -93,7 +93,7 @@ public class ConstructBuildingJob : MapObjectJob {
 			requirements.Clear();
 		} else {
 			RefundRequirements(requirements.ToArray(), ctxFaction.Resources);
-			ctxFaction.RemoveBuilding(building.Position);
+			ctxFaction.RemoveBuilding(building.GlobalPosition);
 			//building = null;
 		}
 	}
@@ -185,7 +185,7 @@ public class GatherResourceJob : MapObjectJob {
 
 	public override Group Workers => workers;
 
-	public override Vector2I Position => site.Position;
+	public override Vector2I Position => site.GlobalPosition;
 
 	readonly Group workers;
 	ResourceStorage storage;
@@ -243,7 +243,7 @@ public class GatherResourceJob : MapObjectJob {
 		}
 
 		regionFaction.RemoveJob(this);
-		regionFaction.Uproot(site.Position);
+		regionFaction.Uproot(site.GlobalPosition);
 		site = null;
 	}
 
@@ -314,7 +314,7 @@ public class CraftJob : MapObjectJob {
 	public override string Title => $"Craft {outputDescription}";
 	public override Group Workers => workers;
 
-	public override Vector2I Position => building.Position;
+	public override Vector2I Position => building.GlobalPosition;
 
 	readonly Group workers;
 	ResourceStorage storage;

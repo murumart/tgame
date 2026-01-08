@@ -175,7 +175,7 @@ namespace scenes.region.ui {
 			resourceLabel.Text = "";
 			var resources = GetResourcesEvent?.Invoke();
 			foreach (var p in resources) {
-				resourceLabel.AppendText(p.ToString());
+				resourceLabel.AppendText(p.Value.ToString());
 			}
 			resourceLabel.AppendText($"\ntotal {resources.ItemAmount}");
 		}

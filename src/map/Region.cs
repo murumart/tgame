@@ -10,6 +10,9 @@ public class Region {
 	public event Action<Vector2I> MapObjectUpdatedAtEvent;
 	public void NotifyMapObjectUpdateAt(Vector2I p) => MapObjectUpdatedAtEvent?.Invoke(p);
 
+	public event Action<Vector2I> TileChangedAtEvent;
+	public void NotifyTileChangedAt(Vector2I p) => TileChangedAtEvent?.Invoke(p);
+
 	readonly int worldIndex;
 
 	public Vector2I WorldPosition { get; init; }
@@ -80,6 +83,11 @@ public class Region {
 		return mapObjects.TryGetValue(tile, out mapObject);
 	}
 
+	public MapObject GetMapObject(Vector2I tile) {
+		Debug.Assert(HasMapObject(tile), $"Region has no map object at {tile}");
+		return mapObjects[tile];
+	}
+
 	public void RemoveMapObject(Vector2I tile) {
 		Debug.Assert(HasMapObject(tile), $"There is no map object to remove at {tile}");
 		mapObjects.Remove(tile);
@@ -89,10 +97,17 @@ public class Region {
 
 	MapObject CreateMapObjectSpotAndPlace(MapObject.IMapObjectType type, Vector2I position) {
 		Debug.Assert(!HasMapObject(position, out var m), $"there's already a mapobject {m} at position {position}");
-		var ob = type.CreateMapObject(position);
+		var ob = type.CreateMapObject(WorldPosition + position);
 		mapObjects[position] = ob;
 		NaturalResources.Touch();
 		return ob;
+	}
+
+	void AddMapObjectToSpot(MapObject mapObject, Vector2I position) {
+		Debug.Assert(!HasMapObject(position, out var m), $"there's already a mapobject {m} at position {position}");
+		mapObjects[position] = mapObject;
+		NaturalResources.Touch();
+		NotifyMapObjectUpdateAt(position);
 	}
 
 	public Building CreateBuildingSpotAndPlace(Building.IBuildingType type, Vector2I position) {
@@ -103,6 +118,23 @@ public class Region {
 	public ResourceSite CreateResourceSiteAndPlace(ResourceSite.IResourceSiteType type, Vector2I position) {
 		var resourceSite = (ResourceSite)CreateMapObjectSpotAndPlace(type, position);
 		return resourceSite;
+	}
+
+	public void AnnexTile(Region from, Vector2I fromCoordinate) {
+		Debug.Assert(from.GroundTiles.ContainsKey(fromCoordinate), $"Region to annex from doesn't own tile at {fromCoordinate}");
+		var localCoord = fromCoordinate + from.WorldPosition - WorldPosition;
+		Debug.Assert(!GroundTiles.ContainsKey(localCoord), $"Annexing region somehow already owns tile at {localCoord}");
+		var tile = from.GroundTiles[fromCoordinate];
+		from.GroundTiles.Remove(fromCoordinate);
+		GroundTiles[localCoord] = tile;
+		from.NotifyTileChangedAt(fromCoordinate);
+		NotifyTileChangedAt(localCoord);
+		if (from.HasMapObject(fromCoordinate)) {
+			Debug.Assert(!HasMapObject(localCoord), "Somehow, I already have a map object where im trying to steal it from??");
+			var mop = from.GetMapObject(fromCoordinate);
+			from.RemoveMapObject(fromCoordinate);
+			AddMapObjectToSpot(mop, localCoord);
+		}
 	}
 
 	public override string ToString() {

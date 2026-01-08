@@ -117,6 +117,14 @@ namespace scenes.region {
 				ui.OnBuildingClicked(faction.GetBuilding(tile));
 			} else if (region.HasMapObject(tile, out MapObject mop) && mop is ResourceSite resourceSite) {
 				ui.OnResourceSiteClicked(resourceSite);
+			} else if (!region.GroundTiles.ContainsKey(tile)) {
+				// DEBUG annex
+				//foreach (var ne in region.Neighbors) {
+				//	var thereCoord = tile + region.WorldPosition - ne.WorldPosition;
+				//	if (ne.GroundTiles.ContainsKey(thereCoord)) {
+				//		region.AnnexTile(ne, thereCoord);
+				//	}
+				//}
 			}
 		}
 
@@ -199,7 +207,7 @@ namespace scenes.region {
 		}
 
 		public HashSet<JobBox> GetMapObjectJobs(MapObject building) {
-			var pos = building.Position;
+			var pos = building.GlobalPosition;
 			var jbox = new HashSet<JobBox>();
 			foreach (var job in faction.GetJobs(pos)) {
 				jbox.Add(new JobBox(job, building));

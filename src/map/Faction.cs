@@ -26,7 +26,6 @@ public class Faction : IEntity {
 
 	public Region Region { get; init; }
 
-	readonly Dictionary<Vector2I, Building> buildings = new();
 	readonly List<Job> jobs = new();
 	readonly Dictionary<Vector2I, HashSet<Job>> jobsByPosition = new();
 
@@ -66,7 +65,7 @@ public class Faction : IEntity {
 	public int GetPopulationCount() => Population.Count;
 
 	public void AddMapObjectJob(MapObjectJob job, MapObject mapObject) {
-		RegisterJob(mapObject.Position, job);
+		RegisterJob(mapObject.GlobalPosition, job);
 
 		Debug.Assert(job.CanInitialise(this, mapObject), "Job cannot be initialised!");
 		job.Initialise(this, mapObject);
@@ -137,7 +136,6 @@ public class Faction : IEntity {
 	// *** MANAGING BUILDINGS ***
 
 	public Building PlaceBuildingConstructionSite(IBuildingType type, Vector2I position) {
-		Debug.Assert(!buildings.ContainsKey(position), "There's a lreayd a building here (known by faction)");
 		Debug.Assert(Region.CanPlaceBuilding(position), "There's a lreayd a building here (known by region)");
 		Debug.Assert(CanPlaceBuilding(type, position), "Cannot place the building for whatever reason");
 		var building = PlaceBuilding(type, position);
@@ -151,7 +149,7 @@ public class Faction : IEntity {
 
 	// for initialising the world and such
 	Building PlacePrebuiltBuilding(IBuildingType type, Vector2I position) {
-		Debug.Assert(!buildings.ContainsKey(position), "There's a lreayd a building here");
+		Debug.Assert(!Region.HasMapObject(position), "There's a lreayd a building here");
 		var building = PlaceBuilding(type, position);
 		building.ProgressBuild((int)(type.GetHoursToConstruct() * 60), new AnonBuilderJob());
 		return building;
@@ -160,7 +158,6 @@ public class Faction : IEntity {
 	Building PlaceBuilding(IBuildingType type, Vector2I position) {
 		var building = Region.CreateBuildingSpotAndPlace(type, position);
 		if (type.GetPopulationCapacity() > 0) AddMapObjectJob(new AbsorbFromHomelessPopulationJob(), building);
-		buildings[position] = building;
 		return building;
 	}
 
@@ -174,7 +171,6 @@ public class Faction : IEntity {
 
 	public void RemoveBuilding(Vector2I at) {
 		Debug.Assert(HasBuilding(at), $"There's no building to remove at {at}...");
-		buildings.Remove(at);
 		foreach (var job in GetJobs(at)) {
 			RemoveJob(job);
 		}
@@ -187,11 +183,12 @@ public class Faction : IEntity {
 		Region.RemoveMapObject(at);
 	}
 
-	public ICollection<Building> GetBuildings() => buildings.Values;
+	public bool HasBuilding(Vector2I at) => Region.HasMapObject(at) && Region.GetMapObject(at) is Building;
 
-	public bool HasBuilding(Vector2I at) => buildings.ContainsKey(at);
-
-	public Building GetBuilding(Vector2I at) => buildings.GetValueOrDefault(at, null);
+	public Building GetBuilding(Vector2I at) {
+		Debug.Assert(HasBuilding(at), $"Don't have a building at {at}");
+		return Region.GetMapObject(at) as Building;
+	}
 
 	private class AnonBuilderJob : ConstructBuildingJob {
 
@@ -200,11 +197,7 @@ public class Faction : IEntity {
 
 	}
 
-	void OnMapObjectUpdated(Vector2I at) {
-		if (!Region.HasMapObject(at) && HasBuilding(at)) {
-			buildings.Remove(at);
-		}
-	}
+	void OnMapObjectUpdated(Vector2I at) { }
 
 	// *** TIMING AND CONTRACTS ***
 
