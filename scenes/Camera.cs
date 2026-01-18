@@ -20,6 +20,12 @@ public partial class Camera : Camera2D {
 	public override void _UnhandledInput(InputEvent evt) {
 		if (evt is InputEventMouseButton bEvent) {
 			MouseButtonInput(bEvent);
+		} else if (evt is InputEventMouseMotion mEvent) {
+			if (dragging) {
+				var wPos = mEvent.Position;
+				var differ = (draggingStartPos - wPos) / zoomSize;
+				Position = draggingStartCamPos + differ;
+			}
 		}
 	}
 
@@ -28,6 +34,9 @@ public partial class Camera : Camera2D {
 		else zoomSize = Mathf.Max(zoomSize - 0.1f * zoomSize, 0.25f);
 	}
 
+	bool dragging = false;
+	Vector2 draggingStartPos;
+	Vector2 draggingStartCamPos;
 	protected virtual bool MouseButtonInput(InputEventMouseButton evt) {
 
 		bool consumed = false;
@@ -37,10 +46,18 @@ public partial class Camera : Camera2D {
 		} else if (evt.ButtonIndex == MouseButton.WheelDown) {
 			ScrollInput(false);
 			consumed = true;
-		} else if (evt.ButtonIndex == MouseButton.Left && evt.IsPressed()) {
+		} else if (evt.ButtonIndex == MouseButton.Left && evt.Pressed) {
 			var wPos = GetCanvasTransform().AffineInverse() * evt.Position;
 			ClickedMouseEvent?.Invoke((Vector2I)wPos);
 			return true;
+		} else if (evt.ButtonIndex == MouseButton.Middle) {
+			if (evt.Pressed) {
+				dragging = true;
+				draggingStartPos = evt.Position;
+				draggingStartCamPos = Position;
+			} else {
+				dragging = false;
+			}
 		}
 		Zoom = new Vector2(zoomSize, zoomSize);
 		if (consumed) GetWindow().SetInputAsHandled();

@@ -60,7 +60,8 @@ Mäng peab olema mängitav iga verstaposti saabudes.
 	- [ ] turg äri ajamiseks (suurem teema kui eelnevad!)
 	- [ ] lõke vms esemete hävitamiseks
 - [ ] mängumehaanikad
-	- [ ] populatsioon sööb toitu, kasvab sündidest, kahaneb surmadest
+	- [ ] kõigis regioonides populatsioon sööb toitu, kasvab sündidest, kahaneb surmadest
+	- [ ] sisseränne emamaalt
 	- [ ] emamaa peab arvet ressurssidest mida kasutab, saadab nende ning regiooni asukoha põhjal mandaate
 	- [X] populatsioonist tööliste määramine
 
