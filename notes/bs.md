@@ -2,7 +2,7 @@ Diplomacy: each faction has values and a view of the player faction. Making busi
 
 ---
 
-Limited resource space is annoying to implement. Resources should be limited through availability and creation time, not storage.
+- [X] Limited resource space is annoying to implement. Resources should be limited through availability and creation time, not storage.
 
 ### Sylvester
 

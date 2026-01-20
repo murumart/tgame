@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://dfsyk55h5ioh0"]
 
-[ext_resource type="Script" uid="uid://tg0ox5vibsay" path="res://scenes/region/RegionMan.cs" id="1_qi5r4"]
+[ext_resource type="Script" uid="uid://tg0ox5vibsay" path="res://scenes/region/PlayerRegion.cs" id="1_qi5r4"]
 [ext_resource type="PackedScene" uid="uid://cpeaxmkgldt5g" path="res://scenes/region/region_display.tscn" id="3_pmx41"]
 [ext_resource type="PackedScene" uid="uid://b1t88emteoav4" path="res://scenes/region/camera.tscn" id="4_du6xo"]
 

@@ -20,6 +20,7 @@ namespace scenes.region {
 
 		Region region;
 		Faction faction;
+		FactionActions actions;
 
 
 		public override void _Ready() { // setup
@@ -39,6 +40,8 @@ namespace scenes.region {
 
 			region = GameMan.Singleton.Game.PlayRegion;
 			faction = region.LocalFaction;
+			actions = new(region, faction);
+
 			ui.GetPopulationCountEvent += faction.GetPopulationCount;
 			ui.GetHomelessPopulationCountEvent += GetHomelessPopulationCount;
 			ui.GetUnemployedPopulationCountEvent += GetUnemployedPopulationCount;
@@ -52,7 +55,7 @@ namespace scenes.region {
 
 			camera.Region = region;
 
-			GameMan.Singleton.Game.PassTime(60 * 7); // start game at 7:00
+			if (GameMan.Singleton.Game.Time.Minutes == 0) GameMan.Singleton.Game.PassTime(60 * 7); // start game at 7:00
 
 			regionDisplay.LoadRegion(region);
 

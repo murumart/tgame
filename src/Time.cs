@@ -40,6 +40,7 @@ public class GameTime : ITimePassing {
 	public const int MONTHS_PER_YEAR = 0;
 
 	TimeT minutes = 0;
+	public TimeT Minutes { get => minutes; }
 
 
 	public GameTime() {

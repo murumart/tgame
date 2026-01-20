@@ -1,7 +1,7 @@
 [gd_scene load_steps=14 format=3 uid="uid://dye16eba5lb31"]
 
 [ext_resource type="Script" uid="uid://3don1v6ha6ia" path="res://scenes/map/WorldMan.cs" id="1_g1pp1"]
-[ext_resource type="PackedScene" uid="uid://dfsyk55h5ioh0" path="res://scenes/region/region_man.tscn" id="2_vqee5"]
+[ext_resource type="PackedScene" uid="uid://dfsyk55h5ioh0" path="res://scenes/region/player_region.tscn" id="2_vqee5"]
 [ext_resource type="Script" uid="uid://dr5e3dfpjl6hw" path="res://scenes/map/WorldGenerator.cs" id="3_n4hhb"]
 [ext_resource type="FastNoiseLite" uid="uid://cf0v3ea3na5un" path="res://scenes/map/noises/continental.tres" id="4_f4k24"]
 [ext_resource type="Script" uid="uid://jdld04xxcpmv" path="res://scenes/map/WorldRenderer.cs" id="5_3biw4"]
