@@ -31,6 +31,11 @@ public partial class ResourceStorage : IEnumerable<KeyValuePair<IResourceType, I
 	//public int ItemCapacity { get; private set; }
 
 
+	public int GetCount(IResourceType item) {
+		if (!storageAmounts.TryGetValue(item, out var v)) return 0;
+		return v.Amount;
+	}
+
 	public bool HasEnough(ResourceBundle resource) {
 		if (!storageAmounts.TryGetValue(resource.Type, out InStorage stored)) return false;
 		return resource.Amount <= stored.Amount;

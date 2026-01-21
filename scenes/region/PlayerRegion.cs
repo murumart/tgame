@@ -11,7 +11,7 @@ using static Document;
 
 namespace scenes.region {
 
-	public partial class RegionMan : Node {
+	public partial class PlayerRegion : Node {
 
 		[Export] UI ui;
 		[Export] RegionCamera camera;
@@ -22,29 +22,34 @@ namespace scenes.region {
 		Faction faction;
 		FactionActions actions;
 
+		// debug
+		LocalAI ai;
 
-		public override void _Ready() { // setup
-			ui.MapClickEvent += MapClick;
-			ui.RequestBuildEvent += OnUIBuildingPlaceRequested;
-			ui.GetBuildingTypesEvent += GetBuildingTypes;
-			ui.GetResourcesEvent += GetResourceStorage;
-			ui.GetCanBuildEvent += CanBuild;
-			ui.GetTimeStringEvent += GetDateTimeString;
-			ui.GetMapObjectJobsEvent += GetMapObjectJobs;
-			ui.AddJobRequestedEvent += AddJob;
-			ui.GetMaxFreeWorkersEvent += GetJobMaxWorkers;
-			ui.ChangeJobWorkerCountEvent += ChangeJobWorkerCount;
-			ui.DeleteJobEvent += RemoveJob;
 
-			GameMan.Singleton.Game.Time.HourPassedEvent += HourlyUpdate;
-
+		public override void _Ready() {
 			region = GameMan.Singleton.Game.PlayRegion;
 			faction = region.LocalFaction;
 			actions = new(region, faction);
+			// debug
+			ai = new(actions);
+
+			ui.MapClickEvent += MapClick;
+			ui.RequestBuildEvent += OnUIBuildingPlaceRequested;
+			ui.GetBuildingTypesEvent += GetBuildingTypes;
+			ui.GetResourcesEvent += actions.GetResourceStorage;
+			ui.GetCanBuildEvent += actions.CanBuild;
+			ui.GetTimeStringEvent += GetDateTimeString;
+			ui.GetMapObjectJobsEvent += actions.GetMapObjectJobs;
+			ui.AddJobRequestedEvent += actions.AddJob;
+			ui.GetMaxFreeWorkersEvent += GetJobMaxWorkers;
+			ui.ChangeJobWorkerCountEvent += ChangeJobWorkerCount;
+			ui.DeleteJobEvent += actions.RemoveJob;
+
+			GameMan.Singleton.Game.Time.HourPassedEvent += HourlyUpdate;
 
 			ui.GetPopulationCountEvent += faction.GetPopulationCount;
-			ui.GetHomelessPopulationCountEvent += GetHomelessPopulationCount;
-			ui.GetUnemployedPopulationCountEvent += GetUnemployedPopulationCount;
+			ui.GetHomelessPopulationCountEvent += actions.GetHomelessPopulationCount;
+			ui.GetUnemployedPopulationCountEvent += actions.GetUnemployedPopulationCount;
 			ui.GetBriefcaseEvent += GetBriefcase;
 			faction.ContractFailedEvent += OnRegionMandateFailed;
 
@@ -89,17 +94,17 @@ namespace scenes.region {
 			if (what == NotificationPredelete) {
 				ui.MapClickEvent -= MapClick;
 				ui.GetPopulationCountEvent -= faction.GetPopulationCount;
-				ui.GetHomelessPopulationCountEvent -= GetHomelessPopulationCount;
-				ui.GetUnemployedPopulationCountEvent -= GetUnemployedPopulationCount;
+				ui.GetHomelessPopulationCountEvent -= actions.GetHomelessPopulationCount;
+				ui.GetUnemployedPopulationCountEvent -= actions.GetUnemployedPopulationCount;
 				ui.GetBuildingTypesEvent -= GetBuildingTypes;
 				ui.RequestBuildEvent -= OnUIBuildingPlaceRequested;
-				ui.GetResourcesEvent -= GetResourceStorage;
-				ui.GetCanBuildEvent -= CanBuild;
+				ui.GetResourcesEvent -= actions.GetResourceStorage;
+				ui.GetCanBuildEvent -= actions.CanBuild;
 				ui.GetTimeStringEvent -= GetDateTimeString;
 				ui.PauseRequestedEvent -= UiTogglePause;
 				ui.GameSpeedChangeRequestedEvent -= UiChangeGameSpeed;
-				ui.GetMapObjectJobsEvent -= GetMapObjectJobs;
-				ui.AddJobRequestedEvent -= AddJob;
+				ui.GetMapObjectJobsEvent -= actions.GetMapObjectJobs;
+				ui.AddJobRequestedEvent -= actions.AddJob;
 				ui.GetMaxFreeWorkersEvent -= GetJobMaxWorkers;
 				ui.ChangeJobWorkerCountEvent -= ChangeJobWorkerCount;
 				ui.GetBriefcaseEvent -= GetBriefcase;
@@ -133,23 +138,13 @@ namespace scenes.region {
 
 		// building
 
-		public bool CanBuild(IBuildingType type) {
-			return faction.CanBuild(type);
-		}
-
-		public bool CanPlaceBuilding(IBuildingType type, Vector2I tilepos) {
-			Debug.Assert(type != null, "Cant place NULL building type!!");
-			return faction.CanPlaceBuilding(type, tilepos);
-		}
-
 		public void PlaceBuilding(IBuildingType type, Vector2I tilepos) {
-			Debug.Assert(type != null, "Cant place NULL building type!!");
-			var building = faction.PlaceBuildingConstructionSite(type, tilepos);
-			regionDisplay.DisplayMapObject(building);
+			var buildin = actions.PlaceBuilding(type, tilepos);
+			regionDisplay.DisplayMapObject(buildin);
 		}
 
 		private void OnUIBuildingPlaceRequested(IBuildingType type, Vector2I tilePosition) {
-			if (CanPlaceBuilding(type, tilePosition)) {
+			if (actions.CanPlaceBuilding(type, tilePosition)) {
 				PlaceBuilding(type, tilePosition);
 			}
 		}
@@ -163,6 +158,7 @@ namespace scenes.region {
 		// notifications
 
 		void HourlyUpdate(TimeT timeInMinutes) {
+			if (timeInMinutes >= 60 * 8) ai.Update(timeInMinutes); // debug
 			ui.HourlyUpdate(timeInMinutes);
 		}
 
@@ -175,13 +171,7 @@ namespace scenes.region {
 
 		// get information (for UI)
 
-		public int GetHomelessPopulationCount() => faction.HomelessPopulation;
 
-		public int GetUnemployedPopulationCount() => faction.UnemployedPopulation;
-
-		public ResourceStorage GetResourceStorage() {
-			return faction.Resources;
-		}
 
 		public int GetJobMaxWorkers() => faction.GetFreeWorkers();
 
@@ -199,27 +189,8 @@ namespace scenes.region {
 			return GameMan.Singleton.IsPaused;
 		}
 
-		public void AddJob(MapObject place, MapObjectJob job) {
-			faction.AddMapObjectJob(job, place);
-
-		}
-
-		public void RemoveJob(Job job) {
-			faction.RemoveJob(job);
-
-		}
-
-		public HashSet<JobBox> GetMapObjectJobs(MapObject building) {
-			var pos = building.GlobalPosition;
-			var jbox = new HashSet<JobBox>();
-			foreach (var job in faction.GetJobs(pos)) {
-				jbox.Add(new JobBox(job, building));
-			}
-			return jbox;
-		}
-
-		public void ChangeJobWorkerCount(JobBox jbox, int by) {
-			faction.EmployWorkers(jbox.Unbox(), by);
+		public void ChangeJobWorkerCount(Job job, int by) {
+			faction.EmployWorkers(job, by);
 		}
 
 		Briefcase GetBriefcase() => faction.Briefcase;

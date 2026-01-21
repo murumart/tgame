@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://cpeaxmkgldt5g" path="res://scenes/region/region_display.tscn" id="3_pmx41"]
 [ext_resource type="PackedScene" uid="uid://b1t88emteoav4" path="res://scenes/region/camera.tscn" id="4_du6xo"]
 
-[node name="RegionMan" type="Node" node_paths=PackedStringArray("ui", "camera", "regionDisplay", "otherDisplaysParent")]
+[node name="PlayerRegion" type="Node" node_paths=PackedStringArray("ui", "camera", "regionDisplay", "otherDisplaysParent")]
 script = ExtResource("1_qi5r4")
 ui = NodePath("RegionCamera/Ui")
 camera = NodePath("RegionCamera")

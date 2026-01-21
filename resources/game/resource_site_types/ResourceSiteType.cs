@@ -10,7 +10,7 @@ namespace resources.game.resource_site_types {
 	public partial class ResourceSiteType : Resource, IResourceSiteType, IScenePathetic {
 
 		[Export] string name;
-		[Export] string resourceTypeDescription;
+		[Export] public string resourceTypeDescription;
 		[Export] Array<ResourceWell> mineResources;
 		[Export(PropertyHint.File, "*.tscn")] string ScenePath;
 

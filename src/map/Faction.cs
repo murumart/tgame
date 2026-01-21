@@ -73,7 +73,6 @@ public class Faction : IEntity {
 	}
 
 	void RegisterJob(Vector2I position, Job job) {
-		Debug.Assert(job is not JobBox, "Debox the job before adding it! Can't add boxed job");
 		Debug.Assert(!(jobsByPosition.ContainsKey(position) && jobsByPosition[position].Contains(job)), $"Job object ({job}) at {position} exists ");
 		if (!jobsByPosition.ContainsKey(position)) jobsByPosition[position] = new();
 		jobsByPosition[position].Add(job);
@@ -86,7 +85,7 @@ public class Faction : IEntity {
 			jobsByPosition[mopjob.GlobalPosition].Remove(job);
 		}
 		Debug.Assert(jobs.Contains(job), "Dont have this job, can't remove it");
-		if (job.NeedsWorkers) UnemployWorkers(job);
+		if (job.NeedsWorkers) UnemployAllWorkers(job);
 		jobs.Remove(job);
 		JobRemovedEvent?.Invoke(job);
 		job.Deinitialise(this);
@@ -121,7 +120,7 @@ public class Faction : IEntity {
 		Population.Employ(job, amount);
 	}
 
-	public void UnemployWorkers(Job job) {
+	public void UnemployAllWorkers(Job job) {
 		if (job.Workers.Count == 0) return; // noone was ever assigned
 		Debug.Assert(jobs.Contains(job), "This isn't my job...");
 		Debug.Assert(CanUnemployWorkers(job, job.Workers.Count), "Can't unemploy these workers!");

@@ -33,7 +33,7 @@ namespace scenes.region.ui {
 		// we're regenerating these lists every time the menu is opened or updated, hopefully not a performance issue!
 		// an alternative is to not do that and set the _* lists to null to regenerate them on next menu open.
 
-		List<JobBox> ExtantJobs {
+		List<Job> ExtantJobs {
 			get {
 				if (attachedToMapObject) return ui.GetMapObjectJobs(myMapObject).ToList();
 				return ui.GetJobs().ToList();
@@ -142,12 +142,12 @@ namespace scenes.region.ui {
 			foreach (var node in jobsList.GetChildren()) node.QueueFree();
 
 			for (int i = ExtantJobs.Count - 1; i >= 0; i--) {
-				var box = ExtantJobs[i];
+				var job = ExtantJobs[i];
 				int sliderMax = -1;
-				if (box.NeedsWorkers) sliderMax = Math.Min(ui.GetMaxFreeWorkers() + box.Workers.Count, box.Workers.Capacity);
+				if (job.NeedsWorkers) sliderMax = Math.Min(ui.GetMaxFreeWorkers() + job.Workers.Count, job.Workers.Capacity);
 				var panel = JobInfoPanel.Packed.Instantiate<JobInfoPanel>();
-				panel.AddToTree(jobsList, box.IsDeletable, true);
-				panel.Display(ui, box, i, sliderMax, JobWorkerCountChanged);
+				panel.AddToTree(jobsList, !job.IsInternal, true);
+				panel.Display(ui, job, i, sliderMax, JobWorkerCountChanged);
 				panel.UIRebuildRequested += OpenViewJobScreen;
 			}
 

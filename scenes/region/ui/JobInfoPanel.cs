@@ -18,7 +18,7 @@ namespace scenes.region.ui {
 		[Export] public Button DeleteJobButton;
 
 		UI ui;
-		JobBox jobBox;
+		Job jobBox;
 
 
 		public void AddToTree(Node parent, bool showSide = false, bool showTop = false) {
@@ -29,22 +29,22 @@ namespace scenes.region.ui {
 			topbar.Visible = showTop;
 		}
 
-		public void Display(UI ui, JobBox jbox, int jobIndex, int sliderMax, Action<int, int> workersSelected) {
+		public void Display(UI ui, Job job, int jobIndex, int sliderMax, Action<int, int> workersSelected) {
 			this.ui = ui;
-			jobBox = jbox;
-			if (jbox.NeedsWorkers) {
+			jobBox = job;
+			if (job.NeedsWorkers) {
 				Debug.Assert(sliderMax >= 0, "Can't have negative slider values when needing workers");
 				var slider = JobSlider.Instantiate();
 				informationList.AddChild(slider);
-				slider.Setup(workersSelected, jobIndex, jbox.Workers.Count, "workers", sliderMax, "");
+				slider.Setup(workersSelected, jobIndex, job.Workers.Count, "workers", sliderMax, "");
 			}
 
-			titleLabel.Text = jbox.Title;
+			titleLabel.Text = job.Title;
 
 			infoLabel.Text =
-				jbox.GetResourceRequirementDescription()
-				+ "\n" + jbox.GetStatusDescription()
-				+ "\n" + jbox.GetProductionDescription();
+				job.GetResourceRequirementDescription()
+				+ "\n" + job.GetStatusDescription()
+				+ "\n" + job.GetProductionDescription();
 		}
 
 		void DeleteJob() {

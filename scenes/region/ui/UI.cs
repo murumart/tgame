@@ -18,11 +18,11 @@ namespace scenes.region.ui {
 		public event Func<IBuildingType, bool> GetCanBuildEvent;
 		public event Func<ResourceStorage> GetResourcesEvent;
 
-		public event Func<MapObject, ICollection<JobBox>> GetMapObjectJobsEvent;
-		public event Func<ICollection<JobBox>> GetJobsEvent;
+		public event Func<MapObject, ICollection<Job>> GetMapObjectJobsEvent;
+		public event Func<ICollection<Job>> GetJobsEvent;
 		public event Action<MapObject, MapObjectJob> AddJobRequestedEvent;
 		public event Func<int> GetMaxFreeWorkersEvent;
-		public event Action<JobBox, int> ChangeJobWorkerCountEvent;
+		public event Action<Job, int> ChangeJobWorkerCountEvent;
 		public event Action<Job> DeleteJobEvent;
 
 		public event Func<Briefcase> GetBriefcaseEvent;
@@ -268,13 +268,13 @@ namespace scenes.region.ui {
 		public List<BuildingType> GetBuildingTypes() => GetBuildingTypesEvent?.Invoke();
 		public ResourceStorage GetResources() => GetResourcesEvent?.Invoke();
 
-		public ICollection<JobBox> GetMapObjectJobs(MapObject mapObject) => GetMapObjectJobsEvent?.Invoke(mapObject);
-		public ICollection<JobBox> GetJobs() => GetJobsEvent?.Invoke();
+		public ICollection<Job> GetMapObjectJobs(MapObject mapObject) => GetMapObjectJobsEvent?.Invoke(mapObject);
+		public ICollection<Job> GetJobs() => GetJobsEvent?.Invoke();
 		public void AddJobRequested(MapObject mapObject, MapObjectJob job) => AddJobRequestedEvent?.Invoke(mapObject, job);
 		public void AddJobRequested(Job job) => throw new NotImplementedException("Cant add jobs without building yet");
 		public int GetMaxFreeWorkers() => GetMaxFreeWorkersEvent?.Invoke() ?? -1;
-		public void ChangeJobWorkerCount(JobBox job, int amount) => ChangeJobWorkerCountEvent?.Invoke(job, amount);
-		public void DeleteJob(JobBox jobBox) => DeleteJobEvent?.Invoke(jobBox.Unbox());
+		public void ChangeJobWorkerCount(Job job, int amount) => ChangeJobWorkerCountEvent?.Invoke(job, amount);
+		public void DeleteJob(Job job) => DeleteJobEvent?.Invoke(job);
 
 		public Briefcase GetBriefcase() => GetBriefcaseEvent?.Invoke();
 
