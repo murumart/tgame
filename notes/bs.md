@@ -3,6 +3,7 @@ Diplomacy: each faction has values and a view of the player faction. Making busi
 ---
 
 - [X] Limited resource space is annoying to implement. Resources should be limited through availability and creation time, not storage.
+- [ ] Jobs should somehow take workers automatically, because it's hard to manage it through AI. Or come up with a good way to manage it with AI...
 
 ### Sylvester
 
