@@ -130,17 +130,20 @@ namespace scenes.region.ui {
 			SetGameSpeedLabelText();
 		}
 
+		const int NORMAL_SPEED = 1;
+		const int FAST_SPEED = 5;
+
 		void OnNormalSpeedButtonPressed() {
 			if (timeSpeedAlteringDisabled) return;
-			GameSpeedChangeRequested(1);
-			gameSpeed = 1;
+			GameSpeedChangeRequested(NORMAL_SPEED);
+			gameSpeed = NORMAL_SPEED;
 			SetGameSpeedLabelText();
 		}
 
 		void OnFastSpeedButtonPressed() {
 			if (timeSpeedAlteringDisabled) return;
-			GameSpeedChangeRequested(3);
-			gameSpeed = 3;
+			GameSpeedChangeRequested(FAST_SPEED);
+			gameSpeed = FAST_SPEED;
 			SetGameSpeedLabelText();
 		}
 

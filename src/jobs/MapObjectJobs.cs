@@ -200,6 +200,10 @@ public class GatherResourceJob : MapObjectJob {
 		workers = new(5);
 	}
 
+	public List<ResourceSite.Well> GetProductions() {
+		return site.MineWells;
+	}
+
 	public GatherResourceJob(string resourceTypeDescription) : this() {
 		this.resourceTypeDescription = resourceTypeDescription;
 	}

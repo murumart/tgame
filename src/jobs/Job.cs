@@ -37,7 +37,7 @@ public abstract class Job {
 	// sandbox methods vv
 
 	public virtual List<ResourceBundle> GetRequirements() => null;
-	public virtual List<ResourceBundle> GetProduction() => null;
+	//public virtual List<ResourceBundle> GetProductions() => null;
 
 	protected static void ConsumeRequirements(ResourceBundle[] requirements, ResourceStorage resources) {
 		foreach (var r in requirements) {

@@ -42,7 +42,7 @@ namespace scenes.region {
 			ui.GetMapObjectJobsEvent += actions.GetMapObjectJobs;
 			ui.AddJobRequestedEvent += actions.AddJob;
 			ui.GetMaxFreeWorkersEvent += GetJobMaxWorkers;
-			ui.ChangeJobWorkerCountEvent += ChangeJobWorkerCount;
+			ui.ChangeJobWorkerCountEvent += actions.ChangeJobWorkerCount;
 			ui.DeleteJobEvent += actions.RemoveJob;
 
 			GameMan.Singleton.Game.Time.HourPassedEvent += HourlyUpdate;
@@ -106,7 +106,7 @@ namespace scenes.region {
 				ui.GetMapObjectJobsEvent -= actions.GetMapObjectJobs;
 				ui.AddJobRequestedEvent -= actions.AddJob;
 				ui.GetMaxFreeWorkersEvent -= GetJobMaxWorkers;
-				ui.ChangeJobWorkerCountEvent -= ChangeJobWorkerCount;
+				ui.ChangeJobWorkerCountEvent -= actions.ChangeJobWorkerCount;
 				ui.GetBriefcaseEvent -= GetBriefcase;
 
 				region.MapObjectUpdatedAtEvent -= OnRegionMapObjectUpdated;
@@ -187,10 +187,6 @@ namespace scenes.region {
 		public bool UiTogglePause() {
 			GameMan.Singleton.TogglePause();
 			return GameMan.Singleton.IsPaused;
-		}
-
-		public void ChangeJobWorkerCount(Job job, int by) {
-			faction.EmployWorkers(job, by);
 		}
 
 		Briefcase GetBriefcase() => faction.Briefcase;

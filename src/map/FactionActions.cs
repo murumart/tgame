@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Godot;
 using static Building;
 
@@ -47,6 +48,20 @@ public class FactionActions {
 		faction.RemoveJob(job);
 	}
 
+	public void ChangeJobWorkerCount(Job job, int by) {
+		faction.EmployWorkers(job, by);
+	}
+
+	public HashSet<Job> GetMapObjectJobs() {
+		var hs = new HashSet<Job>();
+		foreach (var mp in region.GetMapObjects()) {
+			foreach (var job in GetMapObjectJobs(mp)) {
+				hs.Add(job);
+			}
+		}
+		return hs;
+	}
+
 	public HashSet<Job> GetMapObjectJobs(MapObject building) {
 		var pos = building.GlobalPosition;
 		var jobs = new HashSet<Job>();
@@ -57,6 +72,8 @@ public class FactionActions {
 	}
 
 	public int GetHomelessPopulationCount() => faction.HomelessPopulation;
+
+	public int GetFreeWorkers() => GetUnemployedPopulationCount();
 
 	public int GetUnemployedPopulationCount() => faction.UnemployedPopulation;
 
