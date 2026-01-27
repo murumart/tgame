@@ -68,7 +68,7 @@ public class Population {
 		homelessCount = new(() => {
 			return individs.Keys.Where(i => !IsHoused(new(this, i))).Count();
 		});
-		unemployedCount = new(() =>{
+		unemployedCount = new(() => {
 			int c = 0;
 			foreach (var k in individs.Keys) if (!IsEmployed(new(this, k))) c++;
 			return c;
@@ -209,6 +209,10 @@ public class Group {
 
 	public bool CanAdd(int amount) {
 		return Count + amount <= Capacity;
+	}
+
+	public override string ToString() {
+		return $"Group(Capacity={Capacity}, Count={Count})";
 	}
 
 }

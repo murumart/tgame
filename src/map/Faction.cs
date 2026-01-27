@@ -111,11 +111,11 @@ public class Faction : IEntity {
 	public void EmployWorkers(Job job, int amount) {
 		Debug.Assert(jobs.Contains(job), "This isn't my job...");
 		if (amount < 0) {
-			Debug.Assert(CanUnemployWorkers(job, -amount), "Can't employ these workers!");
+			Debug.Assert(CanUnemployWorkers(job, -amount), $"Can't employ these workers! (amount {amount}, workers {job.Workers})");
 			Population.Unemploy(job, -amount);
 			return;
 		}
-		Debug.Assert(CanEmployWorkers(job, amount), "Can't employ these workers!");
+		Debug.Assert(CanEmployWorkers(job, amount), $"Can't employ these workers! (amount {amount}, workers {job.Workers})");
 
 		Population.Employ(job, amount);
 	}
@@ -123,7 +123,7 @@ public class Faction : IEntity {
 	public void UnemployAllWorkers(Job job) {
 		if (job.Workers.Count == 0) return; // noone was ever assigned
 		Debug.Assert(jobs.Contains(job), "This isn't my job...");
-		Debug.Assert(CanUnemployWorkers(job, job.Workers.Count), "Can't unemploy these workers!");
+		Debug.Assert(CanUnemployWorkers(job, job.Workers.Count), $"Can't unemploy these workers! (workers {job.Workers})");
 
 		Population.Unemploy(job, job.Workers.Count);
 	}
@@ -135,7 +135,7 @@ public class Faction : IEntity {
 	// *** MANAGING BUILDINGS ***
 
 	public Building PlaceBuildingConstructionSite(IBuildingType type, Vector2I position) {
-		Debug.Assert(Region.CanPlaceBuilding(position), "There's a lreayd a building here (known by region)");
+		Debug.Assert(Region.CanPlaceBuilding(position), $"Region says can't place building at {position}");
 		Debug.Assert(CanPlaceBuilding(type, position), "Cannot place the building for whatever reason");
 		var building = PlaceBuilding(type, position);
 		if (type.TakesTimeToConstruct() || type.HasResourceRequirements()) {
@@ -148,7 +148,7 @@ public class Faction : IEntity {
 
 	// for initialising the world and such
 	Building PlacePrebuiltBuilding(IBuildingType type, Vector2I position) {
-		Debug.Assert(!Region.HasMapObject(position), "There's a lreayd a building here");
+		Debug.Assert(!Region.HasMapObject(position), $"There's a lreayd a building here (at {position})");
 		var building = PlaceBuilding(type, position);
 		building.ProgressBuild((int)(type.GetHoursToConstruct() * 60), new AnonBuilderJob());
 		return building;
