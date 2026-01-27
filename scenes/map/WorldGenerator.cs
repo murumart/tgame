@@ -298,7 +298,7 @@ namespace scenes.map {
 					}
 					WarlikeExpand(subs[ag], taken, ag, attackingPop, ag);
 				}
-				await ToSignal(GetTree().CreateTimer(0.5), "timeout");
+				await ToSignal(GetTree(), "process_frame");
 			}
 		}
 

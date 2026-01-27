@@ -5,8 +5,6 @@ using Godot;
 using resources.game.resource_site_types;
 using static ResourceSite;
 
-using DecisionFactor = System.Func<float>;
-
 public partial class LocalAI {
 
 	readonly FactionActions factionActions;
@@ -21,21 +19,23 @@ public partial class LocalAI {
 	public LocalAI(FactionActions actions) {
 		this.factionActions = actions;
 		this.resourceWants = new() {
-			{Registry.Resources.GetAsset("logs"), DecisionFactors.GetResourceWant(actions, Registry.Resources.GetAsset("logs"), 30)},
-			{Registry.Resources.GetAsset("rock"), DecisionFactors.GetResourceWant(actions, Registry.Resources.GetAsset("rock"), 30)},
+			{Registry.Resources.GetAsset("logs"), DecisionFactors.ResourceWant(actions, Registry.Resources.GetAsset("logs"), 30)},
+			{Registry.Resources.GetAsset("rock"), DecisionFactors.ResourceWant(actions, Registry.Resources.GetAsset("rock"), 30)},
 		};
 		this.mainActions = [
-			new GatherFromResourceSiteJobAction(
+			Actions.CreateGatherJob(
 				[
 					resourceWants[Registry.Resources.GetAsset("logs")],
-					DecisionFactors.GetHasFreeResourceSite(actions, Registry.ResourceSites.GetAsset("trees")),
+					DecisionFactors.HasFreeResourceSite(actions, Registry.ResourceSites.GetAsset("trees")),
 				],
+				factionActions,
 				Registry.ResourceSites.GetAsset("trees")),
-			new GatherFromResourceSiteJobAction(
+			Actions.CreateGatherJob(
 				[
 					resourceWants[Registry.Resources.GetAsset("rock")],
-					DecisionFactors.GetHasFreeResourceSite(actions, Registry.ResourceSites.GetAsset("boulder")),
+					DecisionFactors.HasFreeResourceSite(actions, Registry.ResourceSites.GetAsset("boulder")),
 				],
+				factionActions,
 				Registry.ResourceSites.GetAsset("boulder")),
 		];
 		this.ephemeralActions = new();
@@ -44,44 +44,53 @@ public partial class LocalAI {
 	public void Update(TimeT minute) {
 		var delta = minute - time;
 
-		GD.Print($"LocalAI::Update : (of {factionActions}) doing update");
+		Console.WriteLine($"LocalAI::Update : (of {factionActions}) doing update");
+		var mstime = Time.GetTicksMsec();
 
 		for (int i = 0; i < 5; i++) {
 			ephemeralActions.Clear();
 			foreach (var job in factionActions.GetMapObjectJobs()) {
 				if (job is GatherResourceJob gjob) {
 					foreach (var prod in gjob.GetProductions()) {
-						var decFacs = new List<DecisionFactor>();
-						ephemeralActions.Add(new AssignWorkersToJobAction(
+						ephemeralActions.Add(Actions.AssignWorkersToJob(
 							[
+								DecisionFactors.HasFreeWorkers(factionActions),
 								resourceWants.GetValueOrDefault(prod.ResourceType, DecisionFactors.Null),
-								DecisionFactors.GetHasFreeWorkers(factionActions),
+								DecisionFactors.HasEmploymentSpots(factionActions, gjob),
 							],
+							factionActions,
 							job
 						));
-						ephemeralActions.Add(new RemoveWorkersFromJobAction(
+						ephemeralActions.Add(Actions.RemoveJob(
 							[
 								DecisionFactors.OneMinus(resourceWants.GetValueOrDefault(prod.ResourceType, DecisionFactors.Null)),
-								//DecisionFactors.OneMinus(DecisionFactors.GetHasFreeWorkers(factionActions)),
+								DecisionFactors.Mult(DecisionFactors.JobEmploymentRate(gjob), 0.025f),
 							],
+							factionActions,
 							job
 						));
 					}
 				}
 			}
 
-			Action chosenAction = null;
-			float chosenScore = -1f;
+			Action chosenAction = Actions.Idle;
+			float chosenScore = 0f;
 			foreach (var action in mainActions.Concat(ephemeralActions)) {
 				var s = action.Score();
+				Debug.Assert(!Mathf.IsNaN(s), $"Got NOT A NUMBER from scoring action {action}");
 				if (s > chosenScore) {
 					chosenScore = s;
 					chosenAction = action;
 				}
 			}
-			GD.Print($"LocalAI::Update : (of {factionActions}) chose action {chosenAction}!");
-			chosenAction.Do(factionActions);
-			GD.Print($"LocalAI::Update : (of {factionActions}) did action {chosenAction}!\n");
+			mstime = Time.GetTicksMsec() - mstime;
+			Console.WriteLine($"LocalAI::Update : (of {factionActions}) chose action {chosenAction}!");
+			Console.WriteLine($"LocalAI::Update : choosing took {mstime} ms!\n");
+			var mstime2 = Time.GetTicksMsec();
+			chosenAction.Do();
+			mstime2 = Time.GetTicksMsec() - mstime2;
+			Console.WriteLine($"LocalAI::Update : (of {factionActions}) did action {chosenAction}!");
+			Console.WriteLine($"LocalAI::Update : doing took {mstime2} ms!\n");
 		}
 
 		time = minute;
@@ -91,86 +100,64 @@ public partial class LocalAI {
 
 public partial class LocalAI {
 
-	abstract class Action {
+	public struct Action(DecisionFactor[] factors, System.Action act, string name) {
 
-		readonly DecisionFactor[] factors;
+		public System.Action Do = act;
 
-
-		public Action(DecisionFactor[] factors) {
-			this.factors = factors;
-		}
-
-		public float Score() {
-			GD.Print($"LocalAI::Action::Score : \tscoring {this}");
+		public readonly float Score() {
+			Console.WriteLine($"LocalAI::Action::Score : \tscoring {this}");
+			var mstime = Time.GetTicksMsec();
 			var score = 1f;
 			foreach (var factor in factors) {
-				var s = factor();
-				GD.Print($"LocalAI::Action::Score : \t\tutility of {factor} ({s})");
+				var s = factor.Call();
+				Console.WriteLine($"LocalAI::Action::Score : \t\tutility of {factor} is {s}");
 				score *= s;
+				if (s <= 0) {
+					break;
+				}
 			}
-			GD.Print($"LocalAI::Action::Score : \tscored *{score}*\n");
+			Console.WriteLine($"LocalAI::Action::Score : \tscored *{score}* (took {Time.GetTicksMsec() - mstime})\n");
 			return score;
 		}
 
-		public abstract void Do(FactionActions ac);
+		public override readonly string ToString() => name;
 
 	}
 
-	class AssignWorkersToJobAction : Action {
+	public static class Actions {
 
-		Job job;
+		private readonly static DecisionFactor[] NoFactors = [];
 
+		public static Action Idle = new(NoFactors, () => { }, "Idle");
 
-		public AssignWorkersToJobAction(DecisionFactor[] factors, Job job) : base(factors) {
-			this.job = job;
+		public static Action AssignWorkersToJob(DecisionFactor[] factors, FactionActions ac, Job job) {
+			return new(factors, () => {
+				if (!job.NeedsWorkers) return;
+				int maxChange = Math.Min(ac.GetFreeWorkers() + job.Workers.Count, job.Workers.Capacity);
+				maxChange = Math.Min(maxChange, job.Workers.Capacity - job.Workers.Count);
+				ac.ChangeJobWorkerCount(job, maxChange);
+			}, $"AssignWorkersToJob({job})");
 		}
 
-		public override void Do(FactionActions ac) {
-			if (!job.NeedsWorkers) return;
-			int maxChange = Math.Min(ac.GetFreeWorkers() + job.Workers.Count, job.Workers.Capacity);
-			ac.ChangeJobWorkerCount(job, maxChange);
+		public static Action RemoveJob(DecisionFactor[] factors, FactionActions ac, Job job) {
+			return new(factors, () => {
+				ac.RemoveJob(job);
+			}, $"RemoveJob({job})");
 		}
 
-	}
-
-	class RemoveWorkersFromJobAction : Action {
-
-		Job job;
-
-
-		public RemoveWorkersFromJobAction(DecisionFactor[] factors, Job job) : base(factors) {
-			this.job = job;
-		}
-
-		public override void Do(FactionActions ac) {
-			if (!job.NeedsWorkers) return;
-			int maxChange = job.Workers.Count;
-			ac.ChangeJobWorkerCount(job, -maxChange);
-		}
-
-	}
-
-	class GatherFromResourceSiteJobAction : Action {
-
-		public IResourceSiteType SiteType;
-
-
-		public GatherFromResourceSiteJobAction(DecisionFactor[] factors, IResourceSiteType siteType) : base(factors) {
-			SiteType = siteType;
-		}
-
-		public override void Do(FactionActions ac) {
-			foreach (var mop in ac.GetMapObjects()) {
-				if (mop is ResourceSite rs) {
-					if (rs.Type == SiteType && ac.GetMapObjectJobs(rs).Count == 0) {
-						var jobdesc = (rs.Type as ResourceSiteType).resourceTypeDescription; // this will breka when not using resources
-						ac.AddJob(rs, new GatherResourceJob(jobdesc));
-						return;
+		public static Action CreateGatherJob(DecisionFactor[] factors, FactionActions ac, IResourceSiteType siteType) {
+			return new(factors, () => {
+				foreach (var mop in ac.GetMapObjects()) {
+					if (mop is ResourceSite rs) {
+						if (rs.Type == siteType && ac.GetMapObjectJobs(rs).Count == 0) {
+							var jobdesc = (rs.Type as ResourceSiteType).resourceTypeDescription; // this will breka when not using resources
+							ac.AddJob(rs, new GatherResourceJob(jobdesc));
+							return;
+						}
 					}
 				}
-			}
-			Debug.Assert(false, "Didn't find resource site to add job to");
-
+				Debug.Assert(false, "Didn't find resource site to add job to");
+			}, $"GatherFromResourceSite({siteType.AssetName})");
 		}
 
 	}
@@ -179,25 +166,51 @@ public partial class LocalAI {
 
 public partial class LocalAI {
 
+	public readonly struct DecisionFactor(Func<float> call, string name) {
+
+		public readonly Func<float> Call = call;
+
+
+		public override readonly string ToString() => name;
+
+	}
+
 	static class DecisionFactors {
 
-		public static readonly DecisionFactor Null = () => 0.0f;
-		public static readonly DecisionFactor One = () => 1.0f;
+
+		public static readonly DecisionFactor Null = new(() => 0.0f, "Null");
+		public static readonly DecisionFactor One = new(() => 1.0f, "One");
 
 		public static DecisionFactor OneMinus(DecisionFactor fac) {
-			return () => 1.0f - fac();
+			return new(() => 1.0f - fac.Call(), $"OneMinus({fac})");
 		}
 
-		public static DecisionFactor GetHomelessnessRate(FactionActions ac) {
-			return () => Mathf.Clamp(ac.GetHomelessPopulationCount() / 7f, 0f, 1f);
+		public static DecisionFactor Mult(DecisionFactor fac, float with) {
+			return new(() => fac.Call() * with, $"({fac} * {with})");
 		}
 
-		public static DecisionFactor GetHasFreeWorkers(FactionActions ac) {
-			return () => ac.GetFreeWorkers() > 0 ? 1.0f : 0.0f;
+		public static DecisionFactor HomelessnessRate(FactionActions ac) {
+			return new(() => Mathf.Clamp(ac.GetHomelessPopulationCount() / 7f, 0f, 1f), "HomelessnessRate");
 		}
 
-		public static DecisionFactor GetHasFreeResourceSite(FactionActions ac, IResourceSiteType siteType) {
-			return () => {
+		public static DecisionFactor HasFreeWorkers(FactionActions ac) {
+			return new(() => ac.GetFreeWorkers() > 0 ? 1.0f : 0.0f, "HasFreeWorkers");
+		}
+
+		public static DecisionFactor JobEmploymentRate(Job job) {
+			return new(() => (float)job.Workers.Count / (float)job.Workers.Capacity, "JobEmploymentRate");
+		}
+
+		public static DecisionFactor HasEmploymentSpots(FactionActions ac, Job job) {
+			return new(() => job.NeedsWorkers && job.Workers.Capacity > job.Workers.Count ? 1.0f : 0.0f, "HasEmploymentSpots");
+		}
+
+		public static DecisionFactor HasEmployees(Job job) {
+			return new(() => job.NeedsWorkers && job.Workers.Count > 0 ? 1.0f : 0.0f, "HasEmployees");
+		}
+
+		public static DecisionFactor HasFreeResourceSite(FactionActions ac, IResourceSiteType siteType) {
+			return new(() => {
 				int matchingSites = 0;
 				int matchingFreeSites = 0;
 				foreach (var mop in ac.GetMapObjects()) {
@@ -210,25 +223,26 @@ public partial class LocalAI {
 						}
 					}
 				}
+				if (matchingSites == 0) return 0f;
 				return (float)matchingFreeSites / (float)matchingSites;
-			};
+			}, $"HasFreeResourceSite({siteType.AssetName})");
 		}
 
-		public static DecisionFactor GetResourceWant(FactionActions ac, IResourceType resourceType, int want) {
-			return () => {
+		public static DecisionFactor ResourceWant(FactionActions ac, IResourceType resourceType, int want) {
+			return new(() => {
 				var res = ac.GetResourceStorage();
 				var count = res.GetCount(resourceType);
 				var a = Mathf.Max(0f, (float)(want - count) / want);
 				a *= a;
 				return Mathf.Clamp(a, 0f, 1f);
-			};
+			}, $"ResourceWant({resourceType.AssetName}, {want})");
 		}
 
-		public static DecisionFactor GetResourceNeed(FactionActions ac, IResourceType resourceType, int need) {
-			return () => {
+		public static DecisionFactor ResourceNeed(FactionActions ac, IResourceType resourceType, int need) {
+			return new(() => {
 				var res = ac.GetResourceStorage();
 				return res.HasEnough(new(resourceType, need)) ? 1f : 0f;
-			};
+			}, $"ResourceNeed({resourceType.AssetName}, {need})");
 		}
 
 	}

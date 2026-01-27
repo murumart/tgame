@@ -45,11 +45,11 @@ camera = NodePath("Camera")
 [node name="WorldGenerator" type="Node" parent="."]
 script = ExtResource("3_n4hhb")
 continentNoise = ExtResource("4_f4k24")
-WorldWidth = 640
-WorldHeight = 420
-LandRegionCount = 350
+WorldWidth = 320
+WorldHeight = 210
+LandRegionCount = 87
 SeaRegionCount = 40
-AggressiveFactionCount = 80
+AggressiveFactionCount = 40
 islandCurve = SubResource("Curve_7j5km")
 populationLandTileCurve = SubResource("Curve_vqee5")
 
