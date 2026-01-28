@@ -20,28 +20,30 @@ public partial class LocalAI {
 	public LocalAI(FactionActions actions) {
 		this.factionActions = actions;
 		this.resourceWants = new() {
-			{Resources.Logs, DecisionFactors.ResourceWant(actions, Resources.Logs, 30)},
-			{Resources.Rocks, DecisionFactors.ResourceWant(actions, Resources.Rocks, 30)},
+			{Resources.Logs, Factors.ResourceWant(actions, Resources.Logs, 30)},
+			{Resources.Rocks, Factors.ResourceWant(actions, Resources.Rocks, 30)},
 		};
 		this.mainActions = [
 			Actions.CreateGatherJob([
 					resourceWants[Resources.Logs],
-					DecisionFactors.FreeWorkerRate(factionActions),
-					DecisionFactors.HasFreeResourceSite(actions, Resources.Trees),
+					Factors.FreeWorkerRate(factionActions),
+					Factors.HasFreeResourceSite(actions, Resources.Trees),
 				], factionActions, Resources.Trees),
 			Actions.CreateGatherJob([
 					resourceWants[Resources.Rocks],
-					DecisionFactors.FreeWorkerRate(factionActions),
-					DecisionFactors.HasFreeResourceSite(actions, Resources.Boulder),
+					Factors.FreeWorkerRate(factionActions),
+					Factors.HasFreeResourceSite(actions, Resources.Boulder),
 				], factionActions, Resources.Boulder),
 		];
 		foreach (var building in Resources.Buildings) {
 			mainActions = mainActions.Append(
 				Actions.PlaceBuildingJob(
-					new DecisionFactor[] { DecisionFactors.HomelessnessRate(factionActions) }
-						.Concat(
+					new DecisionFactor[] {
+						Factors.HomelessnessRate(factionActions),
+						Factors.OneMinus(Factors.HousingSlotsPerPerson(factionActions)),
+					 }.Concat(
 							building.GetResourceRequirements()
-								.Select((rb) => DecisionFactors.ResourceNeed(factionActions, rb.Type, rb.Amount))).ToArray(),
+								.Select((rb) => Factors.ResourceNeed(factionActions, rb.Type, rb.Amount))).ToArray(),
 					factionActions, building)
 				).ToArray();
 		}
@@ -52,7 +54,7 @@ public partial class LocalAI {
 		var delta = minute - time;
 
 		Console.WriteLine($"LocalAI::Update : (of {factionActions}) doing update");
-		var mstime = Time.GetTicksMsec();
+		var ustime = Time.GetTicksUsec();
 
 		for (int i = 0; i < 5; i++) {
 			ephemeralActions.Clear();
@@ -60,19 +62,19 @@ public partial class LocalAI {
 				if (job is GatherResourceJob gjob) {
 					foreach (var prod in gjob.GetProductions()) {
 						ephemeralActions.Add(Actions.AssignWorkersToJob([
-								DecisionFactors.HasFreeWorkers(factionActions),
-								resourceWants.GetValueOrDefault(prod.ResourceType, DecisionFactors.Null),
-								DecisionFactors.JobHasEmploymentSpots(factionActions, gjob),
+								Factors.HasFreeWorkers(factionActions),
+								resourceWants.GetValueOrDefault(prod.ResourceType, Factors.Null),
+								Factors.JobHasEmploymentSpots(factionActions, gjob),
 							], factionActions, job));
 						ephemeralActions.Add(Actions.RemoveJob([
-								DecisionFactors.OneMinus(resourceWants.GetValueOrDefault(prod.ResourceType, DecisionFactors.Null)),
-								DecisionFactors.Mult(DecisionFactors.JobEmploymentRate(gjob), 0.0025f),
+								Factors.Mult(Factors.Cube(Factors.OneMinus(resourceWants.GetValueOrDefault(prod.ResourceType, Factors.Null))), 0.0001f),
+								//DecisionFactors.Mult(DecisionFactors.OneMinus(DecisionFactors.JobEmploymentRate(gjob)), 0.0025f),
 							], factionActions, job));
 					}
 				} else if (job is ConstructBuildingJob bjob) {
 					ephemeralActions.Add(Actions.AssignWorkersToJob([
-						DecisionFactors.HasFreeWorkers(factionActions),
-						DecisionFactors.OneMinus(DecisionFactors.JobEmploymentRate(bjob)),
+						Factors.HasFreeWorkers(factionActions),
+						Factors.OneMinus(Factors.JobEmploymentRate(bjob)),
 					], factionActions, bjob));
 				}
 			}
@@ -87,20 +89,21 @@ public partial class LocalAI {
 					chosenAction = action;
 				}
 			}
-			mstime = Time.GetTicksMsec() - mstime;
+			ustime = Time.GetTicksUsec() - ustime;
 			Console.WriteLine($"LocalAI::Update : (of {factionActions}) chose action {chosenAction} (score {chosenScore})!");
-			Console.WriteLine($"LocalAI::Update : choosing took {mstime} ms!\n");
-			var mstime2 = Time.GetTicksMsec();
+			Console.WriteLine($"LocalAI::Update : choosing took {ustime} us!\n");
+			var ustime2 = Time.GetTicksUsec();
 			chosenAction.Do();
-			mstime2 = Time.GetTicksMsec() - mstime2;
+			ustime2 = Time.GetTicksUsec() - ustime2;
 			Console.WriteLine($"LocalAI::Update : (of {factionActions}) did action {chosenAction}!");
-			Console.WriteLine($"LocalAI::Update : doing took {mstime2} ms!\n");
+			Console.WriteLine($"LocalAI::Update : doing took {ustime2} us!\n");
 		}
 
 		time = minute;
 	}
 
 	static class Resources {
+
 		public static readonly IResourceType Logs = Registry.Resources.GetAsset("logs");
 		public static readonly IResourceType Rocks = Registry.Resources.GetAsset("rock");
 
@@ -111,6 +114,43 @@ public partial class LocalAI {
 		public static readonly IBuildingType Housing = Registry.Buildings.GetAsset("housing");
 		public static readonly IBuildingType BrickHousing = Registry.Buildings.GetAsset("brick_housing");
 		public static readonly IBuildingType[] Buildings = [Resources.LogCabin, Resources.Housing, Resources.BrickHousing];
+
+	}
+
+	public static class Profile {
+
+		static readonly Dictionary<string, List<ulong>> ActionTimes = new();
+
+
+		public static void AddActionTime(ulong time, string name) {
+			if (!ActionTimes.TryGetValue(name, out var list)) {
+				list = new();
+				ActionTimes[name] = list;
+			}
+			list.Add(time);
+		}
+
+		public static void EndProfiling() {
+			var max = ActionTimes.MaxBy(kvp => kvp.Value.Max());
+			const string eps = "LocalAI::Profile::EndProfiling : ";
+			Console.WriteLine(eps + "***************");
+			Console.WriteLine(eps + "PROFILING ENDED");
+			Console.WriteLine(eps + "***************");
+			Console.WriteLine(eps + "");
+			foreach (var (name, vals) in ActionTimes) {
+				Console.WriteLine(eps + $"\t{name}:");
+				Console.WriteLine(eps + $"\t\tCALLS: {vals.Count}");
+				Console.WriteLine(eps + $"\t\tAVG: {vals.Average(l => (double)l)} us");
+				Console.WriteLine(eps + $"\t\tMAX: {vals.Max()} us");
+				Console.WriteLine(eps + $"\t\tTOTAL: {vals.Sum(l => (long)l)} us");
+			}
+			Console.WriteLine(eps + $"\tOMAX: {max.Key} {max.Value.Max()} us");
+			Console.WriteLine(eps + "");
+			Console.WriteLine(eps + "***************");
+			Console.WriteLine(eps + "      BYE");
+			Console.WriteLine(eps + "***************");
+		}
+
 	}
 
 }
@@ -123,7 +163,7 @@ public partial class LocalAI {
 
 		public readonly float Score() {
 			Console.WriteLine($"LocalAI::Action::Score : \tscoring {this}");
-			var mstime = Time.GetTicksMsec();
+			var ustime = Time.GetTicksUsec();
 			var score = 1f;
 			foreach (var factor in factors) {
 				var s = factor.Call();
@@ -133,7 +173,9 @@ public partial class LocalAI {
 					break;
 				}
 			}
-			Console.WriteLine($"LocalAI::Action::Score : \tscored *{score}* (took {Time.GetTicksMsec() - mstime} ms)\n");
+			ustime = Time.GetTicksUsec() - ustime;
+			Profile.AddActionTime(ustime, name);
+			Console.WriteLine($"LocalAI::Action::Score : \tscored *{score}* (took {ustime} us)");
 			return score;
 		}
 
@@ -203,8 +245,7 @@ public partial class LocalAI {
 
 	}
 
-	static class DecisionFactors {
-
+	static class Factors {
 
 		public static readonly DecisionFactor Null = new(() => 0.0f, "Null");
 		public static readonly DecisionFactor One = new(() => 1.0f, "One");
@@ -217,8 +258,20 @@ public partial class LocalAI {
 			return new(() => fac.Call() * with, $"({fac} * {with})");
 		}
 
+		public static DecisionFactor Cube(DecisionFactor fac) {
+			return new(() => { var a = fac.Call(); return a * a * a; }, $"({fac}^3)");
+		}
+
 		public static DecisionFactor HomelessnessRate(FactionActions ac) {
 			return new(() => Mathf.Clamp(ac.GetHomelessPopulationCount() / 7f, 0f, 1f), "HomelessnessRate");
+		}
+
+		public static DecisionFactor HousingSlotsPerPerson(FactionActions ac) {
+			return new(() => {
+				IEnumerable<Building> buildings = ac.GetMapObjects().Where(a => a is Building).Select(a => (Building)a);
+				int housingSpots = buildings.Sum(b => b.Type.GetPopulationCapacity());
+				return Mathf.Clamp((float)housingSpots / (float)ac.Faction.GetPopulationCount(), 0.0f, 1.0f);
+			}, "HousingSlotsPerPerson");
 		}
 
 		public static DecisionFactor HasFreeWorkers(FactionActions ac) {

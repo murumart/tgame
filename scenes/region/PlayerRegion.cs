@@ -113,6 +113,7 @@ namespace scenes.region {
 				faction.ContractFailedEvent -= OnRegionMandateFailed;
 
 				GameMan.Singleton.Game.Time.HourPassedEvent -= HourlyUpdate;
+				LocalAI.Profile.EndProfiling();
 
 				ui.QueueFree();
 			}

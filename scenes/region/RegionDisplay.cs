@@ -127,6 +127,10 @@ namespace scenes.region {
 
 		void UndisplayRegionJob(Job job) {
 			if (job is MapObjectJob mopjob) {
+				if (!mopjob.IsValid) {
+					GD.Print("RegionDisplay::UndisplayRegionJob : ignoring job undisplay, map object isn't valid, assuming it was deleted");
+					return;
+				}
 				if (!mapObjectViews.TryGetValue(mopjob.GlobalPosition - region.WorldPosition, out MapObjectView view)) return; // the building view has already been removed
 				if (!(region.LocalFaction.GetJobs(mopjob.GlobalPosition - region.WorldPosition).Where(j => !j.IsInternal).Any())) view.IconSetHide(MapObjectView.IconSetIcons.Hammer);
 				if (region.LocalFaction.HasBuilding(mopjob.GlobalPosition - region.WorldPosition)) {

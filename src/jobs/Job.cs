@@ -102,6 +102,8 @@ public abstract class MapObjectJob : Job {
 
 	public abstract Vector2I GlobalPosition { get; }
 
+	public abstract bool IsValid { get; }
+
 	public abstract void Initialise(Faction ctxFaction, MapObject mapObject);
 	public override void Initialise(Faction ctxFaction) => throw new NotImplementedException("MapObjectJob requires MapObject argument as well!");
 

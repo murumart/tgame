@@ -13,6 +13,7 @@ public class AbsorbFromHomelessPopulationJob : MapObjectJob {
 
 	Building building;
 	Faction regionFaction;
+	public override bool IsValid => building != null;
 
 
 	public void Finish() { }
@@ -65,7 +66,7 @@ public class ConstructBuildingJob : MapObjectJob {
 
 	public override string Title => "Construct Building";
 	public override Group Workers => workers;
-	public bool Valid => building != null;
+	public override bool IsValid => building != null;
 
 	public override Vector2I GlobalPosition => building.GlobalPosition;
 
@@ -185,7 +186,13 @@ public class GatherResourceJob : MapObjectJob {
 
 	public override Group Workers => workers;
 
-	public override Vector2I GlobalPosition => site.GlobalPosition;
+	public override Vector2I GlobalPosition {
+		get {
+			Debug.Assert(site != null, $"Site of GatherResourceJob ({this}) is null!");
+			return site.GlobalPosition;
+		}
+	}
+	public override bool IsValid => site != null;
 
 	readonly Group workers;
 	ResourceStorage storage;
@@ -323,6 +330,8 @@ public class CraftJob : MapObjectJob {
 	readonly Group workers;
 	ResourceStorage storage;
 	Building building;
+
+	public override bool IsValid => building != null;
 
 	float timeSpent = 0f;
 
