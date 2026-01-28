@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Godot;
 using resources.game.resource_site_types;
+using static Building;
 using static ResourceSite;
 
 public partial class LocalAI {
@@ -19,25 +20,29 @@ public partial class LocalAI {
 	public LocalAI(FactionActions actions) {
 		this.factionActions = actions;
 		this.resourceWants = new() {
-			{Registry.Resources.GetAsset("logs"), DecisionFactors.ResourceWant(actions, Registry.Resources.GetAsset("logs"), 30)},
-			{Registry.Resources.GetAsset("rock"), DecisionFactors.ResourceWant(actions, Registry.Resources.GetAsset("rock"), 30)},
+			{Resources.Logs, DecisionFactors.ResourceWant(actions, Resources.Logs, 30)},
+			{Resources.Rocks, DecisionFactors.ResourceWant(actions, Resources.Rocks, 30)},
 		};
 		this.mainActions = [
-			Actions.CreateGatherJob(
-				[
-					resourceWants[Registry.Resources.GetAsset("logs")],
-					DecisionFactors.HasFreeResourceSite(actions, Registry.ResourceSites.GetAsset("trees")),
-				],
-				factionActions,
-				Registry.ResourceSites.GetAsset("trees")),
-			Actions.CreateGatherJob(
-				[
-					resourceWants[Registry.Resources.GetAsset("rock")],
-					DecisionFactors.HasFreeResourceSite(actions, Registry.ResourceSites.GetAsset("boulder")),
-				],
-				factionActions,
-				Registry.ResourceSites.GetAsset("boulder")),
+			Actions.CreateGatherJob([
+					resourceWants[Resources.Logs],
+					DecisionFactors.HasFreeResourceSite(actions, Resources.Trees),
+				], factionActions, Resources.Trees),
+			Actions.CreateGatherJob([
+					resourceWants[Resources.Rocks],
+					DecisionFactors.HasFreeResourceSite(actions, Resources.Boulder),
+				], factionActions, Resources.Boulder),
 		];
+		foreach (var building in Resources.Buildings) {
+			mainActions = mainActions.Append(
+				Actions.PlaceBuildingJob(
+					new DecisionFactor[] { DecisionFactors.HomelessnessRate(factionActions) }
+						.Concat(
+							building.GetResourceRequirements()
+								.Select((rb) => DecisionFactors.ResourceNeed(factionActions, rb.Type, rb.Amount))).ToArray(),
+					factionActions, building)
+				).ToArray();
+		}
 		this.ephemeralActions = new();
 	}
 
@@ -52,24 +57,21 @@ public partial class LocalAI {
 			foreach (var job in factionActions.GetMapObjectJobs()) {
 				if (job is GatherResourceJob gjob) {
 					foreach (var prod in gjob.GetProductions()) {
-						ephemeralActions.Add(Actions.AssignWorkersToJob(
-							[
+						ephemeralActions.Add(Actions.AssignWorkersToJob([
 								DecisionFactors.HasFreeWorkers(factionActions),
 								resourceWants.GetValueOrDefault(prod.ResourceType, DecisionFactors.Null),
-								DecisionFactors.HasEmploymentSpots(factionActions, gjob),
-							],
-							factionActions,
-							job
-						));
-						ephemeralActions.Add(Actions.RemoveJob(
-							[
+								DecisionFactors.JobHasEmploymentSpots(factionActions, gjob),
+							], factionActions, job));
+						ephemeralActions.Add(Actions.RemoveJob([
 								DecisionFactors.OneMinus(resourceWants.GetValueOrDefault(prod.ResourceType, DecisionFactors.Null)),
 								DecisionFactors.Mult(DecisionFactors.JobEmploymentRate(gjob), 0.025f),
-							],
-							factionActions,
-							job
-						));
+							], factionActions, job));
 					}
+				} else if (job is ConstructBuildingJob bjob) {
+					ephemeralActions.Add(Actions.AssignWorkersToJob([
+						DecisionFactors.HasFreeWorkers(factionActions),
+						DecisionFactors.OneMinus(DecisionFactors.JobEmploymentRate(bjob)),
+					], factionActions, bjob));
 				}
 			}
 
@@ -94,6 +96,19 @@ public partial class LocalAI {
 		}
 
 		time = minute;
+	}
+
+	static class Resources {
+		public static readonly IResourceType Logs = Registry.Resources.GetAsset("logs");
+		public static readonly IResourceType Rocks = Registry.Resources.GetAsset("rock");
+
+		public static readonly IResourceSiteType Trees = Registry.ResourceSites.GetAsset("trees");
+		public static readonly IResourceSiteType Boulder = Registry.ResourceSites.GetAsset("boulder");
+
+		public static readonly IBuildingType LogCabin = Registry.Buildings.GetAsset("log_cabin");
+		public static readonly IBuildingType Housing = Registry.Buildings.GetAsset("housing");
+		public static readonly IBuildingType BrickHousing = Registry.Buildings.GetAsset("brick_housing");
+		public static readonly IBuildingType[] Buildings = [Resources.LogCabin, Resources.Housing, Resources.BrickHousing];
 	}
 
 }
@@ -128,7 +143,7 @@ public partial class LocalAI {
 
 		private readonly static DecisionFactor[] NoFactors = [];
 
-		public static Action Idle = new(NoFactors, () => { }, "Idle");
+		public readonly static Action Idle = new(NoFactors, () => { }, "Idle");
 
 		public static Action AssignWorkersToJob(DecisionFactor[] factors, FactionActions ac, Job job) {
 			return new(factors, () => {
@@ -158,6 +173,17 @@ public partial class LocalAI {
 				}
 				Debug.Assert(false, "Didn't find resource site to add job to");
 			}, $"GatherFromResourceSite({siteType.AssetName})");
+		}
+
+		public static Action PlaceBuildingJob(DecisionFactor[] factors, FactionActions ac, IBuildingType buildingType) {
+			return new(factors, () => {
+				foreach (var pos in ac.GetTiles()) {
+					if (!ac.CanPlaceBuilding(buildingType, pos)) continue;
+					ac.PlaceBuilding(buildingType, pos);
+					return;
+				}
+				Debug.Assert(false, "No free tiles left to place building");
+			}, $"CreateBuildingJob({buildingType.AssetName})");
 		}
 
 	}
@@ -201,11 +227,11 @@ public partial class LocalAI {
 			return new(() => (float)job.Workers.Count / (float)job.Workers.Capacity, "JobEmploymentRate");
 		}
 
-		public static DecisionFactor HasEmploymentSpots(FactionActions ac, Job job) {
+		public static DecisionFactor JobHasEmploymentSpots(FactionActions ac, Job job) {
 			return new(() => job.NeedsWorkers && job.Workers.Capacity > job.Workers.Count ? 1.0f : 0.0f, "HasEmploymentSpots");
 		}
 
-		public static DecisionFactor HasEmployees(Job job) {
+		public static DecisionFactor JobHasEmployees(Job job) {
 			return new(() => job.NeedsWorkers && job.Workers.Count > 0 ? 1.0f : 0.0f, "HasEmployees");
 		}
 

@@ -6,7 +6,9 @@ using static Building;
 public class FactionActions {
 
 	Region region;
+	public Region Region { get => region; }
 	Faction faction;
+	public Faction Faction { get => faction; }
 
 
 	public FactionActions(Region region, Faction faction) {
@@ -18,6 +20,10 @@ public class FactionActions {
 
 	public ResourceStorage GetResourceStorage() {
 		return faction.Resources;
+	}
+
+	public IEnumerable<Vector2I> GetTiles() {
+		return region.GroundTiles.Keys;
 	}
 
 	// building

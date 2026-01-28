@@ -100,6 +100,7 @@ public class Region {
 		var ob = type.CreateMapObject(WorldPosition + position);
 		mapObjects[position] = ob;
 		NaturalResources.Touch();
+		NotifyMapObjectUpdateAt(position);
 		return ob;
 	}
 

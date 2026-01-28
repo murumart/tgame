@@ -15,6 +15,9 @@ namespace scenes.region {
 
 		bool valid = false;
 
+		readonly Queue<Job> jobsToDisplay = new();
+		readonly Queue<Job> jobsToUndisplay = new();
+
 
 		// setup
 
@@ -26,6 +29,17 @@ namespace scenes.region {
 					DisconnectEvents();
 					valid = false;
 					break;
+			}
+		}
+
+		public override void _Process(double delta) {
+			if (jobsToDisplay.Count > 0) {
+				var j = jobsToDisplay.Dequeue();
+				DisplayRegionJob(j);
+			}
+			if (jobsToUndisplay.Count > 0) {
+				var j = jobsToUndisplay.Dequeue();
+				UndisplayRegionJob(j);
 			}
 		}
 
@@ -96,18 +110,22 @@ namespace scenes.region {
 		}
 
 		void OnRegionJobAdded(Job job) {
-			GD.Print("RegionDisplay::OnRegionJobAdded : job added ", job);
+			jobsToDisplay.Enqueue(job);
+		}
+
+		void DisplayRegionJob(Job job) {
 			if (job is MapObjectJob mopjob) {
-				if (!mapObjectViews.ContainsKey(mopjob.GlobalPosition - region.WorldPosition) && mopjob is ConstructBuildingJob or AbsorbFromHomelessPopulationJob) {
-					Callable.From(() => OnRegionJobAdded(mopjob)).CallDeferred();
-					return;
-				}
-				Debug.Assert(mapObjectViews.ContainsKey(mopjob.GlobalPosition - region.WorldPosition), $"Don't have the building object that the {job} is being attached to");
+				Debug.Assert(mapObjectViews.ContainsKey(mopjob.GlobalPosition - region.WorldPosition), $"Don't have the building view that the {job} is being attached to");
 				mapObjectViews[mopjob.GlobalPosition - region.WorldPosition].IconSetShow(MapObjectView.IconSetIcons.Hammer);
 			}
+			GD.Print("RegionDisplay::OnRegionJobAdded : job added ", job);
 		}
 
 		void OnRegionJobRemoved(Job job) {
+			jobsToUndisplay.Enqueue(job);
+		}
+
+		void UndisplayRegionJob(Job job) {
 			if (job is MapObjectJob mopjob) {
 				if (!mapObjectViews.TryGetValue(mopjob.GlobalPosition - region.WorldPosition, out MapObjectView view)) return; // the building view has already been removed
 				if (!(region.LocalFaction.GetJobs(mopjob.GlobalPosition - region.WorldPosition).Where(j => !j.IsInternal).Any())) view.IconSetHide(MapObjectView.IconSetIcons.Hammer);
