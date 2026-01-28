@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://bwhes4dqnhd8d"]
 
-[node name="GameOver" type="Node2D"]
+[node name="GameOver" type="Node2D" unique_id=864112208]
 
-[node name="Label" type="Label" parent="."]
+[node name="Label" type="Label" parent="." unique_id=362640364]
 offset_left = 168.0
 offset_top = 142.0
 offset_right = 208.0

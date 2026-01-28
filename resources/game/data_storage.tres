@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="DataStorage" load_steps=18 format=3 uid="uid://dca836kv0vsm1"]
+[gd_resource type="Resource" script_class="DataStorage" format=3 uid="uid://dca836kv0vsm1"]
 
 [ext_resource type="Resource" uid="uid://cxf4vhnsk21kq" path="res://resources/game/building_types/marketplace.tres" id="1_8bhaa"]
 [ext_resource type="Resource" uid="uid://c613ci251pl2v" path="res://resources/game/building_types/housing.tres" id="1_r67qw"]

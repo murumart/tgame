@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="ResourceType" load_steps=2 format=3 uid="uid://ddqpxr0u07bfp"]
+[gd_resource type="Resource" script_class="ResourceType" format=3 uid="uid://ddqpxr0u07bfp"]
 
 [ext_resource type="Script" uid="uid://coqr05mqlancq" path="res://resources/game/resource_types/ResourceType.cs" id="1_dnl4l"]
 

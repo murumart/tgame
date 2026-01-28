@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=12 format=3 uid="uid://beql3um0mpmyd"]
+[gd_resource type="Theme" format=3 uid="uid://beql3um0mpmyd"]
 
 [ext_resource type="FontVariation" uid="uid://dliky8sbpgnxp" path="res://resources/visual/font/title_font.tres" id="1_70gfe"]
 [ext_resource type="FontVariation" uid="uid://16wjjwlxw4iw" path="res://resources/visual/font/default_font.tres" id="1_rjbnf"]

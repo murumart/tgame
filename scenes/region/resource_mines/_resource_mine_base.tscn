@@ -1,5 +1,5 @@
-[gd_scene load_steps=2 format=3 uid="uid://v8clymlv5hjm"]
+[gd_scene format=3 uid="uid://v8clymlv5hjm"]
 
 [ext_resource type="PackedScene" uid="uid://dl17gbjn423tk" path="res://scenes/region/_map_object_view_base.tscn" id="1_5x3m8"]
 
-[node name="MapObjectViewBase" instance=ExtResource("1_5x3m8")]
+[node name="MapObjectViewBase" unique_id=49676930 instance=ExtResource("1_5x3m8")]

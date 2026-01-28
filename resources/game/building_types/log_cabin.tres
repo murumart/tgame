@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="BuildingType" load_steps=3 format=3 uid="uid://cith36udqt0si"]
+[gd_resource type="Resource" script_class="BuildingType" format=3 uid="uid://cith36udqt0si"]
 
 [ext_resource type="Resource" uid="uid://pmrcwo4t316p" path="res://resources/game/resource_types/logs.tres" id="1_6c64w"]
 [ext_resource type="Script" uid="uid://b5xb3tdf3yoon" path="res://resources/game/building_types/BuildingType.cs" id="3_o2yxb"]

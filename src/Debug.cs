@@ -14,9 +14,9 @@ internal static class Debug {
 		if (!cond) {
 			var sf = new StackFrame(1);
 			var newmsg = $"{sf.GetMethod().DeclaringType}::{sf.GetMethod().Name}: " + msg;
-			GD.PrintErr(newmsg);
+			//GD.PrintErr(newmsg);
+			GD.PushError(msg);
 			OS.Alert(newmsg, $"Assertion Failed in {sf.GetMethod().DeclaringType}::{sf.GetMethod().Name}");
-			//GD.PushError(msg);
 			throw new ApplicationException($"Assertion failed: {msg}");
 		}
 	}

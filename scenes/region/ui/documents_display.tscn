@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://bli7m2dvghbu1"]
+[gd_scene format=3 uid="uid://bli7m2dvghbu1"]
 
 [ext_resource type="Script" uid="uid://bkpe6if0q4xbk" path="res://scenes/region/ui/DocumentsDisplay.cs" id="1_sirhb"]
 [ext_resource type="LabelSettings" uid="uid://ddruam7fh1y7l" path="res://resources/visual/theme/label_styles/title.tres" id="2_6ts6l"]
@@ -7,7 +7,7 @@
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_pk7xb"]
 
-[node name="Agreements" type="PanelContainer" node_paths=PackedStringArray("currentAgreementsToggle", "currentAgreementsControl", "currentAgreementsList", "pastAgreementsToggle", "pastAgreementsControl", "pastAgreementsList")]
+[node name="Agreements" type="PanelContainer" unique_id=597345697 node_paths=PackedStringArray("currentAgreementsToggle", "currentAgreementsControl", "currentAgreementsList", "pastAgreementsToggle", "pastAgreementsControl", "pastAgreementsList")]
 offset_right = 311.0
 offset_bottom = 238.0
 size_flags_horizontal = 3
@@ -19,34 +19,34 @@ pastAgreementsToggle = NodePath("MarginContainer/ScrollContainer/MarginContainer
 pastAgreementsControl = NodePath("MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/PastArrangements")
 pastAgreementsList = NodePath("MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/PastArrangements/Box")
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1451798421]
 layout_mode = 2
 theme_override_constants/margin_left = 4
 theme_override_constants/margin_top = 4
 theme_override_constants/margin_right = 4
 theme_override_constants/margin_bottom = 4
 
-[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer"]
+[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer" unique_id=1798680192]
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_pk7xb")
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/ScrollContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/ScrollContainer" unique_id=99754128]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/margin_right = 4
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/ScrollContainer/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/ScrollContainer/MarginContainer" unique_id=2033858265]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Label" type="Label" parent="MarginContainer/ScrollContainer/MarginContainer/VBoxContainer"]
+[node name="Label" type="Label" parent="MarginContainer/ScrollContainer/MarginContainer/VBoxContainer" unique_id=221918756]
 layout_mode = 2
 text = "Agreements"
 label_settings = ExtResource("2_6ts6l")
 
-[node name="RichTextLabel" type="RichTextLabel" parent="MarginContainer/ScrollContainer/MarginContainer/VBoxContainer"]
+[node name="RichTextLabel" type="RichTextLabel" parent="MarginContainer/ScrollContainer/MarginContainer/VBoxContainer" unique_id=448034191]
 layout_mode = 2
 theme_override_font_sizes/normal_font_size = 10
 bbcode_enabled = true
@@ -54,7 +54,7 @@ text = "Here you can view agreements you've made with the various entities of th
 fit_content = true
 horizontal_alignment = 3
 
-[node name="CurrentAgreementsToggle" type="Button" parent="MarginContainer/ScrollContainer/MarginContainer/VBoxContainer"]
+[node name="CurrentAgreementsToggle" type="Button" parent="MarginContainer/ScrollContainer/MarginContainer/VBoxContainer" unique_id=900306204]
 layout_mode = 2
 focus_mode = 0
 theme_override_fonts/font = ExtResource("3_ie3jr")
@@ -63,18 +63,18 @@ text = "Current agreements"
 flat = true
 alignment = 0
 
-[node name="CurrentArrangements" type="MarginContainer" parent="MarginContainer/ScrollContainer/MarginContainer/VBoxContainer"]
+[node name="CurrentArrangements" type="MarginContainer" parent="MarginContainer/ScrollContainer/MarginContainer/VBoxContainer" unique_id=102637078]
 layout_mode = 2
 theme_override_constants/margin_left = 8
 
-[node name="Box" type="VBoxContainer" parent="MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/CurrentArrangements"]
+[node name="Box" type="VBoxContainer" parent="MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/CurrentArrangements" unique_id=459252009]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Agreement" parent="MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/CurrentArrangements/Box" instance=ExtResource("4_6cgx3")]
+[node name="Agreement" parent="MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/CurrentArrangements/Box" unique_id=1532186999 instance=ExtResource("4_6cgx3")]
 layout_mode = 2
 
-[node name="PastAgreementsToggle" type="Button" parent="MarginContainer/ScrollContainer/MarginContainer/VBoxContainer"]
+[node name="PastAgreementsToggle" type="Button" parent="MarginContainer/ScrollContainer/MarginContainer/VBoxContainer" unique_id=459848214]
 layout_mode = 2
 focus_mode = 0
 theme_override_fonts/font = ExtResource("3_ie3jr")
@@ -83,10 +83,10 @@ text = "Past agreements"
 flat = true
 alignment = 0
 
-[node name="PastArrangements" type="MarginContainer" parent="MarginContainer/ScrollContainer/MarginContainer/VBoxContainer"]
+[node name="PastArrangements" type="MarginContainer" parent="MarginContainer/ScrollContainer/MarginContainer/VBoxContainer" unique_id=497020464]
 layout_mode = 2
 theme_override_constants/margin_left = 8
 
-[node name="Box" type="VBoxContainer" parent="MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/PastArrangements"]
+[node name="Box" type="VBoxContainer" parent="MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/PastArrangements" unique_id=722575813]
 layout_mode = 2
 size_flags_vertical = 3

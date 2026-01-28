@@ -1,9 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://bbhbv3hm6dqgh"]
+[gd_scene format=3 uid="uid://bbhbv3hm6dqgh"]
 
 [ext_resource type="Script" uid="uid://bjia4lgqb45j5" path="res://scenes/region/ui/JobSlider.cs" id="1_elyht"]
 [ext_resource type="LabelSettings" uid="uid://teuhafm0mc0i" path="res://resources/visual/theme/label_styles/10px.tres" id="1_graa7"]
 
-[node name="JobSlider" type="VBoxContainer" node_paths=PackedStringArray("NameLabel", "MoneyLabel", "Slider")]
+[node name="JobSlider" type="VBoxContainer" unique_id=1872956985 node_paths=PackedStringArray("NameLabel", "MoneyLabel", "Slider")]
 size_flags_horizontal = 3
 theme_override_constants/separation = 0
 script = ExtResource("1_elyht")
@@ -11,27 +11,27 @@ NameLabel = NodePath("HBoxContainer/Label")
 MoneyLabel = NodePath("HBoxContainer/Label2")
 Slider = NodePath("HSlider")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="."]
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1277092894]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Label" type="Label" parent="HBoxContainer"]
+[node name="Label" type="Label" parent="HBoxContainer" unique_id=2138997346]
 layout_mode = 2
 text = "Workers"
 label_settings = ExtResource("1_graa7")
 
-[node name="Fat" type="Control" parent="HBoxContainer"]
+[node name="Fat" type="Control" parent="HBoxContainer" unique_id=67243572]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Label2" type="Label" parent="HBoxContainer"]
+[node name="Label2" type="Label" parent="HBoxContainer" unique_id=1481453364]
 custom_minimum_size = Vector2(16, 0)
 layout_mode = 2
 text = "money"
 label_settings = ExtResource("1_graa7")
 horizontal_alignment = 2
 
-[node name="HSlider" type="HSlider" parent="."]
+[node name="HSlider" type="HSlider" parent="." unique_id=2031969232]
 layout_mode = 2
 focus_mode = 0
 rounded = true

@@ -1,24 +1,24 @@
-[gd_scene load_steps=3 format=3 uid="uid://c7bkc1812dw4j"]
+[gd_scene format=3 uid="uid://c7bkc1812dw4j"]
 
 [ext_resource type="Script" uid="uid://dq1j7v15qpxx6" path="res://scenes/region/ui/DocumentDisplay.cs" id="1_re0pi"]
 [ext_resource type="FontVariation" uid="uid://16wjjwlxw4iw" path="res://resources/visual/font/default_font.tres" id="2_pbugc"]
 
-[node name="DocumentDisplay" type="PanelContainer" node_paths=PackedStringArray("titleButton", "bodyText")]
+[node name="DocumentDisplay" type="PanelContainer" unique_id=1845496456 node_paths=PackedStringArray("titleButton", "bodyText")]
 script = ExtResource("1_re0pi")
 titleButton = NodePath("MarginContainer/VBoxContainer/Title")
 bodyText = NodePath("MarginContainer/VBoxContainer/Body")
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1337624739]
 layout_mode = 2
 theme_override_constants/margin_left = 2
 theme_override_constants/margin_top = 2
 theme_override_constants/margin_right = 2
 theme_override_constants/margin_bottom = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=1942355600]
 layout_mode = 2
 
-[node name="Title" type="Button" parent="MarginContainer/VBoxContainer"]
+[node name="Title" type="Button" parent="MarginContainer/VBoxContainer" unique_id=251146329]
 layout_mode = 2
 focus_mode = 0
 theme_override_fonts/font = ExtResource("2_pbugc")
@@ -27,7 +27,7 @@ text = "Export Mandate #1"
 flat = true
 alignment = 0
 
-[node name="Body" type="RichTextLabel" parent="MarginContainer/VBoxContainer"]
+[node name="Body" type="RichTextLabel" parent="MarginContainer/VBoxContainer" unique_id=1407045708]
 layout_mode = 2
 theme_override_font_sizes/normal_font_size = 10
 text = "This mandated mandate mandate man Date. Dm"

@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://cp354pcilqv48"]
+[gd_scene format=3 uid="uid://cp354pcilqv48"]
 
 [ext_resource type="Script" uid="uid://cd6mwdns4bcwa" path="res://scenes/region/ui/UI.cs" id="1_vkak1"]
 [ext_resource type="PackedScene" uid="uid://bfswljwjyhmyy" path="res://scenes/ui/resource_display.tscn" id="2_iwag8"]
@@ -24,7 +24,7 @@ font_color = Color(0.8352941, 0.8392157, 0.85882354, 1)
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_bjdfm"]
 
-[node name="Ui" type="MarginContainer" node_paths=PackedStringArray("buildButton", "agreementsButton", "jobsButton", "menuTabs", "buildingList", "documentsDisplay", "jobsList", "resourceDisplay", "pauseDisplayPanel", "gameSpeedLabel", "pauseButton", "normalSpeedButton", "fastSpeedButton", "resourceLabel")]
+[node name="Ui" type="MarginContainer" unique_id=948088031 node_paths=PackedStringArray("buildButton", "agreementsButton", "jobsButton", "menuTabs", "buildingList", "documentsDisplay", "jobsList", "resourceDisplay", "pauseDisplayPanel", "gameSpeedLabel", "pauseButton", "normalSpeedButton", "fastSpeedButton", "resourceLabel")]
 z_index = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -52,69 +52,69 @@ normalSpeedButton = NodePath("VBoxContainer/VBoxContainer/HBoxContainer/HBoxCont
 fastSpeedButton = NodePath("VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer/FastButton")
 resourceLabel = NodePath("VBoxContainer/MarginContainer/Horizon/ResourcesList")
 
-[node name="PausePanel" type="Panel" parent="."]
+[node name="PausePanel" type="Panel" parent="." unique_id=1758856808]
 visible = false
 layout_mode = 2
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_suhma")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1152691265]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer" unique_id=833483948]
 layout_mode = 2
 theme_override_constants/separation = 1
 
-[node name="ResourceDisplay" parent="VBoxContainer/VBoxContainer" instance=ExtResource("2_iwag8")]
+[node name="ResourceDisplay" parent="VBoxContainer/VBoxContainer" unique_id=647408258 instance=ExtResource("2_iwag8")]
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/VBoxContainer" unique_id=486392852]
 layout_mode = 2
 alignment = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/VBoxContainer/HBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/VBoxContainer/HBoxContainer" unique_id=1888251400]
 custom_minimum_size = Vector2(60, 0)
 layout_mode = 2
 theme_override_constants/separation = 1
 
-[node name="Label" type="Label" parent="VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer"]
+[node name="Label" type="Label" parent="VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer" unique_id=1762454474]
 layout_mode = 2
 text = "game speed 3x"
 label_settings = SubResource("LabelSettings_suhma")
 
-[node name="PauseButton" type="Button" parent="VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer"]
+[node name="PauseButton" type="Button" parent="VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer" unique_id=234190844]
 layout_mode = 2
 size_flags_horizontal = 3
 focus_mode = 0
 theme_override_font_sizes/font_size = 6
 text = "||"
 
-[node name="NormalSpeedButton" type="Button" parent="VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer"]
+[node name="NormalSpeedButton" type="Button" parent="VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer" unique_id=1810911123]
 layout_mode = 2
 size_flags_horizontal = 3
 focus_mode = 0
 theme_override_font_sizes/font_size = 6
 text = ">"
 
-[node name="FastButton" type="Button" parent="VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer"]
+[node name="FastButton" type="Button" parent="VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer" unique_id=1125127116]
 layout_mode = 2
 size_flags_horizontal = 3
 focus_mode = 0
 theme_override_font_sizes/font_size = 6
 text = ">>"
 
-[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer" unique_id=385498282]
 layout_mode = 2
 size_flags_vertical = 3
 mouse_filter = 2
 
-[node name="Horizon" type="HBoxContainer" parent="VBoxContainer/MarginContainer"]
+[node name="Horizon" type="HBoxContainer" parent="VBoxContainer/MarginContainer" unique_id=1017568330]
 layout_mode = 2
 size_flags_vertical = 3
 mouse_filter = 2
 
-[node name="ResourcesList" type="RichTextLabel" parent="VBoxContainer/MarginContainer/Horizon"]
+[node name="ResourcesList" type="RichTextLabel" parent="VBoxContainer/MarginContainer/Horizon" unique_id=2107477024]
 custom_minimum_size = Vector2(60, 0)
 layout_mode = 2
 mouse_filter = 2
@@ -128,19 +128,19 @@ aa
 a
 "
 
-[node name="Fat" type="Control" parent="VBoxContainer/MarginContainer/Horizon"]
+[node name="Fat" type="Control" parent="VBoxContainer/MarginContainer/Horizon" unique_id=1462543820]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 1.75
 mouse_filter = 2
 
-[node name="JobsList" parent="VBoxContainer/MarginContainer/Horizon" node_paths=PackedStringArray("ui") instance=ExtResource("3_y7o2c")]
+[node name="JobsList" parent="VBoxContainer/MarginContainer/Horizon" unique_id=899012506 node_paths=PackedStringArray("ui") instance=ExtResource("3_y7o2c")]
 visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 ui = NodePath("../../../..")
 
-[node name="MenuTabs" type="TabContainer" parent="VBoxContainer/MarginContainer"]
+[node name="MenuTabs" type="TabContainer" parent="VBoxContainer/MarginContainer" unique_id=1179149039]
 unique_name_in_owner = true
 layout_mode = 2
 mouse_filter = 2
@@ -148,12 +148,12 @@ theme_override_styles/panel = SubResource("StyleBoxEmpty_bjdfm")
 tabs_visible = false
 deselect_enabled = true
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/MarginContainer/MenuTabs"]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/MarginContainer/MenuTabs" unique_id=1032668696]
 visible = false
 layout_mode = 2
 metadata/_tab_index = 0
 
-[node name="BuildingList" type="PanelContainer" parent="VBoxContainer/MarginContainer/MenuTabs/HBoxContainer" node_paths=PackedStringArray("ui", "itemList", "buildConfirmation", "resourceListText")]
+[node name="BuildingList" type="PanelContainer" parent="VBoxContainer/MarginContainer/MenuTabs/HBoxContainer" unique_id=1591417954 node_paths=PackedStringArray("ui", "itemList", "buildConfirmation", "resourceListText")]
 custom_minimum_size = Vector2(169, 240)
 layout_mode = 2
 script = ExtResource("4_suhma")
@@ -162,21 +162,21 @@ itemList = NodePath("MarginContainer/VBoxContainer/BuildMenuList")
 buildConfirmation = NodePath("MarginContainer/VBoxContainer/HBoxContainer/BuildMenuConfirmation")
 resourceListText = NodePath("MarginContainer/VBoxContainer/ResourceList")
 
-[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/MarginContainer/MenuTabs/HBoxContainer/BuildingList"]
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/MarginContainer/MenuTabs/HBoxContainer/BuildingList" unique_id=1964448415]
 layout_mode = 2
 theme_override_constants/margin_left = 2
 theme_override_constants/margin_top = 2
 theme_override_constants/margin_right = 2
 theme_override_constants/margin_bottom = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/MarginContainer/MenuTabs/HBoxContainer/BuildingList/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/MarginContainer/MenuTabs/HBoxContainer/BuildingList/MarginContainer" unique_id=1571067220]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="VBoxContainer/MarginContainer/MenuTabs/HBoxContainer/BuildingList/MarginContainer/VBoxContainer"]
+[node name="Label" type="Label" parent="VBoxContainer/MarginContainer/MenuTabs/HBoxContainer/BuildingList/MarginContainer/VBoxContainer" unique_id=401129889]
 layout_mode = 2
 text = "What to build?"
 
-[node name="BuildMenuList" type="ItemList" parent="VBoxContainer/MarginContainer/MenuTabs/HBoxContainer/BuildingList/MarginContainer/VBoxContainer"]
+[node name="BuildMenuList" type="ItemList" parent="VBoxContainer/MarginContainer/MenuTabs/HBoxContainer/BuildingList/MarginContainer/VBoxContainer" unique_id=728412236]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
@@ -186,67 +186,67 @@ item_0/text = "Housing"
 item_1/text = "Well"
 item_2/text = "Idk"
 
-[node name="ResourceList" type="RichTextLabel" parent="VBoxContainer/MarginContainer/MenuTabs/HBoxContainer/BuildingList/MarginContainer/VBoxContainer"]
+[node name="ResourceList" type="RichTextLabel" parent="VBoxContainer/MarginContainer/MenuTabs/HBoxContainer/BuildingList/MarginContainer/VBoxContainer" unique_id=1954358037]
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.33
 bbcode_enabled = true
 text = "you need my resources. to construct these building aa a a a a a a  aa aaa aaaaa aa aa aaa a a  a aa a a aa a a a aa a aaa a a"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/MarginContainer/MenuTabs/HBoxContainer/BuildingList/MarginContainer/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/MarginContainer/MenuTabs/HBoxContainer/BuildingList/MarginContainer/VBoxContainer" unique_id=1956616120]
 layout_mode = 2
 alignment = 2
 
-[node name="BuildMenuConfirmation" type="Button" parent="VBoxContainer/MarginContainer/MenuTabs/HBoxContainer/BuildingList/MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="BuildMenuConfirmation" type="Button" parent="VBoxContainer/MarginContainer/MenuTabs/HBoxContainer/BuildingList/MarginContainer/VBoxContainer/HBoxContainer" unique_id=348796388]
 unique_name_in_owner = true
 layout_mode = 2
 disabled = true
 text = "select"
 
-[node name="Fat" type="Control" parent="VBoxContainer/MarginContainer/MenuTabs/HBoxContainer"]
+[node name="Fat" type="Control" parent="VBoxContainer/MarginContainer/MenuTabs/HBoxContainer" unique_id=1181721685]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 mouse_filter = 2
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer/MarginContainer/MenuTabs"]
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer/MarginContainer/MenuTabs" unique_id=1793221342]
 visible = false
 layout_mode = 2
 metadata/_tab_index = 1
 
-[node name="Agreements" parent="VBoxContainer/MarginContainer/MenuTabs/HBoxContainer2" node_paths=PackedStringArray("ui") instance=ExtResource("5_iwag8")]
+[node name="Agreements" parent="VBoxContainer/MarginContainer/MenuTabs/HBoxContainer2" unique_id=1105556232 node_paths=PackedStringArray("ui") instance=ExtResource("5_iwag8")]
 layout_mode = 2
 ui = NodePath("../../../../..")
 
-[node name="Fat" type="Control" parent="VBoxContainer/MarginContainer/MenuTabs/HBoxContainer2"]
+[node name="Fat" type="Control" parent="VBoxContainer/MarginContainer/MenuTabs/HBoxContainer2" unique_id=15209670]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.47
 
-[node name="ControlButtons" type="HBoxContainer" parent="VBoxContainer"]
+[node name="ControlButtons" type="HBoxContainer" parent="VBoxContainer" unique_id=1935346688]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="BuildButton" type="Button" parent="VBoxContainer/ControlButtons"]
+[node name="BuildButton" type="Button" parent="VBoxContainer/ControlButtons" unique_id=428590394]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
 text = "Build"
 
-[node name="AgreementsButton" type="Button" parent="VBoxContainer/ControlButtons"]
+[node name="AgreementsButton" type="Button" parent="VBoxContainer/ControlButtons" unique_id=234576058]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
 text = "Agreements"
 
-[node name="JobsButton" type="Button" parent="VBoxContainer/ControlButtons"]
+[node name="JobsButton" type="Button" parent="VBoxContainer/ControlButtons" unique_id=1354417080]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
 disabled = true
 text = "Jobs"
 
-[node name="WorldButton" type="Button" parent="VBoxContainer/ControlButtons"]
+[node name="WorldButton" type="Button" parent="VBoxContainer/ControlButtons" unique_id=1836012613]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0

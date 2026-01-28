@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://dye16eba5lb31"]
+[gd_scene format=3 uid="uid://dye16eba5lb31"]
 
 [ext_resource type="Script" uid="uid://3don1v6ha6ia" path="res://scenes/map/WorldMan.cs" id="1_g1pp1"]
 [ext_resource type="PackedScene" uid="uid://dfsyk55h5ioh0" path="res://scenes/region/player_region.tscn" id="2_vqee5"]
@@ -34,7 +34,7 @@ height = 840
 noise = ExtResource("4_f4k24")
 color_ramp = SubResource("Gradient_7j5km")
 
-[node name="WorldMan" type="Node2D" node_paths=PackedStringArray("worldGenerator", "worldRenderer", "worldUI", "camera")]
+[node name="WorldMan" type="Node2D" unique_id=1264187012 node_paths=PackedStringArray("worldGenerator", "worldRenderer", "worldUI", "camera")]
 script = ExtResource("1_g1pp1")
 worldGenerator = NodePath("WorldGenerator")
 worldRenderer = NodePath("WorldRenderer")
@@ -42,7 +42,7 @@ regionScene = ExtResource("2_vqee5")
 worldUI = NodePath("WorldUI")
 camera = NodePath("Camera")
 
-[node name="WorldGenerator" type="Node" parent="."]
+[node name="WorldGenerator" type="Node" parent="." unique_id=421272415]
 script = ExtResource("3_n4hhb")
 continentNoise = ExtResource("4_f4k24")
 WorldWidth = 320
@@ -53,32 +53,32 @@ AggressiveFactionCount = 40
 islandCurve = SubResource("Curve_7j5km")
 populationLandTileCurve = SubResource("Curve_vqee5")
 
-[node name="WorldRenderer" type="Node" parent="." node_paths=PackedStringArray("groundSprite", "regionSprite", "highlightSprite")]
+[node name="WorldRenderer" type="Node" parent="." unique_id=1973556366 node_paths=PackedStringArray("groundSprite", "regionSprite", "highlightSprite")]
 script = ExtResource("5_3biw4")
 groundSprite = NodePath("Ground")
 regionSprite = NodePath("Regions")
 highlightSprite = NodePath("Highlight")
 elevationGradient = SubResource("Gradient_7j5km")
 
-[node name="Ground" type="Sprite2D" parent="WorldRenderer"]
+[node name="Ground" type="Sprite2D" parent="WorldRenderer" unique_id=2127821019]
 centered = false
 
-[node name="Regions" type="Sprite2D" parent="WorldRenderer"]
+[node name="Regions" type="Sprite2D" parent="WorldRenderer" unique_id=2122600001]
 modulate = Color(1.288109, 1.288109, 1.288109, 1)
 material = SubResource("CanvasItemMaterial_n4hhb")
 centered = false
 
-[node name="Highlight" type="Sprite2D" parent="WorldRenderer"]
+[node name="Highlight" type="Sprite2D" parent="WorldRenderer" unique_id=8108790]
 modulate = Color(1, 1, 1, 0.26666668)
 material = SubResource("CanvasItemMaterial_vqee5")
 centered = false
 
-[node name="DebugRender" type="Sprite2D" parent="."]
+[node name="DebugRender" type="Sprite2D" parent="." unique_id=931766]
 visible = false
 texture = SubResource("NoiseTexture2D_j0gdu")
 centered = false
 
-[node name="Camera" type="Camera2D" parent="."]
+[node name="Camera" type="Camera2D" parent="." unique_id=135815858]
 script = ExtResource("6_h4q0h")
 
-[node name="WorldUI" parent="." instance=ExtResource("7_vqee5")]
+[node name="WorldUI" parent="." unique_id=1556432657 instance=ExtResource("7_vqee5")]

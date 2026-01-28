@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="BuildingType" load_steps=4 format=3 uid="uid://dm7cl54id0t35"]
+[gd_resource type="Resource" script_class="BuildingType" format=3 uid="uid://dm7cl54id0t35"]
 
 [ext_resource type="Script" uid="uid://b5xb3tdf3yoon" path="res://resources/game/building_types/BuildingType.cs" id="1_7mu2a"]
 [ext_resource type="Resource" uid="uid://nw83fam2omvi" path="res://resources/game/resource_types/rock.tres" id="1_cgu5r"]
@@ -7,11 +7,11 @@
 [resource]
 script = ExtResource("1_7mu2a")
 name = "well"
-ResourceCapacities = null
 ResourceCosts = Dictionary[Object, int]({
 ExtResource("1_cgu5r"): 10,
 ExtResource("2_cgu5r"): 3
 })
+CraftingJobs = null
 HoursToConstruct = 12.0
 AvailableJobClassNames = PackedStringArray("FishByHandJob")
 ScenePath = "uid://b2bo11jryfpr"

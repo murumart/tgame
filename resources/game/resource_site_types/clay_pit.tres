@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="ResourceSiteType" load_steps=5 format=3 uid="uid://c2hf677ph58lg"]
+[gd_resource type="Resource" script_class="ResourceSiteType" format=3 uid="uid://c2hf677ph58lg"]
 
 [ext_resource type="Resource" uid="uid://lda3p80x02sh" path="res://resources/game/resource_types/clay.tres" id="1_1r0go"]
 [ext_resource type="Script" uid="uid://ct2a6sqe1m7mx" path="res://resources/game/resource_site_types/ResourceSiteType.cs" id="1_ierct"]

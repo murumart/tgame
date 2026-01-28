@@ -1,11 +1,11 @@
-[gd_scene load_steps=3 format=3 uid="uid://chjsqm7q8bab7"]
+[gd_scene format=3 uid="uid://chjsqm7q8bab7"]
 
 [ext_resource type="PackedScene" uid="uid://v8clymlv5hjm" path="res://scenes/region/resource_mines/_resource_mine_base.tscn" id="1_bjeym"]
 [ext_resource type="Texture2D" uid="uid://e2h1brj1lejw" path="res://scenes/region/resource_mines/boulder.png" id="2_5cslr"]
 
-[node name="Boulder" instance=ExtResource("1_bjeym")]
+[node name="Boulder" unique_id=1121197478 instance=ExtResource("1_bjeym")]
 
-[node name="Sprite2D" type="Sprite2D" parent="." index="0"]
+[node name="Sprite2D" type="Sprite2D" parent="." index="0" unique_id=1348954134]
 position = Vector2(-20, -21)
 texture = ExtResource("2_5cslr")
 centered = false

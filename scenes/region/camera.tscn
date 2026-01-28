@@ -1,18 +1,18 @@
-[gd_scene load_steps=5 format=3 uid="uid://b1t88emteoav4"]
+[gd_scene format=3 uid="uid://b1t88emteoav4"]
 
 [ext_resource type="Script" uid="uid://hk3d5pdgs6ra" path="res://scenes/region/RegionCamera.cs" id="1_rxgj5"]
 [ext_resource type="PackedScene" uid="uid://cp354pcilqv48" path="res://scenes/region/ui/ui.tscn" id="2_lh5hp"]
 [ext_resource type="Material" uid="uid://cet7ep6cvqk3p" path="res://resources/visual/add_material.tres" id="3_snfgk"]
 [ext_resource type="Texture2D" uid="uid://ethlsfg8xmhk" path="res://scenes/region/iso_mask.png" id="4_jowqh"]
 
-[node name="RegionCamera" type="Camera2D" node_paths=PackedStringArray("cursor", "ui")]
+[node name="RegionCamera" type="Camera2D" unique_id=633581434 node_paths=PackedStringArray("cursor", "ui")]
 script = ExtResource("1_rxgj5")
 cursor = NodePath("Cursor")
 ui = NodePath("Ui")
 
-[node name="Ui" parent="." instance=ExtResource("2_lh5hp")]
+[node name="Ui" parent="." unique_id=2048202457 instance=ExtResource("2_lh5hp")]
 
-[node name="Cursor" type="Sprite2D" parent="."]
+[node name="Cursor" type="Sprite2D" parent="." unique_id=273959931]
 self_modulate = Color(1, 1, 1, 0.1764706)
 top_level = true
 z_index = 100

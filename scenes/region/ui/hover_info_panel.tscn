@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://3kvcwdnxdp36"]
+[gd_scene format=3 uid="uid://3kvcwdnxdp36"]
 
 [ext_resource type="Script" uid="uid://db3hi55th3gjl" path="res://scenes/region/ui/HoverInfoPanel.cs" id="1_ags74"]
 [ext_resource type="FontVariation" uid="uid://dliky8sbpgnxp" path="res://resources/visual/font/title_font.tres" id="1_bvvw3"]
@@ -10,7 +10,7 @@ font_size = 12
 [sub_resource type="LabelSettings" id="LabelSettings_ags74"]
 font_size = 8
 
-[node name="Infopanel" type="PanelContainer" node_paths=PackedStringArray("nameLabel", "infoLabel")]
+[node name="Infopanel" type="PanelContainer" unique_id=780463876 node_paths=PackedStringArray("nameLabel", "infoLabel")]
 z_index = 10
 offset_left = -47.0
 offset_top = -88.0
@@ -22,7 +22,7 @@ script = ExtResource("1_ags74")
 nameLabel = NodePath("MarginContainer/VBoxContainer/NameLabel")
 infoLabel = NodePath("MarginContainer/VBoxContainer/InfoLabel")
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=111902009]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/margin_left = 2
@@ -30,16 +30,16 @@ theme_override_constants/margin_top = 2
 theme_override_constants/margin_right = 2
 theme_override_constants/margin_bottom = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=1362763277]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="NameLabel" type="Label" parent="MarginContainer/VBoxContainer"]
+[node name="NameLabel" type="Label" parent="MarginContainer/VBoxContainer" unique_id=403146129]
 layout_mode = 2
 text = "Building name"
 label_settings = SubResource("LabelSettings_nt1n5")
 
-[node name="InfoLabel" type="Label" parent="MarginContainer/VBoxContainer"]
+[node name="InfoLabel" type="Label" parent="MarginContainer/VBoxContainer" unique_id=1381582269]
 custom_minimum_size = Vector2(89, 20)
 layout_mode = 2
 label_settings = SubResource("LabelSettings_ags74")

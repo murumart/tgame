@@ -1,10 +1,10 @@
-[gd_scene load_steps=3 format=3 uid="uid://d2ktu1u1uq7aw"]
+[gd_scene format=3 uid="uid://d2ktu1u1uq7aw"]
 
 [ext_resource type="PackedScene" uid="uid://pfy55aydpy4t" path="res://scenes/region/buildings/_building_base.tscn" id="1_l5pva"]
 [ext_resource type="Texture2D" uid="uid://bqxeialw2t4j6" path="res://scenes/region/buildings/brick_housing.png" id="2_l5pva"]
 
-[node name="BuildingBase" instance=ExtResource("1_l5pva")]
+[node name="BuildingBase" unique_id=1411415657 instance=ExtResource("1_l5pva")]
 
-[node name="Sprite2D" type="Sprite2D" parent="." index="0"]
+[node name="Sprite2D" type="Sprite2D" parent="." index="0" unique_id=1553282446]
 position = Vector2(0, -13)
 texture = ExtResource("2_l5pva")

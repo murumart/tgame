@@ -1,11 +1,11 @@
-[gd_scene load_steps=3 format=3 uid="uid://boe1p0fvkx3qh"]
+[gd_scene format=3 uid="uid://boe1p0fvkx3qh"]
 
 [ext_resource type="PackedScene" uid="uid://pfy55aydpy4t" path="res://scenes/region/buildings/_building_base.tscn" id="1_nfixw"]
 [ext_resource type="Texture2D" uid="uid://ujrlsbjn7s4p" path="res://scenes/region/buildings/kiln.png" id="2_nfixw"]
 
-[node name="BuildingBase" instance=ExtResource("1_nfixw")]
+[node name="BuildingBase" unique_id=504798362 instance=ExtResource("1_nfixw")]
 
-[node name="Sprite2D" type="Sprite2D" parent="." index="0"]
+[node name="Sprite2D" type="Sprite2D" parent="." index="0" unique_id=1019738241]
 position = Vector2(-18, -20)
 texture = ExtResource("2_nfixw")
 centered = false
