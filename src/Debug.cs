@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Text;
 using Godot;
 using Environment = System.Environment;
 
@@ -12,12 +13,25 @@ internal static class Debug {
 #if TOOLS
 		{
 		if (!cond) {
-			var sf = new StackFrame(1);
-			var newmsg = $"{sf.GetMethod().DeclaringType}::{sf.GetMethod().Name}: " + msg;
+			var st = new StackTrace(1, true);
+			var ts = new StringBuilder();
+
+			ts.Append(msg).Append('\n').Append('\n');
+			ts.Append("Stack Trace:\n");
+
+			foreach (var sf in st.GetFrames()) {
+				var fn = sf.GetFileName();
+				if (fn.StartsWith("/root/godot") || fn.Contains(".godot")) {
+					ts.Append($"\t... {sf.GetMethod().DeclaringType}::{sf.GetMethod().Name}\n");
+					continue;
+				}
+				ts.Append($"\t{fn}:{sf.GetFileLineNumber()} : {sf.GetMethod().DeclaringType}::{sf.GetMethod().Name}\n");
+			}
+
 			//GD.PrintErr(newmsg);
 			GD.PushError(msg);
-			OS.Alert(newmsg, $"Assertion Failed in {sf.GetMethod().DeclaringType}::{sf.GetMethod().Name}");
-			throw new ApplicationException($"Assertion failed: {msg}");
+			OS.Alert(ts.ToString(), $"Assertion Failed in {st.GetFrame(0).GetMethod().DeclaringType}::{st.GetFrame(0).GetMethod().Name}");
+			//throw new ApplicationException($"Assertion failed: {msg}");
 		}
 	}
 #else

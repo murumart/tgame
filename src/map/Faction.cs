@@ -43,7 +43,7 @@ public class Faction : IEntity {
 	TimeT time;
 
 
-	public Faction(Region region, int initialPopulation = 10, int maxPop = 100) {
+	public Faction(Region region, int initialPopulation = 30, int maxPop = 100) {
 		maxPop = -1; // UNUSED
 
 		Region = region;

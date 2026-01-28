@@ -66,7 +66,7 @@ public partial class LocalAI {
 							], factionActions, job));
 						ephemeralActions.Add(Actions.RemoveJob([
 								DecisionFactors.OneMinus(resourceWants.GetValueOrDefault(prod.ResourceType, DecisionFactors.Null)),
-								DecisionFactors.Mult(DecisionFactors.JobEmploymentRate(gjob), 0.025f),
+								DecisionFactors.Mult(DecisionFactors.JobEmploymentRate(gjob), 0.0025f),
 							], factionActions, job));
 					}
 				} else if (job is ConstructBuildingJob bjob) {
