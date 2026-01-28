@@ -26,10 +26,12 @@ public partial class LocalAI {
 		this.mainActions = [
 			Actions.CreateGatherJob([
 					resourceWants[Resources.Logs],
+					DecisionFactors.FreeWorkerRate(factionActions),
 					DecisionFactors.HasFreeResourceSite(actions, Resources.Trees),
 				], factionActions, Resources.Trees),
 			Actions.CreateGatherJob([
 					resourceWants[Resources.Rocks],
+					DecisionFactors.FreeWorkerRate(factionActions),
 					DecisionFactors.HasFreeResourceSite(actions, Resources.Boulder),
 				], factionActions, Resources.Boulder),
 		];
@@ -86,7 +88,7 @@ public partial class LocalAI {
 				}
 			}
 			mstime = Time.GetTicksMsec() - mstime;
-			Console.WriteLine($"LocalAI::Update : (of {factionActions}) chose action {chosenAction}!");
+			Console.WriteLine($"LocalAI::Update : (of {factionActions}) chose action {chosenAction} (score {chosenScore})!");
 			Console.WriteLine($"LocalAI::Update : choosing took {mstime} ms!\n");
 			var mstime2 = Time.GetTicksMsec();
 			chosenAction.Do();
@@ -131,7 +133,7 @@ public partial class LocalAI {
 					break;
 				}
 			}
-			Console.WriteLine($"LocalAI::Action::Score : \tscored *{score}* (took {Time.GetTicksMsec() - mstime})\n");
+			Console.WriteLine($"LocalAI::Action::Score : \tscored *{score}* (took {Time.GetTicksMsec() - mstime} ms)\n");
 			return score;
 		}
 
@@ -148,7 +150,7 @@ public partial class LocalAI {
 		public static Action AssignWorkersToJob(DecisionFactor[] factors, FactionActions ac, Job job) {
 			return new(factors, () => {
 				if (!job.NeedsWorkers) return;
-				int maxChange = Math.Min(ac.GetFreeWorkers() + job.Workers.Count, job.Workers.Capacity);
+				int maxChange = Math.Min(ac.GetFreeWorkers(), job.Workers.Capacity);
 				maxChange = Math.Min(maxChange, job.Workers.Capacity - job.Workers.Count);
 				ac.ChangeJobWorkerCount(job, maxChange);
 			}, $"AssignWorkersToJob({job})");
@@ -221,6 +223,10 @@ public partial class LocalAI {
 
 		public static DecisionFactor HasFreeWorkers(FactionActions ac) {
 			return new(() => ac.GetFreeWorkers() > 0 ? 1.0f : 0.0f, "HasFreeWorkers");
+		}
+
+		public static DecisionFactor FreeWorkerRate(FactionActions ac) {
+			return new(() => (float)ac.GetFreeWorkers() / (float)ac.Faction.GetPopulationCount(), "FreeWorkerRate");
 		}
 
 		public static DecisionFactor JobEmploymentRate(Job job) {
