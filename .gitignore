@@ -12,3 +12,10 @@
 # tracing
 *.nettrace
 *.speedscope.*
+
+# syllables
+tools/silbitus/litsents.html
+tools/silbitus/create_syls_file*
+tools/silbitus/silbitus.dic*
+tools/silbitus/stb_ds.h
+tools/silbitus/syls.txt
