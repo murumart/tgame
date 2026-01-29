@@ -17,6 +17,7 @@ namespace scenes.region.ui {
 		public event Action<IBuildingType, Vector2I> RequestBuildEvent;
 		public event Func<IBuildingType, bool> GetCanBuildEvent;
 		public event Func<ResourceStorage> GetResourcesEvent;
+		public event Func<Faction> GetFactionEvent;
 
 		public event Func<MapObject, ICollection<Job>> GetMapObjectJobsEvent;
 		public event Func<ICollection<Job>> GetJobsEvent;
@@ -27,9 +28,6 @@ namespace scenes.region.ui {
 
 		public event Func<Briefcase> GetBriefcaseEvent;
 
-		public event Func<int> GetPopulationCountEvent;
-		public event Func<int> GetHomelessPopulationCountEvent;
-		public event Func<int> GetUnemployedPopulationCountEvent;
 		public event Func<string> GetTimeStringEvent;
 		public event Func<List<BuildingType>> GetBuildingTypesEvent;
 
@@ -167,8 +165,9 @@ namespace scenes.region.ui {
 		// display
 
 		void UpdateDisplays() {
-			resourceDisplay.Display(population: GetPopulationCount(), homelessPopulation: GetHomelessPopulationCount(), unemployedPopulation: GetUnemployedPopulationCount());
-			resourceDisplay.Display(timeString: GetTimeString());
+			var faction = GetFaction();
+			resourceDisplay.Display(population: faction.GetPopulationCount(), homelessPopulation: faction.HomelessPopulation, unemployedPopulation: faction.UnemployedPopulation);
+			resourceDisplay.Display(timeString: GetTimeString(), faction: faction);
 			DisplayResources();
 			SetGameSpeedLabelText();
 			pauseDisplayPanel.Visible = gamePaused || gameSpeed == 0f || internalGamePaused;
@@ -270,6 +269,7 @@ namespace scenes.region.ui {
 		public bool GetCanBuild(IBuildingType btype) => GetCanBuildEvent?.Invoke(btype) ?? false;
 		public List<BuildingType> GetBuildingTypes() => GetBuildingTypesEvent?.Invoke();
 		public ResourceStorage GetResources() => GetResourcesEvent?.Invoke();
+		public Faction GetFaction() => GetFactionEvent?.Invoke();
 
 		public ICollection<Job> GetMapObjectJobs(MapObject mapObject) => GetMapObjectJobsEvent?.Invoke(mapObject);
 		public ICollection<Job> GetJobs() => GetJobsEvent?.Invoke();
@@ -281,9 +281,6 @@ namespace scenes.region.ui {
 
 		public Briefcase GetBriefcase() => GetBriefcaseEvent?.Invoke();
 
-		public int GetPopulationCount() => GetPopulationCountEvent?.Invoke() ?? -1;
-		public int GetHomelessPopulationCount() => GetHomelessPopulationCountEvent?.Invoke() ?? -1;
-		public int GetUnemployedPopulationCount() => GetUnemployedPopulationCountEvent?.Invoke() ?? -1;
 		public string GetTimeString() => GetTimeStringEvent?.Invoke() ?? "NEVER";
 
 		public bool PauseRequested() => PauseRequestedEvent?.Invoke() ?? false;

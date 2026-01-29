@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Godot;
 using scenes.autoload;
 using static Building;
@@ -37,6 +38,8 @@ public class Faction : IEntity {
 	public int HomelessPopulation => Population.HomelessCount;
 	public int UnemployedPopulation => Population.UnemployedCount;
 
+	public readonly string Name;
+
 	public string DocName => ToString();
 	public Briefcase Briefcase { get; init; }
 
@@ -48,6 +51,7 @@ public class Faction : IEntity {
 
 		Region = region;
 		Briefcase = new();
+		Name = Naming.GenRandomName();
 
 		region.MapObjectUpdatedAtEvent += OnMapObjectUpdated;
 
@@ -256,6 +260,49 @@ public class Faction : IEntity {
 				GetTime() + GameTime.DAYS_PER_WEEK * GameTime.HOURS_PER_DAY * GameTime.MINUTES_PER_HOUR
 			);
 			(other).Briefcase.AddDocument(Document.Point.Type.ProvidesResourcesTo, newdoc);
+		}
+	}
+
+	public override string ToString() {
+		return Name;
+	}
+
+	public static class Naming {
+		static readonly Dictionary<string, float> syllableCounts = new();
+		static float maxSylProb = 0;
+
+		public static string GenRandomName() {
+			if (syllableCounts.Count == 0) {
+				var culture = System.Globalization.CultureInfo.CreateSpecificCulture("en-us");
+				var f = FileAccess.Open("res://tools/silbitus/syls.txt", FileAccess.ModeFlags.Read);
+				Debug.Assert(FileAccess.GetOpenError() == Error.Ok, "Failed opening syllables file");
+				while (!f.EofReached()) {
+					string line = f.GetLine();
+					if (line.Length <= 1) break;
+					string[] split = line.Split(" ");
+					Debug.Assert(split.Length == 2, $"Invalid line in file? ({line}) length {split.Length})");
+					syllableCounts.Add(split[0], float.Parse(split[1], culture));
+				}
+				f.Close();
+				maxSylProb = syllableCounts.Values.Sum();
+			}
+
+			var sb = new StringBuilder();
+			var maxlen = 3 + GD.Randi() % 6;
+			while (sb.Length < maxlen) {
+				var r = GD.Randf() * maxSylProb;
+				float sum = 0;
+				foreach (var (syl, prob) in syllableCounts) {
+					sum += prob;
+					if (r <= sum) {
+						sb.Append(syl);
+						break;
+					}
+				}
+			}
+
+			sb[0] = char.ToUpper(sb[0]);
+			return sb.ToString();
 		}
 	}
 

@@ -6,7 +6,7 @@ public partial class ResourceDisplay : PanelContainer {
 	[Export] Label silverLabel;
 	[Export] Label tileposLabel;
 	[Export] Label timeLabel;
-	[Export] Label regionLabel;
+	[Export] Label factionLabel;
 
 	[Export] Label fpsLabel;
 
@@ -16,7 +16,7 @@ public partial class ResourceDisplay : PanelContainer {
 		int? homelessPopulation = null,
 		int? unemployedPopulation = null,
 		int? silver = null,
-		Region region = null,
+		Faction faction = null,
 		Vector2I? tilepos = null,
 		(Vector2I, Region)? inRegionTilepos = null,
 		string timeString = null
@@ -40,7 +40,7 @@ public partial class ResourceDisplay : PanelContainer {
 			}
 			tileposLabel.Text = txt;
 		}
-		if (region != null) regionLabel.Text = $"region: {region.Name}";
+		if (faction != null) factionLabel.Text = $"region: {faction.Name}";
 	}
 
 }

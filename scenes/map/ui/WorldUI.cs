@@ -11,37 +11,37 @@ public partial class WorldUI : Control {
 
 	[Export] public ResourceDisplay ResourceDisplay;
 
-	[Export] Label regionTitleLabel;
-	[Export] RichTextLabel regionInfoLabel;
-	[Export] Button regionPlayButton;
+	[Export] Label factionTitleLabel;
+	[Export] RichTextLabel factionInfoLabel;
+	[Export] Button factionPlayButton;
 
 	Region selectedRegion; public Region SelectedRegion => selectedRegion;
 
 
 	public override void _Ready() {
-		regionPlayButton.Pressed += () => RegionPlayRequested?.Invoke();
+		factionPlayButton.Pressed += () => RegionPlayRequested?.Invoke();
 	}
 
 	public void SelectRegion(Region region) {
 		if (region == null) {
-			regionTitleLabel.Text = "";
-			regionInfoLabel.Text = "No region selected...";
-			regionPlayButton.Disabled = true;
+			factionTitleLabel.Text = ". . .";
+			factionInfoLabel.Text = "Select a Faction";
+			factionPlayButton.Disabled = true;
 			selectedRegion = null;
 			return;
 		}
 		selectedRegion = region;
-		regionTitleLabel.Text = region.Name;
+		factionTitleLabel.Text = region.LocalFaction.Name;
 		var things = string.Join(", ", region.GetMapObjects().Select(a => ((IAssetType)a.Type).AssetName).Distinct());
-		regionInfoLabel.Text =
-			$"Property of: {(region.LocalFaction.HasOwningFaction() ? region.LocalFaction.GetOwningFaction() : "Sovereign")}\n"
+		factionInfoLabel.Text =
+			(region.LocalFaction.HasOwningFaction() ? "Submits to " + region.LocalFaction.GetOwningFaction() : "Sovereign territory") + "\n"
 			+ $"Land tiles: {region.LandTileCount}\n"
 			+ $"Sea tiles: {region.OceanTileCount}\n"
-			+ $"Population: {(region.LocalFaction == null ? "Uninhabited" : region.LocalFaction.GetPopulationCount())}\n"
+			+ $"Population: {(region.LocalFaction.GetPopulationCount())}\n"
 			+ $"Natural Resources: {string.Join(", ", region.NaturalResources.Value.Select(a => a.ToString()))}\n"
 			+ $"Map objects: {things}"
 		;
-		regionPlayButton.Disabled = !region.LocalFaction.HasOwningFaction();
+		factionPlayButton.Disabled = !region.LocalFaction.HasOwningFaction();
 	}
 
 	class AnonymousMapbjectComparer : IEqualityComparer<MapObject> {

@@ -47,9 +47,7 @@ namespace scenes.region {
 
 			GameMan.Singleton.Game.Time.HourPassedEvent += HourlyUpdate;
 
-			ui.GetPopulationCountEvent += faction.GetPopulationCount;
-			ui.GetHomelessPopulationCountEvent += actions.GetHomelessPopulationCount;
-			ui.GetUnemployedPopulationCountEvent += actions.GetUnemployedPopulationCount;
+			ui.GetFactionEvent += GetFaction;
 			ui.GetBriefcaseEvent += GetBriefcase;
 			faction.ContractFailedEvent += OnRegionMandateFailed;
 
@@ -93,9 +91,7 @@ namespace scenes.region {
 		public override void _Notification(int what) { // teardown
 			if (what == NotificationPredelete) {
 				ui.MapClickEvent -= MapClick;
-				ui.GetPopulationCountEvent -= faction.GetPopulationCount;
-				ui.GetHomelessPopulationCountEvent -= actions.GetHomelessPopulationCount;
-				ui.GetUnemployedPopulationCountEvent -= actions.GetUnemployedPopulationCount;
+				ui.GetFactionEvent -= GetFaction;
 				ui.GetBuildingTypesEvent -= GetBuildingTypes;
 				ui.RequestBuildEvent -= OnUIBuildingPlaceRequested;
 				ui.GetResourcesEvent -= actions.GetResourceStorage;
@@ -189,6 +185,8 @@ namespace scenes.region {
 			GameMan.Singleton.TogglePause();
 			return GameMan.Singleton.IsPaused;
 		}
+
+		Faction GetFaction() => faction;
 
 		Briefcase GetBriefcase() => faction.Briefcase;
 

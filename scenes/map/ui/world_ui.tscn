@@ -16,7 +16,7 @@ shadow_offset = Vector2(2, 2)
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_mu82y"]
 
-[node name="WorldUI" type="Control" unique_id=1536136679 node_paths=PackedStringArray("ResourceDisplay", "regionTitleLabel", "regionInfoLabel", "regionPlayButton")]
+[node name="WorldUI" type="Control" unique_id=1536136679 node_paths=PackedStringArray("ResourceDisplay", "factionTitleLabel", "factionInfoLabel", "factionPlayButton")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -26,9 +26,9 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1_gjnyb")
 ResourceDisplay = NodePath("VBoxContainer/MarginContainer/ResourceDisplay")
-regionTitleLabel = NodePath("VBoxContainer/MarginContainer2/HBoxContainer/Regionpanel/MarginContainer/VBoxContainer/Title")
-regionInfoLabel = NodePath("VBoxContainer/MarginContainer2/HBoxContainer/Regionpanel/MarginContainer/VBoxContainer/ScrollContainer/RegionInfo")
-regionPlayButton = NodePath("VBoxContainer/MarginContainer2/HBoxContainer/Regionpanel/MarginContainer/VBoxContainer/PlayHereButton")
+factionTitleLabel = NodePath("VBoxContainer/MarginContainer2/HBoxContainer/Factionpanel/MarginContainer/VBoxContainer/Title")
+factionInfoLabel = NodePath("VBoxContainer/MarginContainer2/HBoxContainer/Factionpanel/MarginContainer/VBoxContainer/ScrollContainer/FactionInfo")
+factionPlayButton = NodePath("VBoxContainer/MarginContainer2/HBoxContainer/Factionpanel/MarginContainer/VBoxContainer/PlayHereButton")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=156893236]
 layout_mode = 1
@@ -59,39 +59,39 @@ theme_override_constants/margin_bottom = 2
 layout_mode = 2
 alignment = 2
 
-[node name="Regionpanel" type="PanelContainer" parent="VBoxContainer/MarginContainer2/HBoxContainer" unique_id=1248779983]
+[node name="Factionpanel" type="PanelContainer" parent="VBoxContainer/MarginContainer2/HBoxContainer" unique_id=1248779983]
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_mu82y")
 
-[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/MarginContainer2/HBoxContainer/Regionpanel" unique_id=1170704511]
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/MarginContainer2/HBoxContainer/Factionpanel" unique_id=1170704511]
 layout_mode = 2
 theme_override_constants/margin_left = 2
 theme_override_constants/margin_top = 2
 theme_override_constants/margin_right = 2
 theme_override_constants/margin_bottom = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/MarginContainer2/HBoxContainer/Regionpanel/MarginContainer" unique_id=656614046]
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/MarginContainer2/HBoxContainer/Factionpanel/MarginContainer" unique_id=656614046]
 custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
 
-[node name="Title" type="Label" parent="VBoxContainer/MarginContainer2/HBoxContainer/Regionpanel/MarginContainer/VBoxContainer" unique_id=684263515]
+[node name="Title" type="Label" parent="VBoxContainer/MarginContainer2/HBoxContainer/Factionpanel/MarginContainer/VBoxContainer" unique_id=684263515]
 layout_mode = 2
-text = "Region title"
+text = "Faction title"
 label_settings = ExtResource("3_mu82y")
 
-[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer/MarginContainer2/HBoxContainer/Regionpanel/MarginContainer/VBoxContainer" unique_id=94580042]
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer/MarginContainer2/HBoxContainer/Factionpanel/MarginContainer/VBoxContainer" unique_id=94580042]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_styles/panel = SubResource("StyleBoxEmpty_mu82y")
 
-[node name="RegionInfo" type="RichTextLabel" parent="VBoxContainer/MarginContainer2/HBoxContainer/Regionpanel/MarginContainer/VBoxContainer/ScrollContainer" unique_id=1530252710]
+[node name="FactionInfo" type="RichTextLabel" parent="VBoxContainer/MarginContainer2/HBoxContainer/Factionpanel/MarginContainer/VBoxContainer/ScrollContainer" unique_id=1530252710]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 text = "asdasdasdasdadasdasdsadaasdadadsadadsadsadsasaasdassadasdsadsadsadsadsadsadsadsadsadsadsadsadsadsadsadsadasdadadadadasdasdadadadadasdasdadadadadadasdasdadasdasdasdadasdasdasdadasdasdass"
 fit_content = true
 
-[node name="PlayHereButton" type="Button" parent="VBoxContainer/MarginContainer2/HBoxContainer/Regionpanel/MarginContainer/VBoxContainer" unique_id=613590085]
+[node name="PlayHereButton" type="Button" parent="VBoxContainer/MarginContainer2/HBoxContainer/Factionpanel/MarginContainer/VBoxContainer" unique_id=613590085]
 layout_mode = 2
 disabled = true
 text = "Play"
