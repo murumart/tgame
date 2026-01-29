@@ -31,7 +31,7 @@ public partial class WorldUI : Control {
 			return;
 		}
 		selectedRegion = region;
-		regionTitleLabel.Text = region.ToString();
+		regionTitleLabel.Text = region.Name;
 		var things = string.Join(", ", region.GetMapObjects().Select(a => ((IAssetType)a.Type).AssetName).Distinct());
 		regionInfoLabel.Text =
 			$"Property of: {(region.LocalFaction.HasOwningFaction() ? region.LocalFaction.GetOwningFaction() : "Sovereign")}\n"

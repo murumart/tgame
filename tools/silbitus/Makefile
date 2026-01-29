@@ -9,6 +9,9 @@ stb_ds.h:
 
 silbitus.dic: licence
 	wget "https://arhiiv.eki.ee/tarkvara/wordlist/silbitus.dic"
+	iconv -f iso-8859-1 -t utf-8 silbitus.dic > s.dic
+	rm silbitus.dic
+	mv s.dic silbitus.dic
 
 licence:
 	wget "https://arhiiv.eki.ee/eki/litsents.html"
@@ -17,4 +20,5 @@ clean:
 	-rm silbitus.dic*
 	-rm stb_ds.h*
 	-rm create_syls_file*
+	-rm litsents.html.*
 

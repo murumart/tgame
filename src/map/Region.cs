@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Text;
 using Godot;
 using static ResourceSite;
 
@@ -29,6 +31,7 @@ public class Region {
 	public int OceanTileCount => GroundTiles.Values.Where(t => t == GroundTileType.Ocean).Count();
 
 	public readonly Field<ResourceBundle[]> NaturalResources;
+	public readonly string Name;
 
 
 	public Region(int index, Vector2I worldPosition, Dictionary<Vector2I, GroundTileType> groundTiles) {
@@ -36,6 +39,7 @@ public class Region {
 		WorldPosition = worldPosition;
 		GroundTiles = groundTiles;
 		this.Color = Color.FromHsv(GD.Randf(), (float)GD.RandRange(0.75, 1.0), 1.0f);
+		this.Name = GenRandomName();
 
 		NaturalResources = new(() => {
 			var dict = new Dictionary<IResourceType, ResourceBundle>();
@@ -162,6 +166,43 @@ public class Region {
 			reg.CreateResourceSiteAndPlace(kvp.Value, kvp.Key);
 		}
 		return reg;
+	}
+
+	static readonly Dictionary<string, float> syllableCounts = new();
+	static float maxSylProb = 0;
+
+	public static string GenRandomName() {
+		if (syllableCounts.Count == 0) {
+			var culture = CultureInfo.CreateSpecificCulture("en-us");
+			var f = FileAccess.Open("res://tools/silbitus/syls.txt", FileAccess.ModeFlags.Read);
+			Debug.Assert(FileAccess.GetOpenError() == Error.Ok, "Failed opening syllables file");
+			while (!f.EofReached()) {
+				string line = f.GetLine();
+				if (line.Length <= 1) break;
+				string[] split = line.Split(" ");
+				Debug.Assert(split.Length == 2, $"Invalid line in file? ({line}) length {split.Length})");
+				syllableCounts.Add(split[0], float.Parse(split[1], culture));
+			}
+			f.Close();
+			maxSylProb = syllableCounts.Values.Sum();
+		}
+
+		var sb = new StringBuilder();
+		var maxlen = 3 + GD.Randi() % 6;
+		while (sb.Length < maxlen) {
+			var r = GD.Randf() * maxSylProb;
+			float sum = 0;
+			foreach (var (syl, prob) in syllableCounts) {
+				sum += prob;
+				if (r <= sum) {
+					sb.Append(syl);
+					break;
+				}
+			}
+		}
+
+		sb[0] = char.ToUpper(sb[0]);
+		return sb.ToString();
 	}
 
 }

@@ -40,7 +40,7 @@ public partial class ResourceDisplay : PanelContainer {
 			}
 			tileposLabel.Text = txt;
 		}
-		if (region != null) regionLabel.Text = $"region: {region}";
+		if (region != null) regionLabel.Text = $"region: {region.Name}";
 	}
 
 }
