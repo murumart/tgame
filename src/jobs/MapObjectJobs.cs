@@ -1,84 +1,23 @@
 using System;
 using System.Collections.Generic;
 using Godot;
-
-public class AbsorbFromHomelessPopulationJob : MapObjectJob {
-
-	public override string Title => "House homeless";
-	public override bool IsInternal => true;
-	public override bool NeedsWorkers => false;
-	public bool Paused { get; set; }
-
-	public override Vector2I GlobalPosition => building.GlobalPosition;
-
-	Building building;
-	Faction regionFaction;
-	public override bool IsValid => building != null;
-
-
-	public void Finish() { }
-
-	TimeT remainderPeopleTransferTime;
-	public override void PassTime(TimeT minutes) {
-		if (!Paused && building.IsConstructed && regionFaction.HomelessPopulation > 0) {
-			TimeT peopleTransferTime = minutes + remainderPeopleTransferTime;
-			while (peopleTransferTime > 6 && building.Population.RoomLeft > 0 && regionFaction.HomelessPopulation > 0) {
-				regionFaction.Population.House(building, 1);
-				peopleTransferTime -= 6;
-			}
-			remainderPeopleTransferTime = peopleTransferTime;
-		} else {
-			remainderPeopleTransferTime = 0;
-		}
-	}
-
-	public override bool CanInitialise(Faction ctxFaction) => throw new NotImplementedException();
-	public override bool CanInitialise(Faction ctxFaction, MapObject mapObject) => mapObject != null && mapObject is Building && ctxFaction != null;
-
-	public override void Initialise(Faction ctxFaction, MapObject mapObject) {
-		this.regionFaction = ctxFaction;
-		this.building = mapObject as Building;
-	}
-
-	public override void Deinitialise(Faction ctxFaction) {
-		building = null;
-		regionFaction = null;
-	}
-
-	public override Job Copy() => throw new System.NotImplementedException("You shouldn't have to copy this...");
-
-	public override float GetProgressEstimate() => building.Population.Count / (float)building.Population.Capacity;
-
-	public override string GetStatusDescription() {
-		if (building.GetBuildProgress() < 1) return "";
-		return $"This housing is {(int)(GetProgressEstimate() * 100)}% full.";
-	}
-
-	public override string GetProductionDescription() {
-		if (building.GetBuildProgress() < 1) return "For people to move in, the building needs to be finished.";
-		if (GetProgressEstimate() < 1) return "People without housing will move in here.";
-		return "";
-
-	}
-}
+ 
 
 public class ConstructBuildingJob : MapObjectJob {
 
 	public override string Title => "Construct Building";
-	public override Group Workers => workers;
 	public override bool IsValid => building != null;
 
 	public override Vector2I GlobalPosition => building.GlobalPosition;
 
 	readonly List<ResourceBundle> requirements;
 
-	readonly Group workers;
 	Building building;
 
 
 	public ConstructBuildingJob(List<ResourceBundle> requirements) {
 		this.requirements = requirements;
-		workers = new(35);
+		MaxWorkers = 35;
 	}
 
 	public override bool CanInitialise(Faction ctxFaction, MapObject building) => ctxFaction.Resources.HasEnoughAll(GetRequirements());
@@ -99,7 +38,7 @@ public class ConstructBuildingJob : MapObjectJob {
 		}
 	}
 
-	public override List<ResourceBundle> GetRequirements() => requirements;
+	public List<ResourceBundle> GetRequirements() => requirements;
 
 	public override void PassTime(TimeT minutes) {
 		if (building.IsConstructed) {
@@ -121,7 +60,7 @@ public class ConstructBuildingJob : MapObjectJob {
 	}
 
 	public override float GetWorkTime(TimeT minutes) {
-		return minutes * Mathf.Pow(workers.Count, 0.7f);
+		return minutes * Mathf.Pow(Workers, 0.7f);
 	}
 
 	public override string GetStatusDescription() {
@@ -149,14 +88,12 @@ public class ConstructBuildingJob : MapObjectJob {
 public class FishByHandJob : Job {
 
 	public override string Title => "Fish by Hand";
-	public override Group Workers => workers;
 
 	ResourceStorage storage;
-	readonly Group workers;
 
 
 	public FishByHandJob() {
-		workers = new(5);
+		MaxWorkers = 5;
 	}
 
 	public override void Deinitialise(Faction ctxFaction) { }
@@ -184,8 +121,6 @@ public class GatherResourceJob : MapObjectJob {
 			: "Gather " + resourceTypeDescription.Capitalize())
 		: "Gather from " + site.Type.AssetName;
 
-	public override Group Workers => workers;
-
 	public override Vector2I GlobalPosition {
 		get {
 			Debug.Assert(site != null, $"Site of GatherResourceJob ({this}) is null!");
@@ -194,7 +129,6 @@ public class GatherResourceJob : MapObjectJob {
 	}
 	public override bool IsValid => site != null;
 
-	readonly Group workers;
 	ResourceStorage storage;
 	ResourceSite site;
 	readonly string resourceTypeDescription;
@@ -204,7 +138,7 @@ public class GatherResourceJob : MapObjectJob {
 
 
 	public GatherResourceJob() {
-		workers = new(5);
+		MaxWorkers = 5;
 	}
 
 	public List<ResourceSite.Well> GetProductions() {
@@ -225,7 +159,7 @@ public class GatherResourceJob : MapObjectJob {
 
 	public override void Deinitialise(Faction ctxFaction) { }
 
-	public override float GetWorkTime(TimeT minutes) => minutes * MathF.Pow(workers.Count, 0.7f);
+	public override float GetWorkTime(TimeT minutes) => minutes * MathF.Pow(Workers, 0.7f);
 
 	public override void PassTime(TimeT minutes) {
 		float ts = GetWorkTime(minutes);
@@ -287,8 +221,9 @@ public class GatherResourceJob : MapObjectJob {
 		if (site == null) {
 			return Title;
 		}
+		Debug.Assert(Workers >= 0, $"Worker count can't be negative (is {Workers})");
 		var str = $"The {site.Type.AssetName} produces:\n";
-		if (workers.Count <= 0) str += "Nothing, as long as there's no workers. But it could produce:\n";
+		if (Workers == 0) str += "Nothing, as long as there's no workers. But it could produce:\n";
 		bool reproduce = false;
 		foreach (var well in site.MineWells) {
 			float time = well.MinutesPerBunch / MathF.Max(GetWorkTime(1), 1);
@@ -310,7 +245,7 @@ public class GatherResourceJob : MapObjectJob {
 	}
 
 	public override string GetStatusDescription() {
-		if (workers.Count <= 0) return "";
+		if (Workers == 0) return "";
 		int wellIx = GetClosestWell();
 		var well = site.MineWells[wellIx];
 		float timeLeft = well.MinutesPerBunch - timeSpent[wellIx];
@@ -323,11 +258,9 @@ public class GatherResourceJob : MapObjectJob {
 public class CraftJob : MapObjectJob {
 
 	public override string Title => $"Craft {outputDescription}";
-	public override Group Workers => workers;
 
 	public override Vector2I GlobalPosition => building.GlobalPosition;
 
-	readonly Group workers;
 	ResourceStorage storage;
 	Building building;
 
@@ -345,11 +278,11 @@ public class CraftJob : MapObjectJob {
 		this.inputs = inputs;
 		this.outputs = outputs;
 		this.timeTaken = timeTaken;
-		this.workers = new(maxWorkers);
 		this.outputDescription = outputDescription;
+		MaxWorkers = maxWorkers;
 	}
 
-	public override Job Copy() => new CraftJob(inputs, outputs, timeTaken, workers.Capacity, outputDescription);
+	public override Job Copy() => new CraftJob(inputs, outputs, timeTaken, MaxWorkers, outputDescription);
 
 	public override void Initialise(Faction ctxFaction, MapObject mapObject) {
 		storage = ctxFaction.Resources;
@@ -370,11 +303,11 @@ public class CraftJob : MapObjectJob {
 		}
 	}
 
-	public override float GetWorkTime(TimeT minutes) => minutes * MathF.Pow(workers.Count, 0.5f);
+	public override float GetWorkTime(TimeT minutes) => minutes * MathF.Pow(Workers, 0.5f);
 
 	public override string GetProductionDescription() {
 		var str = $"The workers produce:\n";
-		if (workers.Count <= 0) str += "Nothing, as long as there's no workers. But it could produce:\n";
+		if (Workers == 0) str += "Nothing, as long as there's no workers. But it could produce:\n";
 
 		foreach (var thing in outputs) {
 			str += $" * {thing.Type.AssetName} x {thing.Amount}.\n";
@@ -391,7 +324,7 @@ public class CraftJob : MapObjectJob {
 	}
 
 	public override string GetStatusDescription() {
-		if (workers.Count <= 0) return "";
+		if (Workers == 0) return "";
 		float timeLeft = timeTaken - timeSpent;
 		timeLeft /= GetWorkTime(1);
 		return GameTime.GetFancyTimeString((TimeT)timeLeft) + " until more " + outputDescription + ".";

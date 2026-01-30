@@ -36,7 +36,7 @@ namespace scenes.region.ui {
 				Debug.Assert(sliderMax >= 0, "Can't have negative slider values when needing workers");
 				var slider = JobSlider.Instantiate();
 				informationList.AddChild(slider);
-				slider.Setup(workersSelected, jobIndex, job.Workers.Count, "workers", sliderMax, "");
+				slider.Setup(workersSelected, jobIndex, job.Workers, "workers", sliderMax, "");
 			}
 
 			titleLabel.Text = job.Title;

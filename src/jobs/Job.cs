@@ -11,7 +11,8 @@ public abstract class Job {
 	public virtual bool NeedsWorkers => true;
 	public virtual bool IsInternal => false;
 
-	public virtual Group Workers => throw new NotImplementedException("No workers on default job class!");
+	public int Workers { get; protected set; }
+	public int MaxWorkers { get; protected set; }
 	public virtual float GetWorkTime(TimeT minutes) => throw new NotImplementedException();
 
 	/// <summary>
@@ -36,8 +37,10 @@ public abstract class Job {
 
 	// sandbox methods vv
 
-	public virtual List<ResourceBundle> GetRequirements() => null;
-	//public virtual List<ResourceBundle> GetProductions() => null;
+	public void SetWorkers(int to) {
+		Debug.Assert(to >= 0 && to <= MaxWorkers, $"Employment overflow: can fit {MaxWorkers} but want to fit {to}");
+		Workers = to;
+	}
 
 	protected static void ConsumeRequirements(ResourceBundle[] requirements, ResourceStorage resources) {
 		foreach (var r in requirements) {
@@ -79,15 +82,9 @@ public abstract class Job {
 	}
 
 	public virtual string GetResourceRequirementDescription() {
-		StringBuilder sb = new();
-		var resourceReqs = GetRequirements();
-		if (resourceReqs != null) {
-			sb.Append("Required Resources:\n");
-			foreach (ResourceBundle res in resourceReqs) {
-				sb.Append("  ").Append(res.Type.AssetName).Append(" x ").Append(res.Amount).Append('\n');
-			}
-		}
-		return sb.ToString();
+		var txt = $"Override me ({this}::GetResourceRequirementDescription())";
+		GD.PushWarning(txt);
+		return txt;
 	}
 
 	public virtual string GetProductionDescription() => "This job produces nothing.";

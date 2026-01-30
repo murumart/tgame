@@ -35,8 +35,8 @@ public class Faction : IEntity {
 
 	public readonly Population Population;
 
-	public int HomelessPopulation => Population.HomelessCount;
-	public int UnemployedPopulation => Population.UnemployedCount;
+	public int HomelessPopulation => Population.Count - Population.HousedCount;
+	public int UnemployedPopulation => Population.Count - Population.EmployedCount;
 
 	public readonly string Name;
 
@@ -100,16 +100,16 @@ public class Faction : IEntity {
 		return gottenJobs?.ToList() ?? new List<Job>();
 	}
 
-	public int GetFreeWorkers() => Population.UnemployedCount;
+	public int GetFreeWorkers() => UnemployedPopulation;
 
 	public bool CanEmployWorkers(Job job, int amount) {
 		Debug.Assert(jobs.Contains(job), "This isn't my job...");
-		return UnemployedPopulation > 0 && job.Workers.CanAdd(amount);
+		return UnemployedPopulation > 0 && job.Workers + amount <= job.MaxWorkers;
 	}
 
 	public bool CanUnemployWorkers(Job job, int amount) {
 		Debug.Assert(jobs.Contains(job), "This isnt ,y job...");
-		return job.Workers.Count >= amount;
+		return job.Workers >= amount;
 	}
 
 	public void EmployWorkers(Job job, int amount) {
@@ -125,11 +125,11 @@ public class Faction : IEntity {
 	}
 
 	public void UnemployAllWorkers(Job job) {
-		if (job.Workers.Count == 0) return; // noone was ever assigned
+		if (job.Workers == 0) return; // noone was ever assigned
 		Debug.Assert(jobs.Contains(job), "This isn't my job...");
-		Debug.Assert(CanUnemployWorkers(job, job.Workers.Count), $"Can't unemploy these workers! (workers {job.Workers})");
+		Debug.Assert(CanUnemployWorkers(job, job.Workers), $"Can't unemploy these workers! (workers {job.Workers})");
 
-		Population.Unemploy(job, job.Workers.Count);
+		Population.Unemploy(job, job.Workers);
 	}
 
 	public void DecreasePopulation(int by) {
@@ -138,6 +138,7 @@ public class Faction : IEntity {
 
 	// *** MANAGING BUILDINGS ***
 
+	// does what the method name says: a construction site is created and placed in the world
 	public Building PlaceBuildingConstructionSite(IBuildingType type, Vector2I position) {
 		Debug.Assert(Region.CanPlaceBuilding(position), $"Region says can't place building at {position}");
 		Debug.Assert(CanPlaceBuilding(type, position), "Cannot place the building for whatever reason");
@@ -150,7 +151,7 @@ public class Faction : IEntity {
 		return building;
 	}
 
-	// for initialising the world and such
+	// creates a building object and then completes its construction. for initialising the world and such
 	Building PlacePrebuiltBuilding(IBuildingType type, Vector2I position) {
 		Debug.Assert(!Region.HasMapObject(position), $"There's a lreayd a building here (at {position})");
 		var building = PlaceBuilding(type, position);
@@ -158,28 +159,32 @@ public class Faction : IEntity {
 		return building;
 	}
 
+	// asks the region to create a building spot and gets a building from it.
 	Building PlaceBuilding(IBuildingType type, Vector2I position) {
 		var building = Region.CreateBuildingSpotAndPlace(type, position);
-		if (type.GetPopulationCapacity() > 0) AddMapObjectJob(new AbsorbFromHomelessPopulationJob(), building);
+		building.OnAdded(Region);
 		return building;
 	}
 
 	public bool CanPlaceBuilding(IBuildingType type, Vector2I tilepos) {
-		return CanBuild(type) && Region.CanPlaceBuilding(tilepos);
+		return HasBuildingMaterials(type) && Region.CanPlaceBuilding(tilepos);
 	}
 
-	public bool CanBuild(IBuildingType type) {
+	public bool HasBuildingMaterials(IBuildingType type) {
 		return resourceStorage.HasEnoughAll(type.GetResourceRequirements());
 	}
 
+	// deletes a building from the faction's records and has the region also delete it
 	public void RemoveBuilding(Vector2I at) {
 		Debug.Assert(HasBuilding(at), $"There's no building to remove at {at}...");
 		foreach (var job in GetJobs(at)) {
 			RemoveJob(job);
 		}
+		GetBuilding(at).OnRemoved(Region);
 		Region.RemoveMapObject(at);
 	}
 
+	// just removes a map object, intended for resource sites etc
 	public void Uproot(Vector2I at) {
 		bool has = Region.HasMapObject(at, out var obj);
 		Debug.Assert(has, $"No map object to uproot at {at}");

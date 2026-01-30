@@ -29,7 +29,7 @@ public class FactionActions {
 	// building
 
 	public bool CanBuild(IBuildingType type) {
-		return faction.CanBuild(type);
+		return faction.HasBuildingMaterials(type);
 	}
 
 	public bool CanPlaceBuilding(IBuildingType type, Vector2I tilepos) {

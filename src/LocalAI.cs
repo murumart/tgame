@@ -192,8 +192,8 @@ public partial class LocalAI {
 		public static Action AssignWorkersToJob(DecisionFactor[] factors, FactionActions ac, Job job) {
 			return new(factors, () => {
 				if (!job.NeedsWorkers) return;
-				int maxChange = Math.Min(ac.GetFreeWorkers(), job.Workers.Capacity);
-				maxChange = Math.Min(maxChange, job.Workers.Capacity - job.Workers.Count);
+				int maxChange = Math.Min(ac.GetFreeWorkers(), job.MaxWorkers);
+				maxChange = Math.Min(maxChange, job.MaxWorkers - job.Workers);
 				ac.ChangeJobWorkerCount(job, maxChange);
 			}, $"AssignWorkersToJob({job})");
 		}
@@ -283,15 +283,15 @@ public partial class LocalAI {
 		}
 
 		public static DecisionFactor JobEmploymentRate(Job job) {
-			return new(() => (float)job.Workers.Count / (float)job.Workers.Capacity, "JobEmploymentRate");
+			return new(() => (float)job.Workers / (float)job.MaxWorkers, "JobEmploymentRate");
 		}
 
 		public static DecisionFactor JobHasEmploymentSpots(FactionActions ac, Job job) {
-			return new(() => job.NeedsWorkers && job.Workers.Capacity > job.Workers.Count ? 1.0f : 0.0f, "HasEmploymentSpots");
+			return new(() => job.NeedsWorkers && job.Workers <= job.MaxWorkers ? 1.0f : 0.0f, "JobHasEmploymentSpots");
 		}
 
 		public static DecisionFactor JobHasEmployees(Job job) {
-			return new(() => job.NeedsWorkers && job.Workers.Count > 0 ? 1.0f : 0.0f, "HasEmployees");
+			return new(() => job.NeedsWorkers && job.Workers > 0 ? 1.0f : 0.0f, "JobHasEmployees");
 		}
 
 		public static DecisionFactor HasFreeResourceSite(FactionActions ac, IResourceSiteType siteType) {
