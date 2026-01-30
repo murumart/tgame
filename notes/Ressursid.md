@@ -26,6 +26,7 @@ Inimesi peab saama tööle panna ja töölt ära võtta. Neid võib juurde tulla
 * lihtne kujutada arvu või listina: igal tööl oma list, igal majal oma list...
 * probleem: andmete õigsuse tagamine.
   * kui on eraldi listid "inimesed, kes pole tööl" ja "inimesed, kellel pole kodu", siis on kogu inimeste arv segane - kui inimesi tuleb juurde, tuleb nad lisada mõlemasse listi
+* ^ parem: majutatud inimesed on arv mis suureneb, mitte ei vähene
 
 **Kui iga inimene on eraldi objekt**:
 
@@ -41,7 +42,11 @@ Inimesi peab saama tööle panna ja töölt ära võtta. Neid võib juurde tulla
 * probleem: suurem mälukasutus *cache locality* puudub
 * keerulisem üles seada
 
-## Oskused
+### Toit
+
+Inimesed tarbivad eluks toitu. Kui süüa ei saa, inimesed surevad või lahkuvad kolooniast.
+
+### Oskused
 
 (*Skills*) oleks abstraheeritud terve koloonia populatsiooni peale. Nimekiri arvudest, mis näitavad koloonia üldist oskustaset mingis valdkonnas. Aja jooksul kõik need arvud kahaneks, sest inimesed unustavad, surevad, ning tuleb peale järjest uus põlvkond. Spetsiifilised ehitised (koolid) annaks töid, mis suurendavad oskustaset mingis valdkonnas. Loogiline oleks ka, et teised tööd seda teeksid. Mingid füüsilised ülesanded (puuraidumine) suurendaks vähe sellega seotud oskusi (puuraidumine.. metsandus?).
 

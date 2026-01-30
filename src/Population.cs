@@ -9,6 +9,7 @@ public readonly struct Person {
 
 	public readonly ulong Id;
 
+
 	public Person(Population p, ulong id) {
 		Debug.Assert(p.ExistsId(id), "This person doesn't exist");
 		this.Id = id;
@@ -32,6 +33,7 @@ public readonly struct Person {
 	public override int GetHashCode() {
 		return Id.GetHashCode();
 	}
+
 }
 
 public class Population {
