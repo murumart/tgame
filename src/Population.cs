@@ -1,4 +1,6 @@
 
+using System;
+
 public class Population {
 
 	public int Count { get; private set; }
@@ -15,11 +17,24 @@ public class Population {
 
 	public void Manifest(int count) {
 		Count += count;
+		UpdateHousing();
+	}
+
+	public void Reduce(int count) {
+		Debug.Assert(false, "Reducing population not implemented");
+		Count -= count;
+		UpdateHousing();
 	}
 
 	public void ChangeHousingCapacity(int by) {
 		Debug.Assert(MaxHousing + by >= 0, $"MaxHousing should be more than 0 (ends up {MaxHousing + by})");
 		MaxHousing += by;
+		UpdateHousing();
+	}
+
+	public void UpdateHousing() {
+		HousedCount = Math.Min(Count, MaxHousing);
+		Debug.Assert(HousedCount <= Count, $"More housed people than people extant?? ({HousedCount} vs {Count})");
 	}
 
 	public void Employ(Job job, int amount) {
@@ -36,15 +51,4 @@ public class Population {
 		job.SetWorkers(job.Workers - amount);
 	}
 
-	public void House(int amount) {
-		Debug.Assert(amount > 0, $"Housing negative people ({amount}), please use Population::Unhouse.");
-		Debug.Assert(HousedCount + amount <= MaxHousing, $"Can't house {HousedCount} + {amount} people with capacity {MaxHousing}");
-		HousedCount += amount;
-	}
-
-	public void Unhouse(int amount) {
-		Debug.Assert(amount > 0, $"Unhousing negative people ({amount}), please use Population::House.");
-		Debug.Assert(HousedCount - amount >= 0, $"Can't have negative housed people {HousedCount} + {amount}");
-
-	}
 }

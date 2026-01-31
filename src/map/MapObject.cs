@@ -15,9 +15,6 @@ public abstract partial class MapObject {
 		this.position = globalPosition;
 	}
 
-	public virtual void OnAdded(Region ctxRegion) { }
-	public virtual void OnRemoved(Region ctxRegion) { }
-
 	public abstract void PassTime(TimeT minutes);
 
 }
@@ -35,37 +32,27 @@ public partial class MapObject {
 
 public partial class Building : MapObject {
 
-	readonly IBuildingType type; public override IBuildingType Type { get => type; }
+	public event Action<Building> BuildingConstructed;
+
+	readonly IBuildingType type;
+	public override IBuildingType Type => type;
 
 	public int Population;
 	float constructionProgress; // in minutes
-	public bool IsConstructed => constructionProgress >= type.GetHoursToConstruct() * 60;
+	public bool IsConstructed => IsConstructedProgress(constructionProgress);
+	public bool IsConstructedProgress(float progress) => progress >= type.GetHoursToConstruct() * 60;
 	public ConstructBuildingJob ConstructionJob;
-
-	Region region;
 
 
 	protected Building(IBuildingType type, Vector2I globalPosition) : base(globalPosition) {
 		this.type = type;
 	}
 
-	public override void OnAdded(Region ctxRegion) {
-		region = ctxRegion;
-	}
-
-	public override void OnRemoved(Region ctxRegion) {
-		if (IsConstructed) {
-			region.LocalFaction.Population.Unhouse(-GetHousingCapacity());
-			region.LocalFaction.Population.ChangeHousingCapacity(-GetHousingCapacity());
-		}
-	}
-
 	public void ProgressBuild(TimeT minutes, ConstructBuildingJob job) {
 		Debug.Assert(!IsConstructed, "Don't ProgressBuild building that's ready...");
 		constructionProgress += job.GetWorkTime(minutes);
 		if (IsConstructed) {
-			region.LocalFaction.Population.ChangeHousingCapacity(GetHousingCapacity());
-			region.LocalFaction.Population.House(GetHousingCapacity());
+			BuildingConstructed?.Invoke(this);
 		}
 	}
 

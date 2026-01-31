@@ -133,7 +133,7 @@ public class Faction : IEntity {
 	}
 
 	public void DecreasePopulation(int by) {
-		throw new NotImplementedException();
+		Population.Reduce(by);
 	}
 
 	// *** MANAGING BUILDINGS ***
@@ -142,7 +142,7 @@ public class Faction : IEntity {
 	public Building PlaceBuildingConstructionSite(IBuildingType type, Vector2I position) {
 		Debug.Assert(Region.CanPlaceBuilding(position), $"Region says can't place building at {position}");
 		Debug.Assert(CanPlaceBuilding(type, position), "Cannot place the building for whatever reason");
-		var building = PlaceBuilding(type, position);
+		var building = CreateBuilding(type, position);
 		if (type.TakesTimeToConstruct() || type.HasResourceRequirements()) {
 			var job = new ConstructBuildingJob(type.GetResourceRequirements().ToList());
 			AddMapObjectJob(job, building);
@@ -154,15 +154,15 @@ public class Faction : IEntity {
 	// creates a building object and then completes its construction. for initialising the world and such
 	Building PlacePrebuiltBuilding(IBuildingType type, Vector2I position) {
 		Debug.Assert(!Region.HasMapObject(position), $"There's a lreayd a building here (at {position})");
-		var building = PlaceBuilding(type, position);
+		var building = CreateBuilding(type, position);
 		building.ProgressBuild((int)(type.GetHoursToConstruct() * 60), new AnonBuilderJob());
 		return building;
 	}
 
 	// asks the region to create a building spot and gets a building from it.
-	Building PlaceBuilding(IBuildingType type, Vector2I position) {
+	Building CreateBuilding(IBuildingType type, Vector2I position) {
 		var building = Region.CreateBuildingSpotAndPlace(type, position);
-		building.OnAdded(Region);
+		building.BuildingConstructed += OnBuildingConstructed;
 		return building;
 	}
 
@@ -174,13 +174,20 @@ public class Faction : IEntity {
 		return resourceStorage.HasEnoughAll(type.GetResourceRequirements());
 	}
 
+	void OnBuildingConstructed(Building building) {
+		Population.ChangeHousingCapacity(building.GetHousingCapacity());
+	}
+
 	// deletes a building from the faction's records and has the region also delete it
 	public void RemoveBuilding(Vector2I at) {
 		Debug.Assert(HasBuilding(at), $"There's no building to remove at {at}...");
+		var building = GetBuilding(at);
 		foreach (var job in GetJobs(at)) {
 			RemoveJob(job);
 		}
-		GetBuilding(at).OnRemoved(Region);
+		if (building.IsConstructed) {
+			Population.ChangeHousingCapacity(-building.GetHousingCapacity());
+		}
 		Region.RemoveMapObject(at);
 	}
 
