@@ -12,10 +12,10 @@ public partial class ResourceDisplay : PanelContainer {
 
 
 	public void Display(
-		int? population = null,
-		int? homelessPopulation = null,
-		int? unemployedPopulation = null,
-		int? silver = null,
+		uint? population = null,
+		uint? homelessPopulation = null,
+		uint? unemployedPopulation = null,
+		uint? silver = null,
 		Faction faction = null,
 		Vector2I? tilepos = null,
 		(Vector2I, Region)? inRegionTilepos = null,

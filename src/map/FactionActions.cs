@@ -77,11 +77,11 @@ public class FactionActions {
 		return jobs;
 	}
 
-	public int GetHomelessPopulationCount() => faction.HomelessPopulation;
+	public uint GetHomelessPopulationCount() => faction.HomelessPopulation;
 
-	public int GetFreeWorkers() => GetUnemployedPopulationCount();
+	public uint GetFreeWorkers() => GetUnemployedPopulationCount();
 
-	public int GetUnemployedPopulationCount() => faction.UnemployedPopulation;
+	public uint GetUnemployedPopulationCount() => faction.UnemployedPopulation;
 
 	// notifications
 

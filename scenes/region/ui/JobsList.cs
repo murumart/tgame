@@ -143,8 +143,8 @@ namespace scenes.region.ui {
 
 			for (int i = ExtantJobs.Count - 1; i >= 0; i--) {
 				var job = ExtantJobs[i];
-				int sliderMax = -1;
-				if (job.NeedsWorkers) sliderMax = Math.Min(ui.GetMaxFreeWorkers() + job.Workers, job.MaxWorkers);
+				uint sliderMax = 0;
+				if (job.NeedsWorkers) sliderMax = Math.Min(ui.GetMaxFreeWorkers() + (uint)job.Workers, job.MaxWorkers);
 				var panel = JobInfoPanel.Packed.Instantiate<JobInfoPanel>();
 				panel.AddToTree(jobsList, !job.IsInternal, true);
 				panel.Display(ui, job, i, sliderMax, JobWorkerCountChanged);

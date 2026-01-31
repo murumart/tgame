@@ -29,17 +29,9 @@ namespace resources.game.building_types {
 		public string GetScenePath() => ScenePath;
 
 		public int GetPopulationCapacity() {
+			Debug.Assert(PopulationCapacity >= 0, "Population capacity can't be negative");
 			return PopulationCapacity;
 		}
-
-		//public ResourceCapacity[] GetResourceCapacities() {
-		//	var arr = new ResourceCapacity[ResourceCapacities.Count];
-		//	int i = 0;
-		//	foreach (var pair in ResourceCapacities) {
-		//		arr[i++] = new ResourceCapacity(pair.Key, pair.Value);
-		//	}
-		//	return arr;
-		//}
 
 		public ResourceBundle[] GetResourceRequirements() {
 			var arr = new ResourceBundle[ResourceCosts.Count];

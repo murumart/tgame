@@ -12,7 +12,7 @@ public abstract class Job {
 	public virtual bool IsInternal => false;
 
 	public int Workers { get; protected set; }
-	public int MaxWorkers { get; protected set; }
+	public uint MaxWorkers { get; protected set; }
 	public virtual float GetWorkTime(TimeT minutes) => throw new NotImplementedException();
 
 	/// <summary>
@@ -38,7 +38,8 @@ public abstract class Job {
 	// sandbox methods vv
 
 	public void SetWorkers(int to) {
-		Debug.Assert(to >= 0 && to <= MaxWorkers, $"Employment overflow: can fit {MaxWorkers} but want to fit {to}");
+		Debug.Assert(MaxWorkers >= 0, "Max workers can't be negative");
+		Debug.Assert(to <= MaxWorkers, $"Employment overflow: can fit {MaxWorkers} but want to fit {to}");
 		Workers = to;
 	}
 

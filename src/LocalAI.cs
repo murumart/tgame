@@ -20,20 +20,20 @@ public partial class LocalAI {
 	public LocalAI(FactionActions actions) {
 		this.factionActions = actions;
 		this.resourceWants = new() {
-			{Resources.Logs, Factors.ResourceWant(actions, Resources.Logs, 30)},
-			{Resources.Rocks, Factors.ResourceWant(actions, Resources.Rocks, 30)},
+			{Registry.ResourcesS.Logs, Factors.ResourceWant(actions, Registry.ResourcesS.Logs, 30)},
+			{Registry.ResourcesS.Rocks, Factors.ResourceWant(actions, Registry.ResourcesS.Rocks, 30)},
 		};
 		this.mainActions = [
 			Actions.CreateGatherJob([
-					resourceWants[Resources.Logs],
+					resourceWants[Registry.ResourcesS.Logs],
 					Factors.FreeWorkerRate(factionActions),
-					Factors.HasFreeResourceSite(actions, Resources.Trees),
-				], factionActions, Resources.Trees),
+					Factors.HasFreeResourceSite(actions, Registry.ResourceSitesS.BroadleafWoods),
+				], factionActions, Registry.ResourceSitesS.BroadleafWoods),
 			Actions.CreateGatherJob([
-					resourceWants[Resources.Rocks],
+					resourceWants[Registry.ResourcesS.Rocks],
 					Factors.FreeWorkerRate(factionActions),
-					Factors.HasFreeResourceSite(actions, Resources.Boulder),
-				], factionActions, Resources.Boulder),
+					Factors.HasFreeResourceSite(actions, Registry.ResourceSitesS.Boulder),
+				], factionActions, Registry.ResourceSitesS.Boulder),
 		];
 		foreach (var building in Resources.Buildings) {
 			mainActions = mainActions.Append(
@@ -104,16 +104,7 @@ public partial class LocalAI {
 
 	static class Resources {
 
-		public static readonly IResourceType Logs = Registry.Resources.GetAsset("logs");
-		public static readonly IResourceType Rocks = Registry.Resources.GetAsset("rock");
-
-		public static readonly IResourceSiteType Trees = Registry.ResourceSites.GetAsset("trees");
-		public static readonly IResourceSiteType Boulder = Registry.ResourceSites.GetAsset("boulder");
-
-		public static readonly IBuildingType LogCabin = Registry.Buildings.GetAsset("log_cabin");
-		public static readonly IBuildingType Housing = Registry.Buildings.GetAsset("housing");
-		public static readonly IBuildingType BrickHousing = Registry.Buildings.GetAsset("brick_housing");
-		public static readonly IBuildingType[] Buildings = [Resources.LogCabin, Resources.Housing, Resources.BrickHousing];
+		public static readonly IBuildingType[] Buildings = [Registry.BuildingsS.LogCabin, Registry.BuildingsS.Housing, Registry.BuildingsS.BrickHousing];
 
 	}
 
@@ -192,8 +183,8 @@ public partial class LocalAI {
 		public static Action AssignWorkersToJob(DecisionFactor[] factors, FactionActions ac, Job job) {
 			return new(factors, () => {
 				if (!job.NeedsWorkers) return;
-				int maxChange = Math.Min(ac.GetFreeWorkers(), job.MaxWorkers);
-				maxChange = Math.Min(maxChange, job.MaxWorkers - job.Workers);
+				int maxChange = Math.Min((int)ac.GetFreeWorkers(), (int)job.MaxWorkers);
+				maxChange = Math.Min(maxChange, (int)job.MaxWorkers - job.Workers);
 				ac.ChangeJobWorkerCount(job, maxChange);
 			}, $"AssignWorkersToJob({job})");
 		}

@@ -14,7 +14,7 @@ point_count = 5
 
 [sub_resource type="Curve" id="Curve_vqee5"]
 _limits = [0.0, 500.0, 0.0, 1200.0]
-_data = [Vector2(0, 0), 0.0, 0.14618681, 0, 0, Vector2(1200, 100.24988), 0.06626855, 0.0, 0, 0]
+_data = [Vector2(0, 0), 0.0, 0.45032173, 0, 0, Vector2(1200, 195.57611), 0.06626855, 0.0, 0, 0]
 point_count = 2
 
 [sub_resource type="Gradient" id="Gradient_7j5km"]

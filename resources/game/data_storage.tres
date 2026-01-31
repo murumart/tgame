@@ -7,7 +7,7 @@
 [ext_resource type="Resource" uid="uid://cith36udqt0si" path="res://resources/game/building_types/log_cabin.tres" id="3_0g2bt"]
 [ext_resource type="Resource" uid="uid://bgdfkeb2prwkw" path="res://resources/game/building_types/brick_housing.tres" id="3_o7ste"]
 [ext_resource type="Resource" uid="uid://bh5svfg5ua7eb" path="res://resources/game/resource_site_types/boulder.tres" id="3_xflvh"]
-[ext_resource type="Resource" uid="uid://bws8feec8sqin" path="res://resources/game/resource_site_types/trees.tres" id="4_c2mn5"]
+[ext_resource type="Resource" uid="uid://bws8feec8sqin" path="res://resources/game/resource_site_types/broadleaf_woods.tres" id="4_c2mn5"]
 [ext_resource type="Resource" uid="uid://dv2p1gg3s0wjx" path="res://resources/game/building_types/kiln.tres" id="4_h1ebs"]
 [ext_resource type="Resource" uid="uid://nw83fam2omvi" path="res://resources/game/resource_types/rock.tres" id="4_xflvh"]
 [ext_resource type="Resource" uid="uid://ddqpxr0u07bfp" path="res://resources/game/resource_types/fish.tres" id="5_c2mn5"]

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Godot;
- 
+
 
 public class ConstructBuildingJob : MapObjectJob {
 
@@ -274,7 +274,7 @@ public class CraftJob : MapObjectJob {
 	readonly TimeT timeTaken;
 
 
-	public CraftJob(ResourceBundle[] inputs, ResourceBundle[] outputs, TimeT timeTaken, int maxWorkers, string outputDescription) {
+	public CraftJob(ResourceBundle[] inputs, ResourceBundle[] outputs, TimeT timeTaken, uint maxWorkers, string outputDescription) {
 		this.inputs = inputs;
 		this.outputs = outputs;
 		this.timeTaken = timeTaken;

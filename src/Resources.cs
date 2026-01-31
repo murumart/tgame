@@ -33,6 +33,7 @@ public partial class ResourceStorage : IEnumerable<KeyValuePair<IResourceType, I
 
 	public int GetCount(IResourceType item) {
 		if (!storageAmounts.TryGetValue(item, out var v)) return 0;
+		Debug.Assert(v.Amount >= 0, $"Got negative item count ({v.Amount})");
 		return v.Amount;
 	}
 
@@ -53,7 +54,7 @@ public partial class ResourceStorage : IEnumerable<KeyValuePair<IResourceType, I
 	public bool CanAdd(ResourceBundle resource) => CanAdd(resource.Amount);
 
 	public void AddResource(ResourceBundle resource) {
-		Debug.Assert(CanAdd(resource), "These resources dont fit here.................................");
+		Debug.Assert(CanAdd(resource), "These resources don't fit here");
 		storageAmounts.TryGetValue(resource.Type, out InStorage stored);
 		storageAmounts[resource.Type] = stored.Add(resource);
 		ItemAmount += resource.Amount;
@@ -111,6 +112,7 @@ public partial class ResourceStorage {
 
 
 		public InStorage(int count) {
+			Debug.Assert(count >= 0, "Storage count can't be negative");
 			this.Amount = count;
 		}
 
@@ -138,6 +140,7 @@ public partial class ResourceStorage {
 
 
 		public ResourceCapacity(IResourceType type, int capacity) {
+			Debug.Assert(capacity >= 0, "Resource Capacity cannot be negative");
 			this.Type = type;
 			this.Capacity = capacity;
 		}

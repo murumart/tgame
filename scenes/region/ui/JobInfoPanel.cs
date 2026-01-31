@@ -29,7 +29,7 @@ namespace scenes.region.ui {
 			topbar.Visible = showTop;
 		}
 
-		public void Display(UI ui, Job job, int jobIndex, int sliderMax, Action<int, int> workersSelected) {
+		public void Display(UI ui, Job job, int jobIndex, uint sliderMax, Action<int, int> workersSelected) {
 			this.ui = ui;
 			jobBox = job;
 			if (job.NeedsWorkers) {

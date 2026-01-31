@@ -60,7 +60,7 @@ public partial class Building : MapObject {
 		return (constructionProgress / 60) / type.GetHoursToConstruct();
 	}
 
-	public int GetHousingCapacity() => type.GetPopulationCapacity();
+	public uint GetHousingCapacity() => (uint)type.GetPopulationCapacity();
 
 	public override void PassTime(TimeT minutes) { }
 

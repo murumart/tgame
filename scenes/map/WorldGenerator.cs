@@ -90,7 +90,7 @@ namespace scenes.map {
 					if (pos == Vector2I.Zero) continue; // starter house position..
 					if ((region.GroundTiles[pos] & GroundTileType.Land) == 0) continue;
 					if (GD.Randf() < 0.01f) region.CreateResourceSiteAndPlace(Registry.ResourceSites.GetAsset("boulder"), pos);
-					else if (GD.Randf() < 0.07f) region.CreateResourceSiteAndPlace(Registry.ResourceSites.GetAsset("trees"), pos);
+					else if (GD.Randf() < 0.07f) region.CreateResourceSiteAndPlace(Registry.ResourceSites.GetAsset("broadleaf_woods"), pos);
 					else if (GD.Randf() < 0.003f) region.CreateResourceSiteAndPlace(Registry.ResourceSites.GetAsset("clay_pit"), pos);
 				}
 			}
@@ -273,18 +273,16 @@ namespace scenes.map {
 		}
 
 		async Task War(Region[] regions, int aggressiveRegionCount) {
-			const int MAX_POP = 1000;
 			// all regions get initial populations
 			foreach (Region region in regions) {
 				var faction = new Faction(
 					region,
-					maxPop: MAX_POP,
-					initialPopulation: (int)populationLandTileCurve.SampleBaked(region.LandTileCount)
+					initialPopulation: (uint)populationLandTileCurve.SampleBaked(region.LandTileCount)
 				);
 			}
 
 			var aggressors = regions.Where(r => r.LocalFaction.GetPopulationCount() > 20).OrderByDescending(r => r.LocalFaction.GetPopulationCount()).Take(aggressiveRegionCount);
-			GD.Print($"WorldGenerator::War : aggressors {aggressors.ToArray()}");
+			GD.Print($"WorldGenerator::War : aggressors {string.Join(", ", aggressors)}");
 			var subs = new Dictionary<Region, HashSet<Region>>();
 			var taken = new HashSet<Region>();
 			foreach (var ag in aggressors) subs[ag] = new();
@@ -292,7 +290,7 @@ namespace scenes.map {
 			int actions = 10;
 			while (actions-- > 0) {
 				foreach (var ag in aggressors) {
-					int attackingPop = ag.LocalFaction.GetPopulationCount() + subs[ag].Select(s => s.LocalFaction.GetPopulationCount()).Sum();
+					uint attackingPop = ag.LocalFaction.GetPopulationCount() + (uint)subs[ag].Select(s => (float)s.LocalFaction.GetPopulationCount()).Sum();
 					foreach (var sub in subs[ag]) {
 						WarlikeExpand(subs[ag].ToList().ToHashSet(), taken, sub, attackingPop, ag);
 					}
@@ -302,7 +300,7 @@ namespace scenes.map {
 			}
 		}
 
-		void WarlikeExpand(HashSet<Region> subs, HashSet<Region> taken, Region attacker, int attackingPop, Region owner) {
+		void WarlikeExpand(HashSet<Region> subs, HashSet<Region> taken, Region attacker, uint attackingPop, Region owner) {
 			foreach (var n in attacker.Neighbors) {
 				if (subs.Contains(n)) continue;
 				if (taken.Contains(n)) continue;

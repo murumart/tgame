@@ -36,7 +36,7 @@ namespace scenes.region.ui {
 			ValueChangedCallbackEvent -= valueChangedCallback;
 		}
 
-		public void Setup(Action<int, int> valueChangedCallback, int jobIx, int jobWorkers, string name, int sliderMax, string unitSymbol) {
+		public void Setup(Action<int, int> valueChangedCallback, int jobIx, int jobWorkers, string name, uint sliderMax, string unitSymbol) {
 			Debug.Assert(_ready, "dont setup before we're ready");
 			this.jobIx = jobIx;
 			this.valueChangedCallback = valueChangedCallback;

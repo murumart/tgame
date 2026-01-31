@@ -42,7 +42,8 @@ namespace resouces.game.building_types.crafting {
 		public string OutputDescription => outputDescription;
 
 		public CraftJob GetJob() {
-			return new(Inputs, Outputs, TimeTaken, MaxWorkers, OutputDescription);
+			Debug.Assert(MaxWorkers >= 0, "max workers can't be negative");
+			return new(Inputs, Outputs, TimeTaken, (uint)MaxWorkers, OutputDescription);
 		}
 	}
 

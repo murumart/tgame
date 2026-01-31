@@ -22,6 +22,28 @@ public static class Registry {
 		ResourceSites.RegisterAssets(resourceSiteTypes);
 	}
 
+	public static class ResourcesS {
+
+		public static readonly IResourceType Logs = Resources.GetAsset("logs");
+		public static readonly IResourceType Rocks = Resources.GetAsset("rock");
+
+	}
+
+	public static class BuildingsS {
+
+		public static readonly IBuildingType LogCabin = Buildings.GetAsset("log_cabin");
+		public static readonly IBuildingType Housing = Buildings.GetAsset("housing");
+		public static readonly IBuildingType BrickHousing = Buildings.GetAsset("brick_housing");
+
+	}
+
+	public static class ResourceSitesS {
+
+		public static readonly IResourceSiteType BroadleafWoods = ResourceSites.GetAsset("broadleaf_woods");
+		public static readonly IResourceSiteType Boulder = ResourceSites.GetAsset("boulder");
+
+	}
+
 }
 
 public class AssetTypeRegistry<T> where T : IAssetType {

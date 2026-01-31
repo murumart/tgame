@@ -35,8 +35,8 @@ public class Faction : IEntity {
 
 	public readonly Population Population;
 
-	public int HomelessPopulation => Population.Count - Population.HousedCount;
-	public int UnemployedPopulation => Population.Count - Population.EmployedCount;
+	public uint HomelessPopulation => Population.Count - Population.HousedCount;
+	public uint UnemployedPopulation => Population.Count - Population.EmployedCount;
 
 	public readonly string Name;
 
@@ -46,8 +46,7 @@ public class Faction : IEntity {
 	TimeT time;
 
 
-	public Faction(Region region, int initialPopulation = 30, int maxPop = 100) {
-		maxPop = -1; // UNUSED
+	public Faction(Region region, uint initialPopulation = 30) {
 
 		Region = region;
 		Briefcase = new();
@@ -66,7 +65,7 @@ public class Faction : IEntity {
 
 	// *** MANAGING WORKERS AND JOBS ***
 
-	public int GetPopulationCount() => Population.Count;
+	public uint GetPopulationCount() => Population.Count;
 
 	public void AddMapObjectJob(MapObjectJob job, MapObject mapObject) {
 		RegisterJob(mapObject.GlobalPosition, job);
@@ -77,7 +76,7 @@ public class Faction : IEntity {
 	}
 
 	void RegisterJob(Vector2I position, Job job) {
-		Debug.Assert(!(jobsByPosition.ContainsKey(position) && jobsByPosition[position].Contains(job)), $"Job object ({job}) at {position} exists ");
+		Debug.Assert(!(jobsByPosition.ContainsKey(position) && jobsByPosition[position].Contains(job)), $"The job object ({job}) is already registred at {position}");
 		if (!jobsByPosition.ContainsKey(position)) jobsByPosition[position] = new();
 		jobsByPosition[position].Add(job);
 		jobs.Add(job);
@@ -96,11 +95,11 @@ public class Faction : IEntity {
 	}
 
 	public IEnumerable<Job> GetJobs(Vector2I position) {
-		jobsByPosition.TryGetValue(position, out HashSet<Job> gottenJobs);
-		return gottenJobs?.ToList() ?? new List<Job>();
+		var has = jobsByPosition.TryGetValue(position, out var gottenJobs);
+		return !has ? new List<Job>() : gottenJobs;
 	}
 
-	public int GetFreeWorkers() => UnemployedPopulation;
+	public uint GetFreeWorkers() => UnemployedPopulation;
 
 	public bool CanEmployWorkers(Job job, int amount) {
 		Debug.Assert(jobs.Contains(job), "This isn't my job...");
@@ -116,12 +115,12 @@ public class Faction : IEntity {
 		Debug.Assert(jobs.Contains(job), "This isn't my job...");
 		if (amount < 0) {
 			Debug.Assert(CanUnemployWorkers(job, -amount), $"Can't employ these workers! (amount {amount}, workers {job.Workers})");
-			Population.Unemploy(job, -amount);
+			Population.Unemploy(job, (uint)-amount);
 			return;
 		}
 		Debug.Assert(CanEmployWorkers(job, amount), $"Can't employ these workers! (amount {amount}, workers {job.Workers})");
 
-		Population.Employ(job, amount);
+		Population.Employ(job, (uint)amount);
 	}
 
 	public void UnemployAllWorkers(Job job) {
@@ -129,10 +128,10 @@ public class Faction : IEntity {
 		Debug.Assert(jobs.Contains(job), "This isn't my job...");
 		Debug.Assert(CanUnemployWorkers(job, job.Workers), $"Can't unemploy these workers! (workers {job.Workers})");
 
-		Population.Unemploy(job, job.Workers);
+		Population.Unemploy(job, (uint)job.Workers);
 	}
 
-	public void DecreasePopulation(int by) {
+	public void DecreasePopulation(uint by) {
 		Population.Reduce(by);
 	}
 
@@ -175,7 +174,7 @@ public class Faction : IEntity {
 	}
 
 	void OnBuildingConstructed(Building building) {
-		Population.ChangeHousingCapacity(building.GetHousingCapacity());
+		Population.ChangeHousingCapacity((int)building.GetHousingCapacity());
 	}
 
 	// deletes a building from the faction's records and has the region also delete it
@@ -186,7 +185,7 @@ public class Faction : IEntity {
 			RemoveJob(job);
 		}
 		if (building.IsConstructed) {
-			Population.ChangeHousingCapacity(-building.GetHousingCapacity());
+			Population.ChangeHousingCapacity(-(int)building.GetHousingCapacity());
 		}
 		Region.RemoveMapObject(at);
 	}

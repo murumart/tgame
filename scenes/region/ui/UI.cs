@@ -22,7 +22,7 @@ namespace scenes.region.ui {
 		public event Func<MapObject, ICollection<Job>> GetMapObjectJobsEvent;
 		public event Func<ICollection<Job>> GetJobsEvent;
 		public event Action<MapObject, MapObjectJob> AddJobRequestedEvent;
-		public event Func<int> GetMaxFreeWorkersEvent;
+		public event Func<uint> GetMaxFreeWorkersEvent;
 		public event Action<Job, int> ChangeJobWorkerCountEvent;
 		public event Action<Job> DeleteJobEvent;
 
@@ -275,7 +275,12 @@ namespace scenes.region.ui {
 		public ICollection<Job> GetJobs() => GetJobsEvent?.Invoke();
 		public void AddJobRequested(MapObject mapObject, MapObjectJob job) => AddJobRequestedEvent?.Invoke(mapObject, job);
 		public void AddJobRequested(Job job) => throw new NotImplementedException("Cant add jobs without building yet");
-		public int GetMaxFreeWorkers() => GetMaxFreeWorkersEvent?.Invoke() ?? -1;
+		public uint GetMaxFreeWorkers() {
+			var val = GetMaxFreeWorkersEvent?.Invoke();
+			if (val == null) Debug.Assert(false, "ungood Connection");
+			return val ?? 0;
+		}
+
 		public void ChangeJobWorkerCount(Job job, int amount) => ChangeJobWorkerCountEvent?.Invoke(job, amount);
 		public void DeleteJob(Job job) => DeleteJobEvent?.Invoke(job);
 
