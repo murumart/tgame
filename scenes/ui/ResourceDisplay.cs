@@ -8,6 +8,7 @@ public partial class ResourceDisplay : PanelContainer {
 	[Export] Label tileposLabel;
 	[Export] Label timeLabel;
 	[Export] Label factionLabel;
+	[Export] Label worldTileInfoLabel;
 
 	[Export] Label fpsLabel;
 
@@ -21,7 +22,8 @@ public partial class ResourceDisplay : PanelContainer {
 		Vector2I? tilepos = null,
 		(Vector2I, Region)? inRegionTilepos = null,
 		string timeString = null,
-		(uint, uint)? foodAndUsage = null
+		(uint, uint)? foodAndUsage = null,
+		(float, float, float)? worldTileInfo = null
 	) {
 		fpsLabel.Text = "fps: " + Engine.GetFramesPerSecond().ToString();
 		if (population != null && unemployedPopulation != null && homelessPopulation != null) {
@@ -46,6 +48,9 @@ public partial class ResourceDisplay : PanelContainer {
 			tileposLabel.Text = txt;
 		}
 		if (faction != null) factionLabel.Text = $"region: {faction.Name}";
+		if (worldTileInfo != null) {
+			worldTileInfoLabel.Text = $"ele: {worldTileInfo?.Item1} temp: {worldTileInfo?.Item2} humi: {worldTileInfo?.Item3}";
+		}
 	}
 
 }

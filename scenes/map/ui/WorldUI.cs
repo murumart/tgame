@@ -6,10 +6,11 @@ public partial class WorldUI : Control {
 
 	public event Action<int> WorldDisplaySelected;
 	public event Action<bool> RegionsDisplaySet;
+	public event Func<Vector2, (float, float, float)> WorldTileInfoRequested;
 	public event Action RegionPlayRequested;
 
 	[Export] public ResourceDisplay ResourceDisplay;
-
+	[Export] Camera camera;
 	[Export] Label factionTitleLabel;
 	[Export] RichTextLabel factionInfoLabel;
 	[Export] Button factionPlayButton;
@@ -26,6 +27,15 @@ public partial class WorldUI : Control {
 		regionDisplaySet.Toggled += on => RegionsDisplaySet?.Invoke(on);
 		for (int i = 0; i < (int)WorldRenderer.DrawMode.Max; i++) {
 			drawModeSelect.AddItem((WorldRenderer.DrawMode)(i) + "");
+		}
+	}
+
+	Vector2 oldMousePos;
+	public override void _Process(double delta) {
+		var mousePos = camera.GetMousePos();
+		if (mousePos != oldMousePos) {
+			oldMousePos = mousePos;
+			ResourceDisplay.Display(worldTileInfo: WorldTileInfoRequested?.Invoke(mousePos));
 		}
 	}
 

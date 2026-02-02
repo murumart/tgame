@@ -22,6 +22,12 @@ namespace scenes.map {
 			worldUI.RegionPlayRequested += SetupGame;
 			worldUI.WorldDisplaySelected += which => worldRenderer.drawMode = (WorldRenderer.DrawMode)which;
 			worldUI.RegionsDisplaySet += on => worldRenderer.RegionSprite.Visible = on;
+			worldUI.WorldTileInfoRequested += where => {
+				var w = new Vector2I((int)where.X, (int)where.Y);
+				if (map == null) return (-3f, -3f, -3f);
+				if (map.World == null) return (-2f, -2f, -2f);
+				return (map.World.GetElevation(w.X, w.Y), map.World.GetTemperature(w.X, w.Y), map.World.GetHumidity(w.X, w.Y));
+			};
 			camera.ClickedMouseEvent += MouseClicked;
 			camera.Position = new(worldGenerator.WorldWidth * 0.5f, worldGenerator.WorldHeight * 0.5f);
 

@@ -29,7 +29,7 @@ point_count = 3
 
 [sub_resource type="Curve" id="Curve_wncef"]
 _limits = [0.0, 2.0, 0.0, 1.0]
-_data = [Vector2(0, 2), 0.0, 0.0, 0, 0, Vector2(0.17079511, 0.9229295), 0.0, 0.0, 0, 0, Vector2(0.27227303, 0.2058261), 0.0, 0.0, 0, 0, Vector2(1, 0.0102523565), 0.0, 0.0, 0, 0]
+_data = [Vector2(0, 2), 0.0, 0.0, 0, 0, Vector2(0.097939156, 0.3102436), 0.0, 0.0, 0, 0, Vector2(0.38676095, 0.04947877), 0.0, 0.0, 0, 0, Vector2(1, 0.0102523565), 0.0, 0.0, 0, 0]
 point_count = 4
 
 [sub_resource type="Curve" id="Curve_1p0hh"]
@@ -39,12 +39,12 @@ point_count = 4
 
 [sub_resource type="Curve" id="Curve_iffmc"]
 _limits = [0.0, 1.0, -1.0, 1.0]
-_data = [Vector2(-1, 0), 0.0, 0.0, 0, 0, Vector2(-0.7052457, 0.4810779), 0.0, 0.0, 0, 0, Vector2(0.81952524, 0.72011244), 0.0, 0.0, 0, 0]
-point_count = 3
+_data = [Vector2(-1, 0), 0.0, 0.0, 0, 0, Vector2(-0.5126978, 0.33620852), 0.0, 0.0, 0, 0, Vector2(0.5020815, 0.6114604), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 4
 
 [sub_resource type="Curve" id="Curve_h4q0h"]
 _limits = [-1.0, 1.0, 0.0, 1.0]
-_data = [Vector2(0, 0.6140682), 0.0, -1.3312594, 0, 0, Vector2(1, -0.67526937), 0.0, 0.0, 0, 0]
+_data = [Vector2(0, 0.8748331), 0.0, -1.3312594, 0, 0, Vector2(1, -0.515913), 0.0, 0.0, 0, 0]
 point_count = 2
 
 [sub_resource type="Curve" id="Curve_3biw4"]
@@ -89,7 +89,7 @@ humidityNoise = ExtResource("10_t34eq")
 seawindGainNoise = ExtResource("11_a3btc")
 WorldWidth = 640
 WorldHeight = 420
-LandRegionCount = 87
+LandRegionCount = 174
 AggressiveFactionCount = 40
 islandCurve = SubResource("Curve_7j5km")
 seawindElevationDifferenceReductionCurve = SubResource("Curve_a3btc")
@@ -97,7 +97,6 @@ seawindTemperatureModCurve = SubResource("Curve_t34eq")
 seawindHumidityReductionCurve = SubResource("Curve_wncef")
 elevationHumidityAdditionCurve = SubResource("Curve_1p0hh")
 humidityCurve = SubResource("Curve_iffmc")
-seawindGain = 0.008
 temperaturePolarEquatorCurve = SubResource("Curve_h4q0h")
 elevationTemperatureReductionCurve = SubResource("Curve_3biw4")
 populationLandTileCurve = SubResource("Curve_vqee5")
@@ -133,4 +132,5 @@ centered = false
 [node name="Camera" type="Camera2D" parent="." unique_id=135815858]
 script = ExtResource("6_h4q0h")
 
-[node name="WorldUI" parent="." unique_id=1556432657 instance=ExtResource("7_vqee5")]
+[node name="WorldUI" parent="." unique_id=1556432657 node_paths=PackedStringArray("camera") instance=ExtResource("7_vqee5")]
+camera = NodePath("../Camera")

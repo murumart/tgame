@@ -102,8 +102,11 @@ namespace scenes.map {
 			for (int x = 0; x < world.Longitude; x++) {
 				for (int y = 0; y < world.Latitude; y++) {
 					var ele = world.GetElevation(x, y);
+					var humi = world.GetHumidity(x, y);
+					var temp = world.GetTemperature(x, y);
 					if (ele < 0) world.SetTile(x, y, GroundTileType.Ocean);
-					else if (ele < 0.02) world.SetTile(x, y, GroundTileType.Sand);
+					else if (ele < 0.02 || humi < 0.01f) world.SetTile(x, y, GroundTileType.Sand);
+					else if (temp < -0.01f) world.SetTile(x, y, GroundTileType.Snow);
 					else world.SetTile(x, y, GroundTileType.Grass);
 				}
 			}
@@ -351,7 +354,7 @@ namespace scenes.map {
 			foreach (var n in attacker.Neighbors) {
 				if (subs.Contains(n)) continue;
 				if (taken.Contains(n)) continue;
-				if (n.LocalFaction.GetPopulationCount() > attackingPop / 3) {
+				if (n.LocalFaction.GetPopulationCount() > attackingPop / 2) {
 
 				} else {
 					subs.Add(n);

@@ -17,6 +17,7 @@ public static class GroundTileTypeEx {
 			GroundTileType.Void => "...",
 			GroundTileType.Grass => "grass",
 			GroundTileType.Sand => "sand",
+			GroundTileType.Snow => "snow",
 			GroundTileType.Land => "??all land",
 			GroundTileType.Ocean => "sea",
 			_ => throw new NotImplementedException(),

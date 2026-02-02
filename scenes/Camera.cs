@@ -65,6 +65,10 @@ public partial class Camera : Camera2D {
 
 	}
 
+	public Vector2 GetMousePos() {
+		return GetCanvasTransform().AffineInverse() * GetViewport().GetMousePosition();
+	}
+
 	private void Movement(float delta) {
 		float speed = SPEED / zoomSize;
 		velocity = velocity.MoveToward(Vector2.Zero, delta * DECEL);
