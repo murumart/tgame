@@ -1,12 +1,11 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Godot;
 
 public partial class WorldUI : Control {
 
+	public event Action<int> WorldDisplaySelected;
+	public event Action<bool> RegionsDisplaySet;
 	public event Action RegionPlayRequested;
 
 	[Export] public ResourceDisplay ResourceDisplay;
@@ -14,12 +13,20 @@ public partial class WorldUI : Control {
 	[Export] Label factionTitleLabel;
 	[Export] RichTextLabel factionInfoLabel;
 	[Export] Button factionPlayButton;
+	[Export] OptionButton drawModeSelect;
+	[Export] CheckBox regionDisplaySet;
 
-	Region selectedRegion; public Region SelectedRegion => selectedRegion;
+	Region selectedRegion;
+	public Region SelectedRegion => selectedRegion;
 
 
 	public override void _Ready() {
 		factionPlayButton.Pressed += () => RegionPlayRequested?.Invoke();
+		drawModeSelect.ItemSelected += OnDrawModeSelected;
+		regionDisplaySet.Toggled += on => RegionsDisplaySet?.Invoke(on);
+		for (int i = 0; i < (int)WorldRenderer.DrawMode.Max; i++) {
+			drawModeSelect.AddItem((WorldRenderer.DrawMode)(i) + "");
+		}
 	}
 
 	public void SelectRegion(Region region) {
@@ -44,9 +51,8 @@ public partial class WorldUI : Control {
 		factionPlayButton.Disabled = !region.LocalFaction.HasOwningFaction();
 	}
 
-	class AnonymousMapbjectComparer : IEqualityComparer<MapObject> {
-		public bool Equals(MapObject x, MapObject y) => x.Type == y.Type;
-		public int GetHashCode([DisallowNull] MapObject obj) => obj.GetHashCode();
+	void OnDrawModeSelected(long which) {
+		WorldDisplaySelected?.Invoke((int)which);
 	}
 
 }

@@ -5,6 +5,7 @@ public enum GroundTileType : byte {
 	Void  = 0b00000000,
 	Grass = 0b00000001,
 	Sand  = 0b00000010,
+	Snow  = 0b00000100,
 	Land  = 0b01111111,
 	Ocean = 0b10000000,
 }
@@ -29,6 +30,7 @@ public class World {
 
 	readonly GroundTileType[] Ground;
 	readonly byte[] Elevation;
+	readonly byte[] Temperature;
 
 
 	public World(int width, int height) {
@@ -36,6 +38,7 @@ public class World {
 		Latitude = height;
 		Ground = new GroundTileType[Longitude * Latitude];
 		Elevation = new byte[Longitude * Latitude];
+		Temperature = new byte[Longitude * Latitude];
 	}
 
 	public void SetTile(int x, int y, GroundTileType tile) {
@@ -59,4 +62,13 @@ public class World {
 		return ((float)Elevation[x + y * Longitude] / byte.MaxValue) * 2.0f - 1.0f;
 	}
 
+	public void SetTemperature(int x, int y, float temperature) {
+		Temperature[x + y * Longitude] = (byte)((temperature * 0.5f + 0.5f) * byte.MaxValue);
+	}
+
+	public float GetTemperature(int x, int y) {
+		if (x < 0 || x >= Longitude) return -1f;
+		if (y < 0 || y >= Latitude) return -1f;
+		return ((float)Temperature[x + y * Longitude] / byte.MaxValue) * 2.0f - 1.0f;
+	}
 }

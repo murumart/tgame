@@ -11,13 +11,15 @@ namespace scenes.map {
 		readonly (Vector2I, byte)[] GrowDirs = { (Vector2I.Right, 0b1), (Vector2I.Left, 0b10), (Vector2I.Down, 0b100), (Vector2I.Up, 0b1000) };
 
 		[Export] FastNoiseLite continentNoise;
+		[Export] FastNoiseLite temperatureNoise;
 
 		[Export] public int WorldWidth;
 		[Export] public int WorldHeight;
 		[Export] int LandRegionCount;
-		[Export] int SeaRegionCount;
 		[Export] int AggressiveFactionCount;
 		[Export] Curve islandCurve;
+		[Export] Curve temperaturePolarEquatorCurve;
+		[Export] Curve elevationTemperatureReductionCurve;
 		[Export] Curve populationLandTileCurve;
 
 		public Region[] Regions;
@@ -35,6 +37,7 @@ namespace scenes.map {
 			Generating = true;
 
 			continentNoise.Seed = (int)rng.Randi();
+			temperatureNoise.Seed = (int)rng.Randi();
 
 			var centre = new Vector2(world.Longitude / 2, world.Latitude / 2);
 			var divBySidelen = 1.0f / (float)(Math.Pow(world.Longitude / 2.0, 2) + Math.Pow(world.Latitude / 2.0, 2));
@@ -42,13 +45,20 @@ namespace scenes.map {
 				for (int y = 0; y < world.Latitude; y++) {
 					var vec = new Vector2(x, y);
 
-					float sample = continentNoise.GetNoise2D(x, y);
+					float continentSample = continentNoise.GetNoise2D(x, y);
 
 					float distanceSqFromCentre = centre.DistanceSquaredTo(vec) * divBySidelen;
-					sample -= islandCurve.SampleBaked(distanceSqFromCentre);
-					sample = Mathf.Clamp(sample, -1f, 1f);
+					continentSample -= islandCurve.SampleBaked(distanceSqFromCentre);
+					continentSample = Mathf.Clamp(continentSample, -1f, 1f);
 
-					world.SetElevation(x, y, sample);
+					float temperatureSample = temperatureNoise.GetNoise2D(x, y) * 0.25f;
+					float distanceFromEquator = Math.Abs(y - world.Latitude * 0.5f) / (world.Latitude * 0.5f);
+					temperatureSample += temperaturePolarEquatorCurve.SampleBaked(distanceFromEquator);
+					temperatureSample -= elevationTemperatureReductionCurve.SampleBaked(continentSample);
+					temperatureSample = Mathf.Clamp(temperatureSample, -1f, 1f);
+
+					world.SetElevation(x, y, continentSample);
+					world.SetTemperature(x, y, temperatureSample);
 				}
 			}
 
@@ -64,10 +74,10 @@ namespace scenes.map {
 		}
 
 		public async Task<Map> GenerateRegions(World world) {
-			return await GenerateRegions(world, LandRegionCount, SeaRegionCount);
+			return await GenerateRegions(world, LandRegionCount);
 		}
 
-		public async Task<Map> GenerateRegions(World world, int regionCountLand, int regionCountSea) {
+		public async Task<Map> GenerateRegions(World world, int regionCountLand) {
 			Generating = true;
 			Dictionary<Vector2I, Region> landOccupied; // coordinates in global space
 			landOccupied = GenerateRegionStarts(world, regionCountLand);
@@ -80,7 +90,7 @@ namespace scenes.map {
 				freeEdgeTiles[reg] = new() { (Vector2I.Zero, 0b1111) };
 			}
 
-			GD.Print("WorldGenerator::GenerateRegions : Growing land regions");
+			GD.Print("WorldGenerator::GenerateRegions : Growing regions");
 			await GrowRegions(world, regionsLand, landOccupied, freeEdgeTiles);
 
 			freeEdgeTiles.Clear();

@@ -5,11 +5,35 @@ public partial class WorldRenderer : Node {
 	ColorPalette palette = GD.Load<ColorPalette>("uid://cr4o125t00hli");
 
 	[Export] Sprite2D groundSprite;
-	[Export] Sprite2D regionSprite;
+	[Export] public Sprite2D RegionSprite;
 	[Export] Sprite2D highlightSprite;
 	[Export] Gradient elevationGradient;
+	[Export] Gradient temperatureGradient;
+
+	public enum DrawMode {
+		Continents,
+		Temperature,
+
+		Max
+	}
 
 	World world;
+	DrawMode _drawMode;
+	[Export]
+	public DrawMode drawMode {
+		set {
+			_drawMode = value;
+			switch (drawMode) {
+				case DrawMode.Continents:
+					DrawContinents();
+					break;
+				case DrawMode.Temperature:
+					DrawTemperature();
+					break;
+			}
+		}
+		get => _drawMode;
+	}
 
 
 	public void ResetImages() {
@@ -19,7 +43,7 @@ public partial class WorldRenderer : Node {
 		regionImage.Fill(Colors.White);
 		Image highlightImage = Image.CreateEmpty(world.Longitude, world.Latitude, false, Image.Format.Rgba4444);
 		groundSprite.Texture = ImageTexture.CreateFromImage(worldImage);
-		regionSprite.Texture = ImageTexture.CreateFromImage(regionImage);
+		RegionSprite.Texture = ImageTexture.CreateFromImage(regionImage);
 		highlightSprite.Texture = ImageTexture.CreateFromImage(highlightImage);
 	}
 
@@ -34,7 +58,6 @@ public partial class WorldRenderer : Node {
 
 	void DrawContinents() {
 		if (world == null) return;
-		ResetImages();
 		var worldImage = GetImage(groundSprite);
 		for (int x = 0; x < world.Longitude; x++) {
 			for (int y = 0; y < world.Latitude; y++) {
@@ -53,14 +76,36 @@ public partial class WorldRenderer : Node {
 		UpdateImage(worldImage, groundSprite);
 	}
 
+	void DrawTemperature() {
+		if (world == null) return;
+		var worldImage = GetImage(groundSprite);
+		for (int x = 0; x < world.Longitude; x++) {
+			for (int y = 0; y < world.Latitude; y++) {
+				Color color = temperatureGradient.Sample(world.GetTemperature(x, y) * 0.5f + 0.5f);
+
+				worldImage.SetPixel(x, y, color);
+			}
+
+		}
+		UpdateImage(worldImage, groundSprite);
+	}
+
 	public void Draw(World world) {
 		this.world = world;
-		DrawContinents();
+		ResetImages();
+		switch (drawMode) {
+			case DrawMode.Continents:
+				DrawContinents();
+				break;
+			case DrawMode.Temperature:
+				DrawTemperature();
+				break;
+		}
 	}
 
 	public void DrawRegions(Region[] regions) {
 		if (regions == null) return;
-		var image = GetImage(regionSprite);
+		var image = GetImage(RegionSprite);
 		foreach (var region in regions) {
 			var color = region.Color.Lightened(0.5f);
 			if (region.LocalFaction != null && region.LocalFaction.HasOwningFaction()) color = region.LocalFaction.GetOwningFaction().Region.Color.Darkened(0.25f);
@@ -68,7 +113,7 @@ public partial class WorldRenderer : Node {
 				image.SetPixelv(px + region.WorldPosition, color);
 			}
 		}
-		UpdateImage(image, regionSprite);
+		UpdateImage(image, RegionSprite);
 	}
 
 	public void DrawRegionHighlight(Region hovered, Region highlighted) {

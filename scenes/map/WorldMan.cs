@@ -20,6 +20,8 @@ namespace scenes.map {
 			UILayer.AddUIChild(worldUI);
 			worldUI.SelectRegion(null);
 			worldUI.RegionPlayRequested += SetupGame;
+			worldUI.WorldDisplaySelected += which => worldRenderer.drawMode = (WorldRenderer.DrawMode)which;
+			worldUI.RegionsDisplaySet += on => worldRenderer.RegionSprite.Visible = on;
 			camera.ClickedMouseEvent += MouseClicked;
 			camera.Position = new(worldGenerator.WorldWidth * 0.5f, worldGenerator.WorldHeight * 0.5f);
 

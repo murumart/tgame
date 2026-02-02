@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://snle5m8xmu6t" path="res://scenes/map/ui/WorldUI.cs" id="1_gjnyb"]
 [ext_resource type="PackedScene" uid="uid://bfswljwjyhmyy" path="res://scenes/ui/resource_display.tscn" id="2_mu82y"]
 [ext_resource type="LabelSettings" uid="uid://ddruam7fh1y7l" path="res://resources/visual/theme/label_styles/title.tres" id="3_mu82y"]
+[ext_resource type="LabelSettings" uid="uid://teuhafm0mc0i" path="res://resources/visual/theme/label_styles/10px.tres" id="3_qeha8"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mu82y"]
 bg_color = Color(0.1882353, 0.21960784, 0.2627451, 0.10980392)
@@ -16,7 +17,7 @@ shadow_offset = Vector2(2, 2)
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_mu82y"]
 
-[node name="WorldUI" type="Control" unique_id=1536136679 node_paths=PackedStringArray("ResourceDisplay", "factionTitleLabel", "factionInfoLabel", "factionPlayButton")]
+[node name="WorldUI" type="Control" unique_id=1536136679 node_paths=PackedStringArray("ResourceDisplay", "factionTitleLabel", "factionInfoLabel", "factionPlayButton", "drawModeSelect", "regionDisplaySet")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -25,10 +26,12 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1_gjnyb")
-ResourceDisplay = NodePath("VBoxContainer/MarginContainer/ResourceDisplay")
+ResourceDisplay = NodePath("VBoxContainer/MarginContainer/HBoxContainer/ResourceDisplay")
 factionTitleLabel = NodePath("VBoxContainer/MarginContainer2/HBoxContainer/Factionpanel/MarginContainer/VBoxContainer/Title")
 factionInfoLabel = NodePath("VBoxContainer/MarginContainer2/HBoxContainer/Factionpanel/MarginContainer/VBoxContainer/ScrollContainer/FactionInfo")
 factionPlayButton = NodePath("VBoxContainer/MarginContainer2/HBoxContainer/Factionpanel/MarginContainer/VBoxContainer/PlayHereButton")
+drawModeSelect = NodePath("VBoxContainer/MarginContainer/HBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer/DrawModeSelect")
+regionDisplaySet = NodePath("VBoxContainer/MarginContainer/HBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer2/RegionsCheckBox")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=156893236]
 layout_mode = 1
@@ -45,8 +48,51 @@ theme_override_constants/margin_top = 2
 theme_override_constants/margin_right = 2
 theme_override_constants/margin_bottom = 2
 
-[node name="ResourceDisplay" parent="VBoxContainer/MarginContainer" unique_id=2043342601 instance=ExtResource("2_mu82y")]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/MarginContainer" unique_id=1851554679]
 layout_mode = 2
+
+[node name="ResourceDisplay" parent="VBoxContainer/MarginContainer/HBoxContainer" unique_id=2043342601 instance=ExtResource("2_mu82y")]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+
+[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer/MarginContainer/HBoxContainer" unique_id=1825801308]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/MarginContainer/HBoxContainer/PanelContainer" unique_id=433701488]
+layout_mode = 2
+theme_override_constants/margin_left = 2
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 2
+theme_override_constants/margin_bottom = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/MarginContainer/HBoxContainer/PanelContainer/MarginContainer" unique_id=1332162176]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/MarginContainer/HBoxContainer/PanelContainer/MarginContainer/HBoxContainer" unique_id=1060287307]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/MarginContainer/HBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer" unique_id=47809237]
+layout_mode = 2
+text = "Ground"
+label_settings = ExtResource("3_qeha8")
+
+[node name="DrawModeSelect" type="OptionButton" parent="VBoxContainer/MarginContainer/HBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer" unique_id=164890367]
+layout_mode = 2
+focus_mode = 0
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="VBoxContainer/MarginContainer/HBoxContainer/PanelContainer/MarginContainer/HBoxContainer" unique_id=389256857]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/MarginContainer/HBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer2" unique_id=73724917]
+layout_mode = 2
+text = "Show Regions"
+label_settings = ExtResource("3_qeha8")
+
+[node name="RegionsCheckBox" type="CheckBox" parent="VBoxContainer/MarginContainer/HBoxContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer2" unique_id=1335756401]
+layout_mode = 2
+focus_mode = 0
+button_pressed = true
 
 [node name="MarginContainer2" type="MarginContainer" parent="VBoxContainer" unique_id=723366520]
 layout_mode = 2
@@ -93,5 +139,6 @@ fit_content = true
 
 [node name="PlayHereButton" type="Button" parent="VBoxContainer/MarginContainer2/HBoxContainer/Factionpanel/MarginContainer/VBoxContainer" unique_id=613590085]
 layout_mode = 2
+focus_mode = 0
 disabled = true
 text = "Play"
