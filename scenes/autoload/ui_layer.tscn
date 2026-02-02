@@ -3,8 +3,28 @@
 [ext_resource type="Script" uid="uid://twrusuvwm4pu" path="res://scenes/autoload/UILayer.cs" id="1_4ql2r"]
 [ext_resource type="PackedScene" uid="uid://3kvcwdnxdp36" path="res://scenes/region/ui/hover_info_panel.tscn" id="2_nuntr"]
 
-[node name="UiLayer" type="CanvasLayer" unique_id=1064052168 node_paths=PackedStringArray("infoPanel")]
+[node name="UiLayer" type="CanvasLayer" unique_id=1064052168 node_paths=PackedStringArray("infoPanel", "debugLabelParent")]
 script = ExtResource("1_4ql2r")
 infoPanel = NodePath("Infopanel")
+debugLabelParent = NodePath("Control/VBoxContainer")
 
 [node name="Infopanel" parent="." unique_id=1644599086 instance=ExtResource("2_nuntr")]
+
+[node name="Control" type="Control" parent="." unique_id=1272931970]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control" unique_id=425426708]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.725
+anchor_top = 0.6888889
+anchor_right = 0.725
+anchor_bottom = 0.689
+offset_right = 124.0
+offset_bottom = 103.95999
+metadata/_edit_use_anchors_ = true

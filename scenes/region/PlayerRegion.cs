@@ -87,6 +87,7 @@ namespace scenes.region {
 			//		GD.Print("RegionMan::_Ready : adding resource ", r);
 			//		faction.Resources.AddResource(new(r, 50));
 			//}
+			UILayer.DebugDisplay(() => "hunger: " + faction.Population.Hunger);
 		}
 
 		public override void _Notification(int what) { // teardown
