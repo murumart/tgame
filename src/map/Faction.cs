@@ -60,7 +60,7 @@ public class Faction : IEntity {
 
 		Region.SetLocalFaction(this);
 
-		Resources.AddResource(new(Registry.ResourcesS.Bread, 30)); // initial buffer (DEBUG probably)
+		Resources.AddResource(new(Registry.ResourcesS.Bread, 10)); // initial buffer (DEBUG probably)
 		PlacePrebuiltBuilding(Registry.BuildingsS.LogCabin, new(0, 0));
 	}
 

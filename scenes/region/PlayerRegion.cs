@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Godot;
@@ -87,7 +88,10 @@ namespace scenes.region {
 			//		GD.Print("RegionMan::_Ready : adding resource ", r);
 			//		faction.Resources.AddResource(new(r, 50));
 			//}
-			UILayer.DebugDisplay(() => "hunger: " + faction.Population.Hunger);
+			UILayer.DebugDisplay(() =>{
+				uint twiceperday =  (uint)((GameTime.HOURS_PER_DAY * GameTime.MINUTES_PER_HOUR / 2) * 1);
+				return "hunger: " + faction.Population.Hunger;
+			});
 		}
 
 		public override void _Notification(int what) { // teardown

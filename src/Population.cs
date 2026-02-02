@@ -16,8 +16,10 @@ public class Population {
 
 	public float Food { get; private set; }
 	public float Hunger { get; private set; }
+	public bool ArePeopleStarving => Hunger > 0f;
+	const float HUNGER_KILL_LIMIT = 4f;
 
-	readonly HashSet<Job> employedOnJobs = new();  
+	readonly HashSet<Job> employedOnJobs = new();
 
 	TimeT time;
 
@@ -44,10 +46,10 @@ public class Population {
 		if (Food < wantfood) {
 			Food = 0;
 			Hunger += wantfood - Food;
-			if (Hunger > 50) {
-				var reduction = (uint)Math.Min(Count, (Hunger / 5.0f) / twiceperday);
+			while (Hunger > HUNGER_KILL_LIMIT) {
+				Hunger -= HUNGER_KILL_LIMIT;
+				uint reduction = 1;
 				Reduce(reduction);
-				Hunger -= 50;
 				GD.Print($"Population::EatFood : {reduction} people starved no food");
 			}
 		} else {
@@ -72,9 +74,26 @@ public class Population {
 	}
 
 	public void Reduce(uint count) {
-		Debug.Assert(false, "Reducing population not implemented");
+		//Debug.Assert(false, "Reducing population not implemented");
 		Count -= count;
 		UpdateHousing();
+		// having a job means you starve slower?
+		if (EmployedCount > Count) {
+			uint cme = EmployedCount - Count;
+			while (cme > 0) {
+				bool removed = false;
+				foreach (Job job in employedOnJobs) {
+					if (job.Workers == 0) continue;
+					Unemploy(job, 1);
+					removed = true;
+				}
+				Debug.Assert(EmployedCount - Count != cme, "More people should have become unemployed, but none did?");
+				Debug.Assert(EmployedCount - Count <= cme, $"Somehow as a consequence of death more people became employed? (now {EmployedCount})");
+				cme = EmployedCount - Count;
+				if (!removed) break; // ran out of people to unjob
+			}
+			Debug.Assert(Count >= EmployedCount, $"Somehow more people are employed than are actually alive here ({EmployedCount} vs {Count})");
+		}
 	}
 
 	public void ChangeHousingCapacity(int by) {
@@ -100,8 +119,10 @@ public class Population {
 
 	public void Unemploy(Job job, uint amount) {
 		Debug.Assert(job.Workers - amount >= 0, $"Can't unemploy more workers ({-amount}) than exist in job");
-		Debug.Assert(EmployedCount - amount >= 0, $"Can't unemploy more workers ({-amount}) than exist in population");
+		var oldemployed = EmployedCount;
+		Debug.Assert(EmployedCount >= amount, $"Can't unemploy more workers ({-amount}) than exist in population");
 		EmployedCount -= amount;
+		Debug.Assert(EmployedCount <= oldemployed, $"Somehow, more people became employed as a result of unemploying them (old {oldemployed} new {EmployedCount})");
 		job.SetWorkers(job.Workers - (int)amount);
 		if (job.Workers == 0) employedOnJobs.Remove(job);
 		Debug.Assert(job.Workers >= 0, $"Job can't have negative workers ({job.Workers})");
