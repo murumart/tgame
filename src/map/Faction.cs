@@ -55,12 +55,13 @@ public class Faction : IEntity {
 		region.MapObjectUpdatedAtEvent += OnMapObjectUpdated;
 
 		Population = new();
+		Population.FoodRequested += OnFoodRequested;
 		Population.Manifest(initialPopulation);
 
 		Region.SetLocalFaction(this);
 
-		var housing = Registry.Buildings.GetAsset("log_cabin");
-		PlacePrebuiltBuilding(housing, new(0, 0));
+		Resources.AddResource(new(Registry.ResourcesS.Bread, 30)); // initial buffer (DEBUG probably)
+		PlacePrebuiltBuilding(Registry.BuildingsS.LogCabin, new(0, 0));
 	}
 
 	// *** MANAGING WORKERS AND JOBS ***
@@ -133,6 +134,24 @@ public class Faction : IEntity {
 
 	public void DecreasePopulation(uint by) {
 		Population.Reduce(by);
+	}
+
+	uint OnFoodRequested(uint amount) {
+		Debug.Assert(amount > 0, "Why request 0 food?");
+		uint food = 0;
+		foreach (var (type, value) in Registry.ResourcesS.FoodValues) {
+			Debug.Assert(value >= 0, $"Food value is negative ({value})");
+			if (food >= amount) break;
+			int fcount = Resources.GetCount(type);
+			if (fcount == 0) continue;
+			int fulfillingvalue = (((int)amount - (int)food) / value + 1);
+			int amountchange = Math.Min(fulfillingvalue, fcount);
+			int gotvalue = amountchange * value;
+			Debug.Assert(gotvalue > 0, $"Gotvalue was {gotvalue} <= 0");
+			Resources.SubtractResource(type, amountchange);
+			food += (uint)gotvalue;
+		}
+		return food;
 	}
 
 	// *** MANAGING BUILDINGS ***
@@ -286,7 +305,6 @@ public class Faction : IEntity {
 
 		public static string GenRandomName() {
 			if (syllableCounts.Count == 0) {
-				var culture = System.Globalization.CultureInfo.CreateSpecificCulture("en-us");
 				var f = FileAccess.Open("res://tools/silbitus/syls.txt", FileAccess.ModeFlags.Read);
 				Debug.Assert(FileAccess.GetOpenError() == Error.Ok, "Failed opening syllables file");
 				while (!f.EofReached()) {

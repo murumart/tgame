@@ -1,9 +1,10 @@
 using System;
+using System.Collections.Generic;
 using Godot;
 
 public class Population {
 
-	public event Func<uint> FoodRequested;
+	public event Func<uint, uint> FoodRequested;
 
 	public uint Count { get; private set; }
 
@@ -14,6 +15,9 @@ public class Population {
 	public uint MaxEmployed => Count;
 
 	public uint Food { get; private set; }
+	public uint Hunger { get; private set; }
+
+	readonly HashSet<Job> employedOnJobs = new();  
 
 	TimeT time;
 
@@ -35,7 +39,36 @@ public class Population {
 	}
 
 	public void EatFood() {
-		GD.Print("Population::EatFood : Eeating food");
+		GD.Print($"Population::EatFood : Eeating food ({Food} food)");
+		if (Food < Count) {
+			Food += FoodRequested?.Invoke(Count - Food) ?? 0;
+		}
+
+		var oldfood = Food;
+		if (Food < Count) {
+			uint didnteat = Count - Food;
+			Food = 0;
+			Hunger += didnteat;
+			if (Hunger > 50) {
+				Reduce(Math.Min(Count, 10));
+				Hunger -= 50;
+				GD.Print("Population::EatFood : 10 people starved no food");
+			}
+		} else {
+			Food -= Count;
+			GD.Print($"Population::EatFood : people ate ({Food} food)");
+			if (Hunger > 0) {
+				if (Food > Hunger) {
+					Food -= Hunger;
+					Hunger = 0;
+				} else {
+					Hunger -= Food;
+					Food = 0;
+				}
+				GD.Print($"Population::EatFood : leftover hunger sated ({Food} food)");
+			}
+		}
+		Debug.Assert(oldfood >= Food, $"Somehow, food increased while eating ({Food} was {oldfood} food)?");
 	}
 
 	public void Manifest(uint count) {
@@ -66,6 +99,7 @@ public class Population {
 		Debug.Assert(amount + EmployedCount <= MaxEmployed, $"Population out of capacity ({EmployedCount}, {MaxEmployed}) to fit {amount} extra workers");
 		EmployedCount += amount;
 		job.SetWorkers(job.Workers + (int)amount);
+		if (job.Workers > 0) employedOnJobs.Add(job);
 		Debug.Assert(job.Workers >= 0, $"Job can't have negative workers ({job.Workers})");
 	}
 
@@ -74,6 +108,7 @@ public class Population {
 		Debug.Assert(EmployedCount - amount >= 0, $"Can't unemploy more workers ({-amount}) than exist in population");
 		EmployedCount -= amount;
 		job.SetWorkers(job.Workers - (int)amount);
+		if (job.Workers == 0) employedOnJobs.Remove(job);
 		Debug.Assert(job.Workers >= 0, $"Job can't have negative workers ({job.Workers})");
 	}
 

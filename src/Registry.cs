@@ -36,9 +36,9 @@ public static class Registry {
 
 		public static readonly IResourceType Nuts = Resources.GetAsset("nuts");
 		public static readonly IResourceType Fish = Resources.GetAsset("fish");
+		public static readonly IResourceType Bread = Resources.GetAsset("bread");
 
 		public static IResourceGroup FoodValues { get; private set; }
-
 
 		public static void RegisterFoodValues(IResourceGroup fv) {
 			Debug.Assert(FoodValues == null, "Food values already set");

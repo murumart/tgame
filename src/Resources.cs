@@ -66,13 +66,19 @@ public partial class ResourceStorage : IEnumerable<KeyValuePair<IResourceType, I
 		}
 	}
 
-	public void SubtractResource(ResourceBundle resource) {
-		Debug.Assert(storageAmounts.ContainsKey(resource.Type), "cant subtract resource type that's not in storage!!");
-		storageAmounts.TryGetValue(resource.Type, out InStorage stored);
-		storageAmounts[resource.Type] = stored.Sub(resource);
-		ItemAmount -= resource.Amount;
+	public void SubtractResource(IResourceType type, int amount) {
+		Debug.Assert(storageAmounts.ContainsKey(type), "cant subtract resource type that's not in storage!!");
+		Debug.Assert(amount > 0, "Need positive amount to subtract from resources");
+		storageAmounts.TryGetValue(type, out InStorage stored);
+		Debug.Assert(stored.Amount >= amount, $"Can't subtract more than have in storage ({stored.Amount} - {amount})");
+		storageAmounts[type] = stored.Sub(new(type, amount));
+		ItemAmount -= amount;
 		Debug.Assert(ItemAmount >= 0, "Item amount in storage went negative?? What the hell..");
-		if (storageAmounts[resource.Type].Amount == 0) storageAmounts.Remove(resource.Type);
+		if (storageAmounts[type].Amount == 0) storageAmounts.Remove(type);
+	}
+
+	public void SubtractResource(ResourceBundle resource) {
+		SubtractResource(resource.Type, resource.Amount);
 	}
 
 	public void SubtractResources(IEnumerable<ResourceBundle> resources) {
@@ -169,10 +175,12 @@ public interface IResourceGroup : IEnumerable<KeyValuePair<IResourceType, int>>,
 	}
 
 	IEnumerator<KeyValuePair<IResourceType, int>> IEnumerable<KeyValuePair<IResourceType, int>>.GetEnumerator() {
+		Debug.Assert(GroupValues != null, "GroupValues shouldn't be null");
 		return GroupValues.GetEnumerator();
 	}
 
 	IEnumerator IEnumerable.GetEnumerator() {
+		Debug.Assert(GroupValues != null, "GroupValues shouldn't be null");
 		return GroupValues.GetEnumerator();
 	}
 
