@@ -12,6 +12,8 @@ namespace scenes.map {
 
 		[Export] FastNoiseLite continentNoise;
 		[Export] FastNoiseLite temperatureNoise;
+		[Export] FastNoiseLite humidityNoise;
+		[Export] FastNoiseLite seawindGainNoise;
 
 		[Export] public int WorldWidth;
 		[Export] public int WorldHeight;
@@ -19,8 +21,10 @@ namespace scenes.map {
 		[Export] int AggressiveFactionCount;
 		[Export] Curve islandCurve;
 		[Export] Curve seawindElevationDifferenceReductionCurve;
-		[Export] Curve seawindTemperatureMultiplierCurve;
-		[Export] float seawindGain;
+		[Export] Curve seawindTemperatureModCurve;
+		[Export] Curve seawindHumidityReductionCurve;
+		[Export] Curve elevationHumidityAdditionCurve;
+		[Export] Curve humidityCurve;
 		[Export] Curve temperaturePolarEquatorCurve;
 		[Export] Curve elevationTemperatureReductionCurve;
 		[Export] Curve populationLandTileCurve;
@@ -41,6 +45,8 @@ namespace scenes.map {
 
 			continentNoise.Seed = (int)rng.Randi();
 			temperatureNoise.Seed = (int)rng.Randi();
+			humidityNoise.Seed = (int)rng.Randi();
+			seawindGainNoise.Seed = (int)rng.Randi();
 
 			var centre = new Vector2(world.Longitude / 2, world.Latitude / 2);
 			var divBySidelen = 1.0f / (float)(Math.Pow(world.Longitude / 2.0, 2) + Math.Pow(world.Latitude / 2.0, 2));
@@ -70,16 +76,26 @@ namespace scenes.map {
 					float previousAboveSeaSample = Mathf.Clamp(previousContinentSample, 0f, 1f);
 
 					float previousSeawindSample = world.GetSeaWind(x - world.SeaWindDirection.X, y - world.SeaWindDirection.Y);
-					float seawind = Mathf.Clamp((previousSeawindSample - seawindElevationDifferenceReductionCurve.SampleBaked(aboveSeaSample - previousAboveSeaSample)) + seawindGain, 0f, 1f);
+					float seawindGain = Math.Abs(seawindGainNoise.GetNoise2D(x, y)) * 0.03f;
+					float seawind = (previousSeawindSample - seawindElevationDifferenceReductionCurve.SampleBaked(aboveSeaSample - previousAboveSeaSample)) + seawindGain;
+					seawind = Mathf.Clamp(seawind, 0f, 1f);
 					world.SetSeaWind(x, y, seawind);
 
-					float temperatureSample = temperatureNoise.GetNoise2D(x, y) * seawindTemperatureMultiplierCurve.SampleBaked(seawind);
 					float distanceFromEquator = Math.Abs(y - world.Latitude * 0.5f) / (world.Latitude * 0.5f);
-					temperatureSample += temperaturePolarEquatorCurve.SampleBaked(distanceFromEquator);
+					float temperatureSample = Mathf.Lerp(
+						temperatureNoise.GetNoise2D(x, y),
+						temperaturePolarEquatorCurve.SampleBaked(distanceFromEquator),
+						seawindTemperatureModCurve.SampleBaked(seawind)
+					);
 					temperatureSample -= elevationTemperatureReductionCurve.SampleBaked(continentSample);
 					temperatureSample = Mathf.Clamp(temperatureSample, -1f, 1f);
-
 					world.SetTemperature(x, y, temperatureSample);
+
+					float humiditySample = humidityCurve.SampleBaked(humidityNoise.GetNoise2D(x, y));
+					humiditySample += elevationHumidityAdditionCurve.SampleBaked(continentSample);
+					humiditySample -= seawindHumidityReductionCurve.SampleBaked(seawind);
+					humiditySample = Mathf.Clamp(humiditySample, 0.0f, 1.0f);
+					world.SetHumidity(x, y, humiditySample);
 				}
 			}
 

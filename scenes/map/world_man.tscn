@@ -10,6 +10,9 @@
 [ext_resource type="Gradient" uid="uid://ypkjsovb40j4" path="res://resources/visual/map/temperature_gradient.tres" id="7_f4k24"]
 [ext_resource type="PackedScene" uid="uid://oq1d8aheub65" path="res://scenes/map/ui/world_ui.tscn" id="7_vqee5"]
 [ext_resource type="FastNoiseLite" uid="uid://elpkgdjffs74" path="res://scenes/map/noises/temperature.tres" id="8_3biw4"]
+[ext_resource type="Gradient" uid="uid://w5sdtmt8u44c" path="res://resources/visual/map/humidity_gradient.tres" id="9_h4q0h"]
+[ext_resource type="FastNoiseLite" uid="uid://dubsuvs1ouru5" path="res://scenes/map/noises/humidity.tres" id="10_t34eq"]
+[ext_resource type="FastNoiseLite" uid="uid://bfyvnr33jlpag" path="res://scenes/map/noises/seawind_gain.tres" id="11_a3btc"]
 
 [sub_resource type="Curve" id="Curve_7j5km"]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.21091333, 0.051505923), 0.0, 0.0, 0, 0, Vector2(0.38409886, 0.7443265), 0.0, 0.0, 0, 0, Vector2(0.53596926, 0.9231189), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
@@ -21,9 +24,23 @@ _data = [Vector2(0.012905836, 0), 0.0, 0.0, 0, 0, Vector2(0.018, 0.042), 0.0, 0.
 point_count = 4
 
 [sub_resource type="Curve" id="Curve_t34eq"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.4986469, 0.16236526), 0.0, 0.0, 0, 0, Vector2(1, 0.8939557), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="Curve" id="Curve_wncef"]
+_limits = [0.0, 2.0, 0.0, 1.0]
+_data = [Vector2(0, 2), 0.0, 0.0, 0, 0, Vector2(0.17079511, 0.9229295), 0.0, 0.0, 0, 0, Vector2(0.27227303, 0.2058261), 0.0, 0.0, 0, 0, Vector2(1, 0.0102523565), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="Curve" id="Curve_1p0hh"]
+_limits = [-1.0, 1.0, -1.0, 1.0]
+_data = [Vector2(-0.07556212, 0.06507754), 0.0, 0.0, 0, 0, Vector2(-0.00270617, 0.005616784), 0.8166316, 0.0, 0, 0, Vector2(0.91319716, -0.034276605), 0.0, 0.0, 0, 0, Vector2(1, -1), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="Curve" id="Curve_iffmc"]
 _limits = [0.0, 1.0, -1.0, 1.0]
-_data = [Vector2(0.0024977922, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.14787829), 0.0, 0.0, 0, 0]
-point_count = 2
+_data = [Vector2(-1, 0), 0.0, 0.0, 0, 0, Vector2(-0.7052457, 0.4810779), 0.0, 0.0, 0, 0, Vector2(0.81952524, 0.72011244), 0.0, 0.0, 0, 0]
+point_count = 3
 
 [sub_resource type="Curve" id="Curve_h4q0h"]
 _limits = [-1.0, 1.0, 0.0, 1.0]
@@ -53,7 +70,7 @@ blend_mode = 1
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_j0gdu"]
 width = 1280
 height = 840
-noise = ExtResource("8_3biw4")
+noise = ExtResource("11_a3btc")
 color_ramp = ExtResource("7_f4k24")
 
 [node name="WorldMan" type="Node2D" unique_id=1264187012 node_paths=PackedStringArray("worldGenerator", "worldRenderer", "worldUI", "camera")]
@@ -68,13 +85,18 @@ camera = NodePath("Camera")
 script = ExtResource("3_n4hhb")
 continentNoise = ExtResource("4_f4k24")
 temperatureNoise = ExtResource("8_3biw4")
+humidityNoise = ExtResource("10_t34eq")
+seawindGainNoise = ExtResource("11_a3btc")
 WorldWidth = 640
 WorldHeight = 420
 LandRegionCount = 87
 AggressiveFactionCount = 40
 islandCurve = SubResource("Curve_7j5km")
 seawindElevationDifferenceReductionCurve = SubResource("Curve_a3btc")
-seawindTemperatureMultiplierCurve = SubResource("Curve_t34eq")
+seawindTemperatureModCurve = SubResource("Curve_t34eq")
+seawindHumidityReductionCurve = SubResource("Curve_wncef")
+elevationHumidityAdditionCurve = SubResource("Curve_1p0hh")
+humidityCurve = SubResource("Curve_iffmc")
 seawindGain = 0.008
 temperaturePolarEquatorCurve = SubResource("Curve_h4q0h")
 elevationTemperatureReductionCurve = SubResource("Curve_3biw4")
@@ -88,6 +110,7 @@ highlightSprite = NodePath("Highlight")
 elevationGradient = ExtResource("6_n4hhb")
 temperatureGradient = ExtResource("7_f4k24")
 seaWindGradient = SubResource("Gradient_3biw4")
+humidityGradient = ExtResource("9_h4q0h")
 
 [node name="Ground" type="Sprite2D" parent="WorldRenderer" unique_id=2127821019]
 centered = false

@@ -10,11 +10,13 @@ public partial class WorldRenderer : Node {
 	[Export] Gradient elevationGradient;
 	[Export] Gradient temperatureGradient;
 	[Export] Gradient seaWindGradient;
+	[Export] Gradient humidityGradient;
 
 	public enum DrawMode {
 		Continents,
 		SeaWind,
 		Temperature,
+		Humidity,
 
 		Max
 	}
@@ -34,6 +36,9 @@ public partial class WorldRenderer : Node {
 					break;
 				case DrawMode.Temperature:
 					DrawTemperature();
+					break;
+				case DrawMode.Humidity:
+					DrawHumidity();
 					break;
 			}
 		}
@@ -107,6 +112,19 @@ public partial class WorldRenderer : Node {
 		UpdateImage(worldImage, groundSprite);
 	}
 
+	void DrawHumidity() {
+		if (world == null) return;
+		var worldImage = GetImage(groundSprite);
+		for (int x = 0; x < world.Longitude; x++) {
+			for (int y = 0; y < world.Latitude; y++) {
+				Color color = humidityGradient.Sample(world.GetHumidity(x, y));
+				worldImage.SetPixel(x, y, color);
+			}
+
+		}
+		UpdateImage(worldImage, groundSprite);
+	}
+
 	public void Draw(World world) {
 		this.world = world;
 		ResetImages();
@@ -119,6 +137,9 @@ public partial class WorldRenderer : Node {
 				break;
 			case DrawMode.Temperature:
 				DrawTemperature();
+				break;
+			case DrawMode.Humidity:
+				DrawHumidity();
 				break;
 		}
 	}

@@ -31,9 +31,10 @@ public class World {
 
 	readonly GroundTileType[] Ground;
 	readonly byte[] Elevation;
-	readonly byte[] Temperature;
 	readonly byte[] SeaWind;
 	public readonly Vector2I SeaWindDirection;
+	readonly byte[] Temperature;
+	readonly byte[] Humidity;
 
 
 	public World(int width, int height) {
@@ -44,6 +45,7 @@ public class World {
 		Temperature = new byte[Longitude * Latitude];
 		SeaWind = new byte[Longitude * Latitude];
 		for (int i = 0; i < Longitude * Latitude; i++) SeaWind[i] = byte.MaxValue;
+		Humidity = new byte[Longitude * Latitude];
 		SeaWindDirection = new(((int)GD.Randi() * 2 - 1) % 2, ((int)GD.Randi() % 2 * 2 - 1)); // -1 or 1
 	}
 
@@ -92,6 +94,14 @@ public class World {
 
 	public float GetSeaWind(int x, int y) {
 		return SetArrFloat(x, y, SeaWind, 1.0f);
+	}
+
+	public void SetHumidity(int x, int y, float humid) {
+		SetArrFloat(x, y, humid, Humidity);
+	}
+
+	public float GetHumidity(int x, int y) {
+		return SetArrFloat(x, y, Humidity, 1.0f);
 	}
 
 }
