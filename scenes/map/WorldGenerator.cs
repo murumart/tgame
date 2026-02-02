@@ -97,7 +97,7 @@ namespace scenes.map {
 
 			await War(regionsLand, AggressiveFactionCount);
 
-			Map map = new(regionsLand);
+			Map map = new(regionsLand, world);
 
 			Generating = false;
 			return map;

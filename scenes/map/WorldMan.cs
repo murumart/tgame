@@ -22,6 +22,13 @@ namespace scenes.map {
 			worldUI.RegionPlayRequested += SetupGame;
 			camera.ClickedMouseEvent += MouseClicked;
 			camera.Position = new(worldGenerator.WorldWidth * 0.5f, worldGenerator.WorldHeight * 0.5f);
+
+			if (GameMan.Singleton.Game.Map.World != null) {
+				map = GameMan.Singleton.Game.Map;
+				worldRenderer.Draw(map.World);
+				worldRenderer.DrawRegions(map.GetRegions());
+				return;
+			}
 			GenerateNewWorld();
 		}
 

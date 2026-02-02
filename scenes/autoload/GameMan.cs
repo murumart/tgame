@@ -11,32 +11,31 @@ namespace scenes.autoload {
 		[Export] DataStorage dataRegistry;
 
 		static GameMan singleton;
-		public static GameMan Singleton { get => singleton; }
+		public static GameMan Singleton => singleton;
 		Game game;
-		public Game Game { get => game; }
+		public Game Game => game;
 
 		public enum GameSpeedChanger {
 			UI,
 		}
 
-		Dictionary<GameSpeedChanger, float> gameSpeedMults = new();
+		readonly Dictionary<GameSpeedChanger, float> gameSpeedMults = new();
 		float gameSpeed;
-		bool paused = false; public bool IsPaused { get => paused; }
+		bool paused = false;
+		public bool IsPaused => paused;
 
 
 		public override void _Ready() {
 			AppDomain.CurrentDomain.UnhandledException += OnUnhandled;
+			Debug.Assert(singleton == null, "There GameMan can only GameMan Be One");
 			singleton = this;
 
 			dataRegistry.RegisterThings();
-
-
-			var map = Map.GetDebugMap();
-			NewGame(map.GetRegion(0), map);
-
 			GD.Print("GameMan::_Ready : GameMan is set up");
 
-			//game.PassTime(60 * 7); // start game at 7:00
+			// debug map
+			var map = Map.GetDebugMap();
+			NewGame(map.GetRegion(0), map);
 		}
 
 		void OnUnhandled(object sender, UnhandledExceptionEventArgs e) {
@@ -71,6 +70,7 @@ namespace scenes.autoload {
 
 		public void NewGame(Region playRegion, Map map) {
 			game = new Game(playRegion, map);
+			if (Game.Time.Minutes == 0) Game.PassTime(60 * 7); // start game at 7:00
 		}
 
 	}

@@ -60,8 +60,6 @@ namespace scenes.region {
 
 			camera.Region = region;
 
-			if (GameMan.Singleton.Game.Time.Minutes == 0) GameMan.Singleton.Game.PassTime(60 * 7); // start game at 7:00
-
 			regionDisplay.LoadRegion(region);
 
 			// show also neighboring regions and neighbors' neighbors
@@ -89,9 +87,16 @@ namespace scenes.region {
 			//		faction.Resources.AddResource(new(r, 50));
 			//}
 			UILayer.DebugDisplay(() =>{
-				uint twiceperday =  (uint)((GameTime.HOURS_PER_DAY * GameTime.MINUTES_PER_HOUR / 2) * 1);
 				return "hunger: " + faction.Population.Hunger;
 			});
+		}
+
+		public override void _UnhandledKeyInput(InputEvent @event) {
+			var evt = @event as InputEventKey;
+			if (evt.Pressed && evt.Keycode == Key.Key0) {
+				GD.Print("PlayerRegion::_UnhandledKeyInput : DEBUG: moving back to world scene");
+				GetTree().ChangeSceneToFile("res://scenes/map/world_man.tscn");
+			}
 		}
 
 		public override void _Notification(int what) { // teardown

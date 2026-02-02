@@ -122,6 +122,7 @@ public partial class LocalAI {
 		}
 
 		public static void EndProfiling() {
+			if (ActionTimes.Count == 0) return; // who care
 			var max = ActionTimes.MaxBy(kvp => kvp.Value.Max());
 			const string eps = "LocalAI::Profile::EndProfiling : ";
 			Console.WriteLine(eps + "***************");

@@ -5,13 +5,15 @@ using Godot;
 
 public class Map : ITimePassing {
 
+	public readonly World World;
 	protected readonly List<Region> regions;
 
 	public Dictionary<Vector2I, Region> TileOwners { get; init; }
 
 
-	public Map(ICollection<Region> regions) {
+	public Map(ICollection<Region> regions, World world) {
 		this.regions = regions.ToList();
+		World = world;
 
 		TileOwners = new();
 		foreach (Region region in regions) {
@@ -26,6 +28,8 @@ public class Map : ITimePassing {
 	public Region GetRegion(int ix) {
 		return regions[ix];
 	}
+
+	public Region[] GetRegions() => regions.ToArray();
 
 	public void PassTime(TimeT minutes) {
 		foreach (Region region in regions) {
@@ -53,7 +57,7 @@ public class Map : ITimePassing {
 			//regionFaction.Briefcase.AddDocument(mandate);
 		}
 
-		return new Map(regions);
+		return new Map(regions, null);
 	}
 
 }

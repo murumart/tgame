@@ -1,10 +1,11 @@
+using System;
+using System.Linq;
 using Godot;
 using scenes.region.buildings;
 using scenes.region.ui;
-using System;
-using System.Linq;
 
 namespace scenes.autoload {
+
 	public partial class UILayer : CanvasLayer {
 
 		[Export] HoverInfoPanel infoPanel;
@@ -19,7 +20,13 @@ namespace scenes.autoload {
 
 		public override void _Process(double delta) {
 			foreach (Label child in debugLabelParent.GetChildren().Cast<Label>()) {
-				child.Text = child.GetMeta("callback").AsCallable().Call().AsString();
+				var cb = child.GetMeta("callback").AsCallable();
+				
+				if (!IsInstanceValid(cb.Target)) {
+					child.QueueFree();
+					continue;
+				}
+				child.Text = cb.Call().AsString();
 			}
 		}
 

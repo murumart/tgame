@@ -6,9 +6,9 @@ using static Building;
 
 public class FactionActions {
 
-	Region region;
+	readonly Region region;
 	public Region Region { get => region; }
-	Faction faction;
+	readonly Faction faction;
 	public Faction Faction { get => faction; }
 
 
