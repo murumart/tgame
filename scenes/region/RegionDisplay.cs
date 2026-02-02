@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Godot;
 using resources.game;
+using scenes.region.buildings;
 
 namespace scenes.region {
 
@@ -40,6 +41,14 @@ namespace scenes.region {
 			if (jobsToUndisplay.Count > 0) {
 				var j = jobsToUndisplay.Dequeue();
 				UndisplayRegionJob(j);
+			}
+			foreach (var (tpos, mopview) in mapObjectViews) {
+				if (region.GetMapObject(tpos) is Building building) {
+					var bview = mopview as BuildingView;
+					Debug.Assert(bview != null, $"Map object view {mopview} should be BuildingView but seems to be not (at {tpos})");
+					if (building.IsConstructed) bview.DisplayBuildingProgress(1.0f, false);
+					else bview.DisplayBuildingProgress(building.GetBuildProgress());
+				}
 			}
 		}
 
@@ -87,9 +96,6 @@ namespace scenes.region {
 			buildingsParent.AddChild(view);
 			mapObjectViews[mopbject.GlobalPosition - region.WorldPosition] = view;
 			view.Position = Tilemaps.TilePosToWorldPos(mopbject.GlobalPosition - region.WorldPosition);
-			if (mopbject is Building building) {
-				if (building.GetBuildProgress() < 1) view.Modulate = new Color(1f, 1f, 1f, 0.5f);
-			}
 		}
 
 		void RemoveDisplay(Vector2I tile) {
@@ -134,10 +140,8 @@ namespace scenes.region {
 				if (!mapObjectViews.TryGetValue(mopjob.GlobalPosition - region.WorldPosition, out MapObjectView view)) return; // the building view has already been removed
 				if (!(region.LocalFaction.GetJobs(mopjob.GlobalPosition - region.WorldPosition).Where(j => !j.IsInternal).Any())) view.IconSetHide(MapObjectView.IconSetIcons.Hammer);
 				if (region.LocalFaction.HasBuilding(mopjob.GlobalPosition - region.WorldPosition)) {
-					var building = region.LocalFaction.GetBuilding(mopjob.GlobalPosition - region.WorldPosition);
-					if (building != null && view != null) {
-						view.Modulate = Colors.White;
-					}
+					var bview = view as BuildingView;
+					Debug.Assert(bview != null, $"View at {mopjob.GlobalPosition - region.WorldPosition} {view} doesn't seem to be a buildingview (should be");
 				}
 			}
 		}

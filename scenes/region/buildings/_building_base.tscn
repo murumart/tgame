@@ -2,6 +2,24 @@
 
 [ext_resource type="Script" uid="uid://yr6q8gjnc8wh" path="res://scenes/region/buildings/BuildingView.cs" id="1_jqyv4"]
 [ext_resource type="PackedScene" uid="uid://dl17gbjn423tk" path="res://scenes/region/_map_object_view_base.tscn" id="1_wdp1e"]
+[ext_resource type="Texture2D" uid="uid://ethlsfg8xmhk" path="res://scenes/region/iso_mask.png" id="3_0cdoi"]
 
-[node name="BuildingBase" unique_id=440159348 instance=ExtResource("1_wdp1e")]
+[node name="BuildingBase" unique_id=440159348 node_paths=PackedStringArray("buildingProgressBar", "inProgressDisplay") instance=ExtResource("1_wdp1e")]
 script = ExtResource("1_jqyv4")
+buildingProgressBar = NodePath("IconTransform/VBoxContainer/BuildingProgress")
+inProgressDisplay = NodePath("InProgressDisplay")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="IconTransform" parent_id_path=PackedInt32Array(1589336146) index="1" unique_id=658125459]
+offset_left = -28.0
+offset_top = 10.0
+offset_right = 28.0
+offset_bottom = 18.0
+
+[node name="BuildingProgress" type="ProgressBar" parent="IconTransform/VBoxContainer" index="0" unique_id=743403127]
+layout_mode = 2
+max_value = 1.0
+show_percentage = false
+
+[node name="InProgressDisplay" type="Sprite2D" parent="." index="2" unique_id=1287739371]
+modulate = Color(1, 1, 0, 0.24313726)
+texture = ExtResource("3_0cdoi")

@@ -27,22 +27,17 @@ public class Population {
 
 	public void PassTime(TimeT minutes) {
 		for (TimeT i = 0; i < minutes; i++) {
-			var oldhour = GameTime.GetDayHourS(time);
-			time += 1;
-			var newhour = GameTime.GetDayHourS(time);
-			if (oldhour != newhour) {
-				if (newhour == 12 || newhour == 18) {
-					EatFood();
-				}
-			}
+			EatFood(1);
 		}
 	}
 
-	public void EatFood() {
-		GD.Print($"Population::EatFood : Eeating food ({Food} food)");
+	public void EatFood(TimeT minutesPassed) {
 		float wantfood = FactionActions.GetFoodUsageS(Count, EmployedCount);
+		uint twiceperday =  (uint)((GameTime.HOURS_PER_DAY * GameTime.MINUTES_PER_HOUR / 2) * minutesPassed);
+		wantfood /= twiceperday; // "two meals" per day
+
 		if (Food < wantfood) {
-			Food += FoodRequested?.Invoke((uint)Mathf.Round(wantfood - Food)) ?? 0;
+			Food += FoodRequested?.Invoke((uint)Mathf.Ceil(wantfood - Food)) ?? 0;
 		}
 
 		var oldfood = Food;
@@ -50,13 +45,13 @@ public class Population {
 			Food = 0;
 			Hunger += wantfood - Food;
 			if (Hunger > 50) {
-				Reduce(Math.Min(Count, 10));
+				var reduction = (uint)Math.Min(Count, (Hunger / 5.0f) / twiceperday);
+				Reduce(reduction);
 				Hunger -= 50;
-				GD.Print("Population::EatFood : 10 people starved no food");
+				GD.Print($"Population::EatFood : {reduction} people starved no food");
 			}
 		} else {
 			Food -= wantfood;
-			GD.Print($"Population::EatFood : people ate ({Food} food)");
 			if (Hunger > 0) {
 				if (Food > Hunger) {
 					Food -= Hunger;
