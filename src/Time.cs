@@ -62,15 +62,25 @@ public class GameTime : ITimePassing {
 		}
 	}
 
-	public double GetHour() => minutes / (double)MINUTES_PER_HOUR;
-	public double GetDay() => GetHour() / HOURS_PER_DAY;
-	public double GetWeek() => GetDay() / DAYS_PER_WEEK;
-	public double GetMonth() => GetWeek() / WEEKS_PER_MONTH;
-	public double GetYear() => GetMonth() / MONTHS_PER_YEAR;
+	public double GetHour() => GetHourS(minutes);
+	public double GetDay() => GetDayS(minutes);
+	public double GetWeek() => GetWeekS(minutes);
+	public double GetMonth() => GetMonthS(minutes);
+	public double GetYear() => GetYearS(minutes);
 
-	public int GetHourMinute() => (int)(float)(minutes % MINUTES_PER_HOUR);
-	public int GetDayHour() => (int)(GetHour() % HOURS_PER_DAY);
-	public int GetMonthDay() => (int)(GetDay() % (WEEKS_PER_MONTH * DAYS_PER_WEEK)) + 1;
+	public int GetHourMinute() => GetHourMinuteS(minutes);
+	public int GetDayHour() => GetDayHourS(minutes);
+	public int GetMonthDay() => GetMonthDayS(minutes);
+
+	public static double GetHourS(TimeT minutes) => minutes / (double)MINUTES_PER_HOUR;
+	public static double GetDayS(TimeT minutes) => GetHourS(minutes) / HOURS_PER_DAY;
+	public static double GetWeekS(TimeT minutes) => GetDayS(minutes) / DAYS_PER_WEEK;
+	public static double GetMonthS(TimeT minutes) => GetWeekS(minutes) / WEEKS_PER_MONTH;
+	public static double GetYearS(TimeT minutes) => GetMonthS(minutes) / MONTHS_PER_YEAR;
+
+	public static int GetHourMinuteS(TimeT minutes) => (int)(float)(minutes % MINUTES_PER_HOUR);
+	public static int GetDayHourS(TimeT minutes) => (int)(GetHourS(minutes) % HOURS_PER_DAY);
+	public static int GetMonthDayS(TimeT minutes) => (int)(GetDayS(minutes) % (WEEKS_PER_MONTH * DAYS_PER_WEEK)) + 1;
 
 	public static string GetFancyTimeString(TimeT minutes) {
 		var hours = minutes / MINUTES_PER_HOUR;

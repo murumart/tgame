@@ -12,7 +12,12 @@ public static class Registry {
 	public static AssetTypeRegistry<IResourceSiteType> ResourceSites { get; private set; }
 
 
-	public static void Register(IResourceType[] resourceTypes, IBuildingType[] buildingTypes, IResourceSiteType[] resourceSiteTypes) {
+	public static void Register(
+		IResourceType[] resourceTypes,
+		IBuildingType[] buildingTypes,
+		IResourceSiteType[] resourceSiteTypes,
+		IResourceGroup foodValues
+	) {
 		Resources = new();
 		Buildings = new();
 		ResourceSites = new();
@@ -20,12 +25,25 @@ public static class Registry {
 		Resources.RegisterAssets(resourceTypes);
 		Buildings.RegisterAssets(buildingTypes);
 		ResourceSites.RegisterAssets(resourceSiteTypes);
+
+		ResourcesS.RegisterFoodValues(foodValues);
 	}
 
 	public static class ResourcesS {
 
 		public static readonly IResourceType Logs = Resources.GetAsset("logs");
 		public static readonly IResourceType Rocks = Resources.GetAsset("rock");
+
+		public static readonly IResourceType Nuts = Resources.GetAsset("nuts");
+		public static readonly IResourceType Fish = Resources.GetAsset("fish");
+
+		public static IResourceGroup FoodValues { get; private set; }
+
+
+		public static void RegisterFoodValues(IResourceGroup fv) {
+			Debug.Assert(FoodValues == null, "Food values already set");
+			FoodValues = fv;
+		}
 
 	}
 

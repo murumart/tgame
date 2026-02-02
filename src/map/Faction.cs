@@ -223,6 +223,7 @@ public class Faction : IEntity {
 			job.PassTime(minutes);
 			job.CheckDone(this);
 		}
+		Population.PassTime(minutes);
 		time += minutes;
 		// building time is passed in Region
 	}
@@ -279,6 +280,7 @@ public class Faction : IEntity {
 	}
 
 	public static class Naming {
+
 		static readonly Dictionary<string, float> syllableCounts = new();
 		static float maxSylProb = 0;
 
@@ -292,7 +294,7 @@ public class Faction : IEntity {
 					if (line.Length <= 1) break;
 					string[] split = line.Split(" ");
 					Debug.Assert(split.Length == 2, $"Invalid line in file? ({line}) length {split.Length})");
-					syllableCounts.Add(split[0], float.Parse(split[1], culture));
+					syllableCounts.Add(split[0], split[1].ToFloat());
 				}
 				f.Close();
 				maxSylProb = syllableCounts.Values.Sum();
@@ -315,6 +317,7 @@ public class Faction : IEntity {
 			sb[0] = char.ToUpper(sb[0]);
 			return sb.ToString();
 		}
+
 	}
 
 }

@@ -7,20 +7,23 @@
 [ext_resource type="Resource" uid="uid://cith36udqt0si" path="res://resources/game/building_types/log_cabin.tres" id="3_0g2bt"]
 [ext_resource type="Resource" uid="uid://bgdfkeb2prwkw" path="res://resources/game/building_types/brick_housing.tres" id="3_o7ste"]
 [ext_resource type="Resource" uid="uid://bh5svfg5ua7eb" path="res://resources/game/resource_site_types/boulder.tres" id="3_xflvh"]
-[ext_resource type="Resource" uid="uid://bws8feec8sqin" path="res://resources/game/resource_site_types/broadleaf_woods.tres" id="4_c2mn5"]
 [ext_resource type="Resource" uid="uid://dv2p1gg3s0wjx" path="res://resources/game/building_types/kiln.tres" id="4_h1ebs"]
 [ext_resource type="Resource" uid="uid://nw83fam2omvi" path="res://resources/game/resource_types/rock.tres" id="4_xflvh"]
 [ext_resource type="Resource" uid="uid://ddqpxr0u07bfp" path="res://resources/game/resource_types/fish.tres" id="5_c2mn5"]
 [ext_resource type="Resource" uid="uid://c2hf677ph58lg" path="res://resources/game/resource_site_types/clay_pit.tres" id="6_7f1xh"]
 [ext_resource type="Resource" uid="uid://pmrcwo4t316p" path="res://resources/game/resource_types/logs.tres" id="6_cosqq"]
+[ext_resource type="Resource" uid="uid://dddpyl71ejv65" path="res://resources/game/resource_groups/food_values.tres" id="7_t4jud"]
 [ext_resource type="Resource" uid="uid://b8507qbvqvdy8" path="res://resources/game/resource_types/boards.tres" id="8_0g2bt"]
+[ext_resource type="Resource" uid="uid://bws8feec8sqin" path="res://resources/game/resource_site_types/broadleaf_woods.tres" id="9_tycsq"]
 [ext_resource type="Resource" uid="uid://cvk2heqr2y7qv" path="res://resources/game/resource_types/furniture.tres" id="10_dyo1l"]
 [ext_resource type="Resource" uid="uid://lda3p80x02sh" path="res://resources/game/resource_types/clay.tres" id="11_8wepv"]
 [ext_resource type="Resource" uid="uid://cbynhxq0y3kkl" path="res://resources/game/resource_types/bricks.tres" id="12_7f1xh"]
+[ext_resource type="Resource" uid="uid://xkt4u6pl6p3" path="res://resources/game/resource_types/nuts.tres" id="18_tycsq"]
 
 [resource]
 script = ExtResource("1_wv3fg")
-resourceTypes = Array[Object]([ExtResource("4_xflvh"), ExtResource("6_cosqq"), ExtResource("5_c2mn5"), ExtResource("8_0g2bt"), ExtResource("10_dyo1l"), ExtResource("11_8wepv"), ExtResource("12_7f1xh")])
+resourceTypes = Array[Object]([ExtResource("4_xflvh"), ExtResource("6_cosqq"), ExtResource("5_c2mn5"), ExtResource("8_0g2bt"), ExtResource("10_dyo1l"), ExtResource("11_8wepv"), ExtResource("12_7f1xh"), ExtResource("18_tycsq")])
 buildingTypes = Array[Object]([ExtResource("1_8bhaa"), ExtResource("3_0g2bt"), ExtResource("1_r67qw"), ExtResource("3_o7ste"), ExtResource("2_km6vq"), ExtResource("4_h1ebs")])
-resourceSiteTypes = Array[Object]([ExtResource("3_xflvh"), ExtResource("4_c2mn5"), ExtResource("6_7f1xh")])
+resourceSiteTypes = Array[Object]([ExtResource("3_xflvh"), ExtResource("9_tycsq"), ExtResource("6_7f1xh")])
+foodValues = ExtResource("7_t4jud")
 metadata/_custom_type_script = "uid://05g7rc21q2sd"

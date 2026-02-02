@@ -1,6 +1,4 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using Godot;
 using Godot.Collections;
 using resources.game.building_types;
@@ -20,6 +18,8 @@ namespace resources.game {
 		[Export] Array<BuildingType> buildingTypes;
 		[Export] Array<ResourceSiteType> resourceSiteTypes;
 
+		[Export] ResourceGroup foodValues;
+
 
 		public void RegisterThings() {
 			var resources = new IResourceType[resourceTypes.Count];
@@ -33,7 +33,12 @@ namespace resources.game {
 			for (int i = 0; i < resourceSiteTypes.Count; i++) mines[i] = resourceSiteTypes[i];
 			RegisterScenePaths<ResourceSiteType>(resourceSiteTypes);
 
-			Registry.Register(resources, buildings, mines);
+			Registry.Register(
+				resourceTypes: resources,
+				buildingTypes: buildings,
+				resourceSiteTypes: mines,
+				foodValues: foodValues
+			);
 
 			GD.Print("DataStorage::RegisterThings : REGISTERED FOLLOWING BUILDINGS");
 			foreach (var ass in Registry.Buildings.GetIdAssetPairs()) {

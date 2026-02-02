@@ -1,7 +1,9 @@
-
 using System;
+using Godot;
 
 public class Population {
+
+	public event Func<uint> FoodRequested;
 
 	public uint Count { get; private set; }
 
@@ -11,8 +13,29 @@ public class Population {
 	public uint EmployedCount { get; private set; }
 	public uint MaxEmployed => Count;
 
+	public uint Food { get; private set; }
+
+	TimeT time;
+
 
 	public Population() {
+	}
+
+	public void PassTime(TimeT minutes) {
+		for (TimeT i = 0; i < minutes; i++) {
+			var oldhour = GameTime.GetDayHourS(time);
+			time += 1;
+			var newhour = GameTime.GetDayHourS(time);
+			if (oldhour != newhour) {
+				if (newhour == 8 || newhour == 12 || newhour == 16) {
+					EatFood();
+				}
+			}
+		}
+	}
+
+	public void EatFood() {
+		GD.Print("Population::EatFood : Eeating food");
 	}
 
 	public void Manifest(uint count) {
