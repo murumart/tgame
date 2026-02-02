@@ -15,20 +15,34 @@
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.21091333, 0.051505923), 0.0, 0.0, 0, 0, Vector2(0.38409886, 0.7443265), 0.0, 0.0, 0, 0, Vector2(0.53596926, 0.9231189), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
 point_count = 5
 
+[sub_resource type="Curve" id="Curve_a3btc"]
+_limits = [0.0, 1.0, -1.0, 1.0]
+_data = [Vector2(0.012905836, 0), 0.0, 0.0, 0, 0, Vector2(0.018, 0.042), 0.0, 0.0, 0, 0, Vector2(0.045, 0.044), 0.0, 0.0, 0, 0, Vector2(0.09096575, 0.24204344), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="Curve" id="Curve_t34eq"]
+_limits = [0.0, 1.0, -1.0, 1.0]
+_data = [Vector2(0.0024977922, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.14787829), 0.0, 0.0, 0, 0]
+point_count = 2
+
 [sub_resource type="Curve" id="Curve_h4q0h"]
 _limits = [-1.0, 1.0, 0.0, 1.0]
-_data = [Vector2(0, 0.45692807), 0.0, 0.31186423, 0, 0, Vector2(1, -0.6028347), 0.0, 0.0, 0, 0]
+_data = [Vector2(0, 0.6140682), 0.0, -1.3312594, 0, 0, Vector2(1, -0.67526937), 0.0, 0.0, 0, 0]
 point_count = 2
 
 [sub_resource type="Curve" id="Curve_3biw4"]
 _limits = [0.0, 1.0, -1.0, 1.0]
-_data = [Vector2(0.29912555, 0), 0.0, 0.0, 0, 0, Vector2(1, 1), 2.3344877, 0.0, 0, 0]
+_data = [Vector2(0.23147368, 0), 0.0, 0.0, 0, 0, Vector2(1, 1), 2.3344877, 0.0, 0, 0]
 point_count = 2
 
 [sub_resource type="Curve" id="Curve_vqee5"]
 _limits = [0.0, 500.0, 0.0, 1200.0]
 _data = [Vector2(0, 0), 0.0, 0.45032173, 0, 0, Vector2(1200, 195.57611), 0.06626855, 0.0, 0, 0]
 point_count = 2
+
+[sub_resource type="Gradient" id="Gradient_3biw4"]
+offsets = PackedFloat32Array(0.5, 1)
+colors = PackedColorArray(0.32941177, 0.40392157, 0.3372549, 1, 0.94509804, 0.9647059, 0.9411765, 1)
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_n4hhb"]
 blend_mode = 3
@@ -59,6 +73,9 @@ WorldHeight = 420
 LandRegionCount = 87
 AggressiveFactionCount = 40
 islandCurve = SubResource("Curve_7j5km")
+seawindElevationDifferenceReductionCurve = SubResource("Curve_a3btc")
+seawindTemperatureMultiplierCurve = SubResource("Curve_t34eq")
+seawindGain = 0.008
 temperaturePolarEquatorCurve = SubResource("Curve_h4q0h")
 elevationTemperatureReductionCurve = SubResource("Curve_3biw4")
 populationLandTileCurve = SubResource("Curve_vqee5")
@@ -70,6 +87,7 @@ RegionSprite = NodePath("Regions")
 highlightSprite = NodePath("Highlight")
 elevationGradient = ExtResource("6_n4hhb")
 temperatureGradient = ExtResource("7_f4k24")
+seaWindGradient = SubResource("Gradient_3biw4")
 
 [node name="Ground" type="Sprite2D" parent="WorldRenderer" unique_id=2127821019]
 centered = false

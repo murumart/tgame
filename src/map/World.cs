@@ -1,4 +1,5 @@
 using System;
+using Godot;
 
 [Flags]
 public enum GroundTileType : byte {
@@ -31,6 +32,8 @@ public class World {
 	readonly GroundTileType[] Ground;
 	readonly byte[] Elevation;
 	readonly byte[] Temperature;
+	readonly byte[] SeaWind;
+	public readonly Vector2I SeaWindDirection;
 
 
 	public World(int width, int height) {
@@ -39,6 +42,9 @@ public class World {
 		Ground = new GroundTileType[Longitude * Latitude];
 		Elevation = new byte[Longitude * Latitude];
 		Temperature = new byte[Longitude * Latitude];
+		SeaWind = new byte[Longitude * Latitude];
+		for (int i = 0; i < Longitude * Latitude; i++) SeaWind[i] = byte.MaxValue;
+		SeaWindDirection = new(((int)GD.Randi() * 2 - 1) % 2, ((int)GD.Randi() % 2 * 2 - 1)); // -1 or 1
 	}
 
 	public void SetTile(int x, int y, GroundTileType tile) {
@@ -51,24 +57,41 @@ public class World {
 		return Ground[x + y * Longitude];
 	}
 
+	public void SetArrFloat(int x, int y, float value, byte[] where) {
+		if (x < 0 || x >= Longitude) return;
+		if (y < 0 || y >= Latitude) return;
+		where[x + y * Longitude] = (byte)((value * 0.5f + 0.5f) * byte.MaxValue);
+	}
+
+	public float SetArrFloat(int x, int y, byte[] where, float defauld = -1f) {
+		if (x < 0 || x >= Longitude) return defauld;
+		if (y < 0 || y >= Latitude) return defauld;
+		return ((float)where[x + y * Longitude] / byte.MaxValue) * 2.0f - 1.0f;
+	}
+
 	// elevation float between -1 and 1
 	public void SetElevation(int x, int y, float elevation) {
-		Elevation[x + y * Longitude] = (byte)((elevation * 0.5f + 0.5f) * byte.MaxValue);
+		SetArrFloat(x, y, elevation, Elevation);
 	}
 
 	public float GetElevation(int x, int y) {
-		if (x < 0 || x >= Longitude) return -1f;
-		if (y < 0 || y >= Latitude) return -1f;
-		return ((float)Elevation[x + y * Longitude] / byte.MaxValue) * 2.0f - 1.0f;
+		return SetArrFloat(x, y, Elevation);
 	}
 
 	public void SetTemperature(int x, int y, float temperature) {
-		Temperature[x + y * Longitude] = (byte)((temperature * 0.5f + 0.5f) * byte.MaxValue);
+		SetArrFloat(x, y, temperature, Temperature);
 	}
 
 	public float GetTemperature(int x, int y) {
-		if (x < 0 || x >= Longitude) return -1f;
-		if (y < 0 || y >= Latitude) return -1f;
-		return ((float)Temperature[x + y * Longitude] / byte.MaxValue) * 2.0f - 1.0f;
+		return SetArrFloat(x, y, Temperature);
 	}
+
+	public void SetSeaWind(int x, int y, float wind) {
+		SetArrFloat(x, y, wind, SeaWind);
+	}
+
+	public float GetSeaWind(int x, int y) {
+		return SetArrFloat(x, y, SeaWind, 1.0f);
+	}
+
 }

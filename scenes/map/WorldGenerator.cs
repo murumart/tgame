@@ -18,6 +18,9 @@ namespace scenes.map {
 		[Export] int LandRegionCount;
 		[Export] int AggressiveFactionCount;
 		[Export] Curve islandCurve;
+		[Export] Curve seawindElevationDifferenceReductionCurve;
+		[Export] Curve seawindTemperatureMultiplierCurve;
+		[Export] float seawindGain;
 		[Export] Curve temperaturePolarEquatorCurve;
 		[Export] Curve elevationTemperatureReductionCurve;
 		[Export] Curve populationLandTileCurve;
@@ -51,13 +54,31 @@ namespace scenes.map {
 					continentSample -= islandCurve.SampleBaked(distanceSqFromCentre);
 					continentSample = Mathf.Clamp(continentSample, -1f, 1f);
 
-					float temperatureSample = temperatureNoise.GetNoise2D(x, y) * 0.25f;
+					world.SetElevation(x, y, continentSample);
+				}
+			}
+			for (int xinc = 0; xinc < world.Longitude; xinc++) {
+				for (int yinc = 0; yinc < world.Latitude; yinc++) {
+					int x = xinc;
+					int y = yinc;
+					if (world.SeaWindDirection.X == -1) x = world.Longitude - xinc - 1;
+					if (world.SeaWindDirection.Y == -1) y = world.Latitude - yinc - 1;
+
+					float continentSample = world.GetElevation(x, y);
+					float previousContinentSample = world.GetElevation(x - world.SeaWindDirection.X, y - world.SeaWindDirection.Y);
+					float aboveSeaSample = Mathf.Clamp(continentSample, 0f, 1f);
+					float previousAboveSeaSample = Mathf.Clamp(previousContinentSample, 0f, 1f);
+
+					float previousSeawindSample = world.GetSeaWind(x - world.SeaWindDirection.X, y - world.SeaWindDirection.Y);
+					float seawind = Mathf.Clamp((previousSeawindSample - seawindElevationDifferenceReductionCurve.SampleBaked(aboveSeaSample - previousAboveSeaSample)) + seawindGain, 0f, 1f);
+					world.SetSeaWind(x, y, seawind);
+
+					float temperatureSample = temperatureNoise.GetNoise2D(x, y) * seawindTemperatureMultiplierCurve.SampleBaked(seawind);
 					float distanceFromEquator = Math.Abs(y - world.Latitude * 0.5f) / (world.Latitude * 0.5f);
 					temperatureSample += temperaturePolarEquatorCurve.SampleBaked(distanceFromEquator);
 					temperatureSample -= elevationTemperatureReductionCurve.SampleBaked(continentSample);
 					temperatureSample = Mathf.Clamp(temperatureSample, -1f, 1f);
 
-					world.SetElevation(x, y, continentSample);
 					world.SetTemperature(x, y, temperatureSample);
 				}
 			}

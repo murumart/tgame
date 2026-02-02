@@ -9,9 +9,11 @@ public partial class WorldRenderer : Node {
 	[Export] Sprite2D highlightSprite;
 	[Export] Gradient elevationGradient;
 	[Export] Gradient temperatureGradient;
+	[Export] Gradient seaWindGradient;
 
 	public enum DrawMode {
 		Continents,
+		SeaWind,
 		Temperature,
 
 		Max
@@ -26,6 +28,9 @@ public partial class WorldRenderer : Node {
 			switch (drawMode) {
 				case DrawMode.Continents:
 					DrawContinents();
+					break;
+				case DrawMode.SeaWind:
+					DrawSeaWind();
 					break;
 				case DrawMode.Temperature:
 					DrawTemperature();
@@ -82,7 +87,19 @@ public partial class WorldRenderer : Node {
 		for (int x = 0; x < world.Longitude; x++) {
 			for (int y = 0; y < world.Latitude; y++) {
 				Color color = temperatureGradient.Sample(world.GetTemperature(x, y) * 0.5f + 0.5f);
+				worldImage.SetPixel(x, y, color);
+			}
 
+		}
+		UpdateImage(worldImage, groundSprite);
+	}
+
+	void DrawSeaWind() {
+		if (world == null) return;
+		var worldImage = GetImage(groundSprite);
+		for (int x = 0; x < world.Longitude; x++) {
+			for (int y = 0; y < world.Latitude; y++) {
+				Color color = seaWindGradient.Sample(world.GetSeaWind(x, y));
 				worldImage.SetPixel(x, y, color);
 			}
 
@@ -96,6 +113,9 @@ public partial class WorldRenderer : Node {
 		switch (drawMode) {
 			case DrawMode.Continents:
 				DrawContinents();
+				break;
+			case DrawMode.SeaWind:
+				DrawSeaWind();
 				break;
 			case DrawMode.Temperature:
 				DrawTemperature();
