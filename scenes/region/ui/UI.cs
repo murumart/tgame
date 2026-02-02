@@ -18,6 +18,7 @@ namespace scenes.region.ui {
 		public event Func<IBuildingType, bool> GetCanBuildEvent;
 		public event Func<ResourceStorage> GetResourcesEvent;
 		public event Func<Faction> GetFactionEvent;
+		public event Func<(uint, uint)> GetFoodAndUsageEvent;
 
 		public event Func<MapObject, ICollection<Job>> GetMapObjectJobsEvent;
 		public event Func<ICollection<Job>> GetJobsEvent;
@@ -167,7 +168,7 @@ namespace scenes.region.ui {
 		void UpdateDisplays() {
 			var faction = GetFaction();
 			resourceDisplay.Display(population: faction.GetPopulationCount(), homelessPopulation: faction.HomelessPopulation, unemployedPopulation: faction.UnemployedPopulation);
-			resourceDisplay.Display(timeString: GetTimeString(), faction: faction);
+			resourceDisplay.Display(timeString: GetTimeString(), faction: faction, foodAndUsage: GetFoodAndUsage());
 			DisplayResources();
 			SetGameSpeedLabelText();
 			pauseDisplayPanel.Visible = gamePaused || gameSpeed == 0f || internalGamePaused;
@@ -270,6 +271,7 @@ namespace scenes.region.ui {
 		public List<BuildingType> GetBuildingTypes() => GetBuildingTypesEvent?.Invoke();
 		public ResourceStorage GetResources() => GetResourcesEvent?.Invoke();
 		public Faction GetFaction() => GetFactionEvent?.Invoke();
+		public (uint, uint) GetFoodAndUsage() => GetFoodAndUsageEvent?.Invoke() ?? (1337, 1337);
 
 		public ICollection<Job> GetMapObjectJobs(MapObject mapObject) => GetMapObjectJobsEvent?.Invoke(mapObject);
 		public ICollection<Job> GetJobs() => GetJobsEvent?.Invoke();

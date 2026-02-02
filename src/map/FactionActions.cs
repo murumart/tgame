@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Godot;
@@ -24,6 +25,30 @@ public class FactionActions {
 
 	public IEnumerable<Vector2I> GetTiles() {
 		return region.GroundTiles.Keys;
+	}
+
+	public static float GetFoodUsageS(uint population, uint employed) {
+		return employed + (population - employed) * 0.5f;
+	}
+
+	public float GetFoodUsage() => GetFoodUsageS(Faction.GetPopulationCount(), Faction.Population.EmployedCount);
+
+	public float GetFood() {
+		float f = 0;
+		foreach (var rb in Faction.Resources) {
+			if (Registry.ResourcesS.FoodValues.GroupValues.TryGetValue(rb.Key, out int foodValue)) {
+				f += foodValue * rb.Value.Amount;
+			}
+		}
+		f += Faction.Population.Food;
+		return f;
+	}
+
+	public (uint, uint) GetFoodAndUsage() {
+		return (
+			(uint)Mathf.Round(GetFood()),
+			(uint)Mathf.Round(GetFoodUsage())
+		);
 	}
 
 	// building
@@ -98,5 +123,6 @@ public class FactionActions {
 	public override string ToString() {
 		return $"FactionActions({region}, {faction})";
 	}
+
 
 }

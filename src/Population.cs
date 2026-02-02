@@ -14,8 +14,8 @@ public class Population {
 	public uint EmployedCount { get; private set; }
 	public uint MaxEmployed => Count;
 
-	public uint Food { get; private set; }
-	public uint Hunger { get; private set; }
+	public float Food { get; private set; }
+	public float Hunger { get; private set; }
 
 	readonly HashSet<Job> employedOnJobs = new();  
 
@@ -31,7 +31,7 @@ public class Population {
 			time += 1;
 			var newhour = GameTime.GetDayHourS(time);
 			if (oldhour != newhour) {
-				if (newhour == 8 || newhour == 12 || newhour == 16) {
+				if (newhour == 12 || newhour == 18) {
 					EatFood();
 				}
 			}
@@ -40,22 +40,22 @@ public class Population {
 
 	public void EatFood() {
 		GD.Print($"Population::EatFood : Eeating food ({Food} food)");
-		if (Food < Count) {
-			Food += FoodRequested?.Invoke(Count - Food) ?? 0;
+		float wantfood = FactionActions.GetFoodUsageS(Count, EmployedCount);
+		if (Food < wantfood) {
+			Food += FoodRequested?.Invoke((uint)Mathf.Round(wantfood - Food)) ?? 0;
 		}
 
 		var oldfood = Food;
-		if (Food < Count) {
-			uint didnteat = Count - Food;
+		if (Food < wantfood) {
 			Food = 0;
-			Hunger += didnteat;
+			Hunger += wantfood - Food;
 			if (Hunger > 50) {
 				Reduce(Math.Min(Count, 10));
 				Hunger -= 50;
 				GD.Print("Population::EatFood : 10 people starved no food");
 			}
 		} else {
-			Food -= Count;
+			Food -= wantfood;
 			GD.Print($"Population::EatFood : people ate ({Food} food)");
 			if (Hunger > 0) {
 				if (Food > Hunger) {

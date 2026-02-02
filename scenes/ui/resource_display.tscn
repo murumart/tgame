@@ -3,9 +3,13 @@
 [ext_resource type="LabelSettings" uid="uid://v03gdc53ijm1" path="res://resources/visual/theme/label_styles/half_size.tres" id="1_evu2v"]
 [ext_resource type="Script" uid="uid://nx6ln4b1uxy6" path="res://scenes/ui/ResourceDisplay.cs" id="1_pf40v"]
 
-[node name="ResourceDisplay" type="PanelContainer" unique_id=315126244 node_paths=PackedStringArray("populationLabel", "silverLabel", "tileposLabel", "timeLabel", "factionLabel", "fpsLabel")]
+[node name="ResourceDisplay" type="PanelContainer" unique_id=315126244 node_paths=PackedStringArray("populationLabel", "foodLabel", "silverLabel", "tileposLabel", "timeLabel", "factionLabel", "fpsLabel")]
+offset_left = 1.0
+offset_right = 217.0
+offset_bottom = 12.0
 script = ExtResource("1_pf40v")
 populationLabel = NodePath("MarginContainer/HBoxContainer/poplabel")
+foodLabel = NodePath("MarginContainer/HBoxContainer/Foodlabel")
 silverLabel = NodePath("MarginContainer/HBoxContainer/Label2")
 tileposLabel = NodePath("MarginContainer/HBoxContainer/Tileposlabel")
 timeLabel = NodePath("MarginContainer/HBoxContainer/TimeLabel")
@@ -26,6 +30,11 @@ alignment = 1
 [node name="poplabel" type="Label" parent="MarginContainer/HBoxContainer" unique_id=1855980313]
 layout_mode = 2
 text = "pop: -9099"
+label_settings = ExtResource("1_evu2v")
+
+[node name="Foodlabel" type="Label" parent="MarginContainer/HBoxContainer" unique_id=2093924049]
+layout_mode = 2
+text = "food: b (usage a)"
 label_settings = ExtResource("1_evu2v")
 
 [node name="Label2" type="Label" parent="MarginContainer/HBoxContainer" unique_id=302183719]

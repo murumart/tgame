@@ -44,6 +44,7 @@ namespace scenes.region {
 			ui.GetMaxFreeWorkersEvent += GetJobMaxWorkers;
 			ui.ChangeJobWorkerCountEvent += actions.ChangeJobWorkerCount;
 			ui.DeleteJobEvent += actions.RemoveJob;
+			ui.GetFoodAndUsageEvent += actions.GetFoodAndUsage;
 
 			GameMan.Singleton.Game.Time.HourPassedEvent += HourlyUpdate;
 
@@ -104,6 +105,7 @@ namespace scenes.region {
 				ui.GetMaxFreeWorkersEvent -= GetJobMaxWorkers;
 				ui.ChangeJobWorkerCountEvent -= actions.ChangeJobWorkerCount;
 				ui.GetBriefcaseEvent -= GetBriefcase;
+				ui.GetFoodAndUsageEvent -= actions.GetFoodAndUsage;
 
 				region.MapObjectUpdatedAtEvent -= OnRegionMapObjectUpdated;
 				faction.ContractFailedEvent -= OnRegionMandateFailed;

@@ -3,6 +3,7 @@ using Godot;
 public partial class ResourceDisplay : PanelContainer {
 
 	[Export] Label populationLabel;
+	[Export] Label foodLabel;
 	[Export] Label silverLabel;
 	[Export] Label tileposLabel;
 	[Export] Label timeLabel;
@@ -19,11 +20,15 @@ public partial class ResourceDisplay : PanelContainer {
 		Faction faction = null,
 		Vector2I? tilepos = null,
 		(Vector2I, Region)? inRegionTilepos = null,
-		string timeString = null
+		string timeString = null,
+		(uint, uint)? foodAndUsage = null
 	) {
 		fpsLabel.Text = "fps: " + Engine.GetFramesPerSecond().ToString();
 		if (population != null && unemployedPopulation != null && homelessPopulation != null) {
 			populationLabel.Text = $"pop: {population} ({homelessPopulation} homeless, {unemployedPopulation} unemployed)";
+		}
+		if (foodAndUsage != null) {
+			foodLabel.Text = $"food: {foodAndUsage?.Item1} (usage {foodAndUsage?.Item2})";
 		}
 		if (timeString != null) timeLabel.Text = timeString;
 		if (silver != null) silverLabel.Text = $"silver: {silver}";

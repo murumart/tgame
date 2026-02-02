@@ -29,6 +29,7 @@ GameMan="*res://scenes/autoload/game_man.tscn"
 
 window/size/viewport_width=480
 window/size/viewport_height=360
+window/size/mode=2
 window/size/window_width_override=960
 window/size/window_height_override=720
 window/stretch/mode="canvas_items"
