@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace scenes.region.ui {
 
-	public partial class JobsList : Control {
+	public partial class MapObjectMenu : Control {
 
 		public enum State : int {
 			ViewJobs,

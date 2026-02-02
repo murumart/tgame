@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://cd6mwdns4bcwa" path="res://scenes/region/ui/UI.cs" id="1_vkak1"]
 [ext_resource type="PackedScene" uid="uid://bfswljwjyhmyy" path="res://scenes/ui/resource_display.tscn" id="2_iwag8"]
-[ext_resource type="PackedScene" uid="uid://c7ew6g8hdbgfg" path="res://scenes/region/ui/jobs_list.tscn" id="3_y7o2c"]
+[ext_resource type="PackedScene" uid="uid://c7ew6g8hdbgfg" path="res://scenes/region/ui/map_object_menu.tscn" id="3_y7o2c"]
 [ext_resource type="Script" uid="uid://2xhwk4iyfu73" path="res://scenes/region/ui/BuildingList.cs" id="4_suhma"]
 [ext_resource type="PackedScene" uid="uid://bli7m2dvghbu1" path="res://scenes/region/ui/documents_display.tscn" id="5_iwag8"]
 
@@ -43,7 +43,7 @@ jobsButton = NodePath("VBoxContainer/ControlButtons/JobsButton")
 menuTabs = NodePath("VBoxContainer/MarginContainer/MenuTabs")
 buildingList = NodePath("VBoxContainer/MarginContainer/MenuTabs/HBoxContainer/BuildingList")
 documentsDisplay = NodePath("VBoxContainer/MarginContainer/MenuTabs/HBoxContainer2/Agreements")
-jobsList = NodePath("VBoxContainer/MarginContainer/Horizon/JobsList")
+jobsList = NodePath("VBoxContainer/MarginContainer/Horizon/MapObjectMenu")
 resourceDisplay = NodePath("VBoxContainer/VBoxContainer/ResourceDisplay")
 pauseDisplayPanel = NodePath("PausePanel")
 gameSpeedLabel = NodePath("VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer/Label")
@@ -134,7 +134,7 @@ size_flags_horizontal = 3
 size_flags_stretch_ratio = 1.75
 mouse_filter = 2
 
-[node name="JobsList" parent="VBoxContainer/MarginContainer/Horizon" unique_id=899012506 node_paths=PackedStringArray("ui") instance=ExtResource("3_y7o2c")]
+[node name="MapObjectMenu" parent="VBoxContainer/MarginContainer/Horizon" unique_id=899012506 node_paths=PackedStringArray("ui") instance=ExtResource("3_y7o2c")]
 visible = false
 layout_mode = 2
 size_flags_horizontal = 3

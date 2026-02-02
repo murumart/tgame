@@ -63,7 +63,7 @@ namespace scenes.region.ui {
 		[Export] public DocumentsDisplay documentsDisplay;
 
 		// right
-		[Export] public JobsList jobsList;
+		[Export] public MapObjectMenu jobsList;
 
 		// top bar
 		[Export] ResourceDisplay resourceDisplay;
