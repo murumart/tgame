@@ -2,11 +2,14 @@
 
 [ext_resource type="Script" uid="uid://1ii2ptr21cmq" path="res://scenes/region/MapObjectView.cs" id="1_cca3c"]
 [ext_resource type="Texture2D" uid="uid://cvr7bw57oxjkx" path="res://resources/visual/theme/icons/hammer.svg" id="2_d5rlf"]
+[ext_resource type="Texture2D" uid="uid://ethlsfg8xmhk" path="res://scenes/region/iso_mask.png" id="3_jbdme"]
 
-[node name="MapObjectViewBase" type="Node2D" unique_id=1991676390 node_paths=PackedStringArray("iconTransformParent", "iconContainer")]
+[node name="MapObjectViewBase" type="Node2D" unique_id=1991676390 node_paths=PackedStringArray("iconTransformParent", "iconContainer", "buildingProgressBar", "inProgressDisplay")]
 script = ExtResource("1_cca3c")
 iconTransformParent = NodePath("IconTransform")
 iconContainer = NodePath("IconTransform/IconContainer")
+buildingProgressBar = NodePath("IconTransform/VBoxContainer/BuildingProgress")
+inProgressDisplay = NodePath("InProgressDisplay")
 metadata/_custom_type_script = "uid://1ii2ptr21cmq"
 
 [node name="Clickarea" type="Area2D" parent="." unique_id=1540038721]
@@ -33,3 +36,20 @@ alignment = 1
 layout_mode = 2
 texture = ExtResource("2_d5rlf")
 stretch_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="IconTransform" unique_id=31811092]
+offset_left = -28.0
+offset_top = 7.0
+offset_right = 28.0
+offset_bottom = 15.0
+
+[node name="BuildingProgress" type="ProgressBar" parent="IconTransform/VBoxContainer" unique_id=2063612097]
+visible = false
+layout_mode = 2
+max_value = 1.0
+show_percentage = false
+
+[node name="InProgressDisplay" type="Sprite2D" parent="." unique_id=748287897]
+visible = false
+modulate = Color(1, 1, 0, 0.24313726)
+texture = ExtResource("3_jbdme")

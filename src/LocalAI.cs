@@ -271,7 +271,7 @@ public partial class LocalAI {
 		}
 
 		public static DecisionFactor FreeWorkerRate(FactionActions ac) {
-			return new(() => (float)ac.GetFreeWorkers() / (float)ac.Faction.GetPopulationCount(), "FreeWorkerRate");
+			return new(() => ac.Faction.GetPopulationCount() == 0 ? 0f : (float)ac.GetFreeWorkers() / (float)ac.Faction.GetPopulationCount(), "FreeWorkerRate");
 		}
 
 		public static DecisionFactor JobEmploymentRate(Job job) {

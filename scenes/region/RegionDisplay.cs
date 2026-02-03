@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Godot;
 using resources.game;
-using scenes.region.buildings;
 
 namespace scenes.region {
 
@@ -44,10 +43,8 @@ namespace scenes.region {
 			}
 			foreach (var (tpos, mopview) in mapObjectViews) {
 				if (region.GetMapObject(tpos) is Building building) {
-					var bview = mopview as BuildingView;
-					Debug.Assert(bview != null, $"Map object view {mopview} should be BuildingView but seems to be not (at {tpos})");
-					if (building.IsConstructed) bview.DisplayBuildingProgress(1.0f, false);
-					else bview.DisplayBuildingProgress(building.GetBuildProgress());
+					if (building.IsConstructed) mopview.DisplayBuildingProgress(1.0f, false);
+					else mopview.DisplayBuildingProgress(building.GetBuildProgress());
 				}
 			}
 		}
@@ -140,8 +137,6 @@ namespace scenes.region {
 				if (!mapObjectViews.TryGetValue(mopjob.GlobalPosition - region.WorldPosition, out MapObjectView view)) return; // the building view has already been removed
 				if (!(region.LocalFaction.GetJobs(mopjob.GlobalPosition - region.WorldPosition).Where(j => !j.IsInternal).Any())) view.IconSetHide(MapObjectView.IconSetIcons.Hammer);
 				if (region.LocalFaction.HasBuilding(mopjob.GlobalPosition - region.WorldPosition)) {
-					var bview = view as BuildingView;
-					Debug.Assert(bview != null, $"View at {mopjob.GlobalPosition - region.WorldPosition} {view} doesn't seem to be a buildingview (should be");
 				}
 			}
 		}

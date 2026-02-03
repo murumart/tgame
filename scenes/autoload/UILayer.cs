@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using Godot;
-using scenes.region.buildings;
 using scenes.region.ui;
 
 namespace scenes.autoload {
@@ -21,7 +20,7 @@ namespace scenes.autoload {
 		public override void _Process(double delta) {
 			foreach (Label child in debugLabelParent.GetChildren().Cast<Label>()) {
 				var cb = child.GetMeta("callback").AsCallable();
-				
+
 				if (!IsInstanceValid(cb.Target)) {
 					child.QueueFree();
 					continue;

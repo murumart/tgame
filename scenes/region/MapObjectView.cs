@@ -17,6 +17,9 @@ namespace scenes.region {
 		[Export] Container iconContainer;
 		TextureRect Icon(int i) => (TextureRect)iconContainer.GetChild(i);
 
+		[Export] ProgressBar buildingProgressBar;
+		[Export] Node2D inProgressDisplay;
+
 
 		public override void _Ready() {
 			//RemoveChild(iconTransformParent);
@@ -51,6 +54,13 @@ namespace scenes.region {
 
 		public void IconSetHide() {
 			iconContainer.Hide();
+		}
+
+		public void DisplayBuildingProgress(float progress, bool show = true) {
+			Debug.Assert(progress >= 0f && progress <= 1f, "Progress bar value aout of range");
+			buildingProgressBar.Visible = show;
+			buildingProgressBar.Value = progress;
+			inProgressDisplay.Visible = show;
 		}
 
 	}

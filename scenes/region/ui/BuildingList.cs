@@ -1,7 +1,7 @@
 using Godot;
 using resources.game;
 using resources.game.building_types;
-using scenes.region.buildings;
+using scenes.region;
 using scenes.region.ui;
 using System;
 using static Building;
@@ -14,7 +14,7 @@ public partial class BuildingList : PanelContainer {
 	[Export] RichTextLabel resourceListText;
 
 	long selectedBuildThingId = -1;
-	BuildingView selectedBuildingScene = null;
+	MapObjectView selectedBuildingScene = null;
 	IBuildingType _selectedBuildingType = null;
 	IBuildingType selectedBuildingType {
 		get {
@@ -84,9 +84,9 @@ public partial class BuildingList : PanelContainer {
 		var packedScene = GD.Load<PackedScene>(DataStorage.GetScenePath(buildingType));
 		Node scene = packedScene.Instantiate();
 		Debug.Assert(scene != null, "building display scene canät be null here....w aht...");
-		Debug.Assert(scene is BuildingView, "trying to build something that doesn't extend BuildingView");
+		Debug.Assert(scene is MapObjectView, "trying to build something that doesn't extend MapObjectView");
 		ui.CameraCursor.AddChild(scene);
-		selectedBuildingScene = scene as BuildingView;
+		selectedBuildingScene = scene as MapObjectView;
 		selectedBuildingType = buildingType;
 		ui.state = UI.State.PlacingBuild;
 		selectedBuildingScene.Modulate = new Color(selectedBuildingScene.Modulate, 0.67f);

@@ -1,5 +1,4 @@
 using Godot;
-using scenes.region.buildings;
 using System.Text;
 
 namespace scenes.region.ui {

@@ -5,7 +5,6 @@ using Godot;
 using resources.game;
 using resources.game.building_types;
 using scenes.autoload;
-using scenes.region.buildings;
 using scenes.region.ui;
 using static Building;
 using static Document;
