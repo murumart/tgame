@@ -145,10 +145,13 @@ namespace scenes.map {
 					var ele = world.GetElevation(x, y);
 					var humi = world.GetHumidity(x, y);
 					var temp = world.GetTemperature(x, y);
-					if (ele < 0) world.SetTile(x, y, GroundTileType.Ocean);
-					else if (ele < 0.02 || humi < 0.07f) world.SetTile(x, y, GroundTileType.Sand);
-					else if (temp < -0.01f || ele > 0.5f) world.SetTile(x, y, GroundTileType.Snow);
-					else world.SetTile(x, y, GroundTileType.Grass);
+					var tile = GroundTileType.Sand;
+					if (ele < 0) tile = GroundTileType.Ocean;
+					else if (ele > 0.012f && humi > 0.15f) {
+						if (temp < 0) tile = GroundTileType.Snow;
+						else tile = GroundTileType.Grass;
+					}
+					world.SetTile(x, y, tile);
 				}
 			}
 			Generating = false;
