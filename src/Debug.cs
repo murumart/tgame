@@ -21,7 +21,7 @@ internal static class Debug {
 
 			foreach (var sf in st.GetFrames()) {
 				var fn = sf.GetFileName();
-				if (fn.StartsWith("/root/godot") || fn.Contains(".godot")) {
+				if (fn == null || fn.StartsWith("/root/godot") || fn.Contains(".godot")) {
 					ts.Append($"\t... {sf.GetMethod().DeclaringType}::{sf.GetMethod().Name}\n");
 					continue;
 				}
