@@ -30,9 +30,24 @@ public partial class LocalAI {
 					Factors.HasFreeResourceSite(actions, Registry.ResourceSitesS.BroadleafWoods),
 				], factionActions, Registry.ResourceSitesS.BroadleafWoods),
 			Actions.CreateGatherJob([
+					resourceWants[Registry.ResourcesS.Logs],
+					Factors.FreeWorkerRate(factionActions),
+					Factors.HasFreeResourceSite(actions, Registry.ResourceSitesS.ConiferWoods),
+				], factionActions, Registry.ResourceSitesS.ConiferWoods),
+			Actions.CreateGatherJob([
+					resourceWants[Registry.ResourcesS.Logs],
+					Factors.FreeWorkerRate(factionActions),
+					Factors.HasFreeResourceSite(actions, Registry.ResourceSitesS.SavannaTrees),
+				], factionActions, Registry.ResourceSitesS.SavannaTrees),
+			Actions.CreateGatherJob([
 					resourceWants[Registry.ResourcesS.Rocks],
 					Factors.FreeWorkerRate(factionActions),
 					Factors.HasFreeResourceSite(actions, Registry.ResourceSitesS.Rock),
+				], factionActions, Registry.ResourceSitesS.Rock),
+			Actions.CreateGatherJob([
+					resourceWants[Registry.ResourcesS.Rocks],
+					Factors.FreeWorkerRate(factionActions),
+					Factors.HasFreeResourceSite(actions, Registry.ResourceSitesS.Rubble),
 				], factionActions, Registry.ResourceSitesS.Rock),
 		];
 		foreach (var building in Resources.Buildings) {
