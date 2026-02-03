@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="ResourceSiteType" format=3 uid="uid://d08tlsfel81yf"]
+
+[ext_resource type="Resource" uid="uid://pmrcwo4t316p" path="res://resources/game/resource_types/logs.tres" id="1_0a564"]
+[ext_resource type="Script" uid="uid://bnfatrmjew0vy" path="res://resources/game/resource_site_types/ResourceWell.cs" id="2_wdh35"]
+[ext_resource type="Script" uid="uid://ct2a6sqe1m7mx" path="res://resources/game/resource_site_types/ResourceSiteType.cs" id="4_lxhu8"]
+
+[sub_resource type="Resource" id="Resource_b5t6q"]
+script = ExtResource("2_wdh35")
+resourceType = ExtResource("1_0a564")
+minutesPerBunch = 60
+bunchSize = 3
+minutesPerBunchRegen = 17280
+initialBunches = 40
+metadata/_custom_type_script = "uid://bnfatrmjew0vy"
+
+[resource]
+script = ExtResource("4_lxhu8")
+name = "conifer woods"
+resourceTypeDescription = "logs"
+mineResources = Array[Object]([SubResource("Resource_b5t6q")])
+ScenePath = "uid://du7qwf6qqb2jv"
+metadata/_custom_type_script = "uid://ct2a6sqe1m7mx"

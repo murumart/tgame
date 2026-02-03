@@ -11,10 +11,14 @@
 [ext_resource type="PackedScene" uid="uid://oq1d8aheub65" path="res://scenes/map/ui/world_ui.tscn" id="7_vqee5"]
 [ext_resource type="Resource" uid="uid://bws8feec8sqin" path="res://resources/game/resource_site_types/broadleaf_woods.tres" id="8_1p0hh"]
 [ext_resource type="FastNoiseLite" uid="uid://elpkgdjffs74" path="res://scenes/map/noises/temperature.tres" id="8_3biw4"]
+[ext_resource type="Script" uid="uid://dpr7b2iecx6gm" path="res://resources/game/resource_site_types/ResourceSiteGenerationParameters.cs" id="9_1p0hh"]
 [ext_resource type="Gradient" uid="uid://w5sdtmt8u44c" path="res://resources/visual/map/humidity_gradient.tres" id="9_h4q0h"]
-[ext_resource type="Script" uid="uid://bfidlqog07dy7" path="res://resources/game/resource_site_types/GenerationParameters.cs" id="9_iffmc"]
+[ext_resource type="Resource" uid="uid://c2hf677ph58lg" path="res://resources/game/resource_site_types/clay_pit.tres" id="10_iffmc"]
 [ext_resource type="FastNoiseLite" uid="uid://dubsuvs1ouru5" path="res://scenes/map/noises/humidity.tres" id="10_t34eq"]
 [ext_resource type="FastNoiseLite" uid="uid://bfyvnr33jlpag" path="res://scenes/map/noises/seawind_gain.tres" id="11_a3btc"]
+[ext_resource type="Resource" uid="uid://bh5svfg5ua7eb" path="res://resources/game/resource_site_types/rock.tres" id="11_getmw"]
+[ext_resource type="Resource" uid="uid://dwcrohuk4oajt" path="res://resources/game/resource_site_types/rubble.tres" id="12_dtgda"]
+[ext_resource type="Resource" uid="uid://d08tlsfel81yf" path="res://resources/game/resource_site_types/conifer_woods.tres" id="13_pnmcl"]
 
 [sub_resource type="Curve" id="Curve_7j5km"]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.21091333, 0.051505923), 0.0, 0.0, 0, 0, Vector2(0.38409886, 0.7443265), 0.0, 0.0, 0, 0, Vector2(0.53596926, 0.9231189), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
@@ -59,16 +63,50 @@ _limits = [0.0, 500.0, 0.0, 1200.0]
 _data = [Vector2(0, 0), 0.0, 0.24459472, 0, 0, Vector2(1200, 195.57611), 0.35408792, 0.0, 0, 0]
 point_count = 2
 
-[sub_resource type="Resource" id="Resource_pnmcl"]
-script = ExtResource("9_iffmc")
-instructions = Array[int]([0])
-constants = PackedFloat32Array(0)
+[sub_resource type="Resource" id="Resource_iffmc"]
+script = ExtResource("9_1p0hh")
+Target = ExtResource("8_1p0hh")
+MinElevation = 0.02
+MaxElevation = 0.42
+MinTemperature = 0.035
+MaxTemperature = 0.545
+MinHumidity = 0.235
+MaxHumidity = 0.505
+metadata/_custom_type_script = "uid://dpr7b2iecx6gm"
 
 [sub_resource type="Resource" id="Resource_getmw"]
-script = ExtResource("9_iffmc")
-Target = ExtResource("8_1p0hh")
-instructions = Array[int]([10, 11, 0, 17, 16, 1, 2, 12, 23, 24, 17, 17])
-constants = PackedFloat32Array(0.25, 0.35, 0.05, 0)
+script = ExtResource("9_1p0hh")
+Target = ExtResource("10_iffmc")
+MinElevation = 0.01
+MinHumidity = 0.38
+Rarity = 0.1
+metadata/_custom_type_script = "uid://dpr7b2iecx6gm"
+
+[sub_resource type="Resource" id="Resource_dtgda"]
+script = ExtResource("9_1p0hh")
+Target = ExtResource("11_getmw")
+MinElevation = 0.45
+MaxHumidity = 0.795
+Rarity = 0.275
+metadata/_custom_type_script = "uid://dpr7b2iecx6gm"
+
+[sub_resource type="Resource" id="Resource_pnmcl"]
+script = ExtResource("9_1p0hh")
+Target = ExtResource("12_dtgda")
+MinElevation = 0.16
+Rarity = 0.145
+metadata/_custom_type_script = "uid://dpr7b2iecx6gm"
+
+[sub_resource type="Resource" id="Resource_nugjq"]
+script = ExtResource("9_1p0hh")
+Target = ExtResource("13_pnmcl")
+MinElevation = 0.025
+MaxElevation = 0.74
+MinTemperature = -0.29
+MaxTemperature = 0.155
+MinHumidity = 0.235
+MaxHumidity = 0.505
+metadata/_custom_type_script = "uid://dpr7b2iecx6gm"
 
 [sub_resource type="Gradient" id="Gradient_3biw4"]
 offsets = PackedFloat32Array(0.5, 1)
@@ -113,7 +151,7 @@ humidityCurve = SubResource("Curve_iffmc")
 temperaturePolarEquatorCurve = SubResource("Curve_h4q0h")
 elevationTemperatureReductionCurve = SubResource("Curve_3biw4")
 populationLandTileCurve = SubResource("Curve_vqee5")
-resourceSiteGenerationParameters = Array[Object]([SubResource("Resource_pnmcl"), SubResource("Resource_getmw")])
+resourceSiteGenerationParameters = Array[Object]([SubResource("Resource_iffmc"), SubResource("Resource_getmw"), SubResource("Resource_dtgda"), SubResource("Resource_pnmcl"), SubResource("Resource_nugjq")])
 
 [node name="WorldRenderer" type="Node" parent="." unique_id=1973556366 node_paths=PackedStringArray("groundSprite", "RegionSprite", "highlightSprite")]
 script = ExtResource("5_3biw4")

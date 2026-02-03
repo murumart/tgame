@@ -153,8 +153,8 @@ public class Region {
 					tiles[new Vector2I(i, j)] = GroundTileType.Grass;
 
 					if (i != 0 || j != 0) {
-						if (GD.Randf() < 0.01f) rs.Add(new Vector2I(i, j), Registry.ResourceSites.GetAsset("boulder"));
-						else if (GD.Randf() < 0.07f) rs.Add(new Vector2I(i, j), Registry.ResourceSites.GetAsset("broadleaf_woods"));
+						if (GD.Randf() < 0.01f) rs.Add(new Vector2I(i, j), Registry.ResourceSitesS.Rock);
+						else if (GD.Randf() < 0.07f) rs.Add(new Vector2I(i, j), Registry.ResourceSitesS.BroadleafWoods);
 					}
 				}
 			}

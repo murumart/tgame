@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Godot;
 using resouces.game;
+using resources.game;
 using static ResourceSite;
 
 namespace scenes.map {
@@ -47,7 +48,7 @@ namespace scenes.map {
 		[Export] Curve temperaturePolarEquatorCurve;
 		[Export] Curve elevationTemperatureReductionCurve;
 		[Export] Curve populationLandTileCurve;
-		[Export] Godot.Collections.Array<GenerationParameters> resourceSiteGenerationParameters;
+		[Export] Godot.Collections.Array<ResourceSiteGenerationParameters> resourceSiteGenerationParameters;
 
 		public Region[] Regions;
 
@@ -184,24 +185,35 @@ namespace scenes.map {
 
 			foreach (Region region in regionsLand) {
 				foreach (Vector2I pos in region.GroundTiles.Keys) {
+					var wpos = pos + region.WorldPosition;
 					// starter house position..
 					if (pos == Vector2I.Zero) continue;
-					// skip randomly
-					if (rng.Randf() >= 0.3) continue;
-					//if ((region.GroundTiles[pos] & GroundTileType.Land) == 0) continue;
-					//else if (GD.Randf() < 0.07f) region.CreateResourceSiteAndPlace(Registry.ResourceSitesS.BroadleafWoods, pos);
-					IResourceSiteType siteType = null;
-					float score = rng.RandfRange(-0.5f, 2.0f);
-					foreach (var genpara in resourceSiteGenerationParameters) {
-						var lscore = genpara.Calculate(world, pos.X + region.WorldPosition.X, pos.Y + region.WorldPosition.Y);
-						//System.Console.WriteLine($"WorldGenerator::GenerateRegions : at {pos} scored {genpara.Target?.AssetTypeName ?? "null"} {lscore}");
-						if (lscore > score) {
-							score = lscore;
-							siteType = genpara.Target;
-						}
-					}
-					if (siteType == null || (siteType.AssetName == "null")) continue;
-					region.CreateResourceSiteAndPlace(siteType, pos);
+					var ele = world.GetElevation(wpos.X, wpos.Y);
+					var humi = world.GetHumidity(wpos.X, wpos.Y);
+					var temp = world.GetTemperature(wpos.X, wpos.Y);
+					ResourceSiteGenerationParameters siteType = null;
+					//foreach (var genpara in resourceSiteGenerationParameters) {
+					//	if (ele < genpara.MinElevation || ele > genpara.MaxElevation) continue;
+					//	if (humi < genpara.MinHumidity || humi > genpara.MaxHumidity) continue;
+					//	if (temp < genpara.MinTemperature || temp > genpara.MaxTemperature) continue;
+					//	var eles =  ResourceSiteGenerationParameters.ParamDistance(genpara.MinElevation, genpara.MaxElevation, ele);
+					//	var humis = ResourceSiteGenerationParameters.ParamDistance(genpara.MinHumidity, genpara.MaxHumidity, humi);
+					//	var temps = ResourceSiteGenerationParameters.ParamDistance(genpara.MinTemperature, genpara.MaxTemperature, temp);
+					//	if (eles + humis + temps < distance) {
+					//		distance = eles + humis + temps;
+					//		siteType = genpara;
+					//	}
+					//}
+					siteType = resourceSiteGenerationParameters[rng.RandiRange(0, resourceSiteGenerationParameters.Count - 1)];
+					if (siteType == null) continue;
+					if (ele < siteType.MinElevation || ele > siteType.MaxElevation) continue;
+					if (humi < siteType.MinHumidity || humi > siteType.MaxHumidity) continue;
+					if (temp < siteType.MinTemperature || temp > siteType.MaxTemperature) continue;
+					var elesfinal = Mathf.Clamp(1f - ResourceSiteGenerationParameters.ParamDistance(siteType.MinElevation, siteType.MaxElevation, ele), 0f, 1f);
+					var humisfinal =Mathf.Clamp( 1f - ResourceSiteGenerationParameters.ParamDistance(siteType.MinHumidity, siteType.MaxHumidity, humi), 0f, 1f);
+					var tempsfinal =Mathf.Clamp( 1f - ResourceSiteGenerationParameters.ParamDistance(siteType.MinTemperature, siteType.MaxTemperature, temp), 0f, 1f);
+					if (rng.Randf() > elesfinal * humisfinal * tempsfinal * siteType.Rarity) continue;
+					region.CreateResourceSiteAndPlace(siteType.Target, pos);
 				}
 			}
 

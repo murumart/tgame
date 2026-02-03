@@ -32,8 +32,8 @@ public partial class LocalAI {
 			Actions.CreateGatherJob([
 					resourceWants[Registry.ResourcesS.Rocks],
 					Factors.FreeWorkerRate(factionActions),
-					Factors.HasFreeResourceSite(actions, Registry.ResourceSitesS.Boulder),
-				], factionActions, Registry.ResourceSitesS.Boulder),
+					Factors.HasFreeResourceSite(actions, Registry.ResourceSitesS.Rock),
+				], factionActions, Registry.ResourceSitesS.Rock),
 		];
 		foreach (var building in Resources.Buildings) {
 			mainActions = mainActions.Append(
