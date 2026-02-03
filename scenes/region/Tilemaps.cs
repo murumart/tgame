@@ -48,7 +48,7 @@ namespace scenes.region {
 
 	}
 
-	class GroundCellType {
+	public class GroundCellType {
 
 		public readonly static GroundCellType VOID = new() {
 			SourceId = 1,

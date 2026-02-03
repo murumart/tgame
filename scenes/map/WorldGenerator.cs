@@ -10,6 +10,23 @@ namespace scenes.map {
 
 		readonly (Vector2I, byte)[] GrowDirs = { (Vector2I.Right, 0b1), (Vector2I.Left, 0b10), (Vector2I.Down, 0b100), (Vector2I.Up, 0b1000) };
 
+		readonly struct KernelVal(int x, int y, float coef) {
+			public readonly int X => x;
+			public readonly int Y => y;
+			public readonly float Coef => coef;
+		}
+		readonly KernelVal[] kernel = {
+			new( 0,  0, 0.30f),
+			new( 1,  0, 0.15f),
+			new(-1,  0, 0.15f),
+			new( 0,  1, 0.15f),
+			new( 0, -1, 0.15f),
+			new( 2,  0, 0.05f),
+			new( -2, 0, 0.05f),
+			new( 0,  2, 0.05f),
+			new( 0, -2, 0.05f),
+		};
+
 		[Export] FastNoiseLite continentNoise;
 		[Export] FastNoiseLite temperatureNoise;
 		[Export] FastNoiseLite humidityNoise;
@@ -63,6 +80,7 @@ namespace scenes.map {
 					world.SetElevation(x, y, continentSample);
 				}
 			}
+			// creating initial seawind
 			for (int xinc = 0; xinc < world.Longitude; xinc++) {
 				for (int yinc = 0; yinc < world.Latitude; yinc++) {
 					int x = xinc;
@@ -80,6 +98,29 @@ namespace scenes.map {
 					float seawind = (previousSeawindSample - seawindElevationDifferenceReductionCurve.SampleBaked(aboveSeaSample - previousAboveSeaSample)) + seawindGain;
 					seawind = Mathf.Clamp(seawind, 0f, 1f);
 					world.SetSeaWind(x, y, seawind);
+				}
+			}
+			// blurring the seawind
+			float kernelSum = kernel.Sum(k => k.Coef);
+			for (int x = 0; x < world.Longitude; x++) {
+				for (int y = 0; y < world.Latitude; y++) {
+					float val = 0;
+					foreach (var p in kernel) {
+						val += world.GetSeaWind(x + p.X, y + p.Y) * p.Coef;
+					}
+					val /= kernelSum;
+					world.SetSeaWind(x, y, val);
+				}
+			}
+			for (int xinc = 0; xinc < world.Longitude; xinc++) {
+				for (int yinc = 0; yinc < world.Latitude; yinc++) {
+					int x = xinc;
+					int y = yinc;
+					if (world.SeaWindDirection.X == -1) x = world.Longitude - xinc - 1;
+					if (world.SeaWindDirection.Y == -1) y = world.Latitude - yinc - 1;
+
+					float seawind = world.GetSeaWind(x, y);
+					float continentSample = world.GetElevation(x, y);
 
 					float distanceFromEquator = Math.Abs(y - world.Latitude * 0.5f) / (world.Latitude * 0.5f);
 					float temperatureSample = Mathf.Lerp(
@@ -105,8 +146,8 @@ namespace scenes.map {
 					var humi = world.GetHumidity(x, y);
 					var temp = world.GetTemperature(x, y);
 					if (ele < 0) world.SetTile(x, y, GroundTileType.Ocean);
-					else if (ele < 0.02 || humi < 0.01f) world.SetTile(x, y, GroundTileType.Sand);
-					else if (temp < -0.01f) world.SetTile(x, y, GroundTileType.Snow);
+					else if (ele < 0.02 || humi < 0.07f) world.SetTile(x, y, GroundTileType.Sand);
+					else if (temp < -0.01f || ele > 0.5f) world.SetTile(x, y, GroundTileType.Snow);
 					else world.SetTile(x, y, GroundTileType.Grass);
 				}
 			}

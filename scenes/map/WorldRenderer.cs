@@ -1,4 +1,5 @@
 using Godot;
+using scenes.region;
 
 public partial class WorldRenderer : Node {
 
@@ -13,7 +14,8 @@ public partial class WorldRenderer : Node {
 	[Export] Gradient humidityGradient;
 
 	public enum DrawMode {
-		Continents,
+		Elevation,
+		Ground,
 		SeaWind,
 		Temperature,
 		Humidity,
@@ -28,8 +30,11 @@ public partial class WorldRenderer : Node {
 		set {
 			_drawMode = value;
 			switch (drawMode) {
-				case DrawMode.Continents:
+				case DrawMode.Elevation:
 					DrawContinents();
+					break;
+				case DrawMode.Ground:
+					DrawGround();
 					break;
 				case DrawMode.SeaWind:
 					DrawSeaWind();
@@ -125,13 +130,34 @@ public partial class WorldRenderer : Node {
 		UpdateImage(worldImage, groundSprite);
 	}
 
+	void DrawGround() {
+		if (world == null) return;
+		var worldImage = GetImage(groundSprite);
+		var textureImage = GD.Load<Texture2D>("res://scenes/region/tiles1.png").GetImage();
+		for (int x = 0; x < world.Longitude; x++) {
+			for (int y = 0; y < world.Latitude; y++) {
+				var tile = world.GetTile(x, y);
+				var celltype = GroundCellType.MatchTileTypeToCell(tile);
+				var v = new Vector2I(celltype.AtlasCoords.X * 64 + 32, celltype.AtlasCoords.Y * 48 + 16);
+				Color color = textureImage.GetPixelv(v);
+				worldImage.SetPixel(x, y, color);
+			}
+
+		}
+		UpdateImage(worldImage, groundSprite);
+	}
+
+
 	public void Draw(World world) {
 		this.world = world;
 		ResetImages();
 		switch (drawMode) {
-			case DrawMode.Continents:
+			case DrawMode.Elevation:
 				DrawContinents();
 				break;
+			case DrawMode.Ground:
+					DrawGround();
+					break;
 			case DrawMode.SeaWind:
 				DrawSeaWind();
 				break;
