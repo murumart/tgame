@@ -40,7 +40,8 @@ namespace resouces.game {
 			OperationLesser,
 			OperationNot,
 
-			OperationRangeExpression,
+			RangeExpression,
+			ElevationOverZero,
 
 		}
 
@@ -169,7 +170,7 @@ namespace resouces.game {
 							stack.Push(a != 0f ? 0.0f : 1.0f);
 						}
 						break;
-					case CalcCommand.OperationRangeExpression:
+					case CalcCommand.RangeExpression:
 						Debug.Assert(stack.Count > 2, "Not enough values in stack for operands"); {
 							float b = stack.Pop();
 							float a = stack.Pop();
@@ -179,6 +180,9 @@ namespace resouces.game {
 							float distanceFromCentre = Math.Abs(rangeCentre - c) / rangeWidth;
 							stack.Push(1f - distanceFromCentre);
 						}
+						break;
+					case CalcCommand.ElevationOverZero:
+						stack.Push(world.GetElevation(x, y) > 0f ? 1.0f : 0.0f);
 						break;
 
 					default:

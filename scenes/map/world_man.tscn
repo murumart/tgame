@@ -63,14 +63,12 @@ point_count = 2
 script = ExtResource("9_iffmc")
 instructions = Array[int]([0])
 constants = PackedFloat32Array(0)
-metadata/_custom_type_script = "uid://bfidlqog07dy7"
 
 [sub_resource type="Resource" id="Resource_getmw"]
 script = ExtResource("9_iffmc")
 Target = ExtResource("8_1p0hh")
-instructions = Array[int]([10, 11, 0, 17, 16, 1, 2, 12, 23, 11, 3, 20, 17, 17])
+instructions = Array[int]([10, 11, 0, 17, 16, 1, 2, 12, 23, 24, 17, 17])
 constants = PackedFloat32Array(0.25, 0.35, 0.05, 0)
-metadata/_custom_type_script = "uid://bfidlqog07dy7"
 
 [sub_resource type="Gradient" id="Gradient_3biw4"]
 offsets = PackedFloat32Array(0.5, 1)

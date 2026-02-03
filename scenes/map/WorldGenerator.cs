@@ -186,13 +186,15 @@ namespace scenes.map {
 				foreach (Vector2I pos in region.GroundTiles.Keys) {
 					// starter house position..
 					if (pos == Vector2I.Zero) continue;
+					// skip randomly
+					if (rng.Randf() >= 0.3) continue;
 					//if ((region.GroundTiles[pos] & GroundTileType.Land) == 0) continue;
 					//else if (GD.Randf() < 0.07f) region.CreateResourceSiteAndPlace(Registry.ResourceSitesS.BroadleafWoods, pos);
 					IResourceSiteType siteType = null;
-					float score = (float)GD.RandRange(-0.5, 0.5);
+					float score = rng.RandfRange(-0.5f, 2.0f);
 					foreach (var genpara in resourceSiteGenerationParameters) {
 						var lscore = genpara.Calculate(world, pos.X + region.WorldPosition.X, pos.Y + region.WorldPosition.Y);
-						System.Console.WriteLine($"WorldGenerator::GenerateRegions : at {pos} scored {genpara.Target?.AssetTypeName ?? "null"} {lscore}");
+						//System.Console.WriteLine($"WorldGenerator::GenerateRegions : at {pos} scored {genpara.Target?.AssetTypeName ?? "null"} {lscore}");
 						if (lscore > score) {
 							score = lscore;
 							siteType = genpara.Target;
