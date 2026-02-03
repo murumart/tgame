@@ -9,8 +9,10 @@
 [ext_resource type="Gradient" uid="uid://bwm3e3btidxww" path="res://resources/visual/map/continent_gradient.tres" id="6_n4hhb"]
 [ext_resource type="Gradient" uid="uid://ypkjsovb40j4" path="res://resources/visual/map/temperature_gradient.tres" id="7_f4k24"]
 [ext_resource type="PackedScene" uid="uid://oq1d8aheub65" path="res://scenes/map/ui/world_ui.tscn" id="7_vqee5"]
+[ext_resource type="Resource" uid="uid://bws8feec8sqin" path="res://resources/game/resource_site_types/broadleaf_woods.tres" id="8_1p0hh"]
 [ext_resource type="FastNoiseLite" uid="uid://elpkgdjffs74" path="res://scenes/map/noises/temperature.tres" id="8_3biw4"]
 [ext_resource type="Gradient" uid="uid://w5sdtmt8u44c" path="res://resources/visual/map/humidity_gradient.tres" id="9_h4q0h"]
+[ext_resource type="Script" uid="uid://bfidlqog07dy7" path="res://resources/game/resource_site_types/GenerationParameters.cs" id="9_iffmc"]
 [ext_resource type="FastNoiseLite" uid="uid://dubsuvs1ouru5" path="res://scenes/map/noises/humidity.tres" id="10_t34eq"]
 [ext_resource type="FastNoiseLite" uid="uid://bfyvnr33jlpag" path="res://scenes/map/noises/seawind_gain.tres" id="11_a3btc"]
 
@@ -57,6 +59,19 @@ _limits = [0.0, 500.0, 0.0, 1200.0]
 _data = [Vector2(0, 0), 0.0, 0.24459472, 0, 0, Vector2(1200, 195.57611), 0.35408792, 0.0, 0, 0]
 point_count = 2
 
+[sub_resource type="Resource" id="Resource_pnmcl"]
+script = ExtResource("9_iffmc")
+instructions = null
+initialStack = PackedFloat32Array(0)
+metadata/_custom_type_script = "uid://bfidlqog07dy7"
+
+[sub_resource type="Resource" id="Resource_getmw"]
+script = ExtResource("9_iffmc")
+Target = ExtResource("8_1p0hh")
+instructions = Array[int]([1, 11, 0, 7, 2, 7])
+initialStack = PackedFloat32Array(0)
+metadata/_custom_type_script = "uid://bfidlqog07dy7"
+
 [sub_resource type="Gradient" id="Gradient_3biw4"]
 offsets = PackedFloat32Array(0.5, 1)
 colors = PackedColorArray(0.32941177, 0.40392157, 0.3372549, 1, 0.94509804, 0.9647059, 0.9411765, 1)
@@ -100,6 +115,7 @@ humidityCurve = SubResource("Curve_iffmc")
 temperaturePolarEquatorCurve = SubResource("Curve_h4q0h")
 elevationTemperatureReductionCurve = SubResource("Curve_3biw4")
 populationLandTileCurve = SubResource("Curve_vqee5")
+resourceSiteGenerationParameters = Array[Object]([SubResource("Resource_pnmcl"), SubResource("Resource_getmw")])
 
 [node name="WorldRenderer" type="Node" parent="." unique_id=1973556366 node_paths=PackedStringArray("groundSprite", "RegionSprite", "highlightSprite")]
 script = ExtResource("5_3biw4")

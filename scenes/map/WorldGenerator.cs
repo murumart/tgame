@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Godot;
+using resouces.game;
+using static ResourceSite;
 
 namespace scenes.map {
 
@@ -45,6 +47,7 @@ namespace scenes.map {
 		[Export] Curve temperaturePolarEquatorCurve;
 		[Export] Curve elevationTemperatureReductionCurve;
 		[Export] Curve populationLandTileCurve;
+		[Export] Godot.Collections.Array<GenerationParameters> resourceSiteGenerationParameters;
 
 		public Region[] Regions;
 
@@ -181,11 +184,22 @@ namespace scenes.map {
 
 			foreach (Region region in regionsLand) {
 				foreach (Vector2I pos in region.GroundTiles.Keys) {
-					if (pos == Vector2I.Zero) continue; // starter house position..
-					if ((region.GroundTiles[pos] & GroundTileType.Land) == 0) continue;
-					if (GD.Randf() < 0.01f) region.CreateResourceSiteAndPlace(Registry.ResourceSites.GetAsset("boulder"), pos);
-					else if (GD.Randf() < 0.07f) region.CreateResourceSiteAndPlace(Registry.ResourceSites.GetAsset("broadleaf_woods"), pos);
-					else if (GD.Randf() < 0.003f) region.CreateResourceSiteAndPlace(Registry.ResourceSites.GetAsset("clay_pit"), pos);
+					// starter house position..
+					if (pos == Vector2I.Zero) continue;
+					//if ((region.GroundTiles[pos] & GroundTileType.Land) == 0) continue;
+					//else if (GD.Randf() < 0.07f) region.CreateResourceSiteAndPlace(Registry.ResourceSitesS.BroadleafWoods, pos);
+					IResourceSiteType siteType = null;
+					float score = (float)GD.RandRange(-0.5, 0.5);
+					foreach (var genpara in resourceSiteGenerationParameters) {
+						var lscore = genpara.Calculate(world, pos.X + region.WorldPosition.X, pos.Y + region.WorldPosition.Y);
+						System.Console.WriteLine($"WorldGenerator::GenerateRegions : at {pos} scored {genpara.Target?.AssetTypeName ?? "null"} {lscore}");
+						if (lscore > score) {
+							score = lscore;
+							siteType = genpara.Target;
+						}
+					}
+					if (siteType == null || (siteType.AssetName == "null")) continue;
+					region.CreateResourceSiteAndPlace(siteType, pos);
 				}
 			}
 
@@ -233,7 +247,7 @@ namespace scenes.map {
 
 			var tw = CreateTween().SetLoops(0);
 			var growCallback = Callable.From(() => {
-				var grew = GrowAllRegionsOneStep(regions, occupied, freeEdgeTiles, world, sea: sea, iterations: 17);
+				var grew = GrowAllRegionsOneStep(regions, occupied, freeEdgeTiles, world, sea: sea, iterations: 128);
 				Regions = regions;
 				if (!grew) {
 					tw.EmitSignal("finished");
@@ -274,25 +288,25 @@ namespace scenes.map {
 			var growthOccurred = false;
 			var tileType = !sea ? GroundTileType.Grass : GroundTileType.Ocean;
 
-			for (int i = 0; i < regions.Length; i++) {
-				var region = regions[i];
-				var freeEdges = freeEdgeTiles[region];
-				var c = freeEdges.Count;
-				for (int x = 0; x < c; x++) {
-					var addKeys = new HashSet<Vector2I>(); // coordinates in region local space
-					addKeys.Clear();
-					for (int dirIx = 0; dirIx < 4; dirIx++) {
-						var ix = rng.RandiRange(0, freeEdges.Count - 1);
-						growthOccurred = GrowRegionInDirection(occupied, addKeys, freeEdges, ix, region, dirIx, world, tileType) || growthOccurred;
+			for (int xxx = 0; xxx < iterations; xxx++) for (int i = 0; i < regions.Length; i++) {
+					var region = regions[i];
+					var freeEdges = freeEdgeTiles[region];
+					var c = freeEdges.Count;
+					for (int x = 0; x < c; x++) {
+						var addKeys = new HashSet<Vector2I>(); // coordinates in region local space
+						addKeys.Clear();
+						for (int dirIx = 0; dirIx < 4; dirIx++) {
+							var ix = rng.RandiRange(0, freeEdges.Count - 1);
+							growthOccurred = GrowRegionInDirection(occupied, addKeys, freeEdges, ix, region, dirIx, world, tileType) || growthOccurred;
+							if (freeEdges.Count == 0) break;
+						}
+						foreach (var k in addKeys) {
+							Debug.Assert(!region.GroundTiles.ContainsKey(k), $"region {region} already owns the local tile {k}");
+							region.GroundTiles.Add(k, world.GetTile(k.X + region.WorldPosition.X, k.Y + region.WorldPosition.Y));
+						}
 						if (freeEdges.Count == 0) break;
 					}
-					foreach (var k in addKeys) {
-						Debug.Assert(!region.GroundTiles.ContainsKey(k), $"region {region} already owns the local tile {k}");
-						region.GroundTiles.Add(k, world.GetTile(k.X + region.WorldPosition.X, k.Y + region.WorldPosition.Y));
-					}
-					if (freeEdges.Count == 0) break;
 				}
-			}
 			if (!growthOccurred) {
 				GD.Print("WorldGenerator::GrowAllRegionsOneStep : region growth filled up all space attainable");
 			}
