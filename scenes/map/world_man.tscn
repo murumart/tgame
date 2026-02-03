@@ -19,6 +19,7 @@
 [ext_resource type="Resource" uid="uid://bh5svfg5ua7eb" path="res://resources/game/resource_site_types/rock.tres" id="11_getmw"]
 [ext_resource type="Resource" uid="uid://dwcrohuk4oajt" path="res://resources/game/resource_site_types/rubble.tres" id="12_dtgda"]
 [ext_resource type="Resource" uid="uid://d08tlsfel81yf" path="res://resources/game/resource_site_types/conifer_woods.tres" id="13_pnmcl"]
+[ext_resource type="Resource" uid="uid://bmiejrddiwehn" path="res://resources/game/resource_site_types/savanna_trees.tres" id="14_nugjq"]
 
 [sub_resource type="Curve" id="Curve_7j5km"]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.21091333, 0.051505923), 0.0, 0.0, 0, 0, Vector2(0.38409886, 0.7443265), 0.0, 0.0, 0, 0, Vector2(0.53596926, 0.9231189), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
@@ -63,17 +64,6 @@ _limits = [0.0, 500.0, 0.0, 1200.0]
 _data = [Vector2(0, 0), 0.0, 0.24459472, 0, 0, Vector2(1200, 195.57611), 0.35408792, 0.0, 0, 0]
 point_count = 2
 
-[sub_resource type="Resource" id="Resource_iffmc"]
-script = ExtResource("9_1p0hh")
-Target = ExtResource("8_1p0hh")
-MinElevation = 0.02
-MaxElevation = 0.42
-MinTemperature = 0.035
-MaxTemperature = 0.545
-MinHumidity = 0.235
-MaxHumidity = 0.505
-metadata/_custom_type_script = "uid://dpr7b2iecx6gm"
-
 [sub_resource type="Resource" id="Resource_getmw"]
 script = ExtResource("9_1p0hh")
 Target = ExtResource("10_iffmc")
@@ -97,6 +87,17 @@ MinElevation = 0.16
 Rarity = 0.145
 metadata/_custom_type_script = "uid://dpr7b2iecx6gm"
 
+[sub_resource type="Resource" id="Resource_iffmc"]
+script = ExtResource("9_1p0hh")
+Target = ExtResource("8_1p0hh")
+MinElevation = 0.02
+MaxElevation = 0.42
+MinTemperature = 0.035
+MaxTemperature = 0.4
+MinHumidity = 0.235
+MaxHumidity = 0.505
+metadata/_custom_type_script = "uid://dpr7b2iecx6gm"
+
 [sub_resource type="Resource" id="Resource_nugjq"]
 script = ExtResource("9_1p0hh")
 Target = ExtResource("13_pnmcl")
@@ -104,8 +105,19 @@ MinElevation = 0.025
 MaxElevation = 0.74
 MinTemperature = -0.29
 MaxTemperature = 0.155
-MinHumidity = 0.235
+MinHumidity = 0.195
 MaxHumidity = 0.505
+metadata/_custom_type_script = "uid://dpr7b2iecx6gm"
+
+[sub_resource type="Resource" id="Resource_a1kp6"]
+script = ExtResource("9_1p0hh")
+Target = ExtResource("14_nugjq")
+MinElevation = 0.07
+MaxElevation = 0.305
+MinTemperature = 0.425
+MinHumidity = 0.155
+MaxHumidity = 0.395
+Rarity = 0.8
 metadata/_custom_type_script = "uid://dpr7b2iecx6gm"
 
 [sub_resource type="Gradient" id="Gradient_3biw4"]
@@ -151,7 +163,7 @@ humidityCurve = SubResource("Curve_iffmc")
 temperaturePolarEquatorCurve = SubResource("Curve_h4q0h")
 elevationTemperatureReductionCurve = SubResource("Curve_3biw4")
 populationLandTileCurve = SubResource("Curve_vqee5")
-resourceSiteGenerationParameters = Array[Object]([SubResource("Resource_iffmc"), SubResource("Resource_getmw"), SubResource("Resource_dtgda"), SubResource("Resource_pnmcl"), SubResource("Resource_nugjq")])
+resourceSiteGenerationParameters = Array[Object]([SubResource("Resource_getmw"), SubResource("Resource_dtgda"), SubResource("Resource_pnmcl"), SubResource("Resource_iffmc"), SubResource("Resource_nugjq"), SubResource("Resource_a1kp6")])
 
 [node name="WorldRenderer" type="Node" parent="." unique_id=1973556366 node_paths=PackedStringArray("groundSprite", "RegionSprite", "highlightSprite")]
 script = ExtResource("5_3biw4")

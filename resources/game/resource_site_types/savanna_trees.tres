@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="ResourceSiteType" format=3 uid="uid://bmiejrddiwehn"]
+
+[ext_resource type="Resource" uid="uid://pmrcwo4t316p" path="res://resources/game/resource_types/logs.tres" id="1_l4b5o"]
+[ext_resource type="Script" uid="uid://bnfatrmjew0vy" path="res://resources/game/resource_site_types/ResourceWell.cs" id="2_0pfox"]
+[ext_resource type="Script" uid="uid://ct2a6sqe1m7mx" path="res://resources/game/resource_site_types/ResourceSiteType.cs" id="3_aa6c6"]
+
+[sub_resource type="Resource" id="Resource_l4b5o"]
+script = ExtResource("2_0pfox")
+resourceType = ExtResource("1_l4b5o")
+minutesPerBunch = 60
+bunchSize = 2
+minutesPerBunchRegen = 17280
+initialBunches = 40
+metadata/_custom_type_script = "uid://bnfatrmjew0vy"
+
+[resource]
+script = ExtResource("3_aa6c6")
+name = "savanna trees"
+resourceTypeDescription = "logs"
+mineResources = Array[Object]([SubResource("Resource_l4b5o")])
+ScenePath = "uid://8qfldb4j4c0f"
+metadata/_custom_type_script = "uid://ct2a6sqe1m7mx"
