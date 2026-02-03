@@ -21,10 +21,10 @@ namespace scenes.map {
 			new(-1,  0, 0.15f),
 			new( 0,  1, 0.15f),
 			new( 0, -1, 0.15f),
-			new( 2,  0, 0.05f),
-			new( -2, 0, 0.05f),
-			new( 0,  2, 0.05f),
-			new( 0, -2, 0.05f),
+			new( 2,  0, 0.25f),
+			new( -2, 0, 0.25f),
+			new( 0,  2, 0.25f),
+			new( 0, -2, 0.25f),
 		};
 
 		[Export] FastNoiseLite continentNoise;
