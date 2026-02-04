@@ -10,7 +10,6 @@ namespace resources.game.resource_site_types {
 	public partial class ResourceSiteType : Resource, IResourceSiteType, IScenePathetic {
 
 		[Export] string name;
-		[Export] public string resourceTypeDescription;
 		[Export] Array<ResourceWell> mineResources;
 		[Export(PropertyHint.File, "*.tscn")] string ScenePath;
 
@@ -22,7 +21,7 @@ namespace resources.game.resource_site_types {
 
 		public IEnumerable<Job> GetAvailableJobs() {
 			List<MapObjectJob> jobs = new();
-			jobs.Add(new GatherResourceJob(resourceTypeDescription));
+			for (int i = 0; i < mineResources.Count; i++) jobs.Add(new GatherResourceJob(i, GetJobDescription(i)));
 			return jobs;
 		}
 
@@ -31,6 +30,8 @@ namespace resources.game.resource_site_types {
 			foreach (var item in mineResources) list.Add(item.GetWell());
 			return list;
 		}
+
+		public string GetJobDescription(int wellIx) => mineResources[wellIx].GetWell().ResourceType.AssetName;
 
 		public string GetScenePath() => ScenePath;
 	}

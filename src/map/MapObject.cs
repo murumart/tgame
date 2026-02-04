@@ -141,6 +141,8 @@ public partial class ResourceSite {
 			return new ResourceSite(this, position);
 		}
 
+		public string GetJobDescription(int wellIx);
+
 	}
 
 	public class Well {

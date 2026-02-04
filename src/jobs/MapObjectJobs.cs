@@ -131,9 +131,10 @@ public class GatherResourceJob : MapObjectJob {
 
 	ResourceStorage storage;
 	ResourceSite site;
+	int wellIx;
 	readonly string resourceTypeDescription;
 
-	float[] timeSpent; // storing as float due to workers
+	float timeSpent; // storing as float due to workers
 	readonly List<ResourceBundle> grant = new();
 
 
@@ -145,16 +146,17 @@ public class GatherResourceJob : MapObjectJob {
 		return site.MineWells;
 	}
 
-	public GatherResourceJob(string resourceTypeDescription) : this() {
+	public GatherResourceJob(int well, string resourceTypeDescription) : this() {
+		wellIx = well;
 		this.resourceTypeDescription = resourceTypeDescription;
 	}
 
-	public override Job Copy() => new GatherResourceJob(resourceTypeDescription);
+	public override Job Copy() => new GatherResourceJob(wellIx, resourceTypeDescription);
 
 	public override void Initialise(Faction ctxFaction, MapObject mapObject) {
 		storage = ctxFaction.Resources;
 		site = (ResourceSite)mapObject;
-		timeSpent = new float[site.MineWells.Count];
+		timeSpent = 0f;
 	}
 
 	public override void Deinitialise(Faction ctxFaction) { }
@@ -163,17 +165,14 @@ public class GatherResourceJob : MapObjectJob {
 
 	public override void PassTime(TimeT minutes) {
 		float ts = GetWorkTime(minutes);
+		timeSpent += ts;
 
-		for (int i = 0; i < timeSpent.Length; i++) {
-			timeSpent[i] += ts;
+		var well = site.MineWells[wellIx];
 
-			var well = site.MineWells[i];
-
-			while (timeSpent[i] >= well.MinutesPerBunch && storage.CanAdd(well.BunchSize) && well.HasBunches) {
-				timeSpent[i] -= well.MinutesPerBunch;
-				well.Deplete();
-				grant.Add(new(well.ResourceType, well.BunchSize));
-			}
+		while (timeSpent >= well.MinutesPerBunch && storage.CanAdd(well.BunchSize) && well.HasBunches) {
+			timeSpent -= well.MinutesPerBunch;
+			well.Deplete();
+			grant.Add(new(well.ResourceType, well.BunchSize));
 		}
 
 		if (grant.Count != 0) {
@@ -183,38 +182,21 @@ public class GatherResourceJob : MapObjectJob {
 	}
 
 	public override void CheckDone(Faction regionFaction) {
-		foreach (var item in site.MineWells) {
-			if (item.HasBunches) return;
-		}
+		if (site.MineWells[wellIx].HasBunches) return;
 
 		regionFaction.RemoveJob(this);
+		// remove a completely depleted resource site
+		foreach (var well in site.MineWells) if (well.HasBunches) return;
 		regionFaction.Uproot(site.GlobalPosition - regionFaction.Region.WorldPosition);
-		site = null;
 	}
 
 	// display
 
 	public override float GetProgressEstimate() {
 		float estimate = 0f;
-		for (int i = 0; i < timeSpent.Length; i++) {
-			var well = site.MineWells[i];
-			estimate = Math.Max(estimate, timeSpent[i] / well.MinutesPerBunch);
-		}
+		var well = site.MineWells[wellIx];
+		estimate = Math.Max(estimate, timeSpent / well.MinutesPerBunch);
 		return estimate;
-	}
-
-	int GetClosestWell() {
-		float time = -1f;
-		int ix = -1;
-		for (int i = 0; i < timeSpent.Length; i++) {
-			var well = site.MineWells[i];
-			if (timeSpent[i] / well.MinutesPerBunch > time) {
-				time = timeSpent[i];
-				ix = i;
-			}
-		}
-		Debug.Assert(ix != -1, "Couldn't get closest well? What the issue");
-		return ix;
 	}
 
 	public override string GetProductionDescription() {
@@ -222,24 +204,20 @@ public class GatherResourceJob : MapObjectJob {
 			return Title;
 		}
 		Debug.Assert(Workers >= 0, $"Worker count can't be negative (is {Workers})");
-		var str = $"The {site.Type.AssetName} produces:\n";
-		if (Workers == 0) str += "Nothing, as long as there's no workers. But it could produce:\n";
-		foreach (var well in site.MineWells) {
-			float time = well.MinutesPerBunch / MathF.Max(GetWorkTime(1), 1);
-			str += $" * {well.BunchSize} x {well.ResourceType.AssetName} every {GameTime.GetFancyTimeString((TimeT)time)}.\n";
-			str += $"   This is {100 - ((float)well.Bunches / well.InitialBunches) * 100:0}% depleted.\n";
-		}
-
-		
+		var str = $"";
+		if (Workers == 0) str += "Create a job to gather...\n";
+		else str = "Gathering...\n";
+		var well = site.MineWells[wellIx];
+		float time = well.MinutesPerBunch / MathF.Max(GetWorkTime(1), 1);
+		str += $"{well.BunchSize} x {well.ResourceType.AssetName} every {GameTime.GetFancyTimeString((TimeT)time)}.\n";
 
 		return str;
 	}
 
 	public override string GetStatusDescription() {
 		if (Workers == 0) return "";
-		int wellIx = GetClosestWell();
 		var well = site.MineWells[wellIx];
-		float timeLeft = well.MinutesPerBunch - timeSpent[wellIx];
+		float timeLeft = well.MinutesPerBunch - timeSpent;
 		timeLeft /= GetWorkTime(1);
 		return GameTime.GetFancyTimeString((TimeT)timeLeft) + " until more " + well.ResourceType.AssetName + ".";
 	}

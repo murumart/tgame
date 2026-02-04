@@ -28,27 +28,27 @@ public partial class LocalAI {
 					resourceWants[Registry.ResourcesS.Logs],
 					Factors.FreeWorkerRate(factionActions),
 					Factors.HasFreeResourceSite(actions, Registry.ResourceSitesS.BroadleafWoods),
-				], factionActions, Registry.ResourceSitesS.BroadleafWoods),
+				], factionActions, Registry.ResourceSitesS.BroadleafWoods, Registry.ResourcesS.Logs),
 			Actions.CreateGatherJob([
 					resourceWants[Registry.ResourcesS.Logs],
 					Factors.FreeWorkerRate(factionActions),
 					Factors.HasFreeResourceSite(actions, Registry.ResourceSitesS.ConiferWoods),
-				], factionActions, Registry.ResourceSitesS.ConiferWoods),
+				], factionActions, Registry.ResourceSitesS.ConiferWoods, Registry.ResourcesS.Logs),
 			Actions.CreateGatherJob([
 					resourceWants[Registry.ResourcesS.Logs],
 					Factors.FreeWorkerRate(factionActions),
 					Factors.HasFreeResourceSite(actions, Registry.ResourceSitesS.SavannaTrees),
-				], factionActions, Registry.ResourceSitesS.SavannaTrees),
+				], factionActions, Registry.ResourceSitesS.SavannaTrees, Registry.ResourcesS.Logs),
 			Actions.CreateGatherJob([
 					resourceWants[Registry.ResourcesS.Rocks],
 					Factors.FreeWorkerRate(factionActions),
 					Factors.HasFreeResourceSite(actions, Registry.ResourceSitesS.Rock),
-				], factionActions, Registry.ResourceSitesS.Rock),
+				], factionActions, Registry.ResourceSitesS.Rock, Registry.ResourcesS.Rocks),
 			Actions.CreateGatherJob([
 					resourceWants[Registry.ResourcesS.Rocks],
 					Factors.FreeWorkerRate(factionActions),
 					Factors.HasFreeResourceSite(actions, Registry.ResourceSitesS.Rubble),
-				], factionActions, Registry.ResourceSitesS.Rock),
+				], factionActions, Registry.ResourceSitesS.Rubble, Registry.ResourcesS.Rocks),
 		];
 		foreach (var building in Resources.Buildings) {
 			mainActions = mainActions.Append(
@@ -211,14 +211,17 @@ public partial class LocalAI {
 			}, $"RemoveJob({job})");
 		}
 
-		public static Action CreateGatherJob(DecisionFactor[] factors, FactionActions ac, IResourceSiteType siteType) {
+		public static Action CreateGatherJob(DecisionFactor[] factors, FactionActions ac, IResourceSiteType siteType, IResourceType wantedResource) {
 			return new(factors, () => {
 				foreach (var mop in ac.GetMapObjects()) {
 					if (mop is ResourceSite rs) {
-						if (rs.Type == siteType && ac.GetMapObjectsJob(rs) == null) {
-							var jobdesc = (rs.Type as ResourceSiteType).resourceTypeDescription; // this will breka when not using resources
-							ac.AddJob(rs, new GatherResourceJob(jobdesc));
-							return;
+						int wix = 0;
+						foreach (var well in rs.MineWells) {
+							if (rs.Type == siteType && well.ResourceType == wantedResource && ac.GetMapObjectsJob(rs) == null) {
+								ac.AddJob(rs, new GatherResourceJob(wix, rs.Type.GetJobDescription(wix)));
+								return;
+							}
+							wix++;
 						}
 					}
 				}
