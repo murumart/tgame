@@ -1,7 +1,7 @@
-using Godot;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Godot;
 
 
 namespace scenes.region.ui {
@@ -10,7 +10,7 @@ namespace scenes.region.ui {
 
 		public enum State : int {
 			ViewJob,
-			AddJobs,
+			AddJob,
 		}
 
 		[Export] UI ui;
@@ -22,6 +22,8 @@ namespace scenes.region.ui {
 		[Export] ItemList addJobItemList;
 		[Export] RichTextLabel addJobDescription;
 		[Export] Button addJobConfirmButton;
+
+		[Export] RichTextLabel detailsText;
 
 		bool attachedToMapObject = false;
 		State state;
@@ -72,18 +74,17 @@ namespace scenes.region.ui {
 				OpenViewJobScreen();
 			}
 
-			CallDeferred("show");
+
+
+			Callable.From(Show).CallDeferred();
 		}
 
 		public void Open(MapObject mapObject) {
 			attachedToMapObject = true;
 			this.myMapObject = mapObject;
 
-			if (mapObject is Building b) titleLabel.Text = b.Type.AssetName;
-			else if (mapObject is ResourceSite rs) titleLabel.Text = rs.Type.AssetName;
-			else Debug.Assert(false, "Unimplemented map object name display");
-
 			Open();
+			OpenMapObjectInfo();
 		}
 
 		public void Close() {
@@ -96,7 +97,7 @@ namespace scenes.region.ui {
 		}
 
 		void OpenAddJobScreen() {
-			state = State.AddJobs;
+			state = State.AddJob;
 			addJobMenu.Show();
 			jobInfoPanel.Hide();
 
@@ -122,6 +123,40 @@ namespace scenes.region.ui {
 			jobInfoPanel.Show();
 			if (ExtantJob.NeedsWorkers) sliderMax = Math.Min(ui.GetMaxFreeWorkers() + (uint)ExtantJob.Workers, ExtantJob.MaxWorkers);
 			jobInfoPanel.Display(ui, ExtantJob, 0, sliderMax, JobWorkerCountChanged);
+		}
+
+		void OpenMapObjectInfo() {
+			Debug.Assert(attachedToMapObject && myMapObject != null, "Needs a map object to display its info");
+
+			System.Text.StringBuilder sb = new();
+			if (myMapObject is Building b) {
+				titleLabel.Text = b.Type.AssetName;
+				if (!b.IsConstructed) {
+					sb.Append($"Construction in progress... ({(int)(b.GetBuildProgress() * 100)}%)\n");
+				}
+				if (b.GetHousingCapacity() > 0 && b.IsConstructed) {
+					sb.Append($"Housing room for {b.GetHousingCapacity()} people.\n");
+				}
+			} else if (myMapObject is ResourceSite r) {
+				titleLabel.Text = r.Type.AssetName;
+				sb.Append($"The {r.Type.AssetName} contains exploitable resources...\n");
+				bool reproduce = false;
+				foreach (var well in r.MineWells) {
+					sb.Append($" * {well.BunchSize} x {well.ResourceType.AssetName} every {GameTime.GetFancyTimeString(well.MinutesPerBunch)}.\n");
+					sb.Append($"   This is {100 - ((float)well.Bunches / well.InitialBunches) * 100:0}% depleted.\n");
+					reproduce = reproduce || well.MinutesPerBunchRegen > 0;
+				}
+				if (reproduce) {
+					sb.Append($"\nSome {("resources")} can regrow...\n");
+					foreach (var well in r.MineWells) {
+						if (well.MinutesPerBunchRegen > 0) {
+							sb.Append($" * {well.ResourceType.AssetName} grows every {GameTime.GetFancyTimeString(well.MinutesPerBunchRegen)}.\n");
+						}
+					}
+				}
+			} else Debug.Assert(false, "Unimplemented map object name display");
+
+			detailsText.Text = sb.ToString();
 		}
 
 		void JobWorkerCountChanged(int ix, int by) {

@@ -224,22 +224,13 @@ public class GatherResourceJob : MapObjectJob {
 		Debug.Assert(Workers >= 0, $"Worker count can't be negative (is {Workers})");
 		var str = $"The {site.Type.AssetName} produces:\n";
 		if (Workers == 0) str += "Nothing, as long as there's no workers. But it could produce:\n";
-		bool reproduce = false;
 		foreach (var well in site.MineWells) {
 			float time = well.MinutesPerBunch / MathF.Max(GetWorkTime(1), 1);
 			str += $" * {well.BunchSize} x {well.ResourceType.AssetName} every {GameTime.GetFancyTimeString((TimeT)time)}.\n";
 			str += $"   This is {100 - ((float)well.Bunches / well.InitialBunches) * 100:0}% depleted.\n";
-			reproduce = reproduce || well.MinutesPerBunchRegen > 0;
 		}
 
-		if (reproduce) {
-			str += $"\nSome {(resourceTypeDescription ?? "resources")} can regrow:\n";
-			foreach (var well in site.MineWells) {
-				if (well.MinutesPerBunchRegen > 0) {
-					str += $" * {well.ResourceType.AssetName.Capitalize()} grows every {GameTime.GetFancyTimeString(well.MinutesPerBunchRegen)}.";
-				}
-			}
-		}
+		
 
 		return str;
 	}
