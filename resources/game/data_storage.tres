@@ -22,7 +22,7 @@
 [ext_resource type="Resource" uid="uid://cbynhxq0y3kkl" path="res://resources/game/resource_types/bricks.tres" id="12_7f1xh"]
 [ext_resource type="Resource" uid="uid://bmiejrddiwehn" path="res://resources/game/resource_site_types/savanna_trees.tres" id="12_j5uyn"]
 [ext_resource type="Resource" uid="uid://ckykt5fdrh727" path="res://resources/game/resource_types/bread.tres" id="17_t4jud"]
-[ext_resource type="Resource" uid="uid://xkt4u6pl6p3" path="res://resources/game/resource_types/nuts.tres" id="18_tycsq"]
+[ext_resource type="Resource" uid="uid://xkt4u6pl6p3" path="res://resources/game/resource_types/fruit.tres" id="18_tycsq"]
 
 [resource]
 script = ExtResource("1_wv3fg")

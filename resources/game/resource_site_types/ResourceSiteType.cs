@@ -19,9 +19,10 @@ namespace resources.game.resource_site_types {
 		public string AssetTypeName => "resource_site";
 
 
-		public IEnumerable<Job> GetAvailableJobs() {
+		public IEnumerable<Job> GetPossibleJobs() {
 			List<MapObjectJob> jobs = new();
-			for (int i = 0; i < mineResources.Count; i++) jobs.Add(new GatherResourceJob(i, GetJobDescription(i)));
+			// these jobs are made in the MapObject::GetAvailableJobs()
+			//for (int i = 0; i < mineResources.Count; i++) jobs.Add(new GatherResourceJob(i, GetJobDescription(i)));
 			return jobs;
 		}
 
@@ -31,7 +32,7 @@ namespace resources.game.resource_site_types {
 			return list;
 		}
 
-		public string GetJobDescription(int wellIx) => mineResources[wellIx].GetWell().ResourceType.AssetName;
+		public string GetJobDescription(Well well) => well.ResourceType.AssetName;
 
 		public string GetScenePath() => ScenePath;
 	}

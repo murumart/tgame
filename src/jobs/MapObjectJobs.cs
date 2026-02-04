@@ -116,10 +116,8 @@ public class GatherResourceJob : MapObjectJob {
 
 	public override string Title =>
 		site == null ?
-			(resourceTypeDescription == null ?
 				"Gather Resources"
-			: "Gather " + resourceTypeDescription.Capitalize())
-		: "Gather from " + site.Type.AssetName;
+		: "Gather " + site.Type.GetJobDescription(site.MineWells[wellIx]);
 
 	public override Vector2I GlobalPosition {
 		get {
@@ -132,30 +130,30 @@ public class GatherResourceJob : MapObjectJob {
 	ResourceStorage storage;
 	ResourceSite site;
 	int wellIx;
-	readonly string resourceTypeDescription;
 
 	float timeSpent; // storing as float due to workers
 	readonly List<ResourceBundle> grant = new();
 
 
 	public GatherResourceJob() {
-		MaxWorkers = 5;
+		Debug.Assert(false, "Don't use no parameter GatherResourceJob constructor");
 	}
 
 	public List<ResourceSite.Well> GetProductions() {
 		return site.MineWells;
 	}
 
-	public GatherResourceJob(int well, string resourceTypeDescription) : this() {
-		wellIx = well;
-		this.resourceTypeDescription = resourceTypeDescription;
+	public GatherResourceJob(int wellix, ResourceSite site) {
+		MaxWorkers = 5;
+		wellIx = wellix;
+		this.site = site;
 	}
 
-	public override Job Copy() => new GatherResourceJob(wellIx, resourceTypeDescription);
+	public override Job Copy() => new GatherResourceJob(wellIx, site);
 
 	public override void Initialise(Faction ctxFaction, MapObject mapObject) {
 		storage = ctxFaction.Resources;
-		site = (ResourceSite)mapObject;
+		Debug.Assert(site == mapObject, $"Constructor and initialisation sites don't match ({site} vs {mapObject})");
 		timeSpent = 0f;
 	}
 
@@ -205,7 +203,8 @@ public class GatherResourceJob : MapObjectJob {
 		}
 		Debug.Assert(Workers >= 0, $"Worker count can't be negative (is {Workers})");
 		var str = $"";
-		if (Workers == 0) str += "Create a job to gather...\n";
+		if (storage == null) str += "Create a job to gather...\n";
+		else if (Workers == 0) str += "Employ workers to gather...\n";
 		else str = "Gathering...\n";
 		var well = site.MineWells[wellIx];
 		float time = well.MinutesPerBunch / MathF.Max(GetWorkTime(1), 1);

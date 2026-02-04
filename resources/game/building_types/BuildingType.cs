@@ -46,7 +46,7 @@ namespace resources.game.building_types {
 			return HoursToConstruct;
 		}
 
-		public IEnumerable<Job> GetAvailableJobs() {
+		public IEnumerable<Job> GetPossibleJobs() {
 			List<Job> jobs = new();
 			if (CraftingJobs != null && CraftingJobs.Count != 0) {
 				jobs.AddRange(GetCraftJobs());

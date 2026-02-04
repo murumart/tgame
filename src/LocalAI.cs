@@ -218,7 +218,7 @@ public partial class LocalAI {
 						int wix = 0;
 						foreach (var well in rs.MineWells) {
 							if (rs.Type == siteType && well.ResourceType == wantedResource && ac.GetMapObjectsJob(rs) == null) {
-								ac.AddJob(rs, new GatherResourceJob(wix, rs.Type.GetJobDescription(wix)));
+								ac.AddJob(rs, new GatherResourceJob(wix, rs));
 								return;
 							}
 							wix++;

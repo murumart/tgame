@@ -41,7 +41,7 @@ namespace scenes.region.ui {
 
 		List<Job> AvailableJobs {
 			get {
-				if (attachedToMapObject) return myMapObject.Type.GetAvailableJobs().ToList();
+				if (attachedToMapObject) return myMapObject.GetAvailableJobs().ToList();
 				return new();
 			}
 		}
@@ -130,7 +130,7 @@ namespace scenes.region.ui {
 
 			System.Text.StringBuilder sb = new();
 			if (myMapObject is Building b) {
-				titleLabel.Text = b.Type.AssetName;
+				titleLabel.Text = b.Type.AssetName.Capitalize();
 				if (!b.IsConstructed) {
 					sb.Append($"Construction in progress... ({(int)(b.GetBuildProgress() * 100)}%)\n");
 				}
@@ -138,11 +138,11 @@ namespace scenes.region.ui {
 					sb.Append($"Housing room for {b.GetHousingCapacity()} people.\n");
 				}
 			} else if (myMapObject is ResourceSite r) {
-				titleLabel.Text = r.Type.AssetName;
+				titleLabel.Text = r.Type.AssetName.Capitalize();
 				sb.Append($"The {r.Type.AssetName} contains exploitable resources...\n");
 				bool reproduce = false;
 				foreach (var well in r.MineWells) {
-					sb.Append($" * {well.BunchSize} x {well.ResourceType.AssetName} every {GameTime.GetFancyTimeString(well.MinutesPerBunch)}.\n");
+					sb.Append($" * {well.ResourceType.AssetName} x {well.Bunches * well.BunchSize}\n");
 					sb.Append($"   This is {100 - ((float)well.Bunches / well.InitialBunches) * 100:0}% depleted.\n");
 					reproduce = reproduce || well.MinutesPerBunchRegen > 0;
 				}

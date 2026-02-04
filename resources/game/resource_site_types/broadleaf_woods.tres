@@ -3,7 +3,7 @@
 [ext_resource type="Resource" uid="uid://pmrcwo4t316p" path="res://resources/game/resource_types/logs.tres" id="1_f7tab"]
 [ext_resource type="Script" uid="uid://bnfatrmjew0vy" path="res://resources/game/resource_site_types/ResourceWell.cs" id="2_xu7eb"]
 [ext_resource type="Script" uid="uid://ct2a6sqe1m7mx" path="res://resources/game/resource_site_types/ResourceSiteType.cs" id="3_urpv6"]
-[ext_resource type="Resource" uid="uid://xkt4u6pl6p3" path="res://resources/game/resource_types/nuts.tres" id="3_xu7eb"]
+[ext_resource type="Resource" uid="uid://xkt4u6pl6p3" path="res://resources/game/resource_types/fruit.tres" id="3_xu7eb"]
 
 [sub_resource type="Resource" id="Resource_f0lo2"]
 script = ExtResource("2_xu7eb")
@@ -20,13 +20,12 @@ resourceType = ExtResource("3_xu7eb")
 minutesPerBunch = 240
 bunchSize = 1
 minutesPerBunchRegen = 34560
-initialBunches = 10
+initialBunches = 30
 metadata/_custom_type_script = "uid://bnfatrmjew0vy"
 
 [resource]
 script = ExtResource("3_urpv6")
 name = "broadleaf woods"
-resourceTypeDescription = "logs"
 mineResources = Array[Object]([SubResource("Resource_f0lo2"), SubResource("Resource_f7tab")])
 ScenePath = "uid://cxjh3gpmdx5oj"
 metadata/_custom_type_script = "uid://ct2a6sqe1m7mx"

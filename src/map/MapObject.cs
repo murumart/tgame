@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Godot;
-using static ResourceStorage;
 
 
 public abstract partial class MapObject {
@@ -10,6 +9,7 @@ public abstract partial class MapObject {
 	protected Vector2I position; public Vector2I GlobalPosition { get => position; }
 	public abstract IMapObjectType Type { get; }
 
+	public virtual IEnumerable<Job> GetAvailableJobs() => Type.GetPossibleJobs();
 
 	protected MapObject(Vector2I globalPosition) {
 		this.position = globalPosition;
@@ -24,7 +24,7 @@ public partial class MapObject {
 	public interface IMapObjectType {
 
 		MapObject CreateMapObject(Vector2I globalPosition);
-		IEnumerable<Job> GetAvailableJobs();
+		IEnumerable<Job> GetPossibleJobs();
 
 	}
 
@@ -120,6 +120,18 @@ public partial class ResourceSite : MapObject {
 		}
 	}
 
+	public override IEnumerable<Job> GetAvailableJobs() {
+		var jobs = base.GetAvailableJobs().ToList();
+		int wellix = 0;
+		foreach (var well in MineWells) {
+			if (well.HasBunches) {
+				jobs.Add(new GatherResourceJob(wellix, this));
+			}
+			wellix += 1;
+		}
+		return jobs;
+	}
+
 	// get a list of the resources. don't use these bundles in actual gameplay, only for display
 	public void GetResourcesAvailableAtPristineNaturalStart(Dictionary<IResourceType, ResourceBundle> resourceDict) {
 		foreach (var well in MineWells) {
@@ -141,7 +153,7 @@ public partial class ResourceSite {
 			return new ResourceSite(this, position);
 		}
 
-		public string GetJobDescription(int wellIx);
+		public string GetJobDescription(Well well);
 
 	}
 

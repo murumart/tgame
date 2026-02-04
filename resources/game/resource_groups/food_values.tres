@@ -3,19 +3,19 @@
 [ext_resource type="Resource" uid="uid://ddqpxr0u07bfp" path="res://resources/game/resource_types/fish.tres" id="1_1i88x"]
 [ext_resource type="Script" uid="uid://eb7fhhrceidl" path="res://resources/game/resource_groups/ResourceGroup.cs" id="1_8lcg2"]
 [ext_resource type="Script" uid="uid://camepisb1ldku" path="res://resources/game/resource_groups/ResourceGroupValue.cs" id="2_1i88x"]
-[ext_resource type="Resource" uid="uid://xkt4u6pl6p3" path="res://resources/game/resource_types/nuts.tres" id="2_np2qo"]
 [ext_resource type="Resource" uid="uid://ckykt5fdrh727" path="res://resources/game/resource_types/bread.tres" id="3_np2qo"]
+[ext_resource type="Resource" uid="uid://xkt4u6pl6p3" path="res://resources/game/resource_types/fruit.tres" id="3_npmwh"]
 
 [sub_resource type="Resource" id="Resource_npmwh"]
 script = ExtResource("2_1i88x")
 ResourceType = ExtResource("3_np2qo")
-Value = 2
+Value = 3
 metadata/_custom_type_script = "uid://camepisb1ldku"
 
 [sub_resource type="Resource" id="Resource_np2qo"]
 script = ExtResource("2_1i88x")
-ResourceType = ExtResource("2_np2qo")
-Value = 1
+ResourceType = ExtResource("3_npmwh")
+Value = 2
 metadata/_custom_type_script = "uid://camepisb1ldku"
 
 [sub_resource type="Resource" id="Resource_uk2ul"]
