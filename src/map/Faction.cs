@@ -28,7 +28,7 @@ public class Faction : IEntity {
 	public Region Region { get; init; }
 
 	readonly List<Job> jobs = new();
-	readonly Dictionary<Vector2I, HashSet<Job>> jobsByPosition = new();
+	readonly Dictionary<Vector2I, Job> jobsByPosition = new();
 
 	readonly ResourceStorage resourceStorage = new();
 	public ResourceStorage Resources { get => resourceStorage; }
@@ -77,16 +77,15 @@ public class Faction : IEntity {
 	}
 
 	void RegisterJob(Vector2I position, Job job) {
-		Debug.Assert(!(jobsByPosition.ContainsKey(position) && jobsByPosition[position].Contains(job)), $"The job object ({job}) is already registred at {position}");
-		if (!jobsByPosition.ContainsKey(position)) jobsByPosition[position] = new();
-		jobsByPosition[position].Add(job);
+		Debug.Assert(!jobsByPosition.ContainsKey(position), $"There's already a job registred at {position}");
+		jobsByPosition[position] = job;
 		jobs.Add(job);
 	}
 
 	public void RemoveJob(Job job) {
 		if (job is MapObjectJob mopjob) {
-			Debug.Assert(jobsByPosition.ContainsKey(mopjob.GlobalPosition) && jobsByPosition[mopjob.GlobalPosition].Contains(job), $"Can't remove job ({job}) that doesn't exist here ({mopjob.GlobalPosition})?? Hello?");
-			jobsByPosition[mopjob.GlobalPosition].Remove(job);
+			Debug.Assert(jobsByPosition.ContainsKey(mopjob.GlobalPosition), $"Can't remove job ({job}) that doesn't exist here ({mopjob.GlobalPosition})?? Hello?");
+			jobsByPosition.Remove(mopjob.GlobalPosition);
 		}
 		Debug.Assert(jobs.Contains(job), "Dont have this job, can't remove it");
 		if (job.NeedsWorkers) UnemployAllWorkers(job);
@@ -95,9 +94,8 @@ public class Faction : IEntity {
 		job.Deinitialise(this);
 	}
 
-	public IEnumerable<Job> GetJobs(Vector2I position) {
-		var has = jobsByPosition.TryGetValue(position, out var gottenJobs);
-		return !has ? new List<Job>() : gottenJobs;
+	public bool GetJob(Vector2I position, out Job job) {
+		return jobsByPosition.TryGetValue(position, out job);
 	}
 
 	public uint GetFreeWorkers() => UnemployedPopulation;
@@ -200,7 +198,7 @@ public class Faction : IEntity {
 	public void RemoveBuilding(Vector2I at) {
 		Debug.Assert(HasBuilding(at), $"There's no building to remove at {at}...");
 		var building = GetBuilding(at);
-		foreach (var job in GetJobs(at)) {
+		if (GetJob(at, out var job)) {
 			RemoveJob(job);
 		}
 		if (building.IsConstructed) {

@@ -215,7 +215,7 @@ public partial class LocalAI {
 			return new(factors, () => {
 				foreach (var mop in ac.GetMapObjects()) {
 					if (mop is ResourceSite rs) {
-						if (rs.Type == siteType && ac.GetMapObjectJobs(rs).Count == 0) {
+						if (rs.Type == siteType && ac.GetMapObjectsJob(rs) == null) {
 							var jobdesc = (rs.Type as ResourceSiteType).resourceTypeDescription; // this will breka when not using resources
 							ac.AddJob(rs, new GatherResourceJob(jobdesc));
 							return;
@@ -309,7 +309,7 @@ public partial class LocalAI {
 					if (mop is ResourceSite rs) {
 						if (rs.Type == siteType) {
 							matchingSites += 1;
-							if (ac.GetMapObjectJobs(rs).Count == 0) {
+							if (ac.GetMapObjectsJob(rs) == null) {
 								matchingFreeSites += 1;
 							}
 						}

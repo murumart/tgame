@@ -20,7 +20,7 @@ namespace scenes.region.ui {
 		public event Func<Faction> GetFactionEvent;
 		public event Func<(uint, uint)> GetFoodAndUsageEvent;
 
-		public event Func<MapObject, ICollection<Job>> GetMapObjectJobsEvent;
+		public event Func<MapObject, Job> GetMapObjectJobEvent;
 		public event Func<ICollection<Job>> GetJobsEvent;
 		public event Action<MapObject, MapObjectJob> AddJobRequestedEvent;
 		public event Func<uint> GetMaxFreeWorkersEvent;
@@ -273,7 +273,7 @@ namespace scenes.region.ui {
 		public Faction GetFaction() => GetFactionEvent?.Invoke();
 		public (uint, uint) GetFoodAndUsage() => GetFoodAndUsageEvent?.Invoke() ?? (1337, 1337);
 
-		public ICollection<Job> GetMapObjectJobs(MapObject mapObject) => GetMapObjectJobsEvent?.Invoke(mapObject);
+		public Job GetMapObjectJob(MapObject mapObject) => GetMapObjectJobEvent?.Invoke(mapObject);
 		public ICollection<Job> GetJobs() => GetJobsEvent?.Invoke();
 		public void AddJobRequested(MapObject mapObject, MapObjectJob job) => AddJobRequestedEvent?.Invoke(mapObject, job);
 		public void AddJobRequested(Job job) => throw new NotImplementedException("Cant add jobs without building yet");

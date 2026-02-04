@@ -1,6 +1,7 @@
 using System.Linq;
 using Godot;
 using scenes.autoload;
+using scenes.map.ui;
 
 namespace scenes.map {
 

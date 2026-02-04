@@ -39,7 +39,7 @@ namespace scenes.region {
 			ui.GetResourcesEvent += actions.GetResourceStorage;
 			ui.GetCanBuildEvent += actions.CanBuild;
 			ui.GetTimeStringEvent += GetDateTimeString;
-			ui.GetMapObjectJobsEvent += actions.GetMapObjectJobs;
+			ui.GetMapObjectJobEvent += actions.GetMapObjectsJob;
 			ui.AddJobRequestedEvent += actions.AddJob;
 			ui.GetMaxFreeWorkersEvent += GetJobMaxWorkers;
 			ui.ChangeJobWorkerCountEvent += actions.ChangeJobWorkerCount;
@@ -109,7 +109,7 @@ namespace scenes.region {
 				ui.GetTimeStringEvent -= GetDateTimeString;
 				ui.PauseRequestedEvent -= UiTogglePause;
 				ui.GameSpeedChangeRequestedEvent -= UiChangeGameSpeed;
-				ui.GetMapObjectJobsEvent -= actions.GetMapObjectJobs;
+				ui.GetMapObjectJobEvent -= actions.GetMapObjectsJob;
 				ui.AddJobRequestedEvent -= actions.AddJob;
 				ui.GetMaxFreeWorkersEvent -= GetJobMaxWorkers;
 				ui.ChangeJobWorkerCountEvent -= actions.ChangeJobWorkerCount;

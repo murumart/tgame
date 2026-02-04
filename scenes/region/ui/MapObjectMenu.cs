@@ -9,18 +9,16 @@ namespace scenes.region.ui {
 	public partial class MapObjectMenu : Control {
 
 		public enum State : int {
-			ViewJobs,
+			ViewJob,
 			AddJobs,
 		}
 
 		[Export] UI ui;
-		[Export] TabContainer tabs;
 
-		[Export] Button viewJobTabButton;
-		[Export] BoxContainer jobsList;
-		[Export] Label buildingTitle;
+		[Export] Label titleLabel;
+		[Export] JobInfoPanel jobInfoPanel;
 
-		[Export] Button addJobTabButton;
+		[Export] Control addJobMenu;
 		[Export] ItemList addJobItemList;
 		[Export] RichTextLabel addJobDescription;
 		[Export] Button addJobConfirmButton;
@@ -32,10 +30,10 @@ namespace scenes.region.ui {
 		// we're regenerating these lists every time the menu is opened or updated, hopefully not a performance issue!
 		// an alternative is to not do that and set the _* lists to null to regenerate them on next menu open.
 
-		List<Job> ExtantJobs {
+		Job ExtantJob {
 			get {
-				if (attachedToMapObject) return ui.GetMapObjectJobs(myMapObject).ToList();
-				return ui.GetJobs().ToList();
+				Debug.Assert(attachedToMapObject, "Map object menu isn't attached to map object");
+				return ui.GetMapObjectJob(myMapObject);
 			}
 		}
 
@@ -49,11 +47,10 @@ namespace scenes.region.ui {
 
 
 		public override void _Ready() {
-			addJobTabButton.Pressed += AddJobClicked;
-			viewJobTabButton.Pressed += ViewJobsClicked;
 			addJobItemList.ItemSelected += AddJobSelected;
 			addJobItemList.ItemActivated += AddJobConfirmed;
 			addJobConfirmButton.Pressed += AddJobConfirmed;
+			jobInfoPanel.UIRebuildRequested += OpenViewJobScreen;
 
 			addJobDescription.Text = "";
 		}
@@ -65,7 +62,7 @@ namespace scenes.region.ui {
 		}
 
 		public void Open() {
-			if (ExtantJobs.Count == 0 && AvailableJobs.Count != 0) {
+			if (ExtantJob == null && AvailableJobs.Count != 0) {
 				if (myMapObject is Building building && building.IsConstructed) {
 					OpenAddJobScreen();
 				} else {
@@ -82,7 +79,7 @@ namespace scenes.region.ui {
 			attachedToMapObject = true;
 			this.myMapObject = myBuilding;
 
-			buildingTitle.Text = "Jobs in " + myBuilding.Type.AssetName;
+			titleLabel.Text = myBuilding.Type.AssetName;
 
 			Open();
 		}
@@ -91,7 +88,7 @@ namespace scenes.region.ui {
 			attachedToMapObject = true;
 			this.myMapObject = resourceSite;
 
-			buildingTitle.Text = "Jobs at " + resourceSite.Type.AssetName;
+			titleLabel.Text = resourceSite.Type.AssetName;
 
 			Open();
 		}
@@ -103,25 +100,12 @@ namespace scenes.region.ui {
 			myMapObject = null;
 			selectedAddJob = -1;
 			addJobConfirmButton.Disabled = true;
-
-			foreach (var node in jobsList.GetChildren()) node.QueueFree();
-		}
-
-		void AddJobClicked() {
-			if (state == State.ViewJobs) {
-				OpenAddJobScreen();
-			}
-		}
-
-		void ViewJobsClicked() {
-			if (state == State.AddJobs) {
-				OpenViewJobScreen();
-			}
 		}
 
 		void OpenAddJobScreen() {
 			state = State.AddJobs;
-			tabs.CurrentTab = (int)state;
+			addJobMenu.Show();
+			jobInfoPanel.Hide();
 
 			addJobItemList.Clear();
 
@@ -129,42 +113,34 @@ namespace scenes.region.ui {
 				addJobItemList.AddItem(job.Title);
 			}
 			addJobConfirmButton.Disabled = selectedAddJob == -1;
-
-			ManageTabButtons();
 		}
 
 		void OpenViewJobScreen() {
 			GD.Print("JobsList::OpenViewJobScreen : opening extant jobs list");
-			state = State.ViewJobs;
-			tabs.CurrentTab = (int)state;
+			state = State.ViewJob;
+			jobInfoPanel.Show();
+			addJobMenu.Hide();
 
-			foreach (var node in jobsList.GetChildren()) node.QueueFree();
-
-			for (int i = ExtantJobs.Count - 1; i >= 0; i--) {
-				var job = ExtantJobs[i];
-				uint sliderMax = 0;
-				if (job.NeedsWorkers) sliderMax = Math.Min(ui.GetMaxFreeWorkers() + (uint)job.Workers, job.MaxWorkers);
-				var panel = JobInfoPanel.Packed.Instantiate<JobInfoPanel>();
-				panel.AddToTree(jobsList, !job.IsInternal, true);
-				panel.Display(ui, job, i, sliderMax, JobWorkerCountChanged);
-				panel.UIRebuildRequested += OpenViewJobScreen;
+			uint sliderMax = 0;
+			if (ExtantJob == null) {
+				jobInfoPanel.Hide();
+				return;
 			}
-
-			ManageTabButtons();
+			jobInfoPanel.Show();
+			if (ExtantJob.NeedsWorkers) sliderMax = Math.Min(ui.GetMaxFreeWorkers() + (uint)ExtantJob.Workers, ExtantJob.MaxWorkers);
+			jobInfoPanel.Display(ui, ExtantJob, 0, sliderMax, JobWorkerCountChanged);
 		}
 
 		void JobWorkerCountChanged(int ix, int by) {
 			GD.Print("JobsList::JobWorkerCountChanged : worker count changed by ", by);
-			ui.ChangeJobWorkerCount(ExtantJobs[ix], by);
+			ui.ChangeJobWorkerCount(ExtantJob, by);
 			OpenViewJobScreen(); // rebuild ui entirely in a lazy unoptimised manner
 		}
 
 		void AddJobSelected(long ix) {
 			selectedAddJob = (int)ix;
 			addJobConfirmButton.Disabled = false;
-			addJobDescription.Text =
-				AvailableJobs[selectedAddJob].GetResourceRequirementDescription()
-				+ "\n" + AvailableJobs[selectedAddJob].GetProductionDescription();
+			addJobDescription.Text = AvailableJobs[selectedAddJob].GetProductionDescription();
 		}
 
 		void AddJobConfirmed(long ix) {
@@ -182,14 +158,6 @@ namespace scenes.region.ui {
 			Debug.Assert(selectedAddJob != -1, "Please select a job before confirming!!");
 			if (myMapObject is Building building) Debug.Assert(building.IsConstructed, "Building needs to be constructed before adding job!!!");
 			AddJobConfirmed(selectedAddJob);
-		}
-
-		void ManageTabButtons() {
-			viewJobTabButton.Disabled = ExtantJobs.Count == 0;
-			addJobTabButton.Disabled = AvailableJobs.Count == 0 || (myMapObject is Building building && !building.IsConstructed);
-
-			if (state == State.ViewJobs) viewJobTabButton.Disabled = true;
-			if (state == State.AddJobs) addJobTabButton.Disabled = true;
 		}
 
 	}

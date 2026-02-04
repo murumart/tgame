@@ -135,7 +135,7 @@ namespace scenes.region {
 					return;
 				}
 				if (!mapObjectViews.TryGetValue(mopjob.GlobalPosition - region.WorldPosition, out MapObjectView view)) return; // the building view has already been removed
-				if (!(region.LocalFaction.GetJobs(mopjob.GlobalPosition - region.WorldPosition).Where(j => !j.IsInternal).Any())) view.IconSetHide(MapObjectView.IconSetIcons.Hammer);
+				if (!region.LocalFaction.GetJob(mopjob.GlobalPosition - region.WorldPosition, out var __)) view.IconSetHide(MapObjectView.IconSetIcons.Hammer);
 				if (region.LocalFaction.HasBuilding(mopjob.GlobalPosition - region.WorldPosition)) {
 				}
 			}

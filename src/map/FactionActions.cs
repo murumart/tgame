@@ -86,20 +86,18 @@ public class FactionActions {
 	public HashSet<Job> GetMapObjectJobs() {
 		var hs = new HashSet<Job>();
 		foreach (var mp in region.GetMapObjects()) {
-			foreach (var job in GetMapObjectJobs(mp)) {
-				hs.Add(job);
-			}
+			var job = GetMapObjectsJob(mp);
+			if (job == null) continue;
+			hs.Add(job);
 		}
 		return hs;
 	}
 
-	public HashSet<Job> GetMapObjectJobs(MapObject building) {
+	public Job GetMapObjectsJob(MapObject building) {
 		var pos = building.GlobalPosition;
-		var jobs = new HashSet<Job>();
-		foreach (var job in faction.GetJobs(pos)) {
-			jobs.Add(job);
-		}
-		return jobs;
+		var has = faction.GetJob(pos, out var job);
+		if (!has) return null;
+		return job;
 	}
 
 	public uint GetHomelessPopulationCount() => faction.HomelessPopulation;

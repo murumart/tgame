@@ -3,18 +3,16 @@
 [ext_resource type="Script" uid="uid://h0fsb3ksyveu" path="res://scenes/region/ui/MapObjectMenu.cs" id="1_lkdvm"]
 [ext_resource type="PackedScene" uid="uid://bit7aavyxpq38" path="res://scenes/region/ui/job_info_panel.tscn" id="2_gxr3b"]
 
-[node name="MapObjectMenu" type="HBoxContainer" unique_id=1748631448 node_paths=PackedStringArray("tabs", "viewJobTabButton", "jobsList", "buildingTitle", "addJobTabButton", "addJobItemList", "addJobDescription", "addJobConfirmButton")]
+[node name="MapObjectMenu" type="HBoxContainer" unique_id=1748631448 node_paths=PackedStringArray("titleLabel", "jobInfoPanel", "addJobMenu", "addJobItemList", "addJobDescription", "addJobConfirmButton")]
 offset_right = 147.0
 offset_bottom = 244.0
 script = ExtResource("1_lkdvm")
-tabs = NodePath("Vbox/JobScrolll/TabContainer")
-viewJobTabButton = NodePath("Vbox/PanelContainer/MarginContainer/HBoxContainer/List")
-jobsList = NodePath("Vbox/JobScrolll/TabContainer/JobsList")
-buildingTitle = NodePath("Vbox/Title/MarginContainer/Label")
-addJobTabButton = NodePath("Vbox/PanelContainer/MarginContainer/HBoxContainer/Add")
-addJobItemList = NodePath("Vbox/JobScrolll/TabContainer/MarginContainer/VBoxContainer/AvailableJobsList")
-addJobDescription = NodePath("Vbox/JobScrolll/TabContainer/MarginContainer/VBoxContainer/ResourceList")
-addJobConfirmButton = NodePath("Vbox/JobScrolll/TabContainer/MarginContainer/VBoxContainer/HBoxContainer/ConfirmButton")
+titleLabel = NodePath("Vbox/Title/MarginContainer/Label")
+jobInfoPanel = NodePath("Vbox/JobScrolll/VBoxContainer/JobInfopanel")
+addJobMenu = NodePath("Vbox/JobScrolll/VBoxContainer/JobAdditionMenu")
+addJobItemList = NodePath("Vbox/JobScrolll/VBoxContainer/JobAdditionMenu/VBoxContainer/AvailableJobsList")
+addJobDescription = NodePath("Vbox/JobScrolll/VBoxContainer/JobAdditionMenu/VBoxContainer/JobInfoText")
+addJobConfirmButton = NodePath("Vbox/JobScrolll/VBoxContainer/JobAdditionMenu/VBoxContainer/HBoxContainer/ConfirmButton")
 
 [node name="Vbox" type="VBoxContainer" parent="." unique_id=591111991]
 layout_mode = 2
@@ -23,17 +21,18 @@ theme_override_constants/separation = 0
 
 [node name="Title" type="PanelContainer" parent="Vbox" unique_id=1659357753]
 layout_mode = 2
+size_flags_horizontal = 0
 
 [node name="MarginContainer" type="MarginContainer" parent="Vbox/Title" unique_id=1551623924]
 layout_mode = 2
-theme_override_constants/margin_left = 1
-theme_override_constants/margin_top = 1
-theme_override_constants/margin_right = 1
-theme_override_constants/margin_bottom = 1
+theme_override_constants/margin_left = 2
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 2
+theme_override_constants/margin_bottom = 0
 
 [node name="Label" type="Label" parent="Vbox/Title/MarginContainer" unique_id=1906506456]
 layout_mode = 2
-text = "Jobs of"
+text = "MapObject"
 
 [node name="JobScrolll" type="ScrollContainer" parent="Vbox" unique_id=129622908]
 custom_minimum_size = Vector2(110, 80)
@@ -41,57 +40,33 @@ layout_mode = 2
 size_flags_vertical = 3
 mouse_filter = 0
 
-[node name="TabContainer" type="TabContainer" parent="Vbox/JobScrolll" unique_id=1824775822]
+[node name="VBoxContainer" type="VBoxContainer" parent="Vbox/JobScrolll" unique_id=1015953155]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-current_tab = 0
-clip_tabs = false
-tabs_visible = false
-deselect_enabled = true
 
-[node name="JobsList" type="VBoxContainer" parent="Vbox/JobScrolll/TabContainer" unique_id=779754014]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-metadata/_tab_index = 0
-
-[node name="JobInfopanel" parent="Vbox/JobScrolll/TabContainer/JobsList" unique_id=316087859 instance=ExtResource("2_gxr3b")]
-layout_mode = 2
-
-[node name="JobInfopanel2" parent="Vbox/JobScrolll/TabContainer/JobsList" unique_id=158714740 instance=ExtResource("2_gxr3b")]
-layout_mode = 2
-
-[node name="JobInfopanel3" parent="Vbox/JobScrolll/TabContainer/JobsList" unique_id=1965420854 instance=ExtResource("2_gxr3b")]
-layout_mode = 2
-
-[node name="JobInfopanel4" parent="Vbox/JobScrolll/TabContainer/JobsList" unique_id=1626087590 instance=ExtResource("2_gxr3b")]
-layout_mode = 2
-
-[node name="JobInfopanel5" parent="Vbox/JobScrolll/TabContainer/JobsList" unique_id=358754863 instance=ExtResource("2_gxr3b")]
-layout_mode = 2
-
-[node name="JobInfopanel6" parent="Vbox/JobScrolll/TabContainer/JobsList" unique_id=148866604 instance=ExtResource("2_gxr3b")]
-layout_mode = 2
-
-[node name="MarginContainer" type="MarginContainer" parent="Vbox/JobScrolll/TabContainer" unique_id=552563959]
+[node name="JobInfopanel" parent="Vbox/JobScrolll/VBoxContainer" unique_id=316087859 instance=ExtResource("2_gxr3b")]
 visible = false
 layout_mode = 2
-theme_override_constants/margin_left = 1
-theme_override_constants/margin_top = 1
-theme_override_constants/margin_right = 1
-theme_override_constants/margin_bottom = 1
-metadata/_tab_index = 1
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Vbox/JobScrolll/TabContainer/MarginContainer" unique_id=210755571]
+[node name="JobAdditionMenu" type="MarginContainer" parent="Vbox/JobScrolll/VBoxContainer" unique_id=552563959]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 2
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 2
+theme_override_constants/margin_bottom = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Vbox/JobScrolll/VBoxContainer/JobAdditionMenu" unique_id=210755571]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Vbox/JobScrolll/TabContainer/MarginContainer/VBoxContainer" unique_id=2071264364]
+[node name="Label" type="Label" parent="Vbox/JobScrolll/VBoxContainer/JobAdditionMenu/VBoxContainer" unique_id=2071264364]
 layout_mode = 2
 text = "Select a new job to add."
 horizontal_alignment = 1
 
-[node name="AvailableJobsList" type="ItemList" parent="Vbox/JobScrolll/TabContainer/MarginContainer/VBoxContainer" unique_id=1300818932]
+[node name="AvailableJobsList" type="ItemList" parent="Vbox/JobScrolll/VBoxContainer/JobAdditionMenu/VBoxContainer" unique_id=1300818932]
+custom_minimum_size = Vector2(0, 20.665)
 layout_mode = 2
 size_flags_vertical = 3
 allow_search = false
@@ -107,41 +82,18 @@ item_5/text = "pungus."
 item_6/text = "gleebumbus"
 item_7/text = "šnsandsdasd"
 
-[node name="ResourceList" type="RichTextLabel" parent="Vbox/JobScrolll/TabContainer/MarginContainer/VBoxContainer" unique_id=692822993]
+[node name="JobInfoText" type="RichTextLabel" parent="Vbox/JobScrolll/VBoxContainer/JobAdditionMenu/VBoxContainer" unique_id=692822993]
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.33
 bbcode_enabled = true
-text = "MY NAME JOB:. IM GUNGRY!! fee dme your resources...ssssssssssssss"
+text = "Job info"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Vbox/JobScrolll/TabContainer/MarginContainer/VBoxContainer" unique_id=415954706]
+[node name="HBoxContainer" type="HBoxContainer" parent="Vbox/JobScrolll/VBoxContainer/JobAdditionMenu/VBoxContainer" unique_id=415954706]
 layout_mode = 2
 alignment = 2
 
-[node name="ConfirmButton" type="Button" parent="Vbox/JobScrolll/TabContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1546362689]
+[node name="ConfirmButton" type="Button" parent="Vbox/JobScrolll/VBoxContainer/JobAdditionMenu/VBoxContainer/HBoxContainer" unique_id=1546362689]
 layout_mode = 2
 disabled = true
-text = "select"
-
-[node name="PanelContainer" type="PanelContainer" parent="Vbox" unique_id=1318617011]
-layout_mode = 2
-
-[node name="MarginContainer" type="MarginContainer" parent="Vbox/PanelContainer" unique_id=1465529872]
-layout_mode = 2
-theme_override_constants/margin_left = 1
-theme_override_constants/margin_top = 1
-theme_override_constants/margin_right = 1
-theme_override_constants/margin_bottom = 1
-
-[node name="HBoxContainer" type="HBoxContainer" parent="Vbox/PanelContainer/MarginContainer" unique_id=23631212]
-layout_mode = 2
-
-[node name="List" type="Button" parent="Vbox/PanelContainer/MarginContainer/HBoxContainer" unique_id=1257368805]
-layout_mode = 2
-focus_mode = 0
-text = "≣"
-
-[node name="Add" type="Button" parent="Vbox/PanelContainer/MarginContainer/HBoxContainer" unique_id=1453480352]
-layout_mode = 2
-focus_mode = 0
-text = "+"
+text = "ADD job"

@@ -1,13 +1,11 @@
-using Godot;
 using System;
+using Godot;
 
 namespace scenes.region.ui {
 
 	public partial class JobSlider : VBoxContainer {
 
-		event Action<int, int> ValueChangedCallbackEvent;
-
-		public static readonly PackedScene Packed = GD.Load<PackedScene>("res://scenes/region/ui/job_slider.tscn");
+		static readonly PackedScene Packed = GD.Load<PackedScene>("res://scenes/region/ui/job_slider.tscn");
 
 		[ExportGroup("Nodes")]
 		[Export] Label NameLabel;
@@ -22,29 +20,31 @@ namespace scenes.region.ui {
 
 		public static JobSlider Instantiate() => Packed.Instantiate<JobSlider>();
 
+
 		public override void _Ready() {
 			Slider.ValueChanged += ValueChanged;
 			Slider.DragEnded += DragEnded;
 			_ready = true;
+			GD.Print("JobSlider::_Ready : ready");
 		}
 
-		public override void _ExitTree() {
-			_ready = false;
-			Slider.ValueChanged -= ValueChanged;
-			Slider.DragEnded -= DragEnded;
-
-			ValueChangedCallbackEvent -= valueChangedCallback;
+		public override void _Notification(int what) {
+			if (what == NotificationPredelete) {
+				_ready = false;
+				Slider.ValueChanged -= ValueChanged;
+				Slider.DragEnded -= DragEnded;
+				GD.Print("JobSlider::_Notification : deleting");
+			}
 		}
 
 		public void Setup(Action<int, int> valueChangedCallback, int jobIx, int jobWorkers, string name, uint sliderMax, string unitSymbol) {
-			Debug.Assert(_ready, "dont setup before we're ready");
+			Debug.Assert(_ready, "dont anything before we're ready");
 			this.jobIx = jobIx;
 			this.valueChangedCallback = valueChangedCallback;
-			this.ValueChangedCallbackEvent += valueChangedCallback;
 			NameLabel.Text = name;
 			Slider.MaxValue = sliderMax;
 			Slider.Value = jobWorkers;
-			if (sliderMax <= 0) Slider.Editable = false;
+			if (sliderMax == 0) Slider.Editable = false;
 			lastValue = (int)Slider.Value;
 			this.unitSymbol = unitSymbol;
 			MoneyLabel.Text = "" + lastValue + unitSymbol;
@@ -73,7 +73,7 @@ namespace scenes.region.ui {
 			lastValue = val;
 		}
 
-		void ValueChangedCallback(int ix, int to) => ValueChangedCallbackEvent?.Invoke(ix, to);
+		void ValueChangedCallback(int ix, int to) => valueChangedCallback(ix, to);
 
 
 	}
