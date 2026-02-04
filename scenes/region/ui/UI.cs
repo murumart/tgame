@@ -39,7 +39,7 @@ namespace scenes.region.ui {
 			Idle,
 			ChoosingBuild,
 			PlacingBuild,
-			JobsMenu,
+			MapObjectMenu,
 			AgreementsMenu,
 		}
 
@@ -111,6 +111,13 @@ namespace scenes.region.ui {
 
 		public override void _Process(double delta) {
 			UpdateDisplays(); // todo move this to something that doesn't happen every frame... if it becomes a bottleneck
+		}
+
+		public override void _UnhandledInput(InputEvent @event) {
+			base._UnhandledInput(@event);
+			if (@event.IsActionPressed("escape")) {
+				Escape();
+			}
 		}
 
 		void OnTabButtonPressed(Tab which, State matchingState) {
@@ -185,6 +192,18 @@ namespace scenes.region.ui {
 
 		// utilities
 
+		void Escape() {
+			if (state == State.PlacingBuild || state == State.ChoosingBuild) {
+				state = State.Idle;
+			}
+			if (state == State.MapObjectMenu) {
+				state = State.Idle;
+			}
+			if (state == State.AgreementsMenu) {
+				state = State.Idle;
+			}
+		}
+
 		public void HourlyUpdate(TimeT timeInMinutes) {
 			if (menuTabs.CurrentTab == (int)Tab.Documents) {
 				documentsDisplay.Display();
@@ -205,12 +224,7 @@ namespace scenes.region.ui {
 		}
 
 		public void OnRightMouseClick(Vector2 position, Vector2I tilePosition) {
-			if (state == State.PlacingBuild || state == State.ChoosingBuild) {
-				state = State.Idle;
-			}
-			if (state == State.JobsMenu) {
-				state = State.Idle;
-			}
+			
 		}
 
 		public void OnTileHighlighted(Vector2I tilePosition, Region region) {
@@ -219,13 +233,13 @@ namespace scenes.region.ui {
 
 		public void OnBuildingClicked(Building building) {
 			Debug.Assert(state == State.Idle, "Can't click on buildings outside of idle state");
-			state = State.JobsMenu;
+			state = State.MapObjectMenu;
 			jobsList.Open(building);
 		}
 
 		public void OnResourceSiteClicked(ResourceSite resourceSite) {
 			Debug.Assert(state == State.Idle, "Can't click on resourceSite outside of idle state");
-			state = State.JobsMenu;
+			state = State.MapObjectMenu;
 			jobsList.Open(resourceSite);
 		}
 
@@ -239,13 +253,16 @@ namespace scenes.region.ui {
 					buildingList.Reset();
 					buildingList.SetBuildCursor(null);
 				}
-				if (old == State.JobsMenu) {
+				if (old == State.MapObjectMenu) {
 					jobsList.Close();
 					SetTimeSpeedAltering(true);
 					if (!gamePaused) internalGamePaused = PauseRequested();
 				}
+				if (old == State.AgreementsMenu) {
+					SelectTab(Tab.None);
+				}
 			}
-			if (current == State.JobsMenu) {
+			if (current == State.MapObjectMenu) {
 				SetTimeSpeedAltering(false);
 				if (!gamePaused) internalGamePaused = PauseRequested();
 			}

@@ -223,6 +223,7 @@ ui = NodePath("../../../../..")
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.47
+mouse_filter = 2
 
 [node name="ControlButtons" type="HBoxContainer" parent="VBoxContainer" unique_id=1935346688]
 layout_mode = 2

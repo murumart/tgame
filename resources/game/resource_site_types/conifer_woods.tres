@@ -16,7 +16,6 @@ metadata/_custom_type_script = "uid://bnfatrmjew0vy"
 [resource]
 script = ExtResource("4_lxhu8")
 name = "conifer woods"
-resourceTypeDescription = "logs"
 mineResources = Array[Object]([SubResource("Resource_b5t6q")])
 ScenePath = "uid://du7qwf6qqb2jv"
 metadata/_custom_type_script = "uid://ct2a6sqe1m7mx"

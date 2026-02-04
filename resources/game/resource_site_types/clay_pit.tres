@@ -15,7 +15,6 @@ metadata/_custom_type_script = "uid://bnfatrmjew0vy"
 [resource]
 script = ExtResource("1_ierct")
 name = "clay pit"
-resourceTypeDescription = "clay"
 mineResources = Array[Object]([SubResource("Resource_bkqwf")])
 ScenePath = "uid://br0j1stilq7ro"
 metadata/_custom_type_script = "uid://ct2a6sqe1m7mx"

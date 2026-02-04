@@ -16,7 +16,6 @@ metadata/_custom_type_script = "uid://bnfatrmjew0vy"
 [resource]
 script = ExtResource("3_aa6c6")
 name = "savanna trees"
-resourceTypeDescription = "logs"
 mineResources = Array[Object]([SubResource("Resource_l4b5o")])
 ScenePath = "uid://8qfldb4j4c0f"
 metadata/_custom_type_script = "uid://ct2a6sqe1m7mx"

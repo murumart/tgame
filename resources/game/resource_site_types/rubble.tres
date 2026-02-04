@@ -15,7 +15,6 @@ metadata/_custom_type_script = "uid://bnfatrmjew0vy"
 [resource]
 script = ExtResource("3_utel0")
 name = "rubble"
-resourceTypeDescription = "rocks"
 mineResources = Array[Object]([SubResource("Resource_7crc6")])
 ScenePath = "uid://dngop80nyerxr"
 metadata/_custom_type_script = "uid://ct2a6sqe1m7mx"
