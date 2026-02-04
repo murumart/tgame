@@ -50,7 +50,7 @@ namespace scenes.region.ui {
 			addJobItemList.ItemSelected += AddJobSelected;
 			addJobItemList.ItemActivated += AddJobConfirmed;
 			addJobConfirmButton.Pressed += AddJobConfirmed;
-			jobInfoPanel.UIRebuildRequested += OpenViewJobScreen;
+			jobInfoPanel.UIRebuildRequested += Open;
 
 			addJobDescription.Text = "";
 		}
@@ -75,20 +75,13 @@ namespace scenes.region.ui {
 			CallDeferred("show");
 		}
 
-		public void Open(Building myBuilding) {
+		public void Open(MapObject mapObject) {
 			attachedToMapObject = true;
-			this.myMapObject = myBuilding;
+			this.myMapObject = mapObject;
 
-			titleLabel.Text = myBuilding.Type.AssetName;
-
-			Open();
-		}
-
-		public void Open(ResourceSite resourceSite) {
-			attachedToMapObject = true;
-			this.myMapObject = resourceSite;
-
-			titleLabel.Text = resourceSite.Type.AssetName;
+			if (mapObject is Building b) titleLabel.Text = b.Type.AssetName;
+			else if (mapObject is ResourceSite rs) titleLabel.Text = rs.Type.AssetName;
+			else Debug.Assert(false, "Unimplemented map object name display");
 
 			Open();
 		}
@@ -116,7 +109,7 @@ namespace scenes.region.ui {
 		}
 
 		void OpenViewJobScreen() {
-			GD.Print("JobsList::OpenViewJobScreen : opening extant jobs list");
+			GD.Print("JobsList::OpenViewJobScreen : opening job view screen");
 			state = State.ViewJob;
 			jobInfoPanel.Show();
 			addJobMenu.Hide();
