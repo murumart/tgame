@@ -134,6 +134,15 @@ namespace scenes.region.ui {
 				if (!b.IsConstructed) {
 					sb.Append($"Construction in progress... ({(int)(b.GetBuildProgress() * 100)}%)\n");
 				}
+				sb.Append(b.Type.GetDescription()).Append('\n');
+				var crafting = b.Type.GetCraftJobs();
+				if (crafting.Length > 0) {
+					sb.Append("Production of the following occurs here...\n");
+					foreach (var craftjob in crafting) {
+						sb.Append($"Making ").Append(craftjob.OutputDescription).Append(" gives...\n");
+						craftjob.GetProductionBulletList(sb);
+					}
+				}
 				if (b.GetHousingCapacity() > 0 && b.IsConstructed) {
 					sb.Append($"Housing room for {b.GetHousingCapacity()} people.\n");
 				}

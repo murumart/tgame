@@ -20,7 +20,7 @@ script = ExtResource("1_4q80a")
 infoLabel = NodePath("VBoxContainer2/JobInfopanel/MarginContainer/VBoxContainer/InformationList/WorkDetails2")
 titleLabel = NodePath("VBoxContainer2/TopBar2/PanelContainer/MarginContainer/Label")
 informationList = NodePath("VBoxContainer2/JobInfopanel/MarginContainer/VBoxContainer/InformationList")
-DeleteJobButton = NodePath("VBoxContainer2/JobInfopanel/MarginContainer/VBoxContainer/HBoxContainer/CloseButton")
+DeleteJobButton = NodePath("VBoxContainer2/TopBar2/CloseButton")
 workerCountSlider = NodePath("VBoxContainer2/JobInfopanel/MarginContainer/VBoxContainer/InformationList/JobSlider")
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="." unique_id=1009409877]
@@ -47,6 +47,16 @@ theme_override_styles/normal = SubResource("StyleBoxEmpty_cgm35")
 text = "Work Details"
 label_settings = ExtResource("2_4q80a")
 horizontal_alignment = 1
+
+[node name="Fat" type="Control" parent="VBoxContainer2/TopBar2" unique_id=1291002602]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CloseButton" type="Button" parent="VBoxContainer2/TopBar2" unique_id=1694965561]
+layout_mode = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 6
+text = "Remove"
 
 [node name="JobInfopanel" type="PanelContainer" parent="VBoxContainer2" unique_id=1339773296]
 layout_mode = 2
@@ -81,13 +91,3 @@ layout_mode = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer2/JobInfopanel/MarginContainer/VBoxContainer" unique_id=652711493]
 layout_mode = 2
-
-[node name="Fat" type="Control" parent="VBoxContainer2/JobInfopanel/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1291002602]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="CloseButton" type="Button" parent="VBoxContainer2/JobInfopanel/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1694965561]
-layout_mode = 2
-focus_mode = 0
-theme_override_font_sizes/font_size = 6
-text = "Remove"

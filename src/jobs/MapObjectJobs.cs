@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text;
 using Godot;
 
 
@@ -225,7 +226,7 @@ public class GatherResourceJob : MapObjectJob {
 
 public class CraftJob : MapObjectJob {
 
-	public override string Title => $"Craft {outputDescription}";
+	public override string Title => $"Craft {OutputDescription}";
 
 	public override Vector2I GlobalPosition => building.GlobalPosition;
 
@@ -238,7 +239,7 @@ public class CraftJob : MapObjectJob {
 
 	readonly ResourceBundle[] inputs;
 	readonly ResourceBundle[] outputs;
-	readonly string outputDescription;
+	public readonly string OutputDescription;
 	readonly TimeT timeTaken;
 
 
@@ -246,11 +247,11 @@ public class CraftJob : MapObjectJob {
 		this.inputs = inputs;
 		this.outputs = outputs;
 		this.timeTaken = timeTaken;
-		this.outputDescription = outputDescription;
+		this.OutputDescription = outputDescription;
 		MaxWorkers = maxWorkers;
 	}
 
-	public override Job Copy() => new CraftJob(inputs, outputs, timeTaken, MaxWorkers, outputDescription);
+	public override Job Copy() => new CraftJob(inputs, outputs, timeTaken, MaxWorkers, OutputDescription);
 
 	public override void Initialise(Faction ctxFaction, MapObject mapObject) {
 		storage = ctxFaction.Resources;
@@ -274,28 +275,35 @@ public class CraftJob : MapObjectJob {
 	public override float GetWorkTime(TimeT minutes) => minutes * MathF.Pow(Workers, 0.5f);
 
 	public override string GetProductionDescription() {
-		var str = $"The workers produce:\n";
-		if (Workers == 0) str += "Nothing, as long as there's no workers. But it could produce:\n";
+		var sb = new StringBuilder();
+		if (Workers == 0) sb.Append("Add workers to begin production...\n");
+		else sb.Append($"The workers produce...\n");
 
+		GetProductionBulletList(sb);
+		sb.Append("...with the required inputs...\n");
+		GetInputBulletList(sb);
+		sb.Append($"It takes {GameTime.GetFancyTimeString(timeTaken)} to complete one set of {OutputDescription}.");
+
+		return sb.ToString();
+	}
+
+	public void GetProductionBulletList(StringBuilder sb) {
 		foreach (var thing in outputs) {
-			str += $" * {thing.Type.AssetName} x {thing.Amount}.\n";
+			sb.Append($" * {thing.Type.AssetName} x {thing.Amount}\n");
 		}
+	}
 
-		str += "...with the required inputs:\n";
+	public void GetInputBulletList(StringBuilder sb) {
 		foreach (var thing in inputs) {
-			str += $" * {thing.Type.AssetName} x {thing.Amount}.\n";
+			sb.Append($" * {thing.Type.AssetName} x {thing.Amount}\n");
 		}
-
-		str += $"It takes {GameTime.GetFancyTimeString(timeTaken)} to complete one set of {outputDescription}.";
-
-		return str;
 	}
 
 	public override string GetStatusDescription() {
 		if (Workers == 0) return "";
 		float timeLeft = timeTaken - timeSpent;
 		timeLeft /= GetWorkTime(1);
-		return GameTime.GetFancyTimeString((TimeT)timeLeft) + " until more " + outputDescription + ".";
+		return GameTime.GetFancyTimeString((TimeT)timeLeft) + " until more " + OutputDescription + ".";
 	}
 
 

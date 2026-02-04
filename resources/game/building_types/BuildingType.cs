@@ -60,7 +60,7 @@ namespace resources.game.building_types {
 		}
 
 		public CraftJob[] GetCraftJobs() {
-			if (CraftingJobs.Count == 0) return null;
+			if (CraftingJobs.Count == 0) return Array.Empty<CraftJob>();
 			return CraftingJobs.Select(def => def.GetJob()).ToArray();
 		}
 

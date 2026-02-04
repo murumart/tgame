@@ -13,9 +13,11 @@ namespace scenes.map.ui {
 
 		[Export] public ResourceDisplay ResourceDisplay;
 		[Export] Camera camera;
+		[Export] Control factionPanel;
 		[Export] Label factionTitleLabel;
 		[Export] RichTextLabel factionInfoLabel;
 		[Export] Button factionPlayButton;
+
 		[Export] OptionButton drawModeSelect;
 		[Export] CheckBox regionDisplaySet;
 
@@ -27,6 +29,7 @@ namespace scenes.map.ui {
 			factionPlayButton.Pressed += () => RegionPlayRequested?.Invoke();
 			drawModeSelect.ItemSelected += OnDrawModeSelected;
 			regionDisplaySet.Toggled += on => RegionsDisplaySet?.Invoke(on);
+			factionPanel.GuiInput += _GuiInput;
 			for (int i = 0; i < (int)WorldRenderer.DrawMode.Max; i++) {
 				drawModeSelect.AddItem((WorldRenderer.DrawMode)(i) + "");
 			}

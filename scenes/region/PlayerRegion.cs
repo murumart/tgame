@@ -166,7 +166,7 @@ namespace scenes.region {
 		// notifications
 
 		void HourlyUpdate(TimeT timeInMinutes) {
-			if (timeInMinutes >= 60 * 8) ai.Update(timeInMinutes); // debug
+			//if (timeInMinutes >= 60 * 8) ai.Update(timeInMinutes); // debug
 			ui.HourlyUpdate(timeInMinutes);
 		}
 
