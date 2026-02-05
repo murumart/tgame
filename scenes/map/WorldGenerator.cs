@@ -210,8 +210,8 @@ namespace scenes.map {
 					if (humi < siteType.MinHumidity || humi > siteType.MaxHumidity) continue;
 					if (temp < siteType.MinTemperature || temp > siteType.MaxTemperature) continue;
 					var elesfinal = Mathf.Clamp(1f - ResourceSiteGenerationParameters.ParamDistance(siteType.MinElevation, siteType.MaxElevation, ele), 0f, 1f);
-					var humisfinal =Mathf.Clamp( 1f - ResourceSiteGenerationParameters.ParamDistance(siteType.MinHumidity, siteType.MaxHumidity, humi), 0f, 1f);
-					var tempsfinal =Mathf.Clamp( 1f - ResourceSiteGenerationParameters.ParamDistance(siteType.MinTemperature, siteType.MaxTemperature, temp), 0f, 1f);
+					var humisfinal = Mathf.Clamp(1f - ResourceSiteGenerationParameters.ParamDistance(siteType.MinHumidity, siteType.MaxHumidity, humi), 0f, 1f);
+					var tempsfinal = Mathf.Clamp(1f - ResourceSiteGenerationParameters.ParamDistance(siteType.MinTemperature, siteType.MaxTemperature, temp), 0f, 1f);
 					if (rng.Randf() > elesfinal * humisfinal * tempsfinal * siteType.Rarity) continue;
 					region.CreateResourceSiteAndPlace(siteType.Target, pos);
 				}

@@ -1,56 +1,52 @@
+using System;
+using System.Collections.Generic;
 using Godot;
 
 public partial class ResourceDisplay : PanelContainer {
 
-	[Export] Label populationLabel;
-	[Export] Label foodLabel;
-	[Export] Label silverLabel;
-	[Export] Label tileposLabel;
-	[Export] Label timeLabel;
-	[Export] Label factionLabel;
-	[Export] Label worldTileInfoLabel;
+	static readonly LabelSettings labelSettings = GD.Load<LabelSettings>("res://resources/visual/theme/label_styles/8px.tres");
 
-	[Export] Label fpsLabel;
+	[Export] Container labelsParent;
+
+	readonly struct LaBel(Label label, Func<string> display) {
+
+		public readonly void Display() {
+			label.Text = display();
+		}
+
+	}
+
+	readonly List<LaBel> labels = new();
 
 
-	public void Display(
-		uint? population = null,
-		uint? homelessPopulation = null,
-		uint? unemployedPopulation = null,
-		uint? silver = null,
-		Faction faction = null,
-		Vector2I? tilepos = null,
-		(Vector2I, Region)? inRegionTilepos = null,
-		string timeString = null,
-		(uint, uint)? foodAndUsage = null,
-		(float, float, float)? worldTileInfo = null
-	) {
-		fpsLabel.Text = "fps: " + Engine.GetFramesPerSecond().ToString();
-		if (population != null && unemployedPopulation != null && homelessPopulation != null) {
-			populationLabel.Text = $"pop: {population} ({homelessPopulation} homeless, {unemployedPopulation} unemployed)";
+	public void Display(Func<string> what) {
+		Display(what, new());
+	}
+
+	public void Display(Func<string> what, Label label) {
+		Debug.Assert(label != null && IsInstanceValid(label), $"Label {label} is invalid");
+		labelsParent.AddChild(label);
+		label.LabelSettings = labelSettings;
+		labels.Add(new(label, what));
+	}
+
+	public void DisplayFat() {
+		var fat = new Control {
+			SizeFlagsHorizontal = SizeFlags.ExpandFill,
+			SizeFlagsVertical = SizeFlags.Fill
+		};
+		labelsParent.AddChild(fat);
+	}
+
+	public void Display() {
+		foreach (var l in labels) {
+			l.Display();
 		}
-		if (foodAndUsage != null) {
-			foodLabel.Text = $"food: {foodAndUsage?.Item1} (usage {foodAndUsage?.Item2})";
-		}
-		if (timeString != null) timeLabel.Text = timeString;
-		if (silver != null) silverLabel.Text = $"silver: {silver}";
-		if (tilepos != null) tileposLabel.Text = $"{tilepos}";
-		if (inRegionTilepos != null) {
-			Vector2I pos = (Vector2I)(inRegionTilepos?.Item1);
-			var reg = inRegionTilepos?.Item2;
-			string txt = $"{pos}";
-			if (reg.GroundTiles.TryGetValue(pos, out GroundTileType tile)) {
-				txt += $" {tile.UIString()}";
-				if (reg.HasMapObject(pos, out MapObject mopject)) {
-					txt += $" with {(mopject.Type as IAssetType).AssetName}";
-				}
-			}
-			tileposLabel.Text = txt;
-		}
-		if (faction != null) factionLabel.Text = $"region: {faction.Name}";
-		if (worldTileInfo != null) {
-			worldTileInfoLabel.Text = $"ele: {worldTileInfo?.Item1} temp: {worldTileInfo?.Item2} humi: {worldTileInfo?.Item3}";
-		}
+	}
+
+	public void Reset() {
+		labels.Clear();
+		foreach (var child in labelsParent.GetChildren()) child.QueueFree();
 	}
 
 }

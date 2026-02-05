@@ -7,7 +7,7 @@
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_jmbgv"]
 content_margin_left = 2.0
 
-[node name="MapObjectMenu" type="HBoxContainer" unique_id=1748631448 node_paths=PackedStringArray("titleLabel", "jobInfoPanel", "addJobMenu", "addJobItemList", "addJobDescription", "addJobConfirmButton", "detailsText")]
+[node name="MapObjectMenu" type="HBoxContainer" unique_id=334038367 node_paths=PackedStringArray("titleLabel", "jobInfoPanel", "addJobMenu", "addJobItemList", "addJobDescription", "addJobConfirmButton", "detailsText")]
 offset_right = 147.0
 offset_bottom = 244.0
 script = ExtResource("1_lkdvm")
@@ -19,28 +19,28 @@ addJobDescription = NodePath("Vbox/JobScrolll/DetailsList/JobAdditionMenu/VBoxCo
 addJobConfirmButton = NodePath("Vbox/JobScrolll/DetailsList/JobAdditionMenu/VBoxContainer/PanelContainer/VBoxContainer/HBoxContainer/ConfirmButton")
 detailsText = NodePath("Vbox/JobScrolll/DetailsList/MapObjectInfopanel/VBoxContainer2/DetailsContainer/MarginContainer2/VBoxContainer/InformationList/ObjectDetails")
 
-[node name="Vbox" type="VBoxContainer" parent="." unique_id=591111991]
+[node name="Vbox" type="VBoxContainer" parent="." unique_id=1409576757]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 0
 
-[node name="Title" type="PanelContainer" parent="Vbox" unique_id=1659357753]
+[node name="Title" type="PanelContainer" parent="Vbox" unique_id=171494311]
 layout_mode = 2
 size_flags_horizontal = 0
 
-[node name="MarginContainer" type="MarginContainer" parent="Vbox/Title" unique_id=1551623924]
+[node name="MarginContainer" type="MarginContainer" parent="Vbox/Title" unique_id=1652989263]
 layout_mode = 2
 theme_override_constants/margin_left = 2
 theme_override_constants/margin_top = 2
 theme_override_constants/margin_right = 2
 theme_override_constants/margin_bottom = 0
 
-[node name="Label" type="Label" parent="Vbox/Title/MarginContainer" unique_id=1906506456]
+[node name="Label" type="Label" parent="Vbox/Title/MarginContainer" unique_id=1067927418]
 layout_mode = 2
 text = "MapObject"
 horizontal_alignment = 1
 
-[node name="JobScrolll" type="ScrollContainer" parent="Vbox" unique_id=129622908]
+[node name="JobScrolll" type="ScrollContainer" parent="Vbox" unique_id=1166024140]
 custom_minimum_size = Vector2(0, 220)
 layout_mode = 2
 size_flags_vertical = 3
@@ -48,13 +48,13 @@ mouse_filter = 0
 horizontal_scroll_mode = 0
 vertical_scroll_mode = 4
 
-[node name="DetailsList" type="VBoxContainer" parent="Vbox/JobScrolll" unique_id=1015953155]
+[node name="DetailsList" type="VBoxContainer" parent="Vbox/JobScrolll" unique_id=219229324]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 2
 
-[node name="MapObjectInfopanel" type="MarginContainer" parent="Vbox/JobScrolll/DetailsList" unique_id=1362104975]
+[node name="MapObjectInfopanel" type="MarginContainer" parent="Vbox/JobScrolll/DetailsList" unique_id=42850791]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
@@ -63,24 +63,24 @@ theme_override_constants/margin_top = 2
 theme_override_constants/margin_right = 2
 theme_override_constants/margin_bottom = 2
 
-[node name="VBoxContainer2" type="VBoxContainer" parent="Vbox/JobScrolll/DetailsList/MapObjectInfopanel" unique_id=1009409877]
+[node name="VBoxContainer2" type="VBoxContainer" parent="Vbox/JobScrolll/DetailsList/MapObjectInfopanel" unique_id=1558528125]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 0
 
-[node name="InfoHeader" type="HBoxContainer" parent="Vbox/JobScrolll/DetailsList/MapObjectInfopanel/VBoxContainer2" unique_id=1596772754]
+[node name="InfoHeader" type="HBoxContainer" parent="Vbox/JobScrolll/DetailsList/MapObjectInfopanel/VBoxContainer2" unique_id=998745212]
 layout_mode = 2
 
-[node name="PanelContainer" type="PanelContainer" parent="Vbox/JobScrolll/DetailsList/MapObjectInfopanel/VBoxContainer2/InfoHeader" unique_id=1570056122]
+[node name="PanelContainer" type="PanelContainer" parent="Vbox/JobScrolll/DetailsList/MapObjectInfopanel/VBoxContainer2/InfoHeader" unique_id=1745834748]
 layout_mode = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="Vbox/JobScrolll/DetailsList/MapObjectInfopanel/VBoxContainer2/InfoHeader/PanelContainer" unique_id=815932952]
+[node name="MarginContainer" type="MarginContainer" parent="Vbox/JobScrolll/DetailsList/MapObjectInfopanel/VBoxContainer2/InfoHeader/PanelContainer" unique_id=1196536280]
 layout_mode = 2
 theme_override_constants/margin_left = 2
 theme_override_constants/margin_top = 2
 theme_override_constants/margin_right = 2
 
-[node name="Label" type="Label" parent="Vbox/JobScrolll/DetailsList/MapObjectInfopanel/VBoxContainer2/InfoHeader/PanelContainer/MarginContainer" unique_id=861569099]
+[node name="Label" type="Label" parent="Vbox/JobScrolll/DetailsList/MapObjectInfopanel/VBoxContainer2/InfoHeader/PanelContainer/MarginContainer" unique_id=958538140]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/normal = SubResource("StyleBoxEmpty_jmbgv")
@@ -88,58 +88,58 @@ text = " ⓘ "
 label_settings = ExtResource("3_gxr3b")
 horizontal_alignment = 1
 
-[node name="DetailsContainer" type="PanelContainer" parent="Vbox/JobScrolll/DetailsList/MapObjectInfopanel/VBoxContainer2" unique_id=1696930926]
+[node name="DetailsContainer" type="PanelContainer" parent="Vbox/JobScrolll/DetailsList/MapObjectInfopanel/VBoxContainer2" unique_id=1139343073]
 layout_mode = 2
 
-[node name="MarginContainer2" type="MarginContainer" parent="Vbox/JobScrolll/DetailsList/MapObjectInfopanel/VBoxContainer2/DetailsContainer" unique_id=1128989637]
+[node name="MarginContainer2" type="MarginContainer" parent="Vbox/JobScrolll/DetailsList/MapObjectInfopanel/VBoxContainer2/DetailsContainer" unique_id=488502550]
 layout_mode = 2
 theme_override_constants/margin_left = 2
 theme_override_constants/margin_top = 2
 theme_override_constants/margin_right = 2
 theme_override_constants/margin_bottom = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Vbox/JobScrolll/DetailsList/MapObjectInfopanel/VBoxContainer2/DetailsContainer/MarginContainer2" unique_id=1806933046]
+[node name="VBoxContainer" type="VBoxContainer" parent="Vbox/JobScrolll/DetailsList/MapObjectInfopanel/VBoxContainer2/DetailsContainer/MarginContainer2" unique_id=689145177]
 layout_mode = 2
 
-[node name="InformationList" type="VBoxContainer" parent="Vbox/JobScrolll/DetailsList/MapObjectInfopanel/VBoxContainer2/DetailsContainer/MarginContainer2/VBoxContainer" unique_id=860367287]
+[node name="InformationList" type="VBoxContainer" parent="Vbox/JobScrolll/DetailsList/MapObjectInfopanel/VBoxContainer2/DetailsContainer/MarginContainer2/VBoxContainer" unique_id=660930613]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="ObjectDetails" type="RichTextLabel" parent="Vbox/JobScrolll/DetailsList/MapObjectInfopanel/VBoxContainer2/DetailsContainer/MarginContainer2/VBoxContainer/InformationList" unique_id=1535215109]
+[node name="ObjectDetails" type="RichTextLabel" parent="Vbox/JobScrolll/DetailsList/MapObjectInfopanel/VBoxContainer2/DetailsContainer/MarginContainer2/VBoxContainer/InformationList" unique_id=1495341149]
 layout_mode = 2
 theme_override_font_sizes/normal_font_size = 10
 text = "Details"
 fit_content = true
 tab_stops = PackedFloat32Array(5, 10)
 
-[node name="JobInfopanel" parent="Vbox/JobScrolll/DetailsList" unique_id=316087859 instance=ExtResource("2_gxr3b")]
+[node name="JobInfopanel" parent="Vbox/JobScrolll/DetailsList" unique_id=170020941 instance=ExtResource("2_gxr3b")]
 layout_mode = 2
 
-[node name="JobAdditionMenu" type="MarginContainer" parent="Vbox/JobScrolll/DetailsList" unique_id=552563959]
+[node name="JobAdditionMenu" type="MarginContainer" parent="Vbox/JobScrolll/DetailsList" unique_id=1927652276]
 layout_mode = 2
 theme_override_constants/margin_left = 2
 theme_override_constants/margin_top = 2
 theme_override_constants/margin_right = 2
 theme_override_constants/margin_bottom = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Vbox/JobScrolll/DetailsList/JobAdditionMenu" unique_id=673576098]
+[node name="VBoxContainer" type="VBoxContainer" parent="Vbox/JobScrolll/DetailsList/JobAdditionMenu" unique_id=2049133416]
 layout_mode = 2
 theme_override_constants/separation = 0
 
-[node name="TopBar2" type="HBoxContainer" parent="Vbox/JobScrolll/DetailsList/JobAdditionMenu/VBoxContainer" unique_id=789406644]
+[node name="TopBar2" type="HBoxContainer" parent="Vbox/JobScrolll/DetailsList/JobAdditionMenu/VBoxContainer" unique_id=1853908736]
 layout_mode = 2
 
-[node name="PanelContainer" type="PanelContainer" parent="Vbox/JobScrolll/DetailsList/JobAdditionMenu/VBoxContainer/TopBar2" unique_id=374354029]
+[node name="PanelContainer" type="PanelContainer" parent="Vbox/JobScrolll/DetailsList/JobAdditionMenu/VBoxContainer/TopBar2" unique_id=161372816]
 layout_mode = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="Vbox/JobScrolll/DetailsList/JobAdditionMenu/VBoxContainer/TopBar2/PanelContainer" unique_id=1948102371]
+[node name="MarginContainer" type="MarginContainer" parent="Vbox/JobScrolll/DetailsList/JobAdditionMenu/VBoxContainer/TopBar2/PanelContainer" unique_id=512010622]
 layout_mode = 2
 theme_override_constants/margin_left = 2
 theme_override_constants/margin_top = 2
 theme_override_constants/margin_right = 2
 
-[node name="Label" type="Label" parent="Vbox/JobScrolll/DetailsList/JobAdditionMenu/VBoxContainer/TopBar2/PanelContainer/MarginContainer" unique_id=797707715]
+[node name="Label" type="Label" parent="Vbox/JobScrolll/DetailsList/JobAdditionMenu/VBoxContainer/TopBar2/PanelContainer/MarginContainer" unique_id=1691492764]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/normal = SubResource("StyleBoxEmpty_jmbgv")
@@ -147,29 +147,30 @@ text = "Add Job"
 label_settings = ExtResource("3_gxr3b")
 horizontal_alignment = 1
 
-[node name="PanelContainer" type="PanelContainer" parent="Vbox/JobScrolll/DetailsList/JobAdditionMenu/VBoxContainer" unique_id=1856364958]
+[node name="PanelContainer" type="PanelContainer" parent="Vbox/JobScrolll/DetailsList/JobAdditionMenu/VBoxContainer" unique_id=345912431]
 layout_mode = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Vbox/JobScrolll/DetailsList/JobAdditionMenu/VBoxContainer/PanelContainer" unique_id=210755571]
+[node name="VBoxContainer" type="VBoxContainer" parent="Vbox/JobScrolll/DetailsList/JobAdditionMenu/VBoxContainer/PanelContainer" unique_id=1123279448]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Vbox/JobScrolll/DetailsList/JobAdditionMenu/VBoxContainer/PanelContainer/VBoxContainer" unique_id=2071264364]
+[node name="Label" type="Label" parent="Vbox/JobScrolll/DetailsList/JobAdditionMenu/VBoxContainer/PanelContainer/VBoxContainer" unique_id=413770949]
 visible = false
 layout_mode = 2
 text = "Select a new job to add."
 horizontal_alignment = 1
 
-[node name="MarginContainer" type="MarginContainer" parent="Vbox/JobScrolll/DetailsList/JobAdditionMenu/VBoxContainer/PanelContainer/VBoxContainer" unique_id=1539020468]
+[node name="MarginContainer" type="MarginContainer" parent="Vbox/JobScrolll/DetailsList/JobAdditionMenu/VBoxContainer/PanelContainer/VBoxContainer" unique_id=444774290]
 layout_mode = 2
 theme_override_constants/margin_left = 2
 theme_override_constants/margin_top = 2
 theme_override_constants/margin_right = 2
 theme_override_constants/margin_bottom = 2
 
-[node name="AvailableJobsList" type="ItemList" parent="Vbox/JobScrolll/DetailsList/JobAdditionMenu/VBoxContainer/PanelContainer/VBoxContainer/MarginContainer" unique_id=1300818932]
+[node name="AvailableJobsList" type="ItemList" parent="Vbox/JobScrolll/DetailsList/JobAdditionMenu/VBoxContainer/PanelContainer/VBoxContainer/MarginContainer" unique_id=1875945129]
 custom_minimum_size = Vector2(0, 70)
 layout_mode = 2
 size_flags_vertical = 3
+focus_mode = 0
 allow_search = false
 auto_width = true
 auto_height = true
@@ -186,7 +187,7 @@ item_5/text = "pungus."
 item_6/text = "gleebumbus"
 item_7/text = "šnsandsdasd"
 
-[node name="JobInfoText" type="RichTextLabel" parent="Vbox/JobScrolll/DetailsList/JobAdditionMenu/VBoxContainer/PanelContainer/VBoxContainer" unique_id=692822993]
+[node name="JobInfoText" type="RichTextLabel" parent="Vbox/JobScrolll/DetailsList/JobAdditionMenu/VBoxContainer/PanelContainer/VBoxContainer" unique_id=2128516405]
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.33
@@ -194,11 +195,11 @@ bbcode_enabled = true
 text = "Job info"
 fit_content = true
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Vbox/JobScrolll/DetailsList/JobAdditionMenu/VBoxContainer/PanelContainer/VBoxContainer" unique_id=415954706]
+[node name="HBoxContainer" type="HBoxContainer" parent="Vbox/JobScrolll/DetailsList/JobAdditionMenu/VBoxContainer/PanelContainer/VBoxContainer" unique_id=1453064517]
 layout_mode = 2
 alignment = 2
 
-[node name="ConfirmButton" type="Button" parent="Vbox/JobScrolll/DetailsList/JobAdditionMenu/VBoxContainer/PanelContainer/VBoxContainer/HBoxContainer" unique_id=1546362689]
+[node name="ConfirmButton" type="Button" parent="Vbox/JobScrolll/DetailsList/JobAdditionMenu/VBoxContainer/PanelContainer/VBoxContainer/HBoxContainer" unique_id=1326769315]
 layout_mode = 2
 disabled = true
 text = "ADD job"

@@ -112,12 +112,12 @@ metadata/_custom_type_script = "uid://dpr7b2iecx6gm"
 [sub_resource type="Resource" id="Resource_a1kp6"]
 script = ExtResource("9_1p0hh")
 Target = ExtResource("14_nugjq")
-MinElevation = 0.07
-MaxElevation = 0.305
-MinTemperature = 0.425
-MinHumidity = 0.155
+MinElevation = 0.02
+MaxElevation = 0.42
+MinTemperature = 0.415
+MinHumidity = 0.18
 MaxHumidity = 0.395
-Rarity = 0.8
+Rarity = 0.9
 metadata/_custom_type_script = "uid://dpr7b2iecx6gm"
 
 [sub_resource type="Gradient" id="Gradient_3biw4"]
@@ -136,7 +136,7 @@ height = 840
 noise = ExtResource("11_a3btc")
 color_ramp = ExtResource("7_f4k24")
 
-[node name="WorldMan" type="Node2D" unique_id=1264187012 node_paths=PackedStringArray("worldGenerator", "worldRenderer", "worldUI", "camera")]
+[node name="WorldMan" type="Node2D" unique_id=570883737 node_paths=PackedStringArray("worldGenerator", "worldRenderer", "worldUI", "camera")]
 script = ExtResource("1_g1pp1")
 worldGenerator = NodePath("WorldGenerator")
 worldRenderer = NodePath("WorldRenderer")
@@ -144,7 +144,7 @@ regionScene = ExtResource("2_vqee5")
 worldUI = NodePath("WorldUI")
 camera = NodePath("Camera")
 
-[node name="WorldGenerator" type="Node" parent="." unique_id=421272415]
+[node name="WorldGenerator" type="Node" parent="." unique_id=981015756]
 script = ExtResource("3_n4hhb")
 continentNoise = ExtResource("4_f4k24")
 temperatureNoise = ExtResource("8_3biw4")
@@ -165,7 +165,7 @@ elevationTemperatureReductionCurve = SubResource("Curve_3biw4")
 populationLandTileCurve = SubResource("Curve_vqee5")
 resourceSiteGenerationParameters = Array[Object]([SubResource("Resource_getmw"), SubResource("Resource_dtgda"), SubResource("Resource_pnmcl"), SubResource("Resource_iffmc"), SubResource("Resource_nugjq"), SubResource("Resource_a1kp6")])
 
-[node name="WorldRenderer" type="Node" parent="." unique_id=1973556366 node_paths=PackedStringArray("groundSprite", "RegionSprite", "highlightSprite")]
+[node name="WorldRenderer" type="Node" parent="." unique_id=1180870154 node_paths=PackedStringArray("groundSprite", "RegionSprite", "highlightSprite")]
 script = ExtResource("5_3biw4")
 groundSprite = NodePath("Ground")
 RegionSprite = NodePath("Regions")
@@ -175,26 +175,26 @@ temperatureGradient = ExtResource("7_f4k24")
 seaWindGradient = SubResource("Gradient_3biw4")
 humidityGradient = ExtResource("9_h4q0h")
 
-[node name="Ground" type="Sprite2D" parent="WorldRenderer" unique_id=2127821019]
+[node name="Ground" type="Sprite2D" parent="WorldRenderer" unique_id=907005993]
 centered = false
 
-[node name="Regions" type="Sprite2D" parent="WorldRenderer" unique_id=2122600001]
+[node name="Regions" type="Sprite2D" parent="WorldRenderer" unique_id=1361010814]
 modulate = Color(1.288109, 1.288109, 1.288109, 1)
 material = SubResource("CanvasItemMaterial_n4hhb")
 centered = false
 
-[node name="Highlight" type="Sprite2D" parent="WorldRenderer" unique_id=8108790]
+[node name="Highlight" type="Sprite2D" parent="WorldRenderer" unique_id=1950604947]
 modulate = Color(1, 1, 1, 0.26666668)
 material = SubResource("CanvasItemMaterial_vqee5")
 centered = false
 
-[node name="DebugRender" type="Sprite2D" parent="." unique_id=931766]
+[node name="DebugRender" type="Sprite2D" parent="." unique_id=938434553]
 visible = false
 texture = SubResource("NoiseTexture2D_j0gdu")
 centered = false
 
-[node name="Camera" type="Camera2D" parent="." unique_id=135815858]
+[node name="Camera" type="Camera2D" parent="." unique_id=1650187017]
 script = ExtResource("6_h4q0h")
 
-[node name="WorldUI" parent="." unique_id=1556432657 node_paths=PackedStringArray("camera") instance=ExtResource("7_vqee5")]
+[node name="WorldUI" parent="." unique_id=317421206 node_paths=PackedStringArray("camera") instance=ExtResource("7_vqee5")]
 camera = NodePath("../Camera")

@@ -32,6 +32,11 @@ namespace scenes.map {
 			camera.ClickedMouseEvent += MouseClicked;
 			camera.Position = new(worldGenerator.WorldWidth * 0.5f, worldGenerator.WorldHeight * 0.5f);
 
+			worldUI.ResourceDisplay.Display(() => {
+				var mousePos = new Vector2I((int)GetGlobalMousePosition().X, (int)GetGlobalMousePosition().Y);
+				return $"{mousePos}";
+			});
+
 			if (GameMan.Singleton.Game.Map.World != null) {
 				map = GameMan.Singleton.Game.Map;
 				worldRenderer.Draw(map.World);
@@ -55,7 +60,6 @@ namespace scenes.map {
 
 		public override void _Process(double delta) {
 			var mousePos = new Vector2I((int)GetGlobalMousePosition().X, (int)GetGlobalMousePosition().Y);
-			worldUI.ResourceDisplay.Display(tilepos: mousePos);
 			if (map != null) {
 				map.TileOwners.TryGetValue(mousePos, out Region region);
 				worldRenderer.DrawRegionHighlight(region, worldUI.SelectedRegion);

@@ -109,6 +109,31 @@ namespace scenes.region.ui {
 			Reset();
 		}
 
+		public void SetupResourceDisplay() {
+			var fac = GetFaction();
+			resourceDisplay.Display(() => $"pop: {fac.GetPopulationCount()} ({fac.HomelessPopulation} homeless, {fac.UnemployedPopulation} unemployed)");
+			resourceDisplay.Display(() => {
+				var foodAndUsage = GetFoodAndUsage();
+				return $"food: {foodAndUsage.Item1} (usage {foodAndUsage.Item2})";
+			});
+			resourceDisplay.Display(() => $"fps: {Engine.GetFramesPerSecond()}");
+			var reg = fac.Region;
+			resourceDisplay.Display(() => {
+				string txt = $"{inRegionTilepos}";
+				if (reg.GroundTiles.TryGetValue(inRegionTilepos, out GroundTileType tile)) {
+					txt += $" {tile.UIString()}";
+					if (reg.HasMapObject(inRegionTilepos, out MapObject mopject)) {
+						txt += $" with {(mopject.Type as IAssetType).AssetName}";
+					}
+				}
+				return txt;
+			});
+			resourceDisplay.Display(() => $"faction: {fac.Name}");
+			resourceDisplay.DisplayFat();
+			var timeLabel = new Label {HorizontalAlignment = HorizontalAlignment.Right};
+			resourceDisplay.Display(() => GetTimeString(), timeLabel);
+		}
+
 		public override void _Process(double delta) {
 			UpdateDisplays(); // todo move this to something that doesn't happen every frame... if it becomes a bottleneck
 		}
@@ -173,9 +198,7 @@ namespace scenes.region.ui {
 		// display
 
 		void UpdateDisplays() {
-			var faction = GetFaction();
-			resourceDisplay.Display(population: faction.GetPopulationCount(), homelessPopulation: faction.HomelessPopulation, unemployedPopulation: faction.UnemployedPopulation);
-			resourceDisplay.Display(timeString: GetTimeString(), faction: faction, foodAndUsage: GetFoodAndUsage());
+			resourceDisplay.Display();
 			DisplayResources();
 			SetGameSpeedLabelText();
 			pauseDisplayPanel.Visible = gamePaused || gameSpeed == 0f || internalGamePaused;
@@ -224,11 +247,13 @@ namespace scenes.region.ui {
 		}
 
 		public void OnRightMouseClick(Vector2 position, Vector2I tilePosition) {
-			
+
 		}
 
+		Vector2I inRegionTilepos;
 		public void OnTileHighlighted(Vector2I tilePosition, Region region) {
-			resourceDisplay.Display(inRegionTilepos: (tilePosition, region));
+			inRegionTilepos = tilePosition;
+			//resourceDisplay.Display(inRegionTilepos: (tilePosition, region));
 		}
 
 		public void OnBuildingClicked(Building building) {

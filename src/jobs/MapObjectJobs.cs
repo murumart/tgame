@@ -145,7 +145,7 @@ public class GatherResourceJob : MapObjectJob {
 	}
 
 	public GatherResourceJob(int wellix, ResourceSite site) {
-		MaxWorkers = 5;
+		MaxWorkers = 10;
 		wellIx = wellix;
 		this.site = site;
 	}

@@ -60,6 +60,7 @@ namespace scenes.region {
 			camera.Region = region;
 
 			regionDisplay.LoadRegion(region);
+			ui.SetupResourceDisplay();
 
 			// show also neighboring regions and neighbors' neighbors
 			HashSet<Region> secondLevel = new();
