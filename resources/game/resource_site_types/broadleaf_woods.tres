@@ -10,7 +10,7 @@ script = ExtResource("2_xu7eb")
 resourceType = ExtResource("1_f7tab")
 minutesPerBunch = 60
 bunchSize = 3
-minutesPerBunchRegen = 17280
+minutesPerBunchRegen = 51840
 initialBunches = 40
 metadata/_custom_type_script = "uid://bnfatrmjew0vy"
 

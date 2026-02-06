@@ -5,6 +5,7 @@
 [ext_resource type="Script" uid="uid://camepisb1ldku" path="res://resources/game/resource_groups/ResourceGroupValue.cs" id="2_1i88x"]
 [ext_resource type="Resource" uid="uid://ckykt5fdrh727" path="res://resources/game/resource_types/bread.tres" id="3_np2qo"]
 [ext_resource type="Resource" uid="uid://xkt4u6pl6p3" path="res://resources/game/resource_types/fruit.tres" id="3_npmwh"]
+[ext_resource type="Resource" uid="uid://b41i53hgxp8vw" path="res://resources/game/resource_types/grain.tres" id="5_uk2ul"]
 
 [sub_resource type="Resource" id="Resource_npmwh"]
 script = ExtResource("2_1i88x")
@@ -18,6 +19,12 @@ ResourceType = ExtResource("3_npmwh")
 Value = 2
 metadata/_custom_type_script = "uid://camepisb1ldku"
 
+[sub_resource type="Resource" id="Resource_p6o31"]
+script = ExtResource("2_1i88x")
+ResourceType = ExtResource("5_uk2ul")
+Value = 1
+metadata/_custom_type_script = "uid://camepisb1ldku"
+
 [sub_resource type="Resource" id="Resource_uk2ul"]
 script = ExtResource("2_1i88x")
 ResourceType = ExtResource("1_1i88x")
@@ -26,5 +33,5 @@ metadata/_custom_type_script = "uid://camepisb1ldku"
 
 [resource]
 script = ExtResource("1_8lcg2")
-ResourceValues = Array[Object]([SubResource("Resource_npmwh"), SubResource("Resource_np2qo"), SubResource("Resource_uk2ul")])
+ResourceValues = Array[Object]([SubResource("Resource_npmwh"), SubResource("Resource_np2qo"), SubResource("Resource_p6o31"), SubResource("Resource_uk2ul")])
 metadata/_custom_type_script = "uid://eb7fhhrceidl"

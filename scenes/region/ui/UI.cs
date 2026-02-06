@@ -236,7 +236,7 @@ namespace scenes.region.ui {
 		public void OnLeftMouseClick(Vector2 position, Vector2I tilePosition) {
 			switch (state) {
 				case State.PlacingBuild:
-					buildingList.RequestBuild(tilePosition);
+					RequestBuild(buildingList.SelectedBuildingType, tilePosition);
 					break;
 				case State.Idle:
 					MapClick(tilePosition);

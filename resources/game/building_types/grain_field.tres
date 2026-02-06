@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="BuildingType" format=3 uid="uid://srett0sukua2"]
+
+[ext_resource type="Script" uid="uid://c3n4csk46p0uc" path="res://resources/game/building_types/crafting/CraftingJobDef.cs" id="1_4efhs"]
+[ext_resource type="Script" uid="uid://b5xb3tdf3yoon" path="res://resources/game/building_types/BuildingType.cs" id="1_052vu"]
+[ext_resource type="Resource" uid="uid://b41i53hgxp8vw" path="res://resources/game/resource_types/grain.tres" id="1_860cy"]
+
+[sub_resource type="Resource" id="Resource_860cy"]
+script = ExtResource("1_4efhs")
+inputs = Dictionary[Object, int]({})
+outputs = Dictionary[Object, int]({
+ExtResource("1_860cy"): 65
+})
+timeTakenMinutes = 15120
+maxWorkers = 20
+outputDescription = "grain"
+metadata/_custom_type_script = "uid://c3n4csk46p0uc"
+
+[resource]
+script = ExtResource("1_052vu")
+name = "grain field"
+description = "Grain is grown here."
+ResourceCosts = null
+CraftingJobs = Array[Object]([SubResource("Resource_860cy")])
+HoursToConstruct = 24.0
+ScenePath = "uid://c8cwdv8n4e3i7"
+metadata/_custom_type_script = "uid://b5xb3tdf3yoon"

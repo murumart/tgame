@@ -16,7 +16,7 @@ public partial class BuildingList : PanelContainer {
 	long selectedBuildThingId = -1;
 	MapObjectView selectedBuildingScene = null;
 	IBuildingType _selectedBuildingType = null;
-	IBuildingType selectedBuildingType {
+	public IBuildingType SelectedBuildingType {
 		get {
 			//Debug.PrintWithStack("GET sel build type: ", _selectedBuildingType);
 			return _selectedBuildingType;
@@ -73,10 +73,10 @@ public partial class BuildingList : PanelContainer {
 		if (buildingType == null) {
 			if (selectedBuildingScene != null) {
 				selectedBuildingScene.QueueFree();
-				selectedBuildingType = null;
+				SelectedBuildingType = null;
 			}
 			selectedBuildingScene = null;
-			selectedBuildingType = null;
+			SelectedBuildingType = null;
 			return;
 		}
 		Debug.Assert(buildingType != null, "Buuldint type canät be null here....w aht...");
@@ -87,13 +87,9 @@ public partial class BuildingList : PanelContainer {
 		Debug.Assert(scene is MapObjectView, "trying to build something that doesn't extend MapObjectView");
 		ui.CameraCursor.AddChild(scene);
 		selectedBuildingScene = scene as MapObjectView;
-		selectedBuildingType = buildingType;
+		SelectedBuildingType = buildingType;
 		ui.state = UI.State.PlacingBuild;
 		selectedBuildingScene.Modulate = new Color(selectedBuildingScene.Modulate, 0.67f);
-	}
-
-	public void RequestBuild(Vector2I tpos) {
-		ui.RequestBuild(selectedBuildingType, tpos);
 	}
 
 	public void Update() {

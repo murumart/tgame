@@ -71,7 +71,7 @@ namespace scenes.map.ui {
 			factionTitleLabel.Text = region.LocalFaction.Name;
 			var things = string.Join(", ", region.GetMapObjects().Select(a => ((IAssetType)a.Type).AssetName).Distinct());
 			factionInfoLabel.Text =
-				(region.LocalFaction.HasOwningFaction() ? "Submits to " + region.LocalFaction.GetOwningFaction() : "Sovereign territory") + "\n"
+				(region.LocalFaction.HasOwningFaction() ? "Colony of " + region.LocalFaction.GetOwningFaction() : "Sovereign territory") + "\n"
 				+ $"Land tiles: {region.LandTileCount}\n"
 				+ $"Sea tiles: {region.OceanTileCount}\n"
 				+ $"Population: {(region.LocalFaction.GetPopulationCount())}\n"
