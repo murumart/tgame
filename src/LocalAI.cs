@@ -216,7 +216,7 @@ public partial class LocalAI {
 				foreach (var mop in ac.GetMapObjects()) {
 					if (mop is ResourceSite rs) {
 						int wix = 0;
-						foreach (var well in rs.MineWells) {
+						foreach (var well in rs.Wells) {
 							if (rs.Type == siteType && well.ResourceType == wantedResource && ac.GetMapObjectsJob(rs) == null) {
 								ac.AddJob(rs, new GatherResourceJob(wix, rs));
 								return;

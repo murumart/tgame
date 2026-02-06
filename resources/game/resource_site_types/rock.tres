@@ -1,15 +1,31 @@
 [gd_resource type="Resource" script_class="ResourceSiteType" format=3 uid="uid://bh5svfg5ua7eb"]
 
+[ext_resource type="Script" uid="uid://clkqk6nbux1c1" path="res://resources/visual/Noun.cs" id="1_7pcea"]
 [ext_resource type="Resource" uid="uid://nw83fam2omvi" path="res://resources/game/resource_types/rock.tres" id="1_x1b4t"]
 [ext_resource type="Script" uid="uid://bnfatrmjew0vy" path="res://resources/game/resource_site_types/ResourceWell.cs" id="2_7pcea"]
+[ext_resource type="Script" uid="uid://cbiuqlrd8yyxx" path="res://resources/visual/Verb.cs" id="2_k0djl"]
 [ext_resource type="Script" uid="uid://ct2a6sqe1m7mx" path="res://resources/game/resource_site_types/ResourceSiteType.cs" id="3_k0djl"]
+
+[sub_resource type="Resource" id="Resource_k0djl"]
+script = ExtResource("1_7pcea")
+Singular = "rock"
+Plural = "rock"
+metadata/_custom_type_script = "uid://clkqk6nbux1c1"
+
+[sub_resource type="Resource" id="Resource_xbyw5"]
+script = ExtResource("2_k0djl")
+Infinitive = "mine"
+Progressive = "mining"
+metadata/_custom_type_script = "uid://cbiuqlrd8yyxx"
 
 [sub_resource type="Resource" id="Resource_bkqwf"]
 script = ExtResource("2_7pcea")
 resourceType = ExtResource("1_x1b4t")
-minutesPerBunch = 75
+minutesPerBunch = 150
 bunchSize = 1
 initialBunches = 360
+Produce = SubResource("Resource_k0djl")
+Production = SubResource("Resource_xbyw5")
 metadata/_custom_type_script = "uid://bnfatrmjew0vy"
 
 [resource]

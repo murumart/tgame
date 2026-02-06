@@ -1,10 +1,24 @@
 [gd_resource type="Resource" script_class="BuildingType" format=3 uid="uid://dv2p1gg3s0wjx"]
 
+[ext_resource type="Script" uid="uid://cbiuqlrd8yyxx" path="res://resources/visual/Verb.cs" id="1_1r4bu"]
 [ext_resource type="Resource" uid="uid://pmrcwo4t316p" path="res://resources/game/resource_types/logs.tres" id="1_77qvn"]
+[ext_resource type="Script" uid="uid://clkqk6nbux1c1" path="res://resources/visual/Noun.cs" id="1_e481t"]
 [ext_resource type="Resource" uid="uid://lda3p80x02sh" path="res://resources/game/resource_types/clay.tres" id="2_drxcw"]
 [ext_resource type="Resource" uid="uid://cbynhxq0y3kkl" path="res://resources/game/resource_types/bricks.tres" id="3_e481t"]
 [ext_resource type="Script" uid="uid://b5xb3tdf3yoon" path="res://resources/game/building_types/BuildingType.cs" id="3_wr3si"]
 [ext_resource type="Script" uid="uid://c3n4csk46p0uc" path="res://resources/game/building_types/crafting/CraftingJobDef.cs" id="4_1r4bu"]
+
+[sub_resource type="Resource" id="Resource_qx22m"]
+script = ExtResource("1_1r4bu")
+Infinitive = "make"
+Progressive = "making"
+metadata/_custom_type_script = "uid://cbiuqlrd8yyxx"
+
+[sub_resource type="Resource" id="Resource_1r4bu"]
+script = ExtResource("1_e481t")
+Singular = "brick"
+Plural = "bricks"
+metadata/_custom_type_script = "uid://clkqk6nbux1c1"
 
 [sub_resource type="Resource" id="Resource_po5cf"]
 script = ExtResource("4_1r4bu")
@@ -17,7 +31,8 @@ ExtResource("3_e481t"): 15
 })
 timeTakenMinutes = 300
 maxWorkers = 3
-outputDescription = "bricks"
+Product = SubResource("Resource_1r4bu")
+Process = SubResource("Resource_qx22m")
 metadata/_custom_type_script = "uid://c3n4csk46p0uc"
 
 [resource]

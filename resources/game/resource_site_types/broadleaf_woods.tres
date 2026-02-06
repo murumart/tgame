@@ -1,9 +1,23 @@
 [gd_resource type="Resource" script_class="ResourceSiteType" format=3 uid="uid://bws8feec8sqin"]
 
 [ext_resource type="Resource" uid="uid://pmrcwo4t316p" path="res://resources/game/resource_types/logs.tres" id="1_f7tab"]
+[ext_resource type="Script" uid="uid://clkqk6nbux1c1" path="res://resources/visual/Noun.cs" id="1_urpv6"]
+[ext_resource type="Script" uid="uid://cbiuqlrd8yyxx" path="res://resources/visual/Verb.cs" id="2_6f8wo"]
 [ext_resource type="Script" uid="uid://bnfatrmjew0vy" path="res://resources/game/resource_site_types/ResourceWell.cs" id="2_xu7eb"]
 [ext_resource type="Script" uid="uid://ct2a6sqe1m7mx" path="res://resources/game/resource_site_types/ResourceSiteType.cs" id="3_urpv6"]
 [ext_resource type="Resource" uid="uid://xkt4u6pl6p3" path="res://resources/game/resource_types/fruit.tres" id="3_xu7eb"]
+
+[sub_resource type="Resource" id="Resource_6f8wo"]
+script = ExtResource("1_urpv6")
+Singular = "wood"
+Plural = "wood"
+metadata/_custom_type_script = "uid://clkqk6nbux1c1"
+
+[sub_resource type="Resource" id="Resource_vhtig"]
+script = ExtResource("2_6f8wo")
+Infinitive = "chop"
+Progressive = "chopping"
+metadata/_custom_type_script = "uid://cbiuqlrd8yyxx"
 
 [sub_resource type="Resource" id="Resource_f0lo2"]
 script = ExtResource("2_xu7eb")
@@ -12,6 +26,8 @@ minutesPerBunch = 60
 bunchSize = 3
 minutesPerBunchRegen = 51840
 initialBunches = 40
+Produce = SubResource("Resource_6f8wo")
+Production = SubResource("Resource_vhtig")
 metadata/_custom_type_script = "uid://bnfatrmjew0vy"
 
 [sub_resource type="Resource" id="Resource_f7tab"]

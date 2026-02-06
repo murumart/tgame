@@ -32,8 +32,6 @@ namespace resources.game.resource_site_types {
 			return list;
 		}
 
-		public string GetJobDescription(Well well) => well.ResourceType.AssetName;
-
 		public string GetScenePath() => ScenePath;
 	}
 

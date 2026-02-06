@@ -3,6 +3,20 @@
 [ext_resource type="Script" uid="uid://c3n4csk46p0uc" path="res://resources/game/building_types/crafting/CraftingJobDef.cs" id="1_4efhs"]
 [ext_resource type="Script" uid="uid://b5xb3tdf3yoon" path="res://resources/game/building_types/BuildingType.cs" id="1_052vu"]
 [ext_resource type="Resource" uid="uid://b41i53hgxp8vw" path="res://resources/game/resource_types/grain.tres" id="1_860cy"]
+[ext_resource type="Script" uid="uid://cbiuqlrd8yyxx" path="res://resources/visual/Verb.cs" id="1_w1y7w"]
+[ext_resource type="Script" uid="uid://clkqk6nbux1c1" path="res://resources/visual/Noun.cs" id="2_28vvh"]
+
+[sub_resource type="Resource" id="Resource_ihof6"]
+script = ExtResource("1_w1y7w")
+Infinitive = "grow"
+Progressive = "growing"
+metadata/_custom_type_script = "uid://cbiuqlrd8yyxx"
+
+[sub_resource type="Resource" id="Resource_adydl"]
+script = ExtResource("2_28vvh")
+Singular = "grain"
+Plural = "grain"
+metadata/_custom_type_script = "uid://clkqk6nbux1c1"
 
 [sub_resource type="Resource" id="Resource_860cy"]
 script = ExtResource("1_4efhs")
@@ -12,7 +26,8 @@ ExtResource("1_860cy"): 65
 })
 timeTakenMinutes = 15120
 maxWorkers = 20
-outputDescription = "grain"
+Product = SubResource("Resource_adydl")
+Process = SubResource("Resource_ihof6")
 metadata/_custom_type_script = "uid://c3n4csk46p0uc"
 
 [resource]

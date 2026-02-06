@@ -73,8 +73,8 @@ namespace scenes.region.ui {
 			} else {
 				OpenViewJobScreen();
 			}
-
-
+			detailsText.Text = "";
+			addJobDescription.Text = "";
 
 			Callable.From(Show).CallDeferred();
 		}
@@ -139,7 +139,7 @@ namespace scenes.region.ui {
 				if (crafting.Length > 0) {
 					sb.Append("Production of the following occurs here...\n");
 					foreach (var craftjob in crafting) {
-						sb.Append($"Making ").Append(craftjob.OutputDescription).Append(" gives...\n");
+						sb.Append(craftjob.Process.Progressive.Capitalize()).Append(' ').Append(craftjob.Product.Plural).Append(" gives...\n");
 						craftjob.GetProductionBulletList(sb);
 					}
 				}
@@ -150,14 +150,14 @@ namespace scenes.region.ui {
 				titleLabel.Text = r.Type.AssetName.Capitalize();
 				sb.Append($"The {r.Type.AssetName} contains exploitable resources...\n");
 				bool reproduce = false;
-				foreach (var well in r.MineWells) {
+				foreach (var well in r.Wells) {
 					sb.Append($" * {well.ResourceType.AssetName} x {well.Bunches * well.BunchSize}\n");
 					sb.Append($"   This is {100 - ((float)well.Bunches / well.InitialBunches) * 100:0}% depleted.\n");
 					reproduce = reproduce || well.MinutesPerBunchRegen > 0;
 				}
 				if (reproduce) {
 					sb.Append($"\nSome {("resources")} can regrow...\n");
-					foreach (var well in r.MineWells) {
+					foreach (var well in r.Wells) {
 						if (well.MinutesPerBunchRegen > 0) {
 							sb.Append($" * {well.ResourceType.AssetName} grows every {GameTime.GetFancyTimeString(well.MinutesPerBunchRegen)}.\n");
 						}

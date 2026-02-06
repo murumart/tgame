@@ -35,9 +35,10 @@ namespace scenes.region.ui {
 
 			titleLabel.Text = job.Title;
 
-			infoLabel.Text =
-				job.GetStatusDescription()
-				+ "\n" + job.GetProductionDescription();
+			var desc = job.GetStatusDescription();
+			if (desc.Length != 0) desc += '\n';
+			desc += job.GetProductionDescription();
+			infoLabel.Text = desc;
 		}
 
 		void DeleteJob() {

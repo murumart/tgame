@@ -1,8 +1,22 @@
 [gd_resource type="Resource" script_class="ResourceSiteType" format=3 uid="uid://dwcrohuk4oajt"]
 
 [ext_resource type="Resource" uid="uid://nw83fam2omvi" path="res://resources/game/resource_types/rock.tres" id="1_7crc6"]
+[ext_resource type="Script" uid="uid://clkqk6nbux1c1" path="res://resources/visual/Noun.cs" id="1_utel0"]
 [ext_resource type="Script" uid="uid://bnfatrmjew0vy" path="res://resources/game/resource_site_types/ResourceWell.cs" id="2_524ue"]
+[ext_resource type="Script" uid="uid://cbiuqlrd8yyxx" path="res://resources/visual/Verb.cs" id="2_dclag"]
 [ext_resource type="Script" uid="uid://ct2a6sqe1m7mx" path="res://resources/game/resource_site_types/ResourceSiteType.cs" id="3_utel0"]
+
+[sub_resource type="Resource" id="Resource_rthe3"]
+script = ExtResource("1_utel0")
+Singular = "stone"
+Plural = "stones"
+metadata/_custom_type_script = "uid://clkqk6nbux1c1"
+
+[sub_resource type="Resource" id="Resource_nsexu"]
+script = ExtResource("2_dclag")
+Infinitive = "pick"
+Progressive = "picking"
+metadata/_custom_type_script = "uid://cbiuqlrd8yyxx"
 
 [sub_resource type="Resource" id="Resource_7crc6"]
 script = ExtResource("2_524ue")
@@ -10,6 +24,8 @@ resourceType = ExtResource("1_7crc6")
 minutesPerBunch = 55
 bunchSize = 1
 initialBunches = 60
+Produce = SubResource("Resource_rthe3")
+Production = SubResource("Resource_nsexu")
 metadata/_custom_type_script = "uid://bnfatrmjew0vy"
 
 [resource]

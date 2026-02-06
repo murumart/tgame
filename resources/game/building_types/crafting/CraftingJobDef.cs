@@ -2,6 +2,7 @@ using System.Linq;
 using Godot;
 using Godot.Collections;
 using resources.game.resource_types;
+using resources.visual;
 
 namespace resouces.game.building_types.crafting {
 
@@ -12,7 +13,8 @@ namespace resouces.game.building_types.crafting {
 		[Export] Dictionary<ResourceType, int> outputs;
 		[Export] int timeTakenMinutes;
 		[Export] int maxWorkers = 5;
-		[Export] string outputDescription;
+		[Export] Noun Product; 
+		[Export] Verb Process; 
 
 		public ResourceBundle[] Inputs {
 			get {
@@ -39,11 +41,10 @@ namespace resouces.game.building_types.crafting {
 
 		public TimeT TimeTaken => timeTakenMinutes;
 		public int MaxWorkers => maxWorkers;
-		public string OutputDescription => outputDescription;
 
 		public CraftJob GetJob() {
 			Debug.Assert(MaxWorkers >= 0, "max workers can't be negative");
-			return new(Inputs, Outputs, TimeTaken, (uint)MaxWorkers, OutputDescription);
+			return new(Inputs, Outputs, TimeTaken, (uint)MaxWorkers, Product, Process);
 		}
 	}
 

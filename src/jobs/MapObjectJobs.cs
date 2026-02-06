@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Godot;
+using resources.visual;
 
 
 public class ConstructBuildingJob : MapObjectJob {
@@ -115,10 +116,14 @@ public class FishByHandJob : Job {
 
 public class GatherResourceJob : MapObjectJob {
 
-	public override string Title =>
-		site == null ?
-				"Gather Resources"
-		: "Gather " + site.Type.GetJobDescription(site.MineWells[wellIx]);
+	public override string Title {
+		get {
+			Debug.Assert(site != null, "Can't get GatherResourceJob Title without site");
+			var well = site.Wells[wellIx];
+			Debug.Assert(well.Production != null, "Need well's Production to get Title");
+			return $"{well.Production.Infinitive.Capitalize()} " + well.ResourceType.AssetName;
+		}
+	}
 
 	public override Vector2I GlobalPosition {
 		get {
@@ -129,8 +134,8 @@ public class GatherResourceJob : MapObjectJob {
 	public override bool IsValid => site != null;
 
 	ResourceStorage storage;
-	ResourceSite site;
-	int wellIx;
+	readonly ResourceSite site;
+	readonly int wellIx;
 
 	float timeSpent; // storing as float due to workers
 	readonly List<ResourceBundle> grant = new();
@@ -141,7 +146,7 @@ public class GatherResourceJob : MapObjectJob {
 	}
 
 	public List<ResourceSite.Well> GetProductions() {
-		return site.MineWells;
+		return site.Wells;
 	}
 
 	public GatherResourceJob(int wellix, ResourceSite site) {
@@ -166,7 +171,7 @@ public class GatherResourceJob : MapObjectJob {
 		float ts = GetWorkTime(minutes);
 		timeSpent += ts;
 
-		var well = site.MineWells[wellIx];
+		var well = site.Wells[wellIx];
 
 		while (timeSpent >= well.MinutesPerBunch && storage.CanAdd(well.BunchSize) && well.HasBunches) {
 			timeSpent -= well.MinutesPerBunch;
@@ -181,11 +186,11 @@ public class GatherResourceJob : MapObjectJob {
 	}
 
 	public override void CheckDone(Faction regionFaction) {
-		if (site.MineWells[wellIx].HasBunches) return;
+		if (site.Wells[wellIx].HasBunches) return;
 
 		regionFaction.RemoveJob(this);
 		// remove a completely depleted resource site
-		foreach (var well in site.MineWells) if (well.HasBunches) return;
+		foreach (var well in site.Wells) if (well.HasBunches) return;
 		regionFaction.Uproot(site.GlobalPosition - regionFaction.Region.WorldPosition);
 	}
 
@@ -193,7 +198,7 @@ public class GatherResourceJob : MapObjectJob {
 
 	public override float GetProgressEstimate() {
 		float estimate = 0f;
-		var well = site.MineWells[wellIx];
+		var well = site.Wells[wellIx];
 		estimate = Math.Max(estimate, timeSpent / well.MinutesPerBunch);
 		return estimate;
 	}
@@ -204,19 +209,21 @@ public class GatherResourceJob : MapObjectJob {
 		}
 		Debug.Assert(Workers >= 0, $"Worker count can't be negative (is {Workers})");
 		var str = $"";
-		if (storage == null) str += "Create a job to gather...\n";
-		else if (Workers == 0) str += "Employ workers to gather...\n";
-		else str = "Gathering...\n";
-		var well = site.MineWells[wellIx];
-		float time = well.MinutesPerBunch / MathF.Max(GetWorkTime(1), 1);
-		str += $"{well.BunchSize} x {well.ResourceType.AssetName} every {GameTime.GetFancyTimeString((TimeT)time)}.\n";
+		var well = site.Wells[wellIx];
+		if (storage == null) str += $"Create a job to {well.Production.Infinitive} {well.ResourceType.AssetName}.";
+		else if (Workers == 0) str += $"Employ workers to {well.Production.Infinitive} {well.ResourceType.AssetName}.";
+		else {
+			str = $"{well.Production.Progressive.Capitalize()} ";
+			float time = well.MinutesPerBunch / MathF.Max(GetWorkTime(1), 1);
+			str += $"{well.BunchSize} {well.ResourceType.AssetName} every {GameTime.GetFancyTimeString((TimeT)time)}.\n";
+		}
 
 		return str;
 	}
 
 	public override string GetStatusDescription() {
 		if (Workers == 0) return "";
-		var well = site.MineWells[wellIx];
+		var well = site.Wells[wellIx];
 		float timeLeft = well.MinutesPerBunch - timeSpent;
 		timeLeft /= GetWorkTime(1);
 		return GameTime.GetFancyTimeString((TimeT)timeLeft) + " until more " + well.ResourceType.AssetName + ".";
@@ -226,7 +233,7 @@ public class GatherResourceJob : MapObjectJob {
 
 public class CraftJob : MapObjectJob {
 
-	public override string Title => $"Craft {OutputDescription}";
+	public override string Title => $"{Process.Infinitive.Capitalize()} {Product.Plural}";
 
 	public override Vector2I GlobalPosition => building.GlobalPosition;
 
@@ -239,19 +246,21 @@ public class CraftJob : MapObjectJob {
 
 	readonly ResourceBundle[] inputs;
 	readonly ResourceBundle[] outputs;
-	public readonly string OutputDescription;
+	public readonly Noun Product;
+	public readonly Verb Process;
 	readonly TimeT timeTaken;
 
 
-	public CraftJob(ResourceBundle[] inputs, ResourceBundle[] outputs, TimeT timeTaken, uint maxWorkers, string outputDescription) {
+	public CraftJob(ResourceBundle[] inputs, ResourceBundle[] outputs, TimeT timeTaken, uint maxWorkers, Noun product, Verb process) {
 		this.inputs = inputs;
 		this.outputs = outputs;
 		this.timeTaken = timeTaken;
-		this.OutputDescription = outputDescription;
+		Product = product;
+		Process = process;
 		MaxWorkers = maxWorkers;
 	}
 
-	public override Job Copy() => new CraftJob(inputs, outputs, timeTaken, MaxWorkers, OutputDescription);
+	public override Job Copy() => new CraftJob(inputs, outputs, timeTaken, MaxWorkers, Product, Process);
 
 	public override void Initialise(Faction ctxFaction, MapObject mapObject) {
 		storage = ctxFaction.Resources;
@@ -276,13 +285,15 @@ public class CraftJob : MapObjectJob {
 
 	public override string GetProductionDescription() {
 		var sb = new StringBuilder();
-		if (Workers == 0) sb.Append("Add workers to begin production...\n");
-		else sb.Append($"The workers produce...\n");
+		if (Workers == 0) sb.Append($"Add workers to begin {Process.Progressive}...\n");
+		else sb.Append($"The workers {Process.Infinitive}...\n");
 
 		GetProductionBulletList(sb);
-		sb.Append("...with the required inputs...\n");
-		GetInputBulletList(sb);
-		sb.Append($"It takes {GameTime.GetFancyTimeString(timeTaken)} to complete one set of {OutputDescription}.");
+		if (inputs.Length > 0) {
+			sb.Append("...with the required inputs...\n");
+			GetInputBulletList(sb);
+		}
+		sb.Append($"It takes {GameTime.GetFancyTimeString(timeTaken)} to {Process.Infinitive} one set of {Product.Plural}.");
 
 		return sb.ToString();
 	}
@@ -303,7 +314,7 @@ public class CraftJob : MapObjectJob {
 		if (Workers == 0) return "";
 		float timeLeft = timeTaken - timeSpent;
 		timeLeft /= GetWorkTime(1);
-		return GameTime.GetFancyTimeString((TimeT)timeLeft) + " until more " + OutputDescription + ".";
+		return GameTime.GetFancyTimeString((TimeT)timeLeft) + " until more " + Product.Plural + ".";
 	}
 
 

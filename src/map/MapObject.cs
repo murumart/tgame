@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Godot;
+using resources.visual;
 
 
 public abstract partial class MapObject {
@@ -98,7 +99,7 @@ public partial class ResourceSite : MapObject {
 	public override IResourceSiteType Type => type;
 
 	readonly List<Well> mineWells;
-	public List<Well> MineWells => mineWells;
+	public List<Well> Wells => mineWells;
 
 	public bool IsDepleted {
 		get {
@@ -123,7 +124,7 @@ public partial class ResourceSite : MapObject {
 	public override IEnumerable<Job> GetAvailableJobs() {
 		var jobs = base.GetAvailableJobs().ToList();
 		int wellix = 0;
-		foreach (var well in MineWells) {
+		foreach (var well in Wells) {
 			if (well.HasBunches) {
 				jobs.Add(new GatherResourceJob(wellix, this));
 			}
@@ -134,7 +135,7 @@ public partial class ResourceSite : MapObject {
 
 	// get a list of the resources. don't use these bundles in actual gameplay, only for display
 	public void GetResourcesAvailableAtPristineNaturalStart(Dictionary<IResourceType, ResourceBundle> resourceDict) {
-		foreach (var well in MineWells) {
+		foreach (var well in Wells) {
 			var type = well.ResourceType;
 			if (!resourceDict.ContainsKey(type)) resourceDict[type] = new(type, 0);
 			resourceDict[type] = new(type, resourceDict[type].Amount + well.InitialBunches * well.BunchSize);
@@ -153,20 +154,20 @@ public partial class ResourceSite {
 			return new ResourceSite(this, position);
 		}
 
-		public string GetJobDescription(Well well);
-
 	}
 
 	public class Well {
 
-		public IResourceType ResourceType;
-		public TimeT MinutesPerBunch;
-		public int BunchSize;
-		public TimeT MinutesPerBunchRegen;
-		public int InitialBunches;
+		public readonly IResourceType ResourceType;
+		public readonly TimeT MinutesPerBunch;
+		public readonly int BunchSize;
+		public readonly TimeT MinutesPerBunchRegen;
+		public readonly int InitialBunches;
 
 		public int Bunches { get; private set; }
 		public bool HasBunches => Bunches > 0;
+
+		public readonly Verb Production;
 
 
 		public Well(
@@ -174,13 +175,16 @@ public partial class ResourceSite {
 			int minutesPerBunch,
 			int bunchSize,
 			int minutesPerBunchRegen,
-			int initialBunches
+			int initialBunches,
+			Verb production
 		) {
 			ResourceType = resourceType;
 			MinutesPerBunch = minutesPerBunch;
 			BunchSize = bunchSize;
 			MinutesPerBunchRegen = minutesPerBunchRegen;
 			InitialBunches = initialBunches;
+			Debug.Assert(production != null, "Need valid Production to consturct Well object");
+			Production = production;
 
 			Bunches = initialBunches;
 		}

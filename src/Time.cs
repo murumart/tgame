@@ -87,9 +87,9 @@ public class GameTime : ITimePassing {
 		var days = hours / DAYS_PER_WEEK;
 		var weeks = days / DAYS_PER_WEEK;
 
-		if (weeks > 0) return "" + weeks + " weeks";
-		if (days > 0) return "" + days + " days";
-		if (hours > 0) return "" + hours + " hours";
+		if (weeks > 0) return "" + weeks + " week" + (weeks == 1 ? "" : 's');
+		if (days > 0) return "" + days + " day" + (days == 1 ? "" : 's');
+		if (hours > 0) return "" + hours + " hour" + (hours == 1 ? "" : 's');
 		return "" + minutes + " minutes";
 	}
 

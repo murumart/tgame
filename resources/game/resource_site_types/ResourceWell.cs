@@ -1,5 +1,6 @@
 using Godot;
 using resources.game.resource_types;
+using resources.visual;
 
 namespace resources.game.resource_site_types {
 
@@ -11,10 +12,12 @@ namespace resources.game.resource_site_types {
 		[Export] int bunchSize;
 		[Export] int minutesPerBunchRegen;
 		[Export] int initialBunches;
+		[Export] Verb Production;
 
 
 		public ResourceSite.Well GetWell() {
-			return new(resourceType, minutesPerBunch, bunchSize, minutesPerBunchRegen, initialBunches);
+			return new(resourceType, minutesPerBunch, bunchSize, minutesPerBunchRegen, initialBunches, IsInstanceValid(Production) ? Production : Verb.Make("gather", "gathering"));
+
 		}
 
 	}

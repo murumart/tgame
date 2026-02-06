@@ -1,8 +1,22 @@
 [gd_resource type="Resource" script_class="ResourceSiteType" format=3 uid="uid://c2hf677ph58lg"]
 
 [ext_resource type="Resource" uid="uid://lda3p80x02sh" path="res://resources/game/resource_types/clay.tres" id="1_1r0go"]
+[ext_resource type="Script" uid="uid://clkqk6nbux1c1" path="res://resources/visual/Noun.cs" id="1_e0i0e"]
 [ext_resource type="Script" uid="uid://ct2a6sqe1m7mx" path="res://resources/game/resource_site_types/ResourceSiteType.cs" id="1_ierct"]
 [ext_resource type="Script" uid="uid://bnfatrmjew0vy" path="res://resources/game/resource_site_types/ResourceWell.cs" id="1_pgbn8"]
+[ext_resource type="Script" uid="uid://cbiuqlrd8yyxx" path="res://resources/visual/Verb.cs" id="2_jjj5y"]
+
+[sub_resource type="Resource" id="Resource_jjj5y"]
+script = ExtResource("1_e0i0e")
+Singular = "clay"
+Plural = "clay"
+metadata/_custom_type_script = "uid://clkqk6nbux1c1"
+
+[sub_resource type="Resource" id="Resource_048gy"]
+script = ExtResource("2_jjj5y")
+Infinitive = "gather"
+Progressive = "gathering"
+metadata/_custom_type_script = "uid://cbiuqlrd8yyxx"
 
 [sub_resource type="Resource" id="Resource_bkqwf"]
 script = ExtResource("1_pgbn8")
@@ -10,6 +24,8 @@ resourceType = ExtResource("1_1r0go")
 minutesPerBunch = 75
 bunchSize = 3
 initialBunches = 33
+Produce = SubResource("Resource_jjj5y")
+Production = SubResource("Resource_048gy")
 metadata/_custom_type_script = "uid://bnfatrmjew0vy"
 
 [resource]
