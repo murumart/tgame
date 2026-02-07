@@ -9,7 +9,7 @@ using Environment = System.Environment;
 internal static class Debug {
 	//https://www.reddit.com/r/godot/comments/obxm0i/comment/hj4htrk/
 	//[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal static void Assert(bool cond, string msg)
+	internal static void Assert(bool cond, string msg = "Assertion failed")
 #if TOOLS
 		{
 		if (!cond) {

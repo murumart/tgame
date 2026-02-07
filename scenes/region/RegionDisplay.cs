@@ -81,10 +81,11 @@ namespace scenes.region {
 
 		MapObjectView LoadMapObjectView(MapObject mo) {
 			MapObjectView view = mo switch {
-				Building => GD.Load<PackedScene>(DataStorage.GetScenePath(((Building)mo).Type)).Instantiate<MapObjectView>(),
-				ResourceSite => GD.Load<PackedScene>(DataStorage.GetScenePath(((ResourceSite)mo).Type)).Instantiate<MapObjectView>(),
-				_ => throw new System.Exception("nooooo wrong wrong wrong wrong its all wrong"),
+				Building => MapObjectView.Make(DataStorage.GetScenePath(((Building)mo).Type), mo),
+				ResourceSite => MapObjectView.Make(DataStorage.GetScenePath(((ResourceSite)mo).Type), mo),
+				_ => null,
 			};
+			Debug.Assert(view != null, "Unimplemented map object view load");
 			return view;
 		}
 

@@ -1,29 +1,30 @@
-using System;
 using System.Linq;
 using Godot;
-using scenes.autoload;
 
 namespace scenes.region {
 
 	[GlobalClass]
 	public partial class MapObjectView : Node2D {
 
-		public enum IconSetIcons: int {
+		public enum IconSetIcons : int {
 			Hammer,
 			Max
 		}
 
-		[Export] Node2D iconTransformParent;
-		[Export] Container iconContainer;
-		TextureRect Icon(int i) => (TextureRect)iconContainer.GetChild(i);
+		[Export] protected Node2D iconTransformParent;
+		[Export] protected Container iconContainer;
+		protected TextureRect Icon(int i) => (TextureRect)iconContainer.GetChild(i);
 
-		[Export] ProgressBar buildingProgressBar;
-		[Export] Node2D inProgressDisplay;
+		[Export] protected ProgressBar buildingProgressBar;
+		[Export] protected Node2D inProgressDisplay;
+
+		protected MapObject mapObjectRef;
 
 
 		public override void _Ready() {
 			//RemoveChild(iconTransformParent);
 			//UILayer.AddUiChild(iconTransformParent);
+			Debug.Assert(mapObjectRef != null, "MapObjectView needs a map object ref");
 			IconSetHide();
 		}
 
@@ -61,6 +62,13 @@ namespace scenes.region {
 			buildingProgressBar.Visible = show;
 			buildingProgressBar.Value = progress;
 			inProgressDisplay.Visible = show;
+		}
+
+		public static MapObjectView Make(string scenePath, MapObject mapObject) {
+			Debug.Assert(ResourceLoader.Exists(scenePath, "PackedScene"), $"PackedScene {scenePath} doesn't exist");
+			var scn = GD.Load<PackedScene>(scenePath).Instantiate<MapObjectView>();
+			scn.mapObjectRef = mapObject;
+			return scn;
 		}
 
 	}

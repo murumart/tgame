@@ -22,7 +22,7 @@ public abstract partial class MapObject {
 
 public partial class MapObject {
 
-	public interface IMapObjectType {
+	public interface IMapObjectType : IAssetType {
 
 		MapObject CreateMapObject(Vector2I globalPosition);
 		IEnumerable<Job> GetPossibleJobs();

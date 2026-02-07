@@ -13,8 +13,8 @@ namespace resouces.game.building_types.crafting {
 		[Export] Dictionary<ResourceType, int> outputs;
 		[Export] int timeTakenMinutes;
 		[Export] int maxWorkers = 5;
-		[Export] Noun Product; 
-		[Export] Verb Process; 
+		[Export] Noun Product;
+		[Export] Verb Process;
 
 		public ResourceBundle[] Inputs {
 			get {
@@ -42,12 +42,13 @@ namespace resouces.game.building_types.crafting {
 		public TimeT TimeTaken => timeTakenMinutes;
 		public int MaxWorkers => maxWorkers;
 
+
 		public CraftJob GetJob() {
 			Debug.Assert(MaxWorkers >= 0, "max workers can't be negative");
 			return new(Inputs, Outputs, TimeTaken, (uint)MaxWorkers, Product, Process);
 		}
-	}
 
+	}
 
 }
 

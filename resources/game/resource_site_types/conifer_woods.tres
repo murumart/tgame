@@ -1,16 +1,9 @@
 [gd_resource type="Resource" script_class="ResourceSiteType" format=3 uid="uid://d08tlsfel81yf"]
 
 [ext_resource type="Resource" uid="uid://pmrcwo4t316p" path="res://resources/game/resource_types/logs.tres" id="1_0a564"]
-[ext_resource type="Script" uid="uid://clkqk6nbux1c1" path="res://resources/visual/Noun.cs" id="1_wdh35"]
 [ext_resource type="Script" uid="uid://cbiuqlrd8yyxx" path="res://resources/visual/Verb.cs" id="2_gve7k"]
 [ext_resource type="Script" uid="uid://bnfatrmjew0vy" path="res://resources/game/resource_site_types/ResourceWell.cs" id="2_wdh35"]
 [ext_resource type="Script" uid="uid://ct2a6sqe1m7mx" path="res://resources/game/resource_site_types/ResourceSiteType.cs" id="4_lxhu8"]
-
-[sub_resource type="Resource" id="Resource_lxhu8"]
-script = ExtResource("1_wdh35")
-Singular = "wood"
-Plural = "wood"
-metadata/_custom_type_script = "uid://clkqk6nbux1c1"
 
 [sub_resource type="Resource" id="Resource_oumnl"]
 script = ExtResource("2_gve7k")
@@ -25,7 +18,6 @@ minutesPerBunch = 60
 bunchSize = 3
 minutesPerBunchRegen = 51840
 initialBunches = 40
-Produce = SubResource("Resource_lxhu8")
 Production = SubResource("Resource_oumnl")
 metadata/_custom_type_script = "uid://bnfatrmjew0vy"
 
@@ -33,5 +25,5 @@ metadata/_custom_type_script = "uid://bnfatrmjew0vy"
 script = ExtResource("4_lxhu8")
 name = "conifer woods"
 mineResources = Array[Object]([SubResource("Resource_b5t6q")])
-ScenePath = "uid://du7qwf6qqb2jv"
+ScenePath = "uid://86f5k8lmus4o"
 metadata/_custom_type_script = "uid://ct2a6sqe1m7mx"

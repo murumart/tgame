@@ -1,16 +1,9 @@
 [gd_resource type="Resource" script_class="ResourceSiteType" format=3 uid="uid://c2hf677ph58lg"]
 
 [ext_resource type="Resource" uid="uid://lda3p80x02sh" path="res://resources/game/resource_types/clay.tres" id="1_1r0go"]
-[ext_resource type="Script" uid="uid://clkqk6nbux1c1" path="res://resources/visual/Noun.cs" id="1_e0i0e"]
 [ext_resource type="Script" uid="uid://ct2a6sqe1m7mx" path="res://resources/game/resource_site_types/ResourceSiteType.cs" id="1_ierct"]
 [ext_resource type="Script" uid="uid://bnfatrmjew0vy" path="res://resources/game/resource_site_types/ResourceWell.cs" id="1_pgbn8"]
 [ext_resource type="Script" uid="uid://cbiuqlrd8yyxx" path="res://resources/visual/Verb.cs" id="2_jjj5y"]
-
-[sub_resource type="Resource" id="Resource_jjj5y"]
-script = ExtResource("1_e0i0e")
-Singular = "clay"
-Plural = "clay"
-metadata/_custom_type_script = "uid://clkqk6nbux1c1"
 
 [sub_resource type="Resource" id="Resource_048gy"]
 script = ExtResource("2_jjj5y")
@@ -24,7 +17,6 @@ resourceType = ExtResource("1_1r0go")
 minutesPerBunch = 75
 bunchSize = 3
 initialBunches = 33
-Produce = SubResource("Resource_jjj5y")
 Production = SubResource("Resource_048gy")
 metadata/_custom_type_script = "uid://bnfatrmjew0vy"
 
@@ -32,5 +24,5 @@ metadata/_custom_type_script = "uid://bnfatrmjew0vy"
 script = ExtResource("1_ierct")
 name = "clay pit"
 mineResources = Array[Object]([SubResource("Resource_bkqwf")])
-ScenePath = "uid://br0j1stilq7ro"
+ScenePath = "uid://86f5k8lmus4o"
 metadata/_custom_type_script = "uid://ct2a6sqe1m7mx"
