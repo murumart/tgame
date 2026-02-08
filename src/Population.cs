@@ -74,23 +74,24 @@ public class Population {
 	}
 
 	public void Reduce(uint count) {
-		//Debug.Assert(false, "Reducing population not implemented");
 		Count -= count;
 		UpdateHousing();
-		// having a job means you starve slower?
+		// after people are removed, it may happen that EmployedCount is more than Count
+		// so this is where that's fixed
 		if (EmployedCount > Count) {
-			uint cme = EmployedCount - Count;
-			while (cme > 0) {
+			uint overlimit = EmployedCount - Count; // how many people are "employed" despite not existing
+			while (overlimit > 0) {
 				bool removed = false;
 				foreach (Job job in employedOnJobs) {
 					if (job.Workers == 0) continue;
-					Unemploy(job, 1);
+					Unemploy(job, 1); // this modifies EmployedCount
 					removed = true;
 				}
-				Debug.Assert(EmployedCount - Count != cme, "More people should have become unemployed, but none did?");
-				Debug.Assert(EmployedCount - Count <= cme, $"Somehow as a consequence of death more people became employed? (now {EmployedCount})");
-				cme = EmployedCount - Count;
-				if (!removed) break; // ran out of people to unjob
+				// sanity check with ints to avoid overflow into a bajillion
+				Debug.Assert((int)EmployedCount - (int)Count != overlimit, "More people should have become unemployed, but none did?");
+				Debug.Assert((int)EmployedCount - (int)Count <= overlimit, $"Somehow as a consequence of removal more people became employed? (now {EmployedCount})");
+				if (!removed || EmployedCount <= Count) break; // ran out of people to unjob
+				overlimit = EmployedCount - Count;
 			}
 			Debug.Assert(Count >= EmployedCount, $"Somehow more people are employed than are actually alive here ({EmployedCount} vs {Count})");
 		}
