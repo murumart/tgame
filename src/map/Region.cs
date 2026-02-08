@@ -69,8 +69,8 @@ public class Region {
 		LocalFaction = regionFaction;
 	}
 
-	public bool CanPlaceBuilding(Vector2I position) {
-		return !mapObjects.ContainsKey(position);
+	public bool HasBuildingSpace(Vector2I position) {
+		return !mapObjects.ContainsKey(position) && GroundTiles.ContainsKey(position);
 	}
 
 	public IEnumerable<MapObject> GetMapObjects() {
@@ -99,6 +99,7 @@ public class Region {
 
 	MapObject CreateMapObjectSpotAndPlace(MapObject.IMapObjectType type, Vector2I position) {
 		Debug.Assert(!HasMapObject(position, out var m), $"there's already a mapobject {m} at position {position}");
+		Debug.Assert((type.GetPlacementAllowed() & GroundTiles[position]) != 0, "Can't place this building here");
 		var ob = type.CreateMapObject(WorldPosition + position);
 		mapObjects[position] = ob;
 		NaturalResources.Touch();

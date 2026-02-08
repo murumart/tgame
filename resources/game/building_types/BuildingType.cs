@@ -23,6 +23,7 @@ namespace resources.game.building_types {
 		[Export] Godot.Collections.Array<CraftingJobDef> CraftingJobs;
 		[Export] float HoursToConstruct = 1f;
 		[Export] string[] AvailableJobClassNames = Array.Empty<string>();
+		[Export(PropertyHint.Flags)] GroundTileType AllowedGroundTiles = GroundTileType.Land;
 		[Export(PropertyHint.File, "*.tscn")] string ScenePath;
 
 
@@ -65,6 +66,10 @@ namespace resources.game.building_types {
 		}
 
 		public string GetDescription() => description;
+
+		public GroundTileType GetPlacementAllowed() {
+			return AllowedGroundTiles;
+		}
 	}
 
 }

@@ -175,7 +175,7 @@ public class Faction : IEntity {
 
 	// does what the method name says: a construction site is created and placed in the world
 	public Building PlaceBuildingConstructionSite(IBuildingType type, Vector2I position) {
-		Debug.Assert(Region.CanPlaceBuilding(position), $"Region says can't place building at {position}");
+		Debug.Assert(Region.HasBuildingSpace(position), $"Region says can't place building at {position}");
 		Debug.Assert(CanPlaceBuilding(type, position), "Cannot place the building for whatever reason");
 		var building = CreateBuilding(type, position);
 		if (type.TakesTimeToConstruct() || type.HasResourceRequirements()) {
@@ -202,7 +202,7 @@ public class Faction : IEntity {
 	}
 
 	public bool CanPlaceBuilding(IBuildingType type, Vector2I tilepos) {
-		return HasBuildingMaterials(type) && Region.CanPlaceBuilding(tilepos);
+		return HasBuildingMaterials(type) && Region.HasBuildingSpace(tilepos) && (Region.GroundTiles[tilepos] & type.GetPlacementAllowed()) != 0;
 	}
 
 	public bool HasBuildingMaterials(IBuildingType type) {
