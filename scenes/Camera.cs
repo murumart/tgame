@@ -29,7 +29,9 @@ public partial class Camera : Camera2D {
 		}
 	}
 
-	protected virtual void ScrollInput(bool up) {
+	protected virtual void ScrollInput(bool up) {}
+
+	protected virtual void ControlScrollInput(bool up) {
 		if (up) zoomSize = Mathf.Min(zoomSize + 0.1f * zoomSize, 8.0f);
 		else zoomSize = Mathf.Max(zoomSize - 0.1f * zoomSize, 0.25f);
 	}
@@ -41,10 +43,12 @@ public partial class Camera : Camera2D {
 
 		bool consumed = false;
 		if (evt.ButtonIndex == MouseButton.WheelUp) {
-			ScrollInput(true);
+			if (evt.IsCommandOrControlPressed()) ControlScrollInput(true);
+			else ScrollInput(true);
 			consumed = true;
 		} else if (evt.ButtonIndex == MouseButton.WheelDown) {
-			ScrollInput(false);
+			if (evt.IsCommandOrControlPressed()) ControlScrollInput(false);
+			else ScrollInput(false);
 			consumed = true;
 		} else if (evt.ButtonIndex == MouseButton.Left && evt.Pressed) {
 			var wPos = GetCanvasTransform().AffineInverse() * evt.Position;
