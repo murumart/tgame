@@ -1,5 +1,6 @@
 using System.Linq;
 using Godot;
+using static MapObject;
 
 namespace scenes.region {
 
@@ -69,6 +70,14 @@ namespace scenes.region {
 			var scn = GD.Load<PackedScene>(scenePath).Instantiate<MapObjectView>();
 			scn.mapObjectRef = mapObject;
 			return scn;
+		}
+
+		public static MapObjectView Make(string scenePath, IMapObjectType mapObject) {
+			Debug.Assert(ResourceLoader.Exists(scenePath, "PackedScene"), $"PackedScene {scenePath} doesn't exist");
+			var scn = GD.Load<PackedScene>(scenePath).Instantiate();
+			Debug.Assert(scn is MapObjectView, "Scene must be a MapObjectView");
+			(scn as MapObjectView).mapObjectRef = mapObject.CreateMapObject(Vector2I.Zero);
+			return (scn as MapObjectView);
 		}
 
 	}

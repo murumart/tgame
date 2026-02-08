@@ -1,14 +1,14 @@
+using System;
 using Godot;
 using resources.game;
 using resources.game.building_types;
 using scenes.region;
 using scenes.region.ui;
-using System;
 using static Building;
 
 public partial class BuildingList : PanelContainer {
 
-	[Export] UI ui; // COUPLING YAAAAAYYYYYYYY
+	[Export] UI ui;
 	[Export] ItemList itemList;
 	[Export] Button buildConfirmation;
 	[Export] RichTextLabel resourceListText;
@@ -27,6 +27,7 @@ public partial class BuildingList : PanelContainer {
 		}
 	}
 
+
 	public override void _Ready() {
 		itemList.ItemActivated += OnBuildThingConfirmed;
 		itemList.ItemSelected += OnBuildThingSelected;
@@ -34,10 +35,10 @@ public partial class BuildingList : PanelContainer {
 	}
 
 	public override void _GuiInput(InputEvent evt) {
-			if (evt is InputEventMouseButton) {
-				GetViewport().SetInputAsHandled();
-			}
+		if (evt is InputEventMouseButton) {
+			GetViewport().SetInputAsHandled();
 		}
+	}
 
 	void OnBuildThingSelected(long which) {
 		buildConfirmation.Disabled = false;
@@ -81,12 +82,10 @@ public partial class BuildingList : PanelContainer {
 		}
 		Debug.Assert(buildingType != null, "Buuldint type canät be null here....w aht...");
 		Debug.Assert(ui.GetCanBuild(buildingType), "can't build this...");
-		var packedScene = GD.Load<PackedScene>(DataStorage.GetScenePath(buildingType));
-		Node scene = packedScene.Instantiate();
+		var scene = MapObjectView.Make(DataStorage.GetScenePath(buildingType), buildingType);
 		Debug.Assert(scene != null, "building display scene canät be null here....w aht...");
-		Debug.Assert(scene is MapObjectView, "trying to build something that doesn't extend MapObjectView");
 		ui.CameraCursor.AddChild(scene);
-		selectedBuildingScene = scene as MapObjectView;
+		selectedBuildingScene = scene;
 		SelectedBuildingType = buildingType;
 		ui.state = UI.State.PlacingBuild;
 		selectedBuildingScene.Modulate = new Color(selectedBuildingScene.Modulate, 0.67f);

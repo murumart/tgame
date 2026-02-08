@@ -147,14 +147,11 @@ namespace scenes.region {
 
 		// building
 
-		public void PlaceBuilding(IBuildingType type, Vector2I tilepos) {
-			var buildin = actions.PlaceBuilding(type, tilepos);
-		}
-
 		private void OnUIBuildingPlaceRequested(IBuildingType type, Vector2I tilePosition) {
+			if (!actions.CanPlaceBuilding(type, tilePosition)) return;
 			Debug.Assert(actions.CanPlaceBuilding(type, tilePosition), $"Building {type} cannot be placed at {tilePosition} despite the UI's wish to do so");
 			if (actions.CanPlaceBuilding(type, tilePosition)) {
-				PlaceBuilding(type, tilePosition);
+				actions.PlaceBuilding(type, tilePosition);
 			}
 		}
 
