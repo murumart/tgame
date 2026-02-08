@@ -187,8 +187,6 @@ namespace scenes.region {
 
 		// get information (for UI)
 
-
-
 		public uint GetJobMaxWorkers() => faction.GetFreeWorkers();
 
 		public string GetTimeString() => $"{GameMan.Singleton.Game.Time.GetDayHour():00}:{GameMan.Singleton.Game.Time.GetHourMinute():00}";

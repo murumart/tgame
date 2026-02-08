@@ -20,7 +20,7 @@ namespace scenes.map {
 			RemoveChild(worldUI);
 			UILayer.AddUIChild(worldUI);
 			worldUI.SelectRegion(null);
-			worldUI.RegionPlayRequested += SetupGame;
+			worldUI.RegionPlayRequested += EnterGame;
 			worldUI.WorldDisplaySelected += which => worldRenderer.drawMode = (WorldRenderer.DrawMode)which;
 			worldUI.RegionsDisplaySet += on => worldRenderer.RegionSprite.Visible = on;
 			worldUI.WorldTileInfoRequested += where => {
@@ -95,17 +95,17 @@ namespace scenes.map {
 			GD.Print("WorldMan::GenerateNewWorld : map is ", map);
 			this.map = map;
 			drawRegionsCallable.Call();
+			SetupGame();
 		}
 		// #endregion worldgen
 
 		void SetupGame() {
-			GameMan.Singleton.NewGame(worldUI.SelectedRegion, map);
+			GameMan.Singleton.NewGame(map);
 			GD.Print("WorldMan::SetupGame : game set up.");
-
-			EnterGame();
 		}
 
 		void EnterGame() {
+			GameMan.Singleton.Game.PlayRegion = worldUI.SelectedRegion;
 			GetTree().ChangeSceneToPacked(regionScene);
 		}
 

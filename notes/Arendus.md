@@ -68,7 +68,7 @@ Mäng peab olema mängitav iga verstaposti saabudes.
 ### 0.2.0
 
 - [ ] AI pooled
-	- [ ] implementeerida "utility theory" sisendid ja väljundi valimine
+	- [X] implementeerida "utility theory" sisendid ja väljundi valimine
 	- [ ] meetod kuidas AI tegevusi vaadelda, et mängija saaks aru, et mäng sellega tegeleb
 
 ### 0.3.0

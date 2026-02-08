@@ -2,13 +2,12 @@ public class Game {
 
 	public readonly Map Map;
 	public readonly GameTime Time;
-	public readonly Region PlayRegion;
+	public Region PlayRegion;
 
 
-	public Game(Region playRegion, Map map) {
+	public Game(Map map) {
 		Map = map;
 		Time = new();
-		PlayRegion = playRegion;
 	}
 
 	public void PassTime(TimeT minutes) {

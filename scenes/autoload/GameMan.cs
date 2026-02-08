@@ -35,7 +35,8 @@ namespace scenes.autoload {
 
 			// debug map
 			var map = Map.GetDebugMap();
-			NewGame(map.GetRegion(0), map);
+			NewGame(map);
+			Game.PlayRegion = map.GetRegion(0);
 		}
 
 		void OnUnhandled(object sender, UnhandledExceptionEventArgs e) {
@@ -68,8 +69,8 @@ namespace scenes.autoload {
 			paused = !paused;
 		}
 
-		public void NewGame(Region playRegion, Map map) {
-			game = new Game(playRegion, map);
+		public void NewGame(Map map) {
+			game = new Game(map);
 			if (Game.Time.Minutes == 0) Game.PassTime(60 * 7); // start game at 7:00
 		}
 
