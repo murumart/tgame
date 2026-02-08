@@ -126,8 +126,8 @@ namespace scenes.region {
 		void DisplayRegionJob(Job job) {
 			if (job is MapObjectJob mopjob) {
 				var pos = mopjob.GlobalPosition - region.WorldPosition;
+				if (!mapObjectViews.TryGetValue(pos, out MapObjectView view)) return; // assume this was deleted sometime
 				Debug.Assert(mapObjectViews.ContainsKey(pos), $"Don't have the building view that the {job} is being attached to (at {pos} global {mopjob.GlobalPosition})");
-				var view = mapObjectViews[pos];
 				MapObjectView.IconSetIcons icon = MapObjectView.IconSetIcons.Building;
 				if (job is GatherResourceJob) icon = MapObjectView.IconSetIcons.Gathering;
 				view.IconSetShow(icon);

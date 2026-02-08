@@ -27,27 +27,37 @@ public partial class LocalAI {
 			Actions.CreateGatherJob([
 					resourceWants[Registry.ResourcesS.Logs],
 					Factors.FreeWorkerRate(factionActions),
-					Factors.HasFreeResourceSite(actions, Registry.ResourceSitesS.BroadleafWoods),
+					Factors.HasFreeResourceSite(actions, Registry.ResourceSitesS.BroadleafWoods, Registry.ResourcesS.Logs),
+					Factors.ReasonableGatherJobCount(actions, 4, Registry.ResourcesS.Logs)
 				], factionActions, Registry.ResourceSitesS.BroadleafWoods, Registry.ResourcesS.Logs),
+			Actions.CreateGatherJob([
+					Factors.FoodMakingNeed(factionActions),
+					Factors.HasFreeResourceSite(actions, Registry.ResourceSitesS.BroadleafWoods, Registry.ResourcesS.Fruit),
+					Factors.ReasonableGatherJobCount(actions, 4, Registry.ResourcesS.Fruit)
+				], factionActions, Registry.ResourceSitesS.BroadleafWoods, Registry.ResourcesS.Fruit),
 			Actions.CreateGatherJob([
 					resourceWants[Registry.ResourcesS.Logs],
 					Factors.FreeWorkerRate(factionActions),
-					Factors.HasFreeResourceSite(actions, Registry.ResourceSitesS.ConiferWoods),
+					Factors.HasFreeResourceSite(actions, Registry.ResourceSitesS.ConiferWoods, Registry.ResourcesS.Logs),
+					Factors.ReasonableGatherJobCount(actions, 4, Registry.ResourcesS.Logs)
 				], factionActions, Registry.ResourceSitesS.ConiferWoods, Registry.ResourcesS.Logs),
 			Actions.CreateGatherJob([
 					resourceWants[Registry.ResourcesS.Logs],
 					Factors.FreeWorkerRate(factionActions),
-					Factors.HasFreeResourceSite(actions, Registry.ResourceSitesS.SavannaTrees),
+					Factors.HasFreeResourceSite(actions, Registry.ResourceSitesS.SavannaTrees, Registry.ResourcesS.Logs),
+					Factors.ReasonableGatherJobCount(actions, 4, Registry.ResourcesS.Logs)
 				], factionActions, Registry.ResourceSitesS.SavannaTrees, Registry.ResourcesS.Logs),
 			Actions.CreateGatherJob([
 					resourceWants[Registry.ResourcesS.Rocks],
 					Factors.FreeWorkerRate(factionActions),
-					Factors.HasFreeResourceSite(actions, Registry.ResourceSitesS.Rock),
+					Factors.HasFreeResourceSite(actions, Registry.ResourceSitesS.Rock, Registry.ResourcesS.Rocks),
+					Factors.ReasonableGatherJobCount(actions, 4, Registry.ResourcesS.Rocks)
 				], factionActions, Registry.ResourceSitesS.Rock, Registry.ResourcesS.Rocks),
 			Actions.CreateGatherJob([
 					resourceWants[Registry.ResourcesS.Rocks],
 					Factors.FreeWorkerRate(factionActions),
-					Factors.HasFreeResourceSite(actions, Registry.ResourceSitesS.Rubble),
+					Factors.HasFreeResourceSite(actions, Registry.ResourceSitesS.Rubble, Registry.ResourcesS.Rocks),
+					Factors.ReasonableGatherJobCount(actions, 4, Registry.ResourcesS.Rocks)
 				], factionActions, Registry.ResourceSitesS.Rubble, Registry.ResourcesS.Rocks),
 		];
 		foreach (var building in Resources.Buildings) {
@@ -71,21 +81,20 @@ public partial class LocalAI {
 		Console.WriteLine($"LocalAI::Update : (of {factionActions}) doing update");
 		var ustime = Time.GetTicksUsec();
 
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < 1; i++) {
 			ephemeralActions.Clear();
 			foreach (var job in factionActions.GetMapObjectJobs()) {
 				if (job is GatherResourceJob gjob) {
-					foreach (var prod in gjob.GetProductions()) {
-						ephemeralActions.Add(Actions.AssignWorkersToJob([
-								Factors.HasFreeWorkers(factionActions),
-								resourceWants.GetValueOrDefault(prod.ResourceType, Factors.Null),
-								Factors.JobHasEmploymentSpots(factionActions, gjob),
-							], factionActions, job));
-						ephemeralActions.Add(Actions.RemoveJob([
-								Factors.Mult(Factors.Cube(Factors.OneMinus(resourceWants.GetValueOrDefault(prod.ResourceType, Factors.Null))), 0.0001f),
-								//DecisionFactors.Mult(DecisionFactors.OneMinus(DecisionFactors.JobEmploymentRate(gjob)), 0.0025f),
-							], factionActions, job));
-					}
+					var prod = gjob.GetProduction();
+					ephemeralActions.Add(Actions.AssignWorkersToJob([
+							Factors.HasFreeWorkers(factionActions),
+							resourceWants.GetValueOrDefault(prod.ResourceType, Factors.One),
+							Factors.JobHasEmploymentSpots(factionActions, gjob),
+						], factionActions, job));
+					ephemeralActions.Add(Actions.RemoveJob([
+							Factors.Mult(Factors.Cube(Factors.OneMinus(resourceWants.GetValueOrDefault(prod.ResourceType, Factors.Null))), 0.0001f),
+							//DecisionFactors.Mult(DecisionFactors.OneMinus(DecisionFactors.JobEmploymentRate(gjob)), 0.0025f),
+						], factionActions, job));
 				} else if (job is ConstructBuildingJob bjob) {
 					ephemeralActions.Add(Actions.AssignWorkersToJob([
 						Factors.HasFreeWorkers(factionActions),
@@ -173,7 +182,7 @@ public partial class LocalAI {
 			var ustime = Time.GetTicksUsec();
 			var score = 1f;
 			foreach (var factor in factors) {
-				var s = factor.Call();
+				var s = factor.Score();
 				Console.WriteLine($"LocalAI::Action::Score : \t\tutility of {factor} is {s}");
 				score *= s;
 				if (s <= 0) {
@@ -217,7 +226,7 @@ public partial class LocalAI {
 					if (mop is ResourceSite rs) {
 						int wix = 0;
 						foreach (var well in rs.Wells) {
-							if (rs.Type == siteType && well.ResourceType == wantedResource && ac.GetMapObjectsJob(rs) == null) {
+							if (rs.Type == siteType && well.ResourceType == wantedResource && well.HasBunches && ac.GetMapObjectsJob(rs) == null) {
 								ac.AddJob(rs, new GatherResourceJob(wix, rs));
 								return;
 							}
@@ -226,7 +235,7 @@ public partial class LocalAI {
 					}
 				}
 				Debug.Assert(false, "Didn't find resource site to add job to");
-			}, $"GatherFromResourceSite({siteType.AssetName})");
+			}, $"CreateGatherJob({siteType.AssetName}, {wantedResource.AssetName})");
 		}
 
 		public static Action PlaceBuildingJob(DecisionFactor[] factors, FactionActions ac, IBuildingType buildingType) {
@@ -246,9 +255,9 @@ public partial class LocalAI {
 
 public partial class LocalAI {
 
-	public readonly struct DecisionFactor(Func<float> call, string name) {
+	public readonly struct DecisionFactor(Func<float> score, string name) {
 
-		public readonly Func<float> Call = call;
+		public readonly Func<float> Score = score;
 
 
 		public override readonly string ToString() => name;
@@ -261,15 +270,15 @@ public partial class LocalAI {
 		public static readonly DecisionFactor One = new(() => 1.0f, "One");
 
 		public static DecisionFactor OneMinus(DecisionFactor fac) {
-			return new(() => 1.0f - fac.Call(), $"OneMinus({fac})");
+			return new(() => 1.0f - fac.Score(), $"OneMinus({fac})");
 		}
 
 		public static DecisionFactor Mult(DecisionFactor fac, float with) {
-			return new(() => fac.Call() * with, $"({fac} * {with})");
+			return new(() => fac.Score() * with, $"({fac} * {with})");
 		}
 
 		public static DecisionFactor Cube(DecisionFactor fac) {
-			return new(() => { var a = fac.Call(); return a * a * a; }, $"({fac}^3)");
+			return new(() => { var a = fac.Score(); return a * a * a; }, $"({fac}^3)");
 		}
 
 		public static DecisionFactor HomelessnessRate(FactionActions ac) {
@@ -297,30 +306,42 @@ public partial class LocalAI {
 		}
 
 		public static DecisionFactor JobHasEmploymentSpots(FactionActions ac, Job job) {
-			return new(() => job.NeedsWorkers && job.Workers <= job.MaxWorkers ? 1.0f : 0.0f, "JobHasEmploymentSpots");
+			return new(() => job.NeedsWorkers && job.Workers < job.MaxWorkers ? 1.0f : 0.0f, "JobHasEmploymentSpots");
 		}
 
 		public static DecisionFactor JobHasEmployees(Job job) {
 			return new(() => job.NeedsWorkers && job.Workers > 0 ? 1.0f : 0.0f, "JobHasEmployees");
 		}
 
-		public static DecisionFactor HasFreeResourceSite(FactionActions ac, IResourceSiteType siteType) {
+		public static DecisionFactor HasFreeResourceSite(FactionActions ac, IResourceSiteType siteType, IResourceType need) {
 			return new(() => {
 				int matchingSites = 0;
 				int matchingFreeSites = 0;
 				foreach (var mop in ac.GetMapObjects()) {
 					if (mop is ResourceSite rs) {
 						if (rs.Type == siteType) {
-							matchingSites += 1;
-							if (ac.GetMapObjectsJob(rs) == null) {
-								matchingFreeSites += 1;
-							}
+							foreach (var well in rs.Wells) if (well.ResourceType == need && well.HasBunches) {
+									matchingSites += 1;
+									if (ac.GetMapObjectsJob(rs) == null) {
+										matchingFreeSites += 1;
+									}
+								}
 						}
 					}
 				}
 				if (matchingSites == 0) return 0f;
 				return (float)matchingFreeSites / (float)matchingSites;
 			}, $"HasFreeResourceSite({siteType.AssetName})");
+		}
+
+		public static DecisionFactor ReasonableGatherJobCount(FactionActions ac, int count, IResourceType resourceType) {
+			return new(() => {
+				float jobs = 0;
+				foreach (var job in ac.GetMapObjectJobs()) {
+					if (job is GatherResourceJob gjob && gjob.GetProduction().ResourceType == resourceType) jobs += 1;
+				}
+				return 1f - Mathf.Clamp(jobs / count, 0.0f, 1.0f);
+			}, $"ReasonableGatherJobCount({count}, {resourceType.AssetName})");
 		}
 
 		public static DecisionFactor ResourceWant(FactionActions ac, IResourceType resourceType, int want) {
@@ -338,6 +359,13 @@ public partial class LocalAI {
 				var res = ac.GetResourceStorage();
 				return res.HasEnough(new(resourceType, need)) ? 1f : 0f;
 			}, $"ResourceNeed({resourceType.AssetName}, {need})");
+		}
+
+		public static DecisionFactor FoodMakingNeed(FactionActions ac) {
+			return new(() => {
+				var res = ac.Faction.GetFoodUsage();
+				return res > ac.Faction.GetFood() ? 1f : 0f;
+			}, $"Foodneed()");
 		}
 
 	}

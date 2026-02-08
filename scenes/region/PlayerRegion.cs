@@ -46,6 +46,7 @@ namespace scenes.region {
 			ui.DeleteJobEvent += actions.RemoveJob;
 			ui.GetFoodAndUsageEvent += actions.GetFoodAndUsage;
 
+			GameMan.Singleton.Game.Time.TimePassedEvent += PassTime;
 			GameMan.Singleton.Game.Time.HourPassedEvent += HourlyUpdate;
 
 			ui.GetFactionEvent += GetFaction;
@@ -86,7 +87,7 @@ namespace scenes.region {
 			//		GD.Print("RegionMan::_Ready : adding resource ", r);
 			//		faction.Resources.AddResource(new(r, 50));
 			//}
-			UILayer.DebugDisplay(() =>{
+			UILayer.DebugDisplay(() => {
 				return "hunger: " + faction.Population.Hunger;
 			});
 		}
@@ -121,6 +122,7 @@ namespace scenes.region {
 				faction.ContractFailedEvent -= OnRegionMandateFailed;
 
 				GameMan.Singleton.Game.Time.HourPassedEvent -= HourlyUpdate;
+				GameMan.Singleton.Game.Time.TimePassedEvent -= PassTime;
 				LocalAI.Profile.EndProfiling();
 
 				ui.QueueFree();
@@ -163,8 +165,16 @@ namespace scenes.region {
 
 		// notifications
 
+		TimeT _lastTime = 0; // debug
+		void PassTime(TimeT minutes) {
+			var dt = GameMan.Singleton.Game.Time.Minutes - _lastTime;
+			if (dt >= 30 && GameMan.Singleton.Game.Time.Minutes >= 60 * 8) {
+				ai.Update(GameMan.Singleton.Game.Time.Minutes);
+				_lastTime = GameMan.Singleton.Game.Time.Minutes;
+			}
+		}
+
 		void HourlyUpdate(TimeT timeInMinutes) {
-			//if (timeInMinutes >= 60 * 8) ai.Update(timeInMinutes); // debug
 			ui.HourlyUpdate(timeInMinutes);
 		}
 

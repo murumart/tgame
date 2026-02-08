@@ -145,8 +145,9 @@ public class GatherResourceJob : MapObjectJob {
 		Debug.Assert(false, "Don't use no parameter GatherResourceJob constructor");
 	}
 
-	public List<ResourceSite.Well> GetProductions() {
-		return site.Wells;
+	public ResourceSite.Well GetProduction() {
+		Debug.Assert(site != null, "need a site to get production");
+		return site.Wells[wellIx];
 	}
 
 	public GatherResourceJob(int wellix, ResourceSite site) {
@@ -229,7 +230,7 @@ public class GatherResourceJob : MapObjectJob {
 		return GameTime.GetFancyTimeString((TimeT)timeLeft) + " until more " + well.ResourceType.AssetName + ".";
 	}
 
-	public override string ToString() => $"GatherResourceJob(Workers={Workers}, site={site})";
+	public override string ToString() => $"GatherResourceJob({(site != null ? site.Wells[wellIx].ResourceType.AssetName : "?")})";
 
 }
 

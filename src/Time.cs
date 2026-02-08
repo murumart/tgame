@@ -30,6 +30,7 @@ public readonly struct TimeT {
 public class GameTime : ITimePassing {
 
 	public event Action<TimeT> HourPassedEvent;
+	public event Action<TimeT> TimePassedEvent;
 
 	public const float SECS_TO_HOURS = 1.0f / 60.0f;
 
@@ -53,11 +54,12 @@ public class GameTime : ITimePassing {
 	public void PassTime(TimeT minutes) {
 		var prevHour = this.minutes / 60;
 		var nextHour = (this.minutes + minutes) / 60;
-		var diff = nextHour - prevHour;
+		var hourDiff = nextHour - prevHour;
 
 		this.minutes += minutes;
+		TimePassedEvent?.Invoke(minutes);
 
-		for (ulong i = 1; i <= diff; i++) {
+		for (ulong i = 1; i <= hourDiff; i++) {
 			HourPassedEvent?.Invoke(prevHour * 60 + i * 60);
 		}
 	}

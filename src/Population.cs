@@ -53,7 +53,6 @@ public class Population {
 				Hunger -= HUNGER_KILL_LIMIT;
 				uint reduction = 1;
 				Reduce(reduction);
-				GD.Print($"Population::EatFood : {reduction} people starved no food");
 			}
 		} else {
 			Food -= wantfood;
@@ -65,7 +64,6 @@ public class Population {
 					Hunger -= Food;
 					Food = 0;
 				}
-				GD.Print($"Population::EatFood : leftover hunger sated ({Food} food)");
 			}
 		}
 		Debug.Assert(oldfood >= Food, $"Somehow, food increased while eating ({Food} was {oldfood} food)?");
