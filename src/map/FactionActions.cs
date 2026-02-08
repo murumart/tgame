@@ -27,27 +27,10 @@ public class FactionActions {
 		return region.GroundTiles.Keys;
 	}
 
-	public static float GetFoodUsageS(uint population, uint employed) {
-		return employed + (population - employed) * 0.5f;
-	}
-
-	public float GetFoodUsage() => GetFoodUsageS(Faction.GetPopulationCount(), Faction.Population.EmployedCount);
-
-	public float GetFood() {
-		float f = 0;
-		foreach (var rb in Faction.Resources) {
-			if (Registry.ResourcesS.FoodValues.GroupValues.TryGetValue(rb.Key, out int foodValue)) {
-				f += foodValue * rb.Value.Amount;
-			}
-		}
-		f += Faction.Population.Food;
-		return f;
-	}
-
 	public (uint, uint) GetFoodAndUsage() {
 		return (
-			(uint)Mathf.Round(GetFood()),
-			(uint)Mathf.Round(GetFoodUsage())
+			(uint)Mathf.Round(faction.GetFood()),
+			(uint)Mathf.Round(faction.GetFoodUsage())
 		);
 	}
 

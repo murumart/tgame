@@ -56,7 +56,7 @@ public class Faction : IEntity {
 		region.MapObjectUpdatedAtEvent += OnMapObjectUpdated;
 
 		Population = new();
-		Population.FoodRequested += OnFoodRequested;
+		Population.FoodRequested += OnGetMoreFoodRequested;
 		Population.JobEmploymentChanged += (j, a) => JobChangedEvent?.Invoke(j, a);
 		Population.Manifest(initialPopulation);
 
@@ -136,7 +136,7 @@ public class Faction : IEntity {
 		Population.Reduce(by);
 	}
 
-	uint OnFoodRequested(uint amount) {
+	uint OnGetMoreFoodRequested(uint amount) {
 		Debug.Assert(amount > 0, "Why request 0 food?");
 		uint food = 0;
 		foreach (var (type, value) in Registry.ResourcesS.FoodValues) {
@@ -152,6 +152,23 @@ public class Faction : IEntity {
 			food += (uint)gotvalue;
 		}
 		return food;
+	}
+
+	public static float GetFoodUsageS(uint population, uint employed) {
+		return employed + (population - employed) * 0.5f;
+	}
+
+	public float GetFoodUsage() => GetFoodUsageS(GetPopulationCount(), Population.EmployedCount);
+
+	public float GetFood() {
+		float f = 0;
+		foreach (var rb in Resources) {
+			if (Registry.ResourcesS.FoodValues.TryGetValue(rb.Key, out int foodValue)) {
+				f += foodValue * rb.Value.Amount;
+			}
+		}
+		f += Population.Food;
+		return f;
 	}
 
 	// *** MANAGING BUILDINGS ***

@@ -140,6 +140,16 @@ public class Region {
 		}
 	}
 
+	public float GetPotentialFood() {
+		float f = 0;
+		foreach (var mapObject in mapObjects.Values) if (mapObject is ResourceSite rs) foreach (var w in rs.Wells) {
+			var isFood = Registry.ResourcesS.FoodValues.TryGetValue(w.ResourceType, out int value);
+			if (!isFood) continue;
+			f += value * w.Bunches;
+		}
+		return f;
+	}
+
 	public override string ToString() {
 		return $"Reg{WorldPosition}";
 	}

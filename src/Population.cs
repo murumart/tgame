@@ -36,9 +36,10 @@ public class Population {
 	}
 
 	public void EatFood(TimeT minutesPassed) {
-		float wantfood = FactionActions.GetFoodUsageS(Count, EmployedCount);
-		uint twiceperday =  (uint)((GameTime.HOURS_PER_DAY * GameTime.MINUTES_PER_HOUR / 2) * minutesPassed);
-		wantfood /= twiceperday; // "two meals" per day
+		float wantfood = Faction.GetFoodUsageS(Count, EmployedCount);
+		// one unit of food is how much one person eats per day
+		uint onceperday = (uint)((GameTime.HOURS_PER_DAY * GameTime.MINUTES_PER_HOUR / 1) * minutesPassed);
+		wantfood /= onceperday;
 
 		if (Food < wantfood) {
 			Food += FoodRequested?.Invoke((uint)Mathf.Ceil(wantfood - Food)) ?? 0;
