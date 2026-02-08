@@ -139,6 +139,7 @@ namespace scenes.region.ui {
 				if (crafting.Length > 0) {
 					sb.Append("Production of the following occurs here...\n");
 					foreach (var craftjob in crafting) {
+						Debug.Assert(craftjob.Process != null, "I wanna verb");
 						sb.Append(craftjob.Process.Progressive.Capitalize()).Append(' ').Append(craftjob.Product.Plural).Append(" gives...\n");
 						craftjob.GetProductionBulletList(sb);
 					}

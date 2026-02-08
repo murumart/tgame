@@ -70,6 +70,7 @@ namespace scenes.region {
 			region.LocalFaction.JobAddedEvent += OnRegionJobAdded;
 			region.LocalFaction.JobRemovedEvent += OnRegionJobRemoved;
 			region.TileChangedAtEvent += OnTileChanged;
+			region.LocalFaction.JobChangedEvent += OnJobChanged;
 		}
 
 		void DisconnectEvents() {
@@ -77,6 +78,7 @@ namespace scenes.region {
 			region.LocalFaction.JobAddedEvent -= OnRegionJobAdded;
 			region.LocalFaction.JobRemovedEvent -= OnRegionJobRemoved;
 			region.TileChangedAtEvent -= OnTileChanged;
+			region.LocalFaction.JobChangedEvent -= OnJobChanged;
 		}
 
 		MapObjectView LoadMapObjectView(MapObject mo) {
@@ -101,7 +103,6 @@ namespace scenes.region {
 			mapObjectViews.Remove(tile);
 		}
 
-
 		// reactions to notifications
 
 		void OnRegionMapObjectUpdated(Vector2I tile) {
@@ -117,12 +118,23 @@ namespace scenes.region {
 			jobsToDisplay.Enqueue(job);
 		}
 
+		void OnJobChanged(Job job, int __) {
+			GD.Print($"RegionDisplay::OnJobChanged : {job} changed");
+			jobsToDisplay.Enqueue(job);
+		}
+
 		void DisplayRegionJob(Job job) {
 			if (job is MapObjectJob mopjob) {
-				Debug.Assert(mapObjectViews.ContainsKey(mopjob.GlobalPosition - region.WorldPosition), $"Don't have the building view that the {job} is being attached to");
-				mapObjectViews[mopjob.GlobalPosition - region.WorldPosition].IconSetShow(MapObjectView.IconSetIcons.Hammer);
+				var pos = mopjob.GlobalPosition - region.WorldPosition;
+				Debug.Assert(mapObjectViews.ContainsKey(pos), $"Don't have the building view that the {job} is being attached to (at {pos} global {mopjob.GlobalPosition})");
+				var view = mapObjectViews[pos];
+				MapObjectView.IconSetIcons icon = MapObjectView.IconSetIcons.Building;
+				if (job is GatherResourceJob) icon = MapObjectView.IconSetIcons.Gathering;
+				view.IconSetShow(icon);
+				if (job.Workers != 0) view.IconSetShow(MapObjectView.IconSetIcons.Workers);
+				else view.IconSetHide(MapObjectView.IconSetIcons.Workers);
 			}
-			GD.Print("RegionDisplay::OnRegionJobAdded : job added ", job);
+			GD.Print("RegionDisplay::DisplayRegionJob : job displayed ", job);
 		}
 
 		void OnRegionJobRemoved(Job job) {
@@ -136,7 +148,9 @@ namespace scenes.region {
 					return;
 				}
 				if (!mapObjectViews.TryGetValue(mopjob.GlobalPosition - region.WorldPosition, out MapObjectView view)) return; // the building view has already been removed
-				if (!region.LocalFaction.GetJob(mopjob.GlobalPosition - region.WorldPosition, out var __)) view.IconSetHide(MapObjectView.IconSetIcons.Hammer);
+				if (!region.LocalFaction.GetJob(mopjob.GlobalPosition - region.WorldPosition, out var __)) {
+					view.IconSetHide();
+				}
 				if (region.LocalFaction.HasBuilding(mopjob.GlobalPosition - region.WorldPosition)) {
 				}
 			}

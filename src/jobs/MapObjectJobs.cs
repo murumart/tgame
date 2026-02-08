@@ -229,6 +229,8 @@ public class GatherResourceJob : MapObjectJob {
 		return GameTime.GetFancyTimeString((TimeT)timeLeft) + " until more " + well.ResourceType.AssetName + ".";
 	}
 
+	public override string ToString() => $"GatherResourceJob(Workers={Workers}, site={site})";
+
 }
 
 public class CraftJob : MapObjectJob {

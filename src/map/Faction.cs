@@ -23,6 +23,7 @@ public class Faction : IEntity {
 
 	public event Action<Document> ContractFailedEvent;
 	public event Action<Job> JobAddedEvent;
+	public event Action<Job, int> JobChangedEvent;
 	public event Action<Job> JobRemovedEvent;
 
 	public Region Region { get; init; }
@@ -56,6 +57,7 @@ public class Faction : IEntity {
 
 		Population = new();
 		Population.FoodRequested += OnFoodRequested;
+		Population.JobEmploymentChanged += (j, a) => JobChangedEvent?.Invoke(j, a);
 		Population.Manifest(initialPopulation);
 
 		Region.SetLocalFaction(this);

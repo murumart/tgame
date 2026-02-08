@@ -142,6 +142,8 @@ public partial class ResourceSite : MapObject {
 		}
 	}
 
+	public override string ToString() => $"ResourceSite(at {position})";
+
 }
 
 public partial class ResourceSite {

@@ -44,7 +44,7 @@ namespace scenes.region.ui {
 			NameLabel.Text = name;
 			Slider.MaxValue = sliderMax;
 			Slider.Value = jobWorkers;
-			if (sliderMax == 0) Slider.Editable = false;
+			Slider.Editable = sliderMax != 0;
 			lastValue = (int)Slider.Value;
 			this.unitSymbol = unitSymbol;
 			MoneyLabel.Text = "" + lastValue + unitSymbol;

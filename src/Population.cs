@@ -5,6 +5,8 @@ using Godot;
 public class Population {
 
 	public event Func<uint, uint> FoodRequested;
+	// this feels kind of ugly but something event bussy is useful
+	public event Action<Job, int> JobEmploymentChanged;
 
 	public uint Count { get; private set; }
 
@@ -116,6 +118,7 @@ public class Population {
 		job.SetWorkers(job.Workers + (int)amount);
 		if (job.Workers > 0) employedOnJobs.Add(job);
 		Debug.Assert(job.Workers >= 0, $"Job can't have negative workers ({job.Workers})");
+		JobEmploymentChanged?.Invoke(job, (int)amount);
 	}
 
 	public void Unemploy(Job job, uint amount) {
@@ -127,6 +130,7 @@ public class Population {
 		job.SetWorkers(job.Workers - (int)amount);
 		if (job.Workers == 0) employedOnJobs.Remove(job);
 		Debug.Assert(job.Workers >= 0, $"Job can't have negative workers ({job.Workers})");
+		JobEmploymentChanged?.Invoke(job, -(int)amount);
 	}
 
 }

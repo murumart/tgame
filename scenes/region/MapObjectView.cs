@@ -8,7 +8,9 @@ namespace scenes.region {
 	public partial class MapObjectView : Node2D {
 
 		public enum IconSetIcons : int {
-			Hammer,
+			Building,
+			Workers,
+			Gathering,
 			Max
 		}
 
@@ -56,6 +58,7 @@ namespace scenes.region {
 
 		public void IconSetHide() {
 			iconContainer.Hide();
+			foreach (var c in iconContainer.GetChildren().Cast<TextureRect>()) c.Hide();
 		}
 
 		public void DisplayBuildingProgress(float progress, bool show = true) {
