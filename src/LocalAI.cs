@@ -114,14 +114,14 @@ public partial class LocalAI {
 				}
 			}
 
-			Action chosenAction = Actions.Idle;
+			ref readonly Action chosenAction = ref Actions.Idle;
 			float chosenScore = 0f;
-			foreach (var action in mainActions.Concat(ephemeralActions)) {
+			foreach (ref readonly var action in mainActions.Concat(ephemeralActions).ToArray().AsSpan()) {
 				var s = action.Score();
 				Debug.Assert(!Mathf.IsNaN(s), $"Got NOT A NUMBER from scoring action {action}");
 				if (s > chosenScore) {
 					chosenScore = s;
-					chosenAction = action;
+					chosenAction = ref action;
 				}
 			}
 			ustime = Time.GetTicksUsec() - ustime;
@@ -143,45 +143,9 @@ public partial class LocalAI {
 
 	}
 
-	public static class Profile {
-
-		static readonly Dictionary<string, List<ulong>> ActionTimes = new();
-
-
-		public static void AddActionTime(ulong time, string name) {
-			if (!ActionTimes.TryGetValue(name, out var list)) {
-				list = new();
-				ActionTimes[name] = list;
-			}
-			list.Add(time);
-		}
-
-		public static void EndProfiling() {
-			if (ActionTimes.Count == 0) return; // who care
-			var max = ActionTimes.MaxBy(kvp => kvp.Value.Max());
-			const string eps = "LocalAI::Profile::EndProfiling : ";
-			Console.WriteLine(eps + "***************");
-			Console.WriteLine(eps + "PROFILING ENDED");
-			Console.WriteLine(eps + "***************");
-			Console.WriteLine(eps + "");
-			foreach (var (name, vals) in ActionTimes) {
-				Console.WriteLine(eps + $"\t{name}:");
-				Console.WriteLine(eps + $"\t\tCALLS: {vals.Count}");
-				Console.WriteLine(eps + $"\t\tAVG: {vals.Average(l => (double)l)} us");
-				Console.WriteLine(eps + $"\t\tMAX: {vals.Max()} us");
-				Console.WriteLine(eps + $"\t\tTOTAL: {vals.Sum(l => (long)l)} us");
-			}
-			Console.WriteLine(eps + $"\tOMAX: {max.Key} {max.Value.Max()} us");
-			Console.WriteLine(eps + "");
-			Console.WriteLine(eps + "***************");
-			Console.WriteLine(eps + "      BYE");
-			Console.WriteLine(eps + "***************");
-		}
-
-	}
-
 }
 
+// actions
 public partial class LocalAI {
 
 	public struct Action(DecisionFactor[] factors, System.Action act, string name) {
@@ -192,7 +156,7 @@ public partial class LocalAI {
 			Console.WriteLine($"LocalAI::Action::Score : \tscoring {this}");
 			var ustime = Time.GetTicksUsec();
 			var score = 1f;
-			foreach (var factor in factors) {
+			foreach (ref readonly DecisionFactor factor in factors.AsSpan()) {
 				var s = factor.Score();
 				Console.WriteLine($"LocalAI::Action::Score : \t\tutility of {factor} is {s}");
 				score *= s;
@@ -218,7 +182,7 @@ public partial class LocalAI {
 
 		public static Action AssignWorkersToJob(DecisionFactor[] factors, FactionActions ac, Job job) {
 			return new(factors, () => {
-				if (!job.NeedsWorkers) return;
+				Debug.Assert(job.NeedsWorkers, "Job doesn't \"need workers\"");
 				int maxChange = Math.Min((int)ac.GetFreeWorkers(), (int)job.MaxWorkers);
 				maxChange = Math.Min(maxChange, (int)job.MaxWorkers - job.Workers);
 				ac.ChangeJobWorkerCount(job, maxChange);
@@ -264,6 +228,7 @@ public partial class LocalAI {
 
 }
 
+// decision factors
 public partial class LocalAI {
 
 	public readonly struct DecisionFactor(Func<float> score, string name) {
@@ -377,6 +342,48 @@ public partial class LocalAI {
 				var res = ac.Faction.GetFoodUsage();
 				return res > ac.Faction.GetFood() ? 1f : 0f;
 			}, $"Foodneed()");
+		}
+
+	}
+
+}
+
+// profiling
+public partial class LocalAI {
+
+	public static class Profile {
+
+		static readonly Dictionary<string, List<ulong>> ActionTimes = new();
+
+
+		public static void AddActionTime(ulong time, string name) {
+			if (!ActionTimes.TryGetValue(name, out var list)) {
+				list = new();
+				ActionTimes[name] = list;
+			}
+			list.Add(time);
+		}
+
+		public static void EndProfiling() {
+			if (ActionTimes.Count == 0) return; // who care
+			var max = ActionTimes.MaxBy(kvp => kvp.Value.Max());
+			const string eps = "LocalAI::Profile::EndProfiling : ";
+			Console.WriteLine(eps + "***************");
+			Console.WriteLine(eps + "PROFILING ENDED");
+			Console.WriteLine(eps + "***************");
+			Console.WriteLine(eps + "");
+			foreach (var (name, vals) in ActionTimes) {
+				Console.WriteLine(eps + $"\t{name}:");
+				Console.WriteLine(eps + $"\t\tCALLS: {vals.Count}");
+				Console.WriteLine(eps + $"\t\tAVG: {vals.Average(l => (double)l)} us");
+				Console.WriteLine(eps + $"\t\tMAX: {vals.Max()} us");
+				Console.WriteLine(eps + $"\t\tTOTAL: {vals.Sum(l => (long)l)} us");
+			}
+			Console.WriteLine(eps + $"\tOMAX: {max.Key} {max.Value.Max()} us");
+			Console.WriteLine(eps + "");
+			Console.WriteLine(eps + "***************");
+			Console.WriteLine(eps + "      BYE");
+			Console.WriteLine(eps + "***************");
 		}
 
 	}
