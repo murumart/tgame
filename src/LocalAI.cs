@@ -38,6 +38,17 @@ public partial class LocalAI {
 			Actions.CreateGatherJob([
 					resourceWants[Registry.ResourcesS.Logs],
 					Factors.FreeWorkerRate(factionActions),
+					Factors.HasFreeResourceSite(actions, Registry.ResourceSitesS.RainforestTrees, Registry.ResourcesS.Logs),
+					Factors.ReasonableGatherJobCount(actions, 4, Registry.ResourcesS.Logs)
+				], factionActions, Registry.ResourceSitesS.RainforestTrees, Registry.ResourcesS.Logs),
+			Actions.CreateGatherJob([
+					Factors.FoodMakingNeed(factionActions),
+					Factors.HasFreeResourceSite(actions, Registry.ResourceSitesS.RainforestTrees, Registry.ResourcesS.Fruit),
+					Factors.ReasonableGatherJobCount(actions, 4, Registry.ResourcesS.Fruit)
+				], factionActions, Registry.ResourceSitesS.RainforestTrees, Registry.ResourcesS.Fruit),
+			Actions.CreateGatherJob([
+					resourceWants[Registry.ResourcesS.Logs],
+					Factors.FreeWorkerRate(factionActions),
 					Factors.HasFreeResourceSite(actions, Registry.ResourceSitesS.ConiferWoods, Registry.ResourcesS.Logs),
 					Factors.ReasonableGatherJobCount(actions, 4, Registry.ResourcesS.Logs)
 				], factionActions, Registry.ResourceSitesS.ConiferWoods, Registry.ResourcesS.Logs),

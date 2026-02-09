@@ -1,0 +1,39 @@
+[gd_resource type="Resource" script_class="ResourceSiteType" format=3 uid="uid://b1uvd7viwkyac"]
+
+[ext_resource type="Script" uid="uid://cbiuqlrd8yyxx" path="res://resources/visual/Verb.cs" id="1_unb24"]
+[ext_resource type="Resource" uid="uid://pmrcwo4t316p" path="res://resources/game/resource_types/logs.tres" id="2_4mrpj"]
+[ext_resource type="Script" uid="uid://bnfatrmjew0vy" path="res://resources/game/resource_site_types/ResourceWell.cs" id="3_t8oy2"]
+[ext_resource type="Resource" uid="uid://xkt4u6pl6p3" path="res://resources/game/resource_types/fruit.tres" id="4_yucia"]
+[ext_resource type="Script" uid="uid://ct2a6sqe1m7mx" path="res://resources/game/resource_site_types/ResourceSiteType.cs" id="5_kvgxq"]
+
+[sub_resource type="Resource" id="Resource_unb24"]
+script = ExtResource("1_unb24")
+Infinitive = "chop"
+Progressive = "chopping"
+metadata/_custom_type_script = "uid://cbiuqlrd8yyxx"
+
+[sub_resource type="Resource" id="Resource_4mrpj"]
+script = ExtResource("3_t8oy2")
+resourceType = ExtResource("2_4mrpj")
+minutesPerBunch = 90
+bunchSize = 5
+minutesPerBunchRegen = 414720
+initialBunches = 90
+Production = SubResource("Resource_unb24")
+metadata/_custom_type_script = "uid://bnfatrmjew0vy"
+
+[sub_resource type="Resource" id="Resource_f7tab"]
+script = ExtResource("3_t8oy2")
+resourceType = ExtResource("4_yucia")
+minutesPerBunch = 240
+bunchSize = 1
+minutesPerBunchRegen = 34560
+initialBunches = 30
+metadata/_custom_type_script = "uid://bnfatrmjew0vy"
+
+[resource]
+script = ExtResource("5_kvgxq")
+name = "rainforest trees"
+mineResources = Array[Object]([SubResource("Resource_4mrpj"), SubResource("Resource_f7tab")])
+ScenePath = "uid://86f5k8lmus4o"
+metadata/_custom_type_script = "uid://ct2a6sqe1m7mx"

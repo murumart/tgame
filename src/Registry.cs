@@ -60,6 +60,7 @@ public static class Registry {
 		public static readonly IResourceSiteType BroadleafWoods = ResourceSites.GetAsset("broadleaf_woods");
 		public static readonly IResourceSiteType ConiferWoods = ResourceSites.GetAsset("conifer_woods");
 		public static readonly IResourceSiteType SavannaTrees = ResourceSites.GetAsset("savanna_trees");
+		public static readonly IResourceSiteType RainforestTrees = ResourceSites.GetAsset("rainforest_trees");
 		public static readonly IResourceSiteType Rock = ResourceSites.GetAsset("rock");
 		public static readonly IResourceSiteType Rubble = ResourceSites.GetAsset("rubble");
 		public static readonly IResourceSiteType ClayPit = ResourceSites.GetAsset("clay_pit");
