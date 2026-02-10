@@ -13,11 +13,11 @@ Mängija peab saama läbi viia mõttekaid käike ning neid rahulikult kaaluda.
 
 Mäng jookseb reaalajas, aga oma järgmiste käikude kavandamiseks saab mängu pausile panna. Juhtuvad asjad, mis mängijat sunnivad oma plaani muutma, kuid on ka hetked rahunemiseks ning enda loodud masinavärgi vaatlemiseks.
 
-### 2. 
+### 2.
 
 **Pinge**
 
-### 3. 
+### 3.
 
 
 
@@ -31,7 +31,7 @@ Mängija planeerib ehitisi, milledesse palkab tööle inimesi. Inimesed toodavad
 
 ### Maailmakaart
 
-Protseduuriliselt genereeritud maailmakaart on jagatud maakondadeks, millel igal võib olla omanik riigi näol, ning millel asetseb ka kohalik asustus. Mängija ülesanne on ühte sellist asulat hallata, et emamaale kasulikke asju toota ning saata.
+Protseduuriliselt genereeritud maailmakaart on jagatud maakondadeks, millel igal on omanik mingi "poole (faction)" näol, mis kujutab ka kohalikku asustust. Mängija ülesanne on ühte sellist asulat hallata, et emamaale kasulikke asju toota ning saata.
 
 ### Mängija vaade
 

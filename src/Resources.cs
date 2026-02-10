@@ -42,7 +42,7 @@ public partial class ResourceStorage : IEnumerable<KeyValuePair<IResourceType, I
 		return resource.Amount <= stored.Amount;
 	}
 
-	public bool HasEnoughAll(IEnumerable<ResourceBundle> resources) {
+	public bool HasEnough(IEnumerable<ResourceBundle> resources) {
 		foreach (var r in resources) {
 			if (!HasEnough(r)) return false;
 		}

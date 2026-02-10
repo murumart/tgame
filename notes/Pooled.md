@@ -13,3 +13,7 @@ Näited:
 	- täitmistähtaeg
 	- nõutavad ressursid
 	- vastu antavad ressursid/
+
+## Kaubavahetus
+
+Pooled saavad üksteisele esitada kaubanduspakkumisi (see võtab teatud hulga ressursse ning seab neile vastavusse mingi teise hulga ressursse). Pool, kellele see esitati, saab selle mingis mahus vastu võtta (vastav hulk ressursse vahetab omanikke).

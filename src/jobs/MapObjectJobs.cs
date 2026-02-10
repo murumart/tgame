@@ -22,7 +22,7 @@ public class ConstructBuildingJob : MapObjectJob {
 		MaxWorkers = 35;
 	}
 
-	public override bool CanInitialise(Faction ctxFaction, MapObject building) => ctxFaction.Resources.HasEnoughAll(GetRequirements());
+	public override bool CanInitialise(Faction ctxFaction, MapObject building) => ctxFaction.Resources.HasEnough(GetRequirements());
 
 	public override void Initialise(Faction ctxFaction, MapObject mapObject) {
 		Debug.Assert(CanInitialise(ctxFaction, mapObject), "Job cannot be initialised!!");
@@ -277,7 +277,7 @@ public class CraftJob : MapObjectJob {
 		timeSpent += GetWorkTime(minutes);
 		while (timeSpent > timeTaken) {
 			timeSpent -= timeTaken;
-			if (storage.HasEnoughAll(inputs)) {
+			if (storage.HasEnough(inputs)) {
 				storage.SubtractResources(inputs);
 				Job.ProvideProduction(outputs, storage);
 			}

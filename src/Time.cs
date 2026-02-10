@@ -70,6 +70,12 @@ public class GameTime : ITimePassing {
 	public double GetMonth() => GetMonthS(minutes);
 	public double GetYear() => GetYearS(minutes);
 
+	public static TimeT Years(uint many) => Months(MONTHS_PER_YEAR) * many;
+	public static TimeT Months(uint many) => Weeks(WEEKS_PER_MONTH) * many;
+	public static TimeT Weeks(uint many) => Days(DAYS_PER_WEEK) * many;
+	public static TimeT Days(uint many) => Hours(HOURS_PER_DAY) * many;
+	public static TimeT Hours(uint many) => MINUTES_PER_HOUR * many;
+
 	public int GetHourMinute() => GetHourMinuteS(minutes);
 	public int GetDayHour() => GetDayHourS(minutes);
 	public int GetMonthDay() => GetMonthDayS(minutes);

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Godot;
-using scenes.autoload;
 using static Building;
 using static Document;
 
@@ -12,7 +11,7 @@ public interface IEntity {
 	Briefcase Briefcase { get; }
 	string DocName { get; }
 	TimeT GetTime();
-	void ContractFailure(Document doc, Point fulfillFailure);
+	void ContractFailure(Document doc, Document.FulfillResult fulfillFailure);
 	void ContractSuccess(Document doc);
 
 	ResourceStorage Resources { get; }
@@ -206,7 +205,7 @@ public class Faction : IEntity {
 	}
 
 	public bool HasBuildingMaterials(IBuildingType type) {
-		return resourceStorage.HasEnoughAll(type.GetResourceRequirements());
+		return resourceStorage.HasEnough(type.GetResourceRequirements());
 	}
 
 	void OnBuildingConstructed(Building building) {
@@ -277,20 +276,21 @@ public class Faction : IEntity {
 	public void MakeFactionSubservient(Faction faction) {
 		var doc = Briefcase.CreateOwningRelationship(this, faction);
 		Debug.Assert(!faction.HasOwningFaction(), "This faction is already owned by another faction");
-		faction.Briefcase.AddDocument(Point.Type.HasColony, doc);
+		faction.Briefcase.AddDocument(DocType.AColoniallyOwnsB, doc);
 	}
 
 	public bool HasOwningFaction() {
-		return Briefcase.ContainsPointType(Point.Type.HasColony) && Briefcase.GetOwnerDocument().SideB == this;
+		return Briefcase.ContainsDocType(DocType.AColoniallyOwnsB) && Briefcase.GetOwnershipDocument().SideB == this;
 	}
 
 	// this is meant to be called by the subservient faction
 	// check first with HasOwningFaction
 	public Faction GetOwningFaction() {
-		return Briefcase.GetOwnerDocument().SideA;
+		return Briefcase.GetOwnershipDocument().SideA;
 	}
 
-	public void ContractFailure(Document doc, Point fulfillFailure) {
+	public void ContractFailure(Document doc, Document.FulfillResult result) {
+		Debug.Assert(result != FulfillResult.Ok, "Result is actuall ok??");
 		ContractFailedEvent?.Invoke(doc);
 	}
 
@@ -299,15 +299,16 @@ public class Faction : IEntity {
 
 		// placeholder!! TODO hold place with something better
 		const float MULTIPLY_RESOURCE_COSTS_EVERY_SUCCESS_BY = 1.1f;
-		if (doc.ContainsPointType(Document.Point.Type.ProvidesResourcesTo) && this == doc.SideA) {
+		var (requirements, rewards) = ((IEnumerable<ResourceBundle>, IEnumerable<ResourceBundle>))doc.Meta;
+		if ((doc.Type & DocType.AMandatesExportFromB) != 0 && this == doc.SideA) {
 			var newdoc = Briefcase.CreateExportMandate(
-				doc.Points[0].Resources.Select((j) => new ResourceBundle(j.Type, (int)Math.Round(j.Amount * MULTIPLY_RESOURCE_COSTS_EVERY_SUCCESS_BY))).ToList(),
-				doc.Points[1].Resources,
+				requirements.Select((j) => new ResourceBundle(j.Type, (int)Math.Round(j.Amount * MULTIPLY_RESOURCE_COSTS_EVERY_SUCCESS_BY))).ToList(),
+				rewards,
 				this,
 				other,
 				GetTime() + GameTime.DAYS_PER_WEEK * GameTime.HOURS_PER_DAY * GameTime.MINUTES_PER_HOUR
 			);
-			(other).Briefcase.AddDocument(Document.Point.Type.ProvidesResourcesTo, newdoc);
+			(other).Briefcase.AddDocument(Document.DocType.AMandatesExportFromB, newdoc);
 		}
 	}
 

@@ -333,7 +333,7 @@ public partial class LocalAI {
 		public static DecisionFactor ResourceNeed(FactionActions ac, IResourceType resourceType, int need) {
 			return new(() => {
 				var res = ac.GetResourceStorage();
-				return res.HasEnough(new(resourceType, need)) ? 1f : 0f;
+				return res.HasEnough(new ResourceBundle(resourceType, need)) ? 1f : 0f;
 			}, $"ResourceNeed({resourceType.AssetName}, {need})");
 		}
 
