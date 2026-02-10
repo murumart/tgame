@@ -1,0 +1,88 @@
+[gd_scene format=3 uid="uid://cv6y33io3xxwy"]
+
+[ext_resource type="PackedScene" uid="uid://cjdjyaccqxmmy" path="res://scenes/region/ui/trade_slider.tscn" id="2_42gqs"]
+[ext_resource type="LabelSettings" uid="uid://btwbnjxri1gdg" path="res://resources/visual/theme/label_styles/8px.tres" id="2_oi2vn"]
+
+[node name="TradePartnerDisplay" type="VBoxContainer" unique_id=864180490]
+offset_right = 210.0
+offset_bottom = 62.0
+theme_override_constants/separation = 0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=873576416]
+layout_mode = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="HBoxContainer" unique_id=729603209]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/PanelContainer" unique_id=686627837]
+layout_mode = 2
+theme_override_constants/margin_left = 2
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 2
+
+[node name="Label" type="Label" parent="HBoxContainer/PanelContainer/MarginContainer" unique_id=32117032]
+layout_mode = 2
+text = "PartnerName"
+label_settings = ExtResource("2_oi2vn")
+
+[node name="BuildingList" type="PanelContainer" parent="." unique_id=61790595]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="BuildingList" unique_id=180858812]
+layout_mode = 2
+theme_override_constants/margin_left = 2
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 2
+theme_override_constants/margin_bottom = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="BuildingList/MarginContainer" unique_id=457641062]
+layout_mode = 2
+
+[node name="TradeSliders" type="VBoxContainer" parent="BuildingList/MarginContainer/VBoxContainer" unique_id=901179637]
+layout_mode = 2
+theme_override_constants/separation = 1
+
+[node name="TradeSlider" parent="BuildingList/MarginContainer/VBoxContainer/TradeSliders" unique_id=73745849 instance=ExtResource("2_42gqs")]
+layout_mode = 2
+
+[node name="TradeSlider2" parent="BuildingList/MarginContainer/VBoxContainer/TradeSliders" unique_id=399918420 instance=ExtResource("2_42gqs")]
+layout_mode = 2
+
+[node name="TradeSlider3" parent="BuildingList/MarginContainer/VBoxContainer/TradeSliders" unique_id=319160320 instance=ExtResource("2_42gqs")]
+layout_mode = 2
+
+[node name="TradeSlider4" type="VBoxContainer" parent="BuildingList/MarginContainer/VBoxContainer" unique_id=1864168092]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="BuildingList/MarginContainer/VBoxContainer/TradeSlider4" unique_id=576513228]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="MyResource" type="OptionButton" parent="BuildingList/MarginContainer/VBoxContainer/TradeSlider4/HBoxContainer" unique_id=1566787069]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="BuildingList/MarginContainer/VBoxContainer/TradeSlider4/HBoxContainer" unique_id=1725751039]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_top = 4
+
+[node name="HSlider" type="HSlider" parent="BuildingList/MarginContainer/VBoxContainer/TradeSlider4/HBoxContainer/MarginContainer" unique_id=875684016]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+rounded = true
+scrollable = false
+ticks_position = 3
+
+[node name="WantResource" type="OptionButton" parent="BuildingList/MarginContainer/VBoxContainer/TradeSlider4/HBoxContainer" unique_id=1237826409]
+custom_minimum_size = Vector2(16, 0)
+layout_mode = 2
+
+[node name="Button" type="Button" parent="BuildingList/MarginContainer/VBoxContainer/TradeSlider4/HBoxContainer" unique_id=1764679316]
+layout_mode = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 8
+text = "make offer"

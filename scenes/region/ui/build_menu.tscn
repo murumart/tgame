@@ -1,0 +1,70 @@
+[gd_scene format=3 uid="uid://cf2srkx2edx3u"]
+
+[ext_resource type="Script" uid="uid://2xhwk4iyfu73" path="res://scenes/region/ui/BuildingList.cs" id="1_78e78"]
+
+[node name="BuildMenu" type="VBoxContainer" unique_id=1956105093]
+size_flags_horizontal = 3
+theme_override_constants/separation = 0
+alignment = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1520222375]
+layout_mode = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="HBoxContainer" unique_id=1520407133]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/PanelContainer" unique_id=886147546]
+layout_mode = 2
+theme_override_constants/margin_left = 2
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 2
+
+[node name="Label" type="Label" parent="HBoxContainer/PanelContainer/MarginContainer" unique_id=834659089]
+layout_mode = 2
+text = "What to build?"
+
+[node name="BuildingList" type="PanelContainer" parent="." unique_id=1838821174 node_paths=PackedStringArray("ui", "itemList", "buildConfirmation", "resourceListText")]
+custom_minimum_size = Vector2(170, 180)
+layout_mode = 2
+script = ExtResource("1_78e78")
+ui = NodePath("")
+itemList = NodePath("MarginContainer/VBoxContainer/BuildMenuList")
+buildConfirmation = NodePath("MarginContainer/VBoxContainer/HBoxContainer/BuildMenuConfirmation")
+resourceListText = NodePath("MarginContainer/VBoxContainer/ResourceList")
+
+[node name="MarginContainer" type="MarginContainer" parent="BuildingList" unique_id=1911995746]
+layout_mode = 2
+theme_override_constants/margin_left = 2
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 2
+theme_override_constants/margin_bottom = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="BuildingList/MarginContainer" unique_id=958737905]
+layout_mode = 2
+
+[node name="BuildMenuList" type="ItemList" parent="BuildingList/MarginContainer/VBoxContainer" unique_id=666566716]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+allow_search = false
+item_count = 3
+item_0/text = "Housing"
+item_1/text = "Well"
+item_2/text = "Idk"
+
+[node name="ResourceList" type="RichTextLabel" parent="BuildingList/MarginContainer/VBoxContainer" unique_id=1303932614]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.33
+bbcode_enabled = true
+text = "you need my resources. to construct these building aa a a a a a a  aa aaa aaaaa aa aa aaa a a  a aa a a aa a a a aa a aaa a a"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="BuildingList/MarginContainer/VBoxContainer" unique_id=1348484348]
+layout_mode = 2
+alignment = 2
+
+[node name="BuildMenuConfirmation" type="Button" parent="BuildingList/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1291213956]
+unique_name_in_owner = true
+layout_mode = 2
+disabled = true
+text = "select"
