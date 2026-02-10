@@ -2,10 +2,14 @@
 
 [ext_resource type="Script" uid="uid://2xhwk4iyfu73" path="res://scenes/region/ui/BuildingList.cs" id="1_78e78"]
 
-[node name="BuildMenu" type="VBoxContainer" unique_id=1956105093]
+[node name="BuildMenu" type="VBoxContainer" unique_id=1956105093 node_paths=PackedStringArray("itemList", "buildConfirmation", "resourceListText")]
 size_flags_horizontal = 3
 theme_override_constants/separation = 0
 alignment = 2
+script = ExtResource("1_78e78")
+itemList = NodePath("BuildingList/MarginContainer/VBoxContainer/BuildMenuList")
+buildConfirmation = NodePath("BuildingList/MarginContainer/VBoxContainer/HBoxContainer/BuildMenuConfirmation")
+resourceListText = NodePath("BuildingList/MarginContainer/VBoxContainer/ResourceList")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1520222375]
 layout_mode = 2
@@ -23,14 +27,9 @@ theme_override_constants/margin_right = 2
 layout_mode = 2
 text = "What to build?"
 
-[node name="BuildingList" type="PanelContainer" parent="." unique_id=1838821174 node_paths=PackedStringArray("ui", "itemList", "buildConfirmation", "resourceListText")]
+[node name="BuildingList" type="PanelContainer" parent="." unique_id=1838821174]
 custom_minimum_size = Vector2(170, 180)
 layout_mode = 2
-script = ExtResource("1_78e78")
-ui = NodePath("")
-itemList = NodePath("MarginContainer/VBoxContainer/BuildMenuList")
-buildConfirmation = NodePath("MarginContainer/VBoxContainer/HBoxContainer/BuildMenuConfirmation")
-resourceListText = NodePath("MarginContainer/VBoxContainer/ResourceList")
 
 [node name="MarginContainer" type="MarginContainer" parent="BuildingList" unique_id=1911995746]
 layout_mode = 2

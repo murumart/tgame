@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://do5uvuxk7ubbq" path="res://scenes/region/ui/JobInfoPanel.cs" id="1_4q80a"]
 [ext_resource type="LabelSettings" uid="uid://teuhafm0mc0i" path="res://resources/visual/theme/label_styles/10px.tres" id="2_4q80a"]
+[ext_resource type="StyleBox" uid="uid://bvafrlmq6sivc" path="res://resources/visual/theme/sb_lighter.tres" id="2_gpdlg"]
 [ext_resource type="PackedScene" uid="uid://bbhbv3hm6dqgh" path="res://scenes/region/ui/job_slider.tscn" id="3_cgm35"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_cgm35"]
@@ -33,6 +34,7 @@ layout_mode = 2
 
 [node name="PanelContainer" type="PanelContainer" parent="VBoxContainer2/TopBar2" unique_id=1570056122]
 layout_mode = 2
+theme_override_styles/panel = ExtResource("2_gpdlg")
 
 [node name="MarginContainer" type="MarginContainer" parent="VBoxContainer2/TopBar2/PanelContainer" unique_id=815932952]
 layout_mode = 2
@@ -62,6 +64,7 @@ text = "Remove"
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+theme_override_styles/panel = ExtResource("2_gpdlg")
 
 [node name="MarginContainer" type="MarginContainer" parent="VBoxContainer2/JobInfopanel" unique_id=1128989637]
 layout_mode = 2

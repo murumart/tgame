@@ -2,6 +2,7 @@
 
 [ext_resource type="FontVariation" uid="uid://dliky8sbpgnxp" path="res://resources/visual/font/title_font.tres" id="1_70gfe"]
 [ext_resource type="FontVariation" uid="uid://16wjjwlxw4iw" path="res://resources/visual/font/default_font.tres" id="1_rjbnf"]
+[ext_resource type="StyleBox" uid="uid://cg2fkivtsnr2x" path="res://resources/visual/theme/sb_dark.tres" id="3_3wo1x"]
 [ext_resource type="Texture2D" uid="uid://dlsoj84e70cwb" path="res://resources/visual/theme/icons/circle8x8.svg" id="3_hwdam"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xbfgx"]
@@ -11,17 +12,6 @@ border_width_top = 4
 border_width_right = 4
 border_width_bottom = 4
 border_color = Color(1.6353589, 1.6353589, 0, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5kvdv"]
-bg_color = Color(0.1882353, 0.21960784, 0.2627451, 0.61960787)
-corner_radius_top_left = 2
-corner_radius_top_right = 2
-corner_radius_bottom_right = 2
-corner_radius_bottom_left = 2
-shadow_color = Color(0.1882353, 0.21960784, 0.2627451, 0.14509805)
-shadow_size = 1
-shadow_offset = Vector2(1, 1)
-anti_aliasing = false
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_i0op6"]
 bg_color = Color(0.42352942, 0.5058824, 0.6313726, 1)
@@ -95,7 +85,7 @@ Control/font_sizes/normal_font_size = 12
 Control/fonts/font = ExtResource("1_rjbnf")
 Control/fonts/normal_font = ExtResource("1_rjbnf")
 Control/styles/focus = SubResource("StyleBoxFlat_xbfgx")
-Control/styles/panel = SubResource("StyleBoxFlat_5kvdv")
+Control/styles/panel = ExtResource("3_3wo1x")
 HSlider/icons/grabber = ExtResource("3_hwdam")
 HSlider/icons/grabber_disabled = ExtResource("3_hwdam")
 HSlider/icons/grabber_highlight = ExtResource("3_hwdam")

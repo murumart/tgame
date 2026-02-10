@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://bli7m2dvghbu1"]
 
 [ext_resource type="Script" uid="uid://bkpe6if0q4xbk" path="res://scenes/region/ui/DocumentsDisplay.cs" id="1_sirhb"]
+[ext_resource type="StyleBox" uid="uid://bvafrlmq6sivc" path="res://resources/visual/theme/sb_lighter.tres" id="2_sirhb"]
 [ext_resource type="FontVariation" uid="uid://16wjjwlxw4iw" path="res://resources/visual/font/default_font.tres" id="3_ie3jr"]
 [ext_resource type="PackedScene" uid="uid://c7bkc1812dw4j" path="res://scenes/region/ui/document_display.tscn" id="4_6cgx3"]
 
@@ -70,6 +71,7 @@ fit_content = true
 
 [node name="PanelContainer" type="PanelContainer" parent="PanelContainer/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer" unique_id=1607634486]
 layout_mode = 2
+theme_override_styles/panel = ExtResource("2_sirhb")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/PanelContainer" unique_id=1299357277]
 layout_mode = 2
@@ -85,7 +87,10 @@ alignment = 0
 
 [node name="CurrentArrangements" type="MarginContainer" parent="PanelContainer/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/PanelContainer/VBoxContainer" unique_id=102637078]
 layout_mode = 2
-theme_override_constants/margin_left = 8
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 2
+theme_override_constants/margin_bottom = 2
 
 [node name="Box" type="VBoxContainer" parent="PanelContainer/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/PanelContainer/VBoxContainer/CurrentArrangements" unique_id=459252009]
 layout_mode = 2
@@ -94,8 +99,12 @@ size_flags_vertical = 3
 [node name="Agreement" parent="PanelContainer/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/PanelContainer/VBoxContainer/CurrentArrangements/Box" unique_id=1532186999 instance=ExtResource("4_6cgx3")]
 layout_mode = 2
 
+[node name="Agreement2" parent="PanelContainer/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/PanelContainer/VBoxContainer/CurrentArrangements/Box" unique_id=1845496456 instance=ExtResource("4_6cgx3")]
+layout_mode = 2
+
 [node name="PanelContainer2" type="PanelContainer" parent="PanelContainer/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer" unique_id=1416145984]
 layout_mode = 2
+theme_override_styles/panel = ExtResource("2_sirhb")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/PanelContainer2" unique_id=1325628386]
 layout_mode = 2
@@ -111,7 +120,10 @@ alignment = 0
 
 [node name="PastArrangements" type="MarginContainer" parent="PanelContainer/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/PanelContainer2/VBoxContainer" unique_id=497020464]
 layout_mode = 2
-theme_override_constants/margin_left = 8
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 2
+theme_override_constants/margin_bottom = 2
 
 [node name="Box" type="VBoxContainer" parent="PanelContainer/MarginContainer/ScrollContainer/MarginContainer/VBoxContainer/PanelContainer2/VBoxContainer/PastArrangements" unique_id=722575813]
 layout_mode = 2

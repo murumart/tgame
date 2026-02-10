@@ -24,7 +24,7 @@ font_color = Color(0.8352941, 0.8392157, 0.85882354, 1)
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_bjdfm"]
 
-[node name="Ui" type="MarginContainer" unique_id=948088031 node_paths=PackedStringArray("buildButton", "agreementsButton", "jobsButton", "menuTabs", "documentsDisplay", "jobsList", "resourceDisplay", "pauseDisplayPanel", "gameSpeedLabel", "pauseButton", "normalSpeedButton", "fastSpeedButton", "resourceLabel")]
+[node name="Ui" type="MarginContainer" unique_id=948088031 node_paths=PackedStringArray("buildButton", "agreementsButton", "jobsButton", "menuTabs", "buildingList", "documentsDisplay", "jobsList", "resourceDisplay", "pauseDisplayPanel", "gameSpeedLabel", "pauseButton", "normalSpeedButton", "fastSpeedButton", "resourceLabel")]
 z_index = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -41,6 +41,7 @@ buildButton = NodePath("VBoxContainer/HBoxContainer/VBoxContainer2/ControlButton
 agreementsButton = NodePath("VBoxContainer/HBoxContainer/VBoxContainer2/ControlButtons/AgreementsButton")
 jobsButton = NodePath("VBoxContainer/HBoxContainer/VBoxContainer2/ControlButtons/JobsButton")
 menuTabs = NodePath("VBoxContainer/MarginContainer/MenuTabs")
+buildingList = NodePath("VBoxContainer/MarginContainer/MenuTabs/HBoxContainer/BuildMenu")
 documentsDisplay = NodePath("VBoxContainer/MarginContainer/MenuTabs/HBoxContainer2/Agreements")
 jobsList = NodePath("VBoxContainer/HBoxContainer/MapObjectMenu")
 resourceDisplay = NodePath("VBoxContainer/VBoxContainer/ResourceDisplay")
@@ -148,8 +149,9 @@ visible = false
 layout_mode = 2
 metadata/_tab_index = 0
 
-[node name="BuildMenu" parent="VBoxContainer/MarginContainer/MenuTabs/HBoxContainer" unique_id=1956105093 instance=ExtResource("3_iwag8")]
+[node name="BuildMenu" parent="VBoxContainer/MarginContainer/MenuTabs/HBoxContainer" unique_id=1956105093 node_paths=PackedStringArray("ui") instance=ExtResource("3_iwag8")]
 layout_mode = 2
+ui = NodePath("../../../../..")
 
 [node name="Fat" type="Control" parent="VBoxContainer/MarginContainer/MenuTabs/HBoxContainer" unique_id=1181721685]
 layout_mode = 2

@@ -6,7 +6,7 @@ using scenes.region;
 using scenes.region.ui;
 using static Building;
 
-public partial class BuildingList : PanelContainer {
+public partial class BuildingList : Control {
 
 	[Export] UI ui;
 	[Export] ItemList itemList;
