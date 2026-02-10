@@ -15,7 +15,7 @@ public class Game {
 		var regions = map.GetRegions();
 		regionAIs = new LocalAI[regions.Length];
 		for (int i = 0; i < regions.Length; i++) {
-			regionAIs[i] = new(new(regions[i], regions[i].LocalFaction));
+			regionAIs[i] = new GamerAI(new(regions[i], regions[i].LocalFaction));
 		}
 	}
 
@@ -28,6 +28,7 @@ public class Game {
 				var regs = Map.GetRegions();
 				for (int i = 0; i < regionAIs.Length; i++) {
 					if (regs[i] == PlayRegion) continue;
+					regionAIs[i].PreUpdate(Time.Minutes);
 					regionAIs[i].Update(Time.Minutes);
 				}
 				_lastAIUpdate = Time.Minutes;

@@ -5,139 +5,28 @@ using Godot;
 using static Building;
 using static ResourceSite;
 
-public partial class LocalAI {
+public abstract partial class LocalAI {
 
-	readonly FactionActions factionActions;
-	readonly Action[] mainActions;
-	readonly List<Action> ephemeralActions;
-
-	readonly Dictionary<IResourceType, DecisionFactor> resourceWants;
-
-	TimeT time;
-
+	protected readonly FactionActions factionActions;
 
 	public LocalAI(FactionActions actions) {
 		this.factionActions = actions;
-		this.resourceWants = new() {
-			{Registry.ResourcesS.Logs, Factors.ResourceWant(actions, Registry.ResourcesS.Logs, 30)},
-			{Registry.ResourcesS.Rocks, Factors.ResourceWant(actions, Registry.ResourcesS.Rocks, 30)},
-		};
-		this.mainActions = [
-			Actions.CreateGatherJob([
-					resourceWants[Registry.ResourcesS.Logs],
-					Factors.FreeWorkerRate(factionActions),
-					Factors.HasFreeResourceSite(actions, Registry.ResourceSitesS.BroadleafWoods, Registry.ResourcesS.Logs),
-					Factors.ReasonableGatherJobCount(actions, 4, Registry.ResourcesS.Logs)
-				], factionActions, Registry.ResourceSitesS.BroadleafWoods, Registry.ResourcesS.Logs),
-			Actions.CreateGatherJob([
-					Factors.FoodMakingNeed(factionActions),
-					Factors.HasFreeResourceSite(actions, Registry.ResourceSitesS.BroadleafWoods, Registry.ResourcesS.Fruit),
-					Factors.ReasonableGatherJobCount(actions, 4, Registry.ResourcesS.Fruit)
-				], factionActions, Registry.ResourceSitesS.BroadleafWoods, Registry.ResourcesS.Fruit),
-			Actions.CreateGatherJob([
-					resourceWants[Registry.ResourcesS.Logs],
-					Factors.FreeWorkerRate(factionActions),
-					Factors.HasFreeResourceSite(actions, Registry.ResourceSitesS.RainforestTrees, Registry.ResourcesS.Logs),
-					Factors.ReasonableGatherJobCount(actions, 4, Registry.ResourcesS.Logs)
-				], factionActions, Registry.ResourceSitesS.RainforestTrees, Registry.ResourcesS.Logs),
-			Actions.CreateGatherJob([
-					Factors.FoodMakingNeed(factionActions),
-					Factors.HasFreeResourceSite(actions, Registry.ResourceSitesS.RainforestTrees, Registry.ResourcesS.Fruit),
-					Factors.ReasonableGatherJobCount(actions, 4, Registry.ResourcesS.Fruit)
-				], factionActions, Registry.ResourceSitesS.RainforestTrees, Registry.ResourcesS.Fruit),
-			Actions.CreateGatherJob([
-					resourceWants[Registry.ResourcesS.Logs],
-					Factors.FreeWorkerRate(factionActions),
-					Factors.HasFreeResourceSite(actions, Registry.ResourceSitesS.ConiferWoods, Registry.ResourcesS.Logs),
-					Factors.ReasonableGatherJobCount(actions, 4, Registry.ResourcesS.Logs)
-				], factionActions, Registry.ResourceSitesS.ConiferWoods, Registry.ResourcesS.Logs),
-			Actions.CreateGatherJob([
-					resourceWants[Registry.ResourcesS.Logs],
-					Factors.FreeWorkerRate(factionActions),
-					Factors.HasFreeResourceSite(actions, Registry.ResourceSitesS.SavannaTrees, Registry.ResourcesS.Logs),
-					Factors.ReasonableGatherJobCount(actions, 4, Registry.ResourcesS.Logs)
-				], factionActions, Registry.ResourceSitesS.SavannaTrees, Registry.ResourcesS.Logs),
-			Actions.CreateGatherJob([
-					resourceWants[Registry.ResourcesS.Rocks],
-					Factors.FreeWorkerRate(factionActions),
-					Factors.HasFreeResourceSite(actions, Registry.ResourceSitesS.Rock, Registry.ResourcesS.Rocks),
-					Factors.ReasonableGatherJobCount(actions, 4, Registry.ResourcesS.Rocks)
-				], factionActions, Registry.ResourceSitesS.Rock, Registry.ResourcesS.Rocks),
-			Actions.CreateGatherJob([
-					resourceWants[Registry.ResourcesS.Rocks],
-					Factors.FreeWorkerRate(factionActions),
-					Factors.HasFreeResourceSite(actions, Registry.ResourceSitesS.Rubble, Registry.ResourcesS.Rocks),
-					Factors.ReasonableGatherJobCount(actions, 4, Registry.ResourcesS.Rocks)
-				], factionActions, Registry.ResourceSitesS.Rubble, Registry.ResourcesS.Rocks),
-		];
-		foreach (var building in Resources.Buildings) {
-			mainActions = mainActions.Append(
-				Actions.PlaceBuildingJob(
-					new DecisionFactor[] {
-						Factors.HomelessnessRate(factionActions),
-						Factors.OneMinus(Factors.HousingSlotsPerPerson(factionActions)),
-					 }.Concat(
-							building.GetResourceRequirements()
-								.Select((rb) => Factors.ResourceNeed(factionActions, rb.Type, rb.Amount))).ToArray(),
-					factionActions, building)
-				).ToArray();
-		}
-		this.ephemeralActions = new();
 	}
 
-	public void Update(TimeT minute) {
-		Console.WriteLine($"LocalAI::Update : (of {factionActions}) doing update");
-		var ustime = Time.GetTicksUsec();
+	public abstract void PreUpdate(TimeT moment);
+	public abstract void Update(TimeT moment);
 
-		for (int i = 0; i < 1; i++) {
-			ephemeralActions.Clear();
-			foreach (var job in factionActions.GetMapObjectJobs()) {
-				if (job is GatherResourceJob gjob) {
-					var prod = gjob.GetProduction();
-					ephemeralActions.Add(Actions.AssignWorkersToJob([
-							Factors.HasFreeWorkers(factionActions),
-							resourceWants.GetValueOrDefault(prod.ResourceType, Factors.One),
-							Factors.JobHasEmploymentSpots(factionActions, gjob),
-						], factionActions, job));
-					ephemeralActions.Add(Actions.RemoveJob([
-							Factors.Mult(Factors.Cube(Factors.OneMinus(resourceWants.GetValueOrDefault(prod.ResourceType, Factors.Null))), 0.0001f),
-							//DecisionFactors.Mult(DecisionFactors.OneMinus(DecisionFactors.JobEmploymentRate(gjob)), 0.0025f),
-						], factionActions, job));
-				} else if (job is ConstructBuildingJob bjob) {
-					ephemeralActions.Add(Actions.AssignWorkersToJob([
-						Factors.HasFreeWorkers(factionActions),
-						Factors.OneMinus(Factors.JobEmploymentRate(bjob)),
-					], factionActions, bjob));
-				}
+	protected void ChooseAction(out Action chosenAction, out float chosenScore, Span<Action> actions) {
+		chosenAction = Actions.Idle;
+		chosenScore = 0f;
+		foreach (ref readonly var action in actions) {
+			var s = action.Score();
+			Debug.Assert(!Mathf.IsNaN(s), $"Got NOT A NUMBER from scoring action {action}");
+			if (s > chosenScore) {
+				chosenScore = s;
+				chosenAction = action;
 			}
-
-			ref readonly Action chosenAction = ref Actions.Idle;
-			float chosenScore = 0f;
-			foreach (ref readonly var action in mainActions.Concat(ephemeralActions).ToArray().AsSpan()) {
-				var s = action.Score();
-				Debug.Assert(!Mathf.IsNaN(s), $"Got NOT A NUMBER from scoring action {action}");
-				if (s > chosenScore) {
-					chosenScore = s;
-					chosenAction = ref action;
-				}
-			}
-			ustime = Time.GetTicksUsec() - ustime;
-			Console.WriteLine($"LocalAI::Update : (of {factionActions}) chose action {chosenAction} (score {chosenScore})!");
-			Console.WriteLine($"LocalAI::Update : choosing took {ustime} us!\n");
-			var ustime2 = Time.GetTicksUsec();
-			chosenAction.Do();
-			ustime2 = Time.GetTicksUsec() - ustime2;
-			//Console.WriteLine($"LocalAI::Update : (of {factionActions}) did action {chosenAction}!");
-			//Console.WriteLine($"LocalAI::Update : doing took {ustime2} us!\n");
 		}
-
-		time = minute;
-	}
-
-	static class Resources {
-
-		public static readonly IBuildingType[] Buildings = [Registry.BuildingsS.LogCabin, Registry.BuildingsS.Housing, Registry.BuildingsS.BrickHousing];
-
 	}
 
 }
@@ -147,7 +36,9 @@ public partial class LocalAI {
 
 	public struct Action(DecisionFactor[] factors, System.Action act, string name) {
 
-		public System.Action Do = act;
+		public readonly void Do() {
+			act();
+		}
 
 		public readonly float Score() {
 			//Console.WriteLine($"LocalAI::Action::Score : \tscoring {this}");
@@ -237,7 +128,7 @@ public partial class LocalAI {
 
 	}
 
-	static class Factors {
+	protected static class Factors {
 
 		public static readonly DecisionFactor Null = new(() => 0.0f, "Null");
 		public static readonly DecisionFactor One = new(() => 1.0f, "One");
@@ -379,10 +270,144 @@ public partial class LocalAI {
 			Console.WriteLine(eps + $"\tOMAX: {max.Key} {max.Value.Max()} us");
 			Console.WriteLine(eps + "");
 			Console.WriteLine(eps + "***************");
-			Console.WriteLine(eps + "      BYE");
+			Console.WriteLine(eps + "      BYE      ");
 			Console.WriteLine(eps + "***************");
 		}
 
+	}
+
+}
+
+public class GamerAI : LocalAI {
+
+	readonly Dictionary<IResourceType, DecisionFactor> resourceWants;
+	readonly Action[] mainActions;
+	readonly List<Action> ephemeralActions;
+	TimeT time;
+
+	public GamerAI(FactionActions actions) : base(actions) {
+
+		this.resourceWants = new() {
+			{Registry.ResourcesS.Logs, Factors.ResourceWant(actions, Registry.ResourcesS.Logs, 30)},
+			{Registry.ResourcesS.Rocks, Factors.ResourceWant(actions, Registry.ResourcesS.Rocks, 30)},
+		};
+		this.mainActions = [
+			Actions.CreateGatherJob([
+					resourceWants[Registry.ResourcesS.Logs],
+					Factors.FreeWorkerRate(factionActions),
+					Factors.HasFreeResourceSite(actions, Registry.ResourceSitesS.BroadleafWoods, Registry.ResourcesS.Logs),
+					Factors.ReasonableGatherJobCount(actions, 4, Registry.ResourcesS.Logs)
+				], factionActions, Registry.ResourceSitesS.BroadleafWoods, Registry.ResourcesS.Logs),
+			Actions.CreateGatherJob([
+					Factors.FoodMakingNeed(factionActions),
+					Factors.HasFreeResourceSite(actions, Registry.ResourceSitesS.BroadleafWoods, Registry.ResourcesS.Fruit),
+					Factors.ReasonableGatherJobCount(actions, 4, Registry.ResourcesS.Fruit)
+				], factionActions, Registry.ResourceSitesS.BroadleafWoods, Registry.ResourcesS.Fruit),
+			Actions.CreateGatherJob([
+					resourceWants[Registry.ResourcesS.Logs],
+					Factors.FreeWorkerRate(factionActions),
+					Factors.HasFreeResourceSite(actions, Registry.ResourceSitesS.RainforestTrees, Registry.ResourcesS.Logs),
+					Factors.ReasonableGatherJobCount(actions, 4, Registry.ResourcesS.Logs)
+				], factionActions, Registry.ResourceSitesS.RainforestTrees, Registry.ResourcesS.Logs),
+			Actions.CreateGatherJob([
+					Factors.FoodMakingNeed(factionActions),
+					Factors.HasFreeResourceSite(actions, Registry.ResourceSitesS.RainforestTrees, Registry.ResourcesS.Fruit),
+					Factors.ReasonableGatherJobCount(actions, 4, Registry.ResourcesS.Fruit)
+				], factionActions, Registry.ResourceSitesS.RainforestTrees, Registry.ResourcesS.Fruit),
+			Actions.CreateGatherJob([
+					resourceWants[Registry.ResourcesS.Logs],
+					Factors.FreeWorkerRate(factionActions),
+					Factors.HasFreeResourceSite(actions, Registry.ResourceSitesS.ConiferWoods, Registry.ResourcesS.Logs),
+					Factors.ReasonableGatherJobCount(actions, 4, Registry.ResourcesS.Logs)
+				], factionActions, Registry.ResourceSitesS.ConiferWoods, Registry.ResourcesS.Logs),
+			Actions.CreateGatherJob([
+					resourceWants[Registry.ResourcesS.Logs],
+					Factors.FreeWorkerRate(factionActions),
+					Factors.HasFreeResourceSite(actions, Registry.ResourceSitesS.SavannaTrees, Registry.ResourcesS.Logs),
+					Factors.ReasonableGatherJobCount(actions, 4, Registry.ResourcesS.Logs)
+				], factionActions, Registry.ResourceSitesS.SavannaTrees, Registry.ResourcesS.Logs),
+			Actions.CreateGatherJob([
+					resourceWants[Registry.ResourcesS.Rocks],
+					Factors.FreeWorkerRate(factionActions),
+					Factors.HasFreeResourceSite(actions, Registry.ResourceSitesS.Rock, Registry.ResourcesS.Rocks),
+					Factors.ReasonableGatherJobCount(actions, 4, Registry.ResourcesS.Rocks)
+				], factionActions, Registry.ResourceSitesS.Rock, Registry.ResourcesS.Rocks),
+			Actions.CreateGatherJob([
+					resourceWants[Registry.ResourcesS.Rocks],
+					Factors.FreeWorkerRate(factionActions),
+					Factors.HasFreeResourceSite(actions, Registry.ResourceSitesS.Rubble, Registry.ResourcesS.Rocks),
+					Factors.ReasonableGatherJobCount(actions, 4, Registry.ResourcesS.Rocks)
+				], factionActions, Registry.ResourceSitesS.Rubble, Registry.ResourcesS.Rocks),
+		];
+		foreach (var building in Registry.BuildingsS.HousingBuildings) {
+			mainActions = mainActions.Append(
+				Actions.PlaceBuildingJob(
+					new DecisionFactor[] {
+						Factors.HomelessnessRate(factionActions),
+						Factors.OneMinus(Factors.HousingSlotsPerPerson(factionActions)),
+					 }.Concat(
+							building.GetResourceRequirements()
+								.Select((rb) => Factors.ResourceNeed(factionActions, rb.Type, rb.Amount))).ToArray(),
+					factionActions, building)
+				).ToArray();
+		}
+		this.ephemeralActions = new();
+	}
+
+	public override void PreUpdate(TimeT minute) {
+		ephemeralActions.Clear();
+		foreach (var job in factionActions.GetMapObjectJobs()) {
+			if (job is GatherResourceJob gjob) {
+				var prod = gjob.GetProduction();
+				ephemeralActions.Add(Actions.AssignWorkersToJob([
+						Factors.HasFreeWorkers(factionActions),
+						resourceWants.GetValueOrDefault(prod.ResourceType, Factors.One),
+						Factors.JobHasEmploymentSpots(factionActions, gjob),
+					], factionActions, job));
+				ephemeralActions.Add(Actions.RemoveJob([
+						Factors.Mult(Factors.Cube(Factors.OneMinus(resourceWants.GetValueOrDefault(prod.ResourceType, Factors.Null))), 0.0001f),
+						//DecisionFactors.Mult(DecisionFactors.OneMinus(DecisionFactors.JobEmploymentRate(gjob)), 0.0025f),
+					], factionActions, job));
+			} else if (job is ConstructBuildingJob bjob) {
+				ephemeralActions.Add(Actions.AssignWorkersToJob([
+					Factors.HasFreeWorkers(factionActions),
+					Factors.OneMinus(Factors.JobEmploymentRate(bjob)),
+				], factionActions, bjob));
+			}
+		}
+	}
+
+	public override void Update(TimeT minute) {
+		Console.WriteLine($"LocalAI::Update : (of {factionActions}) doing update");
+		var ustime = Time.GetTicksUsec();
+		ChooseAction(out Action chosenAction, out float chosenScore, mainActions.Concat(ephemeralActions).ToArray().AsSpan());
+		ustime = Time.GetTicksUsec() - ustime;
+		Console.WriteLine($"LocalAI::Update : (of {factionActions}) chose action {chosenAction} (score {chosenScore})!");
+		Console.WriteLine($"LocalAI::Update : choosing took {ustime} us!\n");
+		chosenAction.Do();
+
+		time = minute;
+	}
+
+}
+
+public class NatureAI : LocalAI {
+
+	readonly Action[] actions;
+
+
+	public NatureAI(FactionActions factionActions) : base(factionActions) {
+		this.actions = [
+			Actions.Idle,
+		];
+	}
+
+	public override void PreUpdate(TimeT moment) {
+	}
+
+	public override void Update(TimeT moment) {
+		ChooseAction(out var chosenAction, out _, actions.AsSpan());
+		chosenAction.Do();
 	}
 
 }

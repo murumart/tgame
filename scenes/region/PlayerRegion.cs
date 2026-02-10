@@ -31,7 +31,7 @@ namespace scenes.region {
 			faction = region.LocalFaction;
 			actions = new(region, faction);
 			// debug
-			ai = new(actions);
+			ai = new GamerAI(actions);
 
 			ui.MapClickEvent += MapClick;
 			ui.RequestBuildEvent += OnUIBuildingPlaceRequested;
