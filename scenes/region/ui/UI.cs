@@ -162,7 +162,7 @@ namespace scenes.region.ui {
 		}
 
 		const int NORMAL_SPEED = 1;
-		const int FAST_SPEED = 15;
+		const int FAST_SPEED = 30;
 
 		void OnNormalSpeedButtonPressed() {
 			if (timeSpeedAlteringDisabled) return;

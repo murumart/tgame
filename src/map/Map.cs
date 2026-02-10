@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Godot;
 
-public class Map : ITimePassing {
+public class Map {
 
 	public readonly World World;
 	protected readonly List<Region> regions;

@@ -27,7 +27,7 @@ public readonly struct TimeT {
 
 }
 
-public class GameTime : ITimePassing {
+public class GameTime {
 
 	public event Action<TimeT> HourPassedEvent;
 	public event Action<TimeT> TimePassedEvent;
@@ -44,12 +44,7 @@ public class GameTime : ITimePassing {
 	public TimeT Minutes { get => minutes; }
 
 
-	public GameTime() {
-		/*for (int i = 0; i < 900; i++) {
-			System.Console.Out.WriteLine($"m: {minutes} d: {GetDay():0.00} m: {GetMonth():0.00} dh: {GetDayHour():0.00} md: {GetMonthDay():0.00} ");
-			PassTime(60 * 12);
-		}*/
-	}
+	public GameTime() { }
 
 	public void PassTime(TimeT minutes) {
 		var prevHour = this.minutes / 60;
@@ -95,16 +90,12 @@ public class GameTime : ITimePassing {
 		var days = hours / DAYS_PER_WEEK;
 		var weeks = days / DAYS_PER_WEEK;
 
-		if (weeks > 0) return "" + weeks + " week" + (weeks == 1 ? "" : 's');
+		var daysPlusWeek = days - weeks * DAYS_PER_WEEK;
+
+		if (weeks > 0) return "" + weeks + " week" + (weeks == 1 ? "" : 's') + (daysPlusWeek > 0 ? " and " + daysPlusWeek + " day" + (daysPlusWeek == 1 ? "" : 's') : "");
 		if (days > 0) return "" + days + " day" + (days == 1 ? "" : 's');
 		if (hours > 0) return "" + hours + " hour" + (hours == 1 ? "" : 's');
 		return "" + minutes + " minutes";
 	}
-
-}
-
-public interface ITimePassing {
-
-	public void PassTime(TimeT minutes);
 
 }
