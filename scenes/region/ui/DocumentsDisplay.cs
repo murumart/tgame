@@ -3,7 +3,7 @@ using Godot;
 
 namespace scenes.region.ui {
 
-	public partial class DocumentsDisplay : PanelContainer {
+	public partial class DocumentsDisplay : Control {
 
 		public const char DOWN = '⇩';
 		public const char RIGHT = '⇨';
