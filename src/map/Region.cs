@@ -25,8 +25,6 @@ public class Region {
 
 	readonly HashSet<Region> neighbors = new(); public ICollection<Region> Neighbors => neighbors;
 
-	public Color Color { get; init; } // used for displaying
-
 	public int LandTileCount => GroundTiles.Values.Where(t => (t & GroundTileType.Land) != 0).Count();
 	public int OceanTileCount => GroundTiles.Values.Where(t => t == GroundTileType.Ocean).Count();
 
@@ -37,7 +35,6 @@ public class Region {
 		this.worldIndex = index;
 		WorldPosition = worldPosition;
 		GroundTiles = groundTiles;
-		this.Color = Color.FromHsv(GD.Randf(), (float)GD.RandRange(0.75, 1.0), 1.0f);
 
 		NaturalResources = new(() => {
 			var dict = new Dictionary<IResourceType, ResourceBundle>();

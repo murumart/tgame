@@ -397,9 +397,13 @@ namespace scenes.map {
 		async Task War(Region[] regions, int aggressiveRegionCount) {
 			// all regions get initial populations
 			foreach (Region region in regions) {
+				int initPop = (int)populationLandTileCurve.SampleBaked(region.LandTileCount);
+				int sustainsForOneMonth = (int)(region.GetPotentialFood() * 1.75f / (GameTime.WEEKS_PER_MONTH * GameTime.DAYS_PER_WEEK));
+				initPop = Math.Min(initPop, sustainsForOneMonth);
+
 				var faction = new Faction(
 					region,
-					initialPopulation: (uint)populationLandTileCurve.SampleBaked(region.LandTileCount)
+					initialPopulation: (uint)initPop
 				);
 			}
 

@@ -15,7 +15,8 @@ public class Game {
 		var regions = map.GetRegions();
 		regionAIs = new LocalAI[regions.Length];
 		for (int i = 0; i < regions.Length; i++) {
-			regionAIs[i] = new GamerAI(new(regions[i], regions[i].LocalFaction));
+			if (regions[i].LocalFaction.GetPopulationCount() > 0) regionAIs[i] = new GamerAI(new(regions[i], regions[i].LocalFaction));
+			else regionAIs[i] = new NatureAI(new(regions[i], regions[i].LocalFaction));
 		}
 	}
 

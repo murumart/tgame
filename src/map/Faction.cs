@@ -39,6 +39,7 @@ public class Faction : IEntity {
 	public uint UnemployedPopulation => Population.Count - Population.EmployedCount;
 
 	public readonly string Name;
+	public Color Color { get; init; } // used for displaying
 
 	public string DocName => ToString();
 	public Briefcase Briefcase { get; init; }
@@ -50,7 +51,6 @@ public class Faction : IEntity {
 
 		Region = region;
 		Briefcase = new();
-		Name = Naming.GenRandomName();
 
 		region.MapObjectUpdatedAtEvent += OnMapObjectUpdated;
 
@@ -61,8 +61,15 @@ public class Faction : IEntity {
 
 		Region.SetLocalFaction(this);
 
-		Resources.AddResource(new(Registry.ResourcesS.Bread, 10)); // initial buffer (DEBUG probably)
-		PlacePrebuiltBuilding(Registry.BuildingsS.LogCabin, new(0, 0));
+		if (Population.Count == 0) {
+			Name = Naming.GenRandomNatureName();
+			Color = new(1, 1, 0.89f);
+		} else {
+			Name = Naming.GenRandomName();
+			Color = Color.FromHsv(GD.Randf(), (float)GD.RandRange(0.75, 1.0), 1.0f);
+			Resources.AddResource(new(Registry.ResourcesS.Bread, 10)); // initial buffer (DEBUG probably)
+			PlacePrebuiltBuilding(Registry.BuildingsS.LogCabin, new(0, 0));
+		}
 	}
 
 	// *** MANAGING WORKERS AND JOBS ***
@@ -354,6 +361,10 @@ public class Faction : IEntity {
 			return sb.ToString();
 		}
 
+		public static string GenRandomNatureName() {
+			string[] prexes = ["The Wilds of ", "The Wild ", "Wilderness of "];
+			return prexes[GD.Randi() % prexes.Length] + GenRandomName();
+		}
 	}
 
 }

@@ -68,7 +68,7 @@ namespace scenes.region {
 			foreach (var neighbor in region.Neighbors) {
 				var rdisp = RegionDisplay.Instantiate();
 				otherDisplaysParent.AddChild(rdisp);
-				rdisp.Modulate = new Color(0.3f, 0.3f, 0.3f).Lerp(neighbor.Color, 0.05f);
+				rdisp.Modulate = new Color(0.3f, 0.3f, 0.3f).Lerp(neighbor.LocalFaction.Color, 0.05f);
 				rdisp.Position = Tilemaps.TilePosToWorldPos(neighbor.WorldPosition - region.WorldPosition) - Tilemaps.TILE_SIZE / 2;
 				rdisp.LoadRegion(neighbor);
 				foreach (var n in neighbor.Neighbors) if (n != region && !region.Neighbors.Contains(n)) secondLevel.Add(n);
@@ -76,7 +76,7 @@ namespace scenes.region {
 			foreach (var neighbor in secondLevel) {
 				var rdisp = RegionDisplay.Instantiate();
 				otherDisplaysParent.AddChild(rdisp);
-				rdisp.Modulate = new Color(0.1f, 0.1f, 0.1f).Lerp(region.Color, 0.1f);
+				rdisp.Modulate = new Color(0.1f, 0.1f, 0.1f).Lerp(region.LocalFaction.Color, 0.1f);
 				rdisp.Position = Tilemaps.TilePosToWorldPos(neighbor.WorldPosition - region.WorldPosition) - Tilemaps.TILE_SIZE / 2;
 				rdisp.LoadRegion(neighbor);
 			}
