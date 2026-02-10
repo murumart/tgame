@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Godot;
-using resources.game.resource_site_types;
 using static Building;
 using static ResourceSite;
 
@@ -87,8 +86,6 @@ public partial class LocalAI {
 	}
 
 	public void Update(TimeT minute) {
-		var delta = minute - time;
-
 		Console.WriteLine($"LocalAI::Update : (of {factionActions}) doing update");
 		var ustime = Time.GetTicksUsec();
 
@@ -130,8 +127,8 @@ public partial class LocalAI {
 			var ustime2 = Time.GetTicksUsec();
 			chosenAction.Do();
 			ustime2 = Time.GetTicksUsec() - ustime2;
-			Console.WriteLine($"LocalAI::Update : (of {factionActions}) did action {chosenAction}!");
-			Console.WriteLine($"LocalAI::Update : doing took {ustime2} us!\n");
+			//Console.WriteLine($"LocalAI::Update : (of {factionActions}) did action {chosenAction}!");
+			//Console.WriteLine($"LocalAI::Update : doing took {ustime2} us!\n");
 		}
 
 		time = minute;
@@ -153,12 +150,12 @@ public partial class LocalAI {
 		public System.Action Do = act;
 
 		public readonly float Score() {
-			Console.WriteLine($"LocalAI::Action::Score : \tscoring {this}");
+			//Console.WriteLine($"LocalAI::Action::Score : \tscoring {this}");
 			var ustime = Time.GetTicksUsec();
 			var score = 1f;
 			foreach (ref readonly DecisionFactor factor in factors.AsSpan()) {
 				var s = factor.Score();
-				Console.WriteLine($"LocalAI::Action::Score : \t\tutility of {factor} is {s}");
+				//Console.WriteLine($"LocalAI::Action::Score : \t\tutility of {factor} is {s}");
 				score *= s;
 				if (s <= 0) {
 					break;
@@ -166,7 +163,7 @@ public partial class LocalAI {
 			}
 			ustime = Time.GetTicksUsec() - ustime;
 			Profile.AddActionTime(ustime, name);
-			Console.WriteLine($"LocalAI::Action::Score : \tscored *{score}* (took {ustime} us)");
+			//Console.WriteLine($"LocalAI::Action::Score : \tscored *{score}* (took {ustime} us)");
 			return score;
 		}
 

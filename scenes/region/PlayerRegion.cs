@@ -167,11 +167,11 @@ namespace scenes.region {
 
 		TimeT _lastTime = 0; // debug
 		void PassTime(TimeT minutes) {
-			var dt = GameMan.Singleton.Game.Time.Minutes - _lastTime;
-			if (dt >= 30 && GameMan.Singleton.Game.Time.Minutes >= 60 * 8) {
-				ai.Update(GameMan.Singleton.Game.Time.Minutes);
-				_lastTime = GameMan.Singleton.Game.Time.Minutes;
-			}
+			//var dt = GameMan.Singleton.Game.Time.Minutes - _lastTime;
+			//if (dt >= 30 && GameMan.Singleton.Game.Time.Minutes >= 60 * 8) {
+			//	ai.Update(GameMan.Singleton.Game.Time.Minutes);
+			//	_lastTime = GameMan.Singleton.Game.Time.Minutes;
+			//}
 		}
 
 		void HourlyUpdate(TimeT timeInMinutes) {

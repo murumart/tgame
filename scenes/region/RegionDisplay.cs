@@ -96,6 +96,9 @@ namespace scenes.region {
 			buildingsParent.AddChild(view);
 			mapObjectViews[mopbject.GlobalPosition - region.WorldPosition] = view;
 			view.Position = Tilemaps.TilePosToWorldPos(mopbject.GlobalPosition - region.WorldPosition);
+			if (region.LocalFaction.GetJob(mopbject.GlobalPosition - region.WorldPosition, out var job)) {
+				OnJobChanged(job, 0);
+			}
 		}
 
 		void RemoveDisplay(Vector2I tile) {
