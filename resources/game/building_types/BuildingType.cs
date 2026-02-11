@@ -5,6 +5,7 @@ using Godot;
 using resouces.game.building_types.crafting;
 using resources.game.resource_types;
 using static Building;
+using static Building.IBuildingType;
 
 namespace resources.game.building_types {
 
@@ -22,12 +23,15 @@ namespace resources.game.building_types {
 		[Export] Godot.Collections.Dictionary<ResourceType, int> ResourceCosts;
 		[Export] Godot.Collections.Array<CraftingJobDef> CraftingJobs;
 		[Export] float HoursToConstruct = 1f;
+		[Export] Special special;
 		[Export] string[] AvailableJobClassNames = Array.Empty<string>();
 		[Export(PropertyHint.Flags)] GroundTileType AllowedGroundTiles = GroundTileType.Land;
 		[Export(PropertyHint.File, "*.tscn")] string ScenePath;
 
 
 		public string GetScenePath() => ScenePath;
+
+		public Special GetSpecial() => special;
 
 		public int GetPopulationCapacity() {
 			Debug.Assert(PopulationCapacity >= 0, "Population capacity can't be negative");

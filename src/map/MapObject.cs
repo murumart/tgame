@@ -72,6 +72,13 @@ public partial class Building {
 
 	public interface IBuildingType : IAssetType, IMapObjectType {
 
+		public enum Special {
+			None,
+			Marketplace,
+		}
+
+		public Special GetSpecial();
+
 		int GetPopulationCapacity();
 		ResourceBundle[] GetResourceRequirements();
 		float GetHoursToConstruct();

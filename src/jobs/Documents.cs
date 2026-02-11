@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 
+
 public partial class Document {
 
 	public DocType Type { get; init; }

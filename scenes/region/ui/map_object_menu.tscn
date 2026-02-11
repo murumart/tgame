@@ -9,12 +9,13 @@
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_jmbgv"]
 content_margin_left = 2.0
 
-[node name="MapObjectMenu" type="HBoxContainer" unique_id=334038367 node_paths=PackedStringArray("titleLabel", "jobInfoPanel", "addJobMenu", "addJobItemList", "addJobDescription", "addJobConfirmButton", "detailsText")]
+[node name="MapObjectMenu" type="HBoxContainer" unique_id=334038367 node_paths=PackedStringArray("titleLabel", "jobInfoPanel", "tradeInfoPanel", "addJobMenu", "addJobItemList", "addJobDescription", "addJobConfirmButton", "detailsText")]
 offset_right = 147.0
 offset_bottom = 244.0
 script = ExtResource("1_lkdvm")
 titleLabel = NodePath("Vbox/Title/MarginContainer/Label")
 jobInfoPanel = NodePath("Vbox/JobScrolll/ParametersList/JobInfopanel")
+tradeInfoPanel = NodePath("Vbox/JobScrolll/ParametersList/TradeInfopanel")
 addJobMenu = NodePath("Vbox/JobScrolll/ParametersList/JobAdditionMenu")
 addJobItemList = NodePath("Vbox/JobScrolll/ParametersList/JobAdditionMenu/VBoxContainer/PanelContainer/VBoxContainer/MarginContainer/AvailableJobsList")
 addJobDescription = NodePath("Vbox/JobScrolll/ParametersList/JobAdditionMenu/VBoxContainer/PanelContainer/VBoxContainer/JobInfoText")

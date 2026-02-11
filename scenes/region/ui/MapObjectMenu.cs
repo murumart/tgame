@@ -17,6 +17,7 @@ namespace scenes.region.ui {
 
 		[Export] Label titleLabel;
 		[Export] JobInfoPanel jobInfoPanel;
+		[Export] TradeInfoPanel tradeInfoPanel;
 
 		[Export] Control addJobMenu;
 		[Export] ItemList addJobItemList;
@@ -28,6 +29,8 @@ namespace scenes.region.ui {
 		bool attachedToMapObject = false;
 		State state;
 		MapObject myMapObject;
+		bool IsMarketplaceBuilding => (myMapObject is Building b && b.IsConstructed && b.Type.GetSpecial() == Building.IBuildingType.Special.Marketplace);
+		bool IsMarketplaceActive => IsMarketplaceBuilding && ExtantJob != null;
 
 		// we're regenerating these lists every time the menu is opened or updated, hopefully not a performance issue!
 		// an alternative is to not do that and set the _* lists to null to regenerate them on next menu open.
@@ -75,6 +78,8 @@ namespace scenes.region.ui {
 			}
 			detailsText.Text = "";
 			addJobDescription.Text = "";
+			SizeFlagsStretchRatio = IsMarketplaceActive ? 4.0f : 1.0f;
+			tradeInfoPanel.Visible = IsMarketplaceActive;
 
 			Callable.From(Show).CallDeferred();
 		}
@@ -135,6 +140,7 @@ namespace scenes.region.ui {
 					sb.Append($"Construction in progress... ({(int)(b.GetBuildProgress() * 100)}%)\n");
 				}
 				sb.Append(b.Type.GetDescription()).Append('\n');
+				if (IsMarketplaceBuilding && !IsMarketplaceActive) sb.Append("Add a job to process trade activities.").Append('\n');
 				var crafting = b.Type.GetCraftJobs();
 				if (crafting.Length > 0) {
 					sb.Append("Production of the following occurs here...\n");

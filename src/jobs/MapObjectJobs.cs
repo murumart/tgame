@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Godot;
 using resources.visual;
@@ -112,6 +113,9 @@ public class FishByHandJob : Job {
 		GD.Print("FishByHandJob::PassTime : We fish x", minutes);
 	}
 
+	public override float GetWorkTime(TimeT minutes) {
+		throw new NotImplementedException();
+	}
 }
 
 public class GatherResourceJob : MapObjectJob {
@@ -329,6 +333,56 @@ public class CraftJob : MapObjectJob {
 
 		public CraftJob GetJob();
 
+	}
+
+}
+
+public class ProcessMarketJob : MapObjectJob {
+
+	Building marketplace;
+	Faction faction;
+
+	public override Vector2I GlobalPosition => marketplace.GlobalPosition;
+
+	public override bool IsValid => marketplace != null;
+
+	float timeSpent;
+	readonly Dictionary<Faction, List<TradeOffer>> tradeOffers = new();
+
+
+	public ProcessMarketJob() {
+		MaxWorkers = 10;
+	}
+
+	public override Job Copy() => throw new NotImplementedException();
+
+	public override void Deinitialise(Faction ctxFaction) {
+		faction = null;
+	}
+
+	public override void Initialise(Faction ctxFaction, MapObject mapObject) {
+		faction = ctxFaction;
+		Debug.Assert(mapObject is Building b && b.IsConstructed && b.Type.GetSpecial() == Building.IBuildingType.Special.Marketplace, "This map object isn't a marketplace");
+		marketplace = mapObject as Building;
+	}
+
+	public override float GetWorkTime(TimeT minutes) => minutes * MathF.Pow(Workers, 0.6f);
+
+	public override void PassTime(TimeT minutes) {
+		timeSpent += GetWorkTime(minutes);
+		while (timeSpent > GameTime.Hours(12)) {
+			timeSpent -= GameTime.Hours(12);
+
+		}
+	}
+
+	void TryAddTradeOffer() {
+		var newpartners = faction.GetTradePartners().Where(a => !tradeOffers.ContainsKey(a)).ToArray();
+		if (newpartners.Length != 0) {
+			var newpartner = newpartners[GD.Randi() % newpartners.Length];
+			tradeOffers.Add(newpartner, new());
+			faction.GetTradeOffers(newpartner, out var offers);
+		}
 	}
 
 }

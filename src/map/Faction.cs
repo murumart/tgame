@@ -314,7 +314,7 @@ public class Faction : IEntity {
 		var (requirements, rewards) = ((IEnumerable<ResourceBundle>, IEnumerable<ResourceBundle>))doc.Meta;
 		if ((doc.Type & DocType.AMandatesExportFromB) != 0 && this == doc.SideA) {
 			var newdoc = Briefcase.CreateExportMandate(
-				requirements.Select((j) => new ResourceBundle(j.Type, (int)Math.Round(j.Amount * MULTIPLY_RESOURCE_COSTS_EVERY_SUCCESS_BY))).ToList(),
+				requirements.Select((j) => new ResourceBundle(j.Type, (int)Math.Round(j.Amount * MULTIPLY_RESOURCE_COSTS_EVERY_SUCCESS_BY))),
 				rewards,
 				this,
 				other,
@@ -325,6 +325,8 @@ public class Faction : IEntity {
 	}
 
 	// *** TRADING *** 
+
+	public IEnumerable<Faction> GetTradePartners() => tradeInfo.Keys;
 
 	public bool GetTradeOffers(Faction with, out IEnumerable<TradeOffer> tradeOffers) {
 		var has = tradeInfo.TryGetValue(with, out var list);

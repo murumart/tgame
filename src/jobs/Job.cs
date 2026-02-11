@@ -13,7 +13,7 @@ public abstract class Job {
 
 	public int Workers { get; protected set; }
 	public uint MaxWorkers { get; protected set; }
-	public virtual float GetWorkTime(TimeT minutes) => throw new NotImplementedException();
+	public abstract float GetWorkTime(TimeT minutes);
 
 	/// <summary>
 	/// Call before adding job. Do things like consume resources here.

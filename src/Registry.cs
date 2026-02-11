@@ -53,6 +53,8 @@ public static class Registry {
 		public static readonly IBuildingType Housing = Buildings.GetAsset("housing");
 		public static readonly IBuildingType BrickHousing = Buildings.GetAsset("brick_housing");
 
+		public static readonly IBuildingType Marketplace = Buildings.GetAsset("marketplace");
+
 		public static readonly IBuildingType[] HousingBuildings = [LogCabin, Housing, BrickHousing];
 
 	}
