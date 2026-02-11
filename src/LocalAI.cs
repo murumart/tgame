@@ -101,6 +101,20 @@ public partial class LocalAI {
 			}, $"CreateGatherJob({siteType.AssetName}, {wantedResource.AssetName})");
 		}
 
+		public static Action CreateProcessMarketJob(DecisionFactor[] factors, FactionActions ac) {
+			return new(factors, () => {
+				foreach (var mop in ac.GetMapObjects()) {
+					if (mop is Building b) {
+						if (b.Type.GetSpecial() == IBuildingType.Special.Marketplace && b.IsConstructed) {
+							ac.AddJob(b, new ProcessMarketJob());
+							return;
+						}
+					}
+				}
+				Debug.Assert(false, "Didn't find market to add job to");
+			}, $"CreateProcessMarketJob()");
+		}
+
 		public static Action PlaceBuildingJob(DecisionFactor[] factors, FactionActions ac, IBuildingType buildingType) {
 			return new(factors, () => {
 				foreach (var pos in ac.GetTiles()) {
@@ -123,13 +137,32 @@ public partial class LocalAI {
 				} else {
 					KeyValuePair<IResourceType, ResourceStorage.InStorage> excessiveResource = new(null, 0);
 					foreach (var res in from.Resources) {
-						if (res.Value > excessiveResource.Value) excessiveResource = res;
+						if (res.Value.Amount > excessiveResource.Value.Amount) excessiveResource = res;
 					}
 					if (excessiveResource.Value == 0) return; // nothing to give
 					var give = new ResourceBundle(excessiveResource.Key, Math.Max(1, excessiveResource.Value / 14));
-					toffer = new(from, give, to, give.Amount / ((int)(GD.Randi() % 2) + 1), 1);
+					toffer = new(from, give, to, give.Amount / (int)((GD.Randi() % 2) + 1) + 1, 1);
+					from.SendTradeOffer(to, toffer);
 				}
-			}, $"SendTradeOffer({to})");
+			}, $"SendTradeOffer()");
+		}
+
+		public static Action AcceptTradeOffer(DecisionFactor[] factors, Faction me, Faction from, TradeOffer offer) {
+			return new(factors, () => {
+				me.AcceptTradeOffer(from, offer, offer.StoredUnits);
+			}, $"AcceptTradeOffer()");
+		}
+
+		public static Action RejectTradeOffer(DecisionFactor[] factors, Faction me, Faction from, TradeOffer offer) {
+			return new(factors, () => {
+				me.RejectTradeOffer(from, offer);
+			}, $"RejectTradeOffer()");
+		}
+
+		public static Action CancelTradeOffer(DecisionFactor[] factors, Faction me, Faction to, TradeOffer offer) {
+			return new(factors, () => {
+				me.CancelTradeOffer(to, offer);
+			}, $"CancelTradeOffer()");
 		}
 
 	}
@@ -154,6 +187,10 @@ public partial class LocalAI {
 
 		public static readonly DecisionFactor Null = new(() => 0.0f, "Null");
 		public static readonly DecisionFactor One = new(() => 1.0f, "One");
+
+		public static DecisionFactor Const(float val) {
+			return new(() => val, $"{val}");
+		}
 
 		public static DecisionFactor OneMinus(DecisionFactor fac) {
 			return new(() => 1.0f - fac.Score(), $"(1 - {fac})");
@@ -268,6 +305,47 @@ public partial class LocalAI {
 			}, $"Foodneed()");
 		}
 
+		public static DecisionFactor SeeNoInterestInTradeOffer(Faction me, TradeOffer toff, TimeT disintrestTime) {
+			return new(() => {
+				var timeTaken = me.GetTime() - toff.CreationMinute;
+				return Mathf.Clamp((float)timeTaken / disintrestTime, 0f, 1f);
+			}, $"SeeNoInterestInTradeOffer");
+		}
+
+		public static DecisionFactor CanAcceptTradeOffer(TradeOffer tradeOffer) {
+			return new(() => tradeOffer.CanTrade(tradeOffer.StoredUnits) ? 1.0f : 0.0f, $"CanAcceptTradeOffer");
+		}
+
+		public static DecisionFactor HasFunctionalMarketplace(FactionActions ac) {
+			return new(() => {
+				var job = ac.GetProcessMarketJob();
+				if (job != null) return 1.0f;
+				return 0f;
+			}, "HasFunctionalMarketplace");
+		}
+
+		public static DecisionFactor HasMarketplace(FactionActions ac) {
+			return new(() => {
+				if (ac.GetMarketplace() != null) return 1f;
+				return 0f;
+			}, "HasMarketplace");
+		}
+
+		public static DecisionFactor IsMarketplaceConstructed(FactionActions ac) {
+			return new(() => {
+				var mp = ac.GetMarketplace();
+				if (mp.IsConstructed) return 1f;
+				return 0f;
+			}, "IsMarketplaceConstructed");
+		}
+
+		public static DecisionFactor TradeOfferLimit(Faction me, Faction other, int limit) {
+			return new(() => {
+				var sent = me.GetSentTradeOffers(other, out var amt);
+				if (!sent) return 1.0f;
+				return 1f - Mathf.Clamp(amt.Count / (float)limit, 0f, 1f);
+			}, $"TradeOfferLimit({limit})");
+		}
 	}
 
 }
@@ -329,6 +407,7 @@ public class GamerAI : LocalAI {
 			{Registry.ResourcesS.Rocks, Factors.ResourceWant(actions, Registry.ResourcesS.Rocks, 30)},
 		};
 		var startActions = new List<Action>();
+
 		startActions.Add(Actions.CreateGatherJob([
 				resourceWants[Registry.ResourcesS.Logs],
 				Factors.FreeWorkerRate(factionActions),
@@ -375,9 +454,22 @@ public class GamerAI : LocalAI {
 				Factors.HasFreeResourceSite(actions, Registry.ResourceSitesS.Rubble, Registry.ResourcesS.Rocks),
 				Factors.ReasonableGatherJobCount(actions, 4, Registry.ResourcesS.Rocks)
 			], factionActions, Registry.ResourceSitesS.Rubble, Registry.ResourcesS.Rocks));
+
+		startActions.Add(Actions.PlaceBuildingJob([
+				Factors.OneMinus(Factors.HasMarketplace(actions)),
+				Factors.Group(Registry.BuildingsS.Marketplace.GetResourceRequirements().Select((rb) => Factors.ResourceNeed(factionActions, rb.Type, rb.Amount)).ToArray()),
+			], factionActions, Registry.BuildingsS.Marketplace));
+		startActions.Add(Actions.CreateProcessMarketJob([
+				Factors.OneMinus(Factors.HasFunctionalMarketplace(actions)),
+				Factors.HasMarketplace(actions),
+				Factors.IsMarketplaceConstructed(actions),
+			], actions));
+
 		foreach (var neighbor in actions.Region.Neighbors.Where(r => r.LocalFaction.GetPopulationCount() > 0)) {
 			startActions.Add(Actions.SendTradeOffer([
-				Factors.Mult(Factors.One, 0.05f),
+				Factors.HasFunctionalMarketplace(factionActions),
+				Factors.TradeOfferLimit(factionActions.Faction, neighbor.LocalFaction, 5),
+				Factors.Const(0.05f),
 			], actions.Faction, neighbor.LocalFaction));
 		}
 		foreach (var building in Registry.BuildingsS.HousingBuildings) {
@@ -386,9 +478,7 @@ public class GamerAI : LocalAI {
 					Factors.OneMinus(Factors.HousingSlotsPerPerson(factionActions)),
 					Factors.Group(building.GetResourceRequirements().Select((rb) => Factors.ResourceNeed(factionActions, rb.Type, rb.Amount)).ToArray()),
 					Factors.PeopleHoused(building),
-				],
-				factionActions, building)
-			);
+				], factionActions, building));
 		}
 		this.mainActions = startActions.ToArray();
 		this.ephemeralActions = new();
@@ -413,6 +503,41 @@ public class GamerAI : LocalAI {
 					Factors.HasFreeWorkers(factionActions),
 					Factors.OneMinus(Factors.JobEmploymentRate(bjob)),
 				], factionActions, bjob));
+			} else if (job is ProcessMarketJob pjob) {
+				ephemeralActions.Add(Actions.AssignWorkersToJob([
+					Factors.HasFreeWorkers(factionActions),
+					Factors.OneMinus(Factors.JobEmploymentRate(pjob)),
+				], factionActions, pjob));
+			}
+		}
+		var marketJob = factionActions.GetProcessMarketJob();
+		if (marketJob == null) return;
+		foreach (var (partner, toffs) in factionActions.Faction.GetSentTradeOffers()) {
+			foreach (var toff in toffs) {
+				toff.Log($"ephemeral actions sent to {partner}");
+				ephemeralActions.Add(Actions.CancelTradeOffer([
+					Factors.HasFunctionalMarketplace(factionActions),
+					!toff.OffererGivesRecipentSilver ? resourceWants.GetValueOrDefault(toff.OffererSoldResourcesUnit.Type, Factors.Const(0.15f)) : Factors.Const(0.15f),
+					Factors.SeeNoInterestInTradeOffer(factionActions.Faction, toff, GameTime.Days(4)),
+				], factionActions.Faction, partner, toff));
+			}
+		}
+		foreach (var (partner, toffs) in marketJob.TradeOffers) {
+			foreach (var toff in toffs) {
+				toff.Log($"ephemeral actions from TradeOffers with {partner}");
+				if (!toff.IsValid) GD.PushWarning(toff.History);
+				Debug.Assert(toff.IsValid, "This trade offer isn't valid, delete!!!!!");
+				ephemeralActions.Add(Actions.AcceptTradeOffer([
+					Factors.HasFunctionalMarketplace(factionActions),
+					toff.OffererGivesRecipentSilver
+						? Factors.OneMinus(resourceWants.GetValueOrDefault(toff.RecepientRequiredResourcesUnit.Type, Factors.Const(0.015f)))
+						: resourceWants.GetValueOrDefault(toff.OffererSoldResourcesUnit.Type, Factors.Const(0.015f)),
+					Factors.CanAcceptTradeOffer(toff),
+				], factionActions.Faction, partner, toff));
+				ephemeralActions.Add(Actions.RejectTradeOffer([
+					Factors.HasFunctionalMarketplace(factionActions),
+					Factors.Mult(Factors.OneMinus(Factors.CanAcceptTradeOffer(toff)), 0.0015f),
+				], factionActions.Faction, partner, toff));
 			}
 		}
 	}

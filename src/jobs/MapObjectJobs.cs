@@ -353,7 +353,20 @@ public class ProcessMarketJob : MapObjectJob {
 	public Faction Faction { get => faction; }
 
 	float timeSpent;
-	public readonly Dictionary<Faction, List<TradeOffer>> TradeOffers = new();
+	readonly Dictionary<Faction, List<TradeOffer>> tradeOffers = new();
+	public Dictionary<Faction, List<TradeOffer>> TradeOffers {
+		get {
+			foreach (var (_, l) in tradeOffers) {
+				for (int i = l.Count - 1; i > -1; i--) {
+					if (!l[i].IsValid) {
+						l[i].Log("getting trade offers, removing because it's not valid");
+						l.RemoveAt(i);
+					}
+				}
+			}
+			return tradeOffers;
+		}
+	}
 	readonly TimeT timeTaken;
 
 
@@ -385,18 +398,19 @@ public class ProcessMarketJob : MapObjectJob {
 	}
 
 	void TryAddTradeOffer() {
-		var newpartners = faction.GetTradePartners().Where(a => !TradeOffers.ContainsKey(a)).ToArray();
+		var newpartners = faction.GetTradePartners().Where(a => !tradeOffers.ContainsKey(a)).ToArray();
 		if (newpartners.Length != 0) {
 			var newpartner = newpartners[GD.Randi() % newpartners.Length];
-			TradeOffers.Add(newpartner, new());
+			tradeOffers.Add(newpartner, new());
 			faction.GetGottenTradeOffers(newpartner, out var offersenu);
 			var offers = offersenu.Where(o => o.IsValid).ToArray();
-			TradeOffers[newpartner].Add(offers[GD.Randi() % offers.Length]);
+			if (offers.Length == 0) return;
+			tradeOffers[newpartner].Add(offers[GD.Randi() % offers.Length]);
 		} else {
 			var unaddedOffers = new Dictionary<Faction, TradeOffer[]>();
 			var partnersWithUnaddedOffers = faction.GetTradePartners().Where(p => {
 				var has = faction.GetGottenTradeOffers(p, out var l);
-				var wo = l.Where(o => o.IsValid && !TradeOffers[p].Contains(o)).ToArray();
+				var wo = l.Where(o => o.IsValid && !tradeOffers[p].Contains(o)).ToArray();
 				unaddedOffers[p] = wo;
 				return has && wo.Length != 0;
 			}).ToArray();
@@ -404,7 +418,7 @@ public class ProcessMarketJob : MapObjectJob {
 			var partner = partnersWithUnaddedOffers[GD.Randi() % partnersWithUnaddedOffers.Length];
 			faction.GetGottenTradeOffers(partner, out var list);
 			var withoutExtant = unaddedOffers[partner][GD.Randi() % unaddedOffers[partner].Length];
-			TradeOffers[partner].Add(withoutExtant);
+			tradeOffers[partner].Add(withoutExtant);
 		}
 	}
 

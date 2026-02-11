@@ -52,6 +52,28 @@ public class FactionActions {
 
 	public IEnumerable<MapObject> GetMapObjects() => region.GetMapObjects();
 
+	ProcessMarketJob _marketJobCached = null;
+	public ProcessMarketJob GetProcessMarketJob() {
+		if (_marketJobCached == null || !_marketJobCached.IsValid) {
+			_marketJobCached = null;
+			foreach (var m in GetMapObjects()) if (m is Building b) if (b.Type.GetSpecial() == IBuildingType.Special.Marketplace && b.IsConstructed) {
+						_marketJobCached = GetMapObjectsJob(m) as ProcessMarketJob;
+					}
+		}
+		return _marketJobCached;
+	}
+
+	Building _marketplaceCahced = null;
+	public Building GetMarketplace() {
+		if (_marketplaceCahced == null) {
+			_marketplaceCahced = null;
+			foreach (var m in GetMapObjects()) if (m is Building b) if (b.Type.GetSpecial() == IBuildingType.Special.Marketplace) {
+						_marketplaceCahced = b;
+					}
+		}
+		return _marketplaceCahced;
+	}
+
 	// jobs
 
 	public void AddJob(MapObject place, MapObjectJob job) {

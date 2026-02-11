@@ -329,13 +329,18 @@ public class Faction : IEntity {
 
 	public IEnumerable<Faction> GetTradePartners() => gottenTradeOffers.Keys;
 
+	public IDictionary<Faction, List<TradeOffer>> GetGottenTradeOffers() => gottenTradeOffers;
+
 	public bool GetGottenTradeOffers(Faction with, out IEnumerable<TradeOffer> tradeOffers) {
 		var has = gottenTradeOffers.TryGetValue(with, out var list);
 		tradeOffers = list;
 		return has;
 	}
 
-	public bool GetSentTradeOffers(Faction with, out IEnumerable<TradeOffer> tradeOffers) {
+	public IDictionary<Faction, List<TradeOffer>> GetSentTradeOffers() => sentTradeOffers;
+
+
+	public bool GetSentTradeOffers(Faction with, out List<TradeOffer> tradeOffers) {
 		var has = sentTradeOffers.TryGetValue(with, out var list);
 		tradeOffers = list;
 		return has;
@@ -361,7 +366,7 @@ public class Faction : IEntity {
 	}
 
 	public void SendTradeOffer(Faction to, TradeOffer offer) {
-		Debug.Assert(offer.IsValid, "Trade offer isn't valid");
+		Debug.Assert(offer.IsValid, "Trade offer isn't valid" + offer.History);
 		Debug.Assert(to != null);
 
 		to.TradeOfferReceived(this, offer);
@@ -381,46 +386,54 @@ public class Faction : IEntity {
 	}
 
 	public void AcceptTradeOffer(Faction from, TradeOffer offer, int units) {
-		Debug.Assert(offer.IsValid, "This trade offer isn't valid any more");
-		Debug.Assert(gottenTradeOffers.ContainsKey(from), $"We didn't actually get a trade offer from {from}");
-		Debug.Assert(gottenTradeOffers[from].Contains(offer), "We didn't actually get this trade offer..");
+		Debug.Assert(offer.IsValid, "This trade offer isn't valid any more" + offer.History);
+		Debug.Assert(gottenTradeOffers.ContainsKey(from), $"We didn't actually get a trade offer from {from}" + offer.History);
+		Debug.Assert(gottenTradeOffers[from].Contains(offer), "We didn't actually get this trade offer.. " + offer.History);
+		offer.Log($"{this} accepting offer from {from}");
 		offer.MakeTrade(units);
 		from.MyTradeOfferWasAccepted(this, offer);
 		if (!offer.IsValid) gottenTradeOffers[from].Remove(offer); // depleted
+		if (!offer.IsValid) offer.Log($"depleted so removed from gotten");
 	}
 
 	void MyTradeOfferWasAccepted(Faction by, TradeOffer offer) {
-		Debug.Assert(sentTradeOffers.ContainsKey(by), $"We didn't senda get a trade offer to {by}");
-		Debug.Assert(sentTradeOffers[by].Contains(offer), "We didn't actually send this trade offer..");
+		Debug.Assert(sentTradeOffers.ContainsKey(by), $"We didn't senda get a trade offer to {by}" + offer.History);
+		Debug.Assert(sentTradeOffers[by].Contains(offer), "We didn't actually send this trade offer.." + offer.History);
 		if (!offer.IsValid) sentTradeOffers[by].Remove(offer); // depleted
+		if (!offer.IsValid) offer.Log($"depleted so removed from sent");
 	}
 
 	public void RejectTradeOffer(Faction from, TradeOffer offer) {
-		Debug.Assert(offer.IsValid, "This trade offer isn't valid any more");
-		Debug.Assert(gottenTradeOffers.ContainsKey(from), $"We didn't actually get a trade offer from {from}");
-		Debug.Assert(gottenTradeOffers[from].Contains(offer), "We didn't actually get this trade offer..");
+		Debug.Assert(offer.IsValid, "This trade offer isn't valid any more" + offer.History);
+		Debug.Assert(gottenTradeOffers.ContainsKey(from), $"We didn't actually get a trade offer from {from}" + offer.History);
+		Debug.Assert(gottenTradeOffers[from].Contains(offer), "We didn't actually get this trade offer.." + offer.History);
 		gottenTradeOffers[from].Remove(offer);
+		offer.Log($"rejecting offer by {from} im removing from gotten");
 		from.MyTradeOfferWasRejectedSnif(this, offer);
 	}
 
 	void MyTradeOfferWasRejectedSnif(Faction by, TradeOffer offer) {
-		Debug.Assert(sentTradeOffers.ContainsKey(by), $"We didn't senda get a trade offer to {by}");
-		Debug.Assert(sentTradeOffers[by].Contains(offer), "We didn't actually send this trade offer..");
+		Debug.Assert(sentTradeOffers.ContainsKey(by), $"We didn't senda get a trade offer to {by}" + offer.History);
+		Debug.Assert(sentTradeOffers[by].Contains(offer), "We didn't actually send this trade offer.." + offer.History);
 		sentTradeOffers[by].Remove(offer);
+		offer.Log($"{this} offer was rejected by {by} im removing from sent");
 		offer.Cancel();
 	}
 
-	public void CancelTradeOffer(Faction with, TradeOffer offer) {
-		Debug.Assert(offer.IsValid, "This trade offer isn't valid any more");
-		Debug.Assert(sentTradeOffers.ContainsKey(with), $"We didn't senda get a trade offer to {with}");
-		Debug.Assert(sentTradeOffers[with].Contains(offer), "We didn't actually send this trade offer..");
-		sentTradeOffers[with].Remove(offer);
-		with.TradeOfferWithMeWasCancelled(this, offer);
+	public void CancelTradeOffer(Faction to, TradeOffer offer) {
+		Debug.Assert(offer.IsValid, "This trade offer isn't valid any more" + offer.History);
+		Debug.Assert(sentTradeOffers.ContainsKey(to), $"We didn't senda get a trade offer to {to}" + offer.History);
+		Debug.Assert(sentTradeOffers[to].Contains(offer), "We didn't actually send this trade offer.." + offer.History);
+		offer.Log($"Cancelling, removing from {this} sent");
+		sentTradeOffers[to].Remove(offer);
+		offer.Cancel();
+		to.TradeOfferWithMeWasCancelled(this, offer);
 	}
 
 	void TradeOfferWithMeWasCancelled(Faction source, TradeOffer offer) {
-		Debug.Assert(gottenTradeOffers.ContainsKey(source), $"We didn't actually get a trade offer from {source}");
-		Debug.Assert(gottenTradeOffers[source].Contains(offer), "We didn't actually get this trade offer..");
+		Debug.Assert(gottenTradeOffers.ContainsKey(source), $"We didn't actually get a trade offer from {source}" + offer.History);
+		Debug.Assert(gottenTradeOffers[source].Contains(offer), "We didn't actually get this trade offer.." + offer.History);
+		offer.Log($"mine was cancelled says {this} and removing from gotten");
 		gottenTradeOffers[source].Remove(offer);
 	}
 
