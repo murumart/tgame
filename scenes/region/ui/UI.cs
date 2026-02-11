@@ -119,6 +119,9 @@ namespace scenes.region.ui {
 			resourceDisplay.Display(() => $"fps: {Engine.GetFramesPerSecond()}");
 			var reg = fac.Region;
 			resourceDisplay.Display(() => {
+				return $"silver: {fac.Silver}";
+			});
+			resourceDisplay.Display(() => {
 				string txt = $"{inRegionTilepos}";
 				if (reg.GroundTiles.TryGetValue(inRegionTilepos, out GroundTileType tile)) {
 					txt += $" {tile.UIString()}";

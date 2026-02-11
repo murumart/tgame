@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using static ResourceStorage;
@@ -19,6 +20,8 @@ public struct ResourceBundle {
 		this.Type = type;
 		this.Amount = amount;
 	}
+
+	public readonly ResourceBundle Multiply(int coef) => new(Type, Amount * coef);
 
 	public override readonly string ToString() => $"{Type.AssetName} x {Amount}";
 
@@ -98,6 +101,11 @@ public partial class ResourceStorage : IEnumerable<KeyValuePair<IResourceType, I
 		}
 	}
 
+	public ResourceBundle GetTransfer(ResourceBundle gives) {
+		SubtractResource(gives);
+		return gives;
+	}
+
 	// enumerating over the object
 
 	public IEnumerator<KeyValuePair<IResourceType, InStorage>> GetEnumerator() {
@@ -107,7 +115,7 @@ public partial class ResourceStorage : IEnumerable<KeyValuePair<IResourceType, I
 	IEnumerator IEnumerable.GetEnumerator() {
 		return GetEnumerator();
 	}
-
+	
 }
 
 public partial class ResourceStorage {

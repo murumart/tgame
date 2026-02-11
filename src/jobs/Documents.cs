@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 public partial class Document {
 
@@ -181,3 +180,99 @@ partial class Document {
 	}
 
 }
+
+public partial class TradeOffer {
+
+	readonly Faction starter;
+	public readonly bool BuyingWithSilver;
+
+	public int StoredUnits { get; private set; }
+
+	public readonly int GiveSilverUnit = 0;
+	public readonly ResourceBundle GiveResourcesUnit;
+
+	readonly Faction acceptor;
+	public readonly int TakeSilverUnit = 0;
+	public readonly ResourceBundle TakeResourcesUnit;
+
+	bool valid = false;
+	public bool IsValid => valid;
+
+
+	public TradeOffer(Faction starter, int gives, Faction acceptor, ResourceBundle wants, int maxUnits) {
+		Debug.Assert(maxUnits > 0, "No sense to make offer to trade 0 (or less) of something");
+		this.storedUnits = maxUnits;
+		Debug.Assert(starter != null);
+		this.starter = starter;
+		Debug.Assert(starter.Silver >= gives * maxUnits, "Don't have enough silver to create trade offer");
+		Debug.Assert(acceptor != null);
+		this.acceptor = acceptor;
+		BuyingWithSilver = true;
+
+		GiveSilverUnit = gives;
+		starter.SubtractAndReturnSilver(gives * maxUnits);
+		TakeResourcesUnit = wants;
+
+		valid = true;
+	}
+
+	public TradeOffer(Faction starter, ResourceBundle gives, Faction acceptor, int wants, int maxUnits) {
+		Debug.Assert(maxUnits > 0, "No sense to make offer to trade 0 (or less) of something");
+		this.storedUnits = maxUnits;
+		Debug.Assert(starter != null);
+		this.starter = starter;
+		Debug.Assert(starter.Resources.HasEnough(gives.Multiply(maxUnits)), "Don't have enough resources to create trade offer");
+		Debug.Assert(acceptor != null);
+		this.acceptor = acceptor;
+		BuyingWithSilver = false;
+
+		GiveResourcesUnit = gives;
+		starter.Resources.GetTransfer(gives.Multiply(storedUnits));
+		TakeSilverUnit = wants;
+
+		valid = true;
+	}
+
+	public void Cancel() {
+		Debug.Assert(valid, "Trade offer invalid, can't cancel, please delete");
+		if (BuyingWithSilver) {
+			starter.ReceiveTransferSilver(GiveSilverUnit);
+		} else {
+			starter.Resources.AddResource(GiveResourcesUnit);
+		}
+
+		valid = false;
+	}
+
+	public bool CanTrade(int units) {
+		Debug.Assert(valid, "Trade offer invalid, please delete this");
+		Debug.Assert(units > 0, "No sense to trade <= 0 units");
+		Debug.Assert(units <= storedUnits, "Can't trade more units than contained in offer");
+		if (BuyingWithSilver) {
+			return acceptor.Resources.HasEnough(TakeResourcesUnit.Multiply(units));
+		} else {
+			return acceptor.Silver >= TakeSilverUnit * units;
+		}
+	}
+
+	public void MakeTrade(int units) {
+		Debug.Assert(valid, "Trade offer invalid, please delete this");
+		Debug.Assert(units > 0, "No sense to trade <= 0 units");
+		Debug.Assert(units <= storedUnits, "Can't trade more units than contained in offer");
+		Debug.Assert(CanTrade(units), "Can't even trade Brooooo");
+		if (BuyingWithSilver) {
+			acceptor.ReceiveTransferSilver(GiveSilverUnit * units);
+			acceptor.Resources.TransferResources(starter.Resources, TakeResourcesUnit.Multiply(units));
+			storedUnits -= units;
+		} else {
+			acceptor.Resources.AddResource(GiveResourcesUnit.Multiply(units));
+			starter.ReceiveTransferSilver(acceptor.SubtractAndReturnSilver(TakeSilverUnit * units));
+			storedUnits -= units;
+		}
+		Debug.Assert(units >= 0);
+		if (units == 0) valid = false;
+	}
+
+}
+
+

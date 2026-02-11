@@ -1,12 +1,21 @@
 [gd_scene format=3 uid="uid://cv6y33io3xxwy"]
 
+[ext_resource type="Script" uid="uid://bp4lg6hcl6tox" path="res://scenes/region/ui/TradePartnerDisplay.cs" id="1_oi2vn"]
 [ext_resource type="PackedScene" uid="uid://cjdjyaccqxmmy" path="res://scenes/region/ui/trade_slider.tscn" id="2_42gqs"]
 [ext_resource type="LabelSettings" uid="uid://btwbnjxri1gdg" path="res://resources/visual/theme/label_styles/8px.tres" id="2_oi2vn"]
 
-[node name="TradePartnerDisplay" type="VBoxContainer" unique_id=864180490]
+[node name="TradePartnerDisplay" type="VBoxContainer" unique_id=864180490 node_paths=PackedStringArray("PartnerNameLabel", "TradeParnerOfferList", "GiveResourceList", "TakeResourceList", "GiveAmountSlider", "TakeAmountLine")]
 offset_right = 210.0
-offset_bottom = 62.0
+offset_bottom = 96.0
 theme_override_constants/separation = 0
+script = ExtResource("1_oi2vn")
+PartnerNameLabel = NodePath("HBoxContainer/PanelContainer/MarginContainer/Label")
+TradeParnerOfferList = NodePath("BuildingList/MarginContainer/VBoxContainer/TradeSliders")
+GiveResourceList = NodePath("BuildingList/MarginContainer/VBoxContainer/TradeSlider4/HBoxContainer/MyResource")
+TakeResourceList = NodePath("BuildingList/MarginContainer/VBoxContainer/TradeSlider4/HBoxContainer/WantResource")
+GiveAmountSlider = NodePath("BuildingList/MarginContainer/VBoxContainer/TradeSlider4/HBoxContainer/MarginContainer/GiveSlider")
+TakeAmountLine = NodePath("BuildingList/MarginContainer/VBoxContainer/TradeSlider4/HBoxContainer/WantAmount")
+TradePartnerSliderScene = ExtResource("2_42gqs")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=873576416]
 layout_mode = 2
@@ -63,13 +72,14 @@ size_flags_vertical = 3
 
 [node name="MyResource" type="OptionButton" parent="BuildingList/MarginContainer/VBoxContainer/TradeSlider4/HBoxContainer" unique_id=1566787069]
 layout_mode = 2
+theme_override_font_sizes/font_size = 8
 
 [node name="MarginContainer" type="MarginContainer" parent="BuildingList/MarginContainer/VBoxContainer/TradeSlider4/HBoxContainer" unique_id=1725751039]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/margin_top = 4
 
-[node name="HSlider" type="HSlider" parent="BuildingList/MarginContainer/VBoxContainer/TradeSlider4/HBoxContainer/MarginContainer" unique_id=875684016]
+[node name="GiveSlider" type="HSlider" parent="BuildingList/MarginContainer/VBoxContainer/TradeSlider4/HBoxContainer/MarginContainer" unique_id=875684016]
 layout_mode = 2
 size_flags_horizontal = 3
 focus_mode = 0
@@ -80,6 +90,13 @@ ticks_position = 3
 [node name="WantResource" type="OptionButton" parent="BuildingList/MarginContainer/VBoxContainer/TradeSlider4/HBoxContainer" unique_id=1237826409]
 custom_minimum_size = Vector2(16, 0)
 layout_mode = 2
+theme_override_font_sizes/font_size = 8
+
+[node name="WantAmount" type="LineEdit" parent="BuildingList/MarginContainer/VBoxContainer/TradeSlider4/HBoxContainer" unique_id=1578335814]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 8
+placeholder_text = "0..."
 
 [node name="Button" type="Button" parent="BuildingList/MarginContainer/VBoxContainer/TradeSlider4/HBoxContainer" unique_id=1764679316]
 layout_mode = 2

@@ -38,11 +38,15 @@ public class Faction : IEntity {
 	public uint HomelessPopulation => Population.Count - Population.HousedCount;
 	public uint UnemployedPopulation => Population.Count - Population.EmployedCount;
 
+	public int Silver { get; private set; }
+
 	public readonly string Name;
 	public Color Color { get; init; } // used for displaying
 
 	public string DocName => ToString();
 	public Briefcase Briefcase { get; init; }
+
+	readonly Dictionary<Faction, List<TradeOffer>> tradeInfo = new();
 
 	TimeT time;
 
@@ -68,6 +72,7 @@ public class Faction : IEntity {
 			Name = Naming.GenRandomName();
 			Color = Color.FromHsv(GD.Randf(), (float)GD.RandRange(0.75, 1.0), 1.0f);
 			Resources.AddResource(new(Registry.ResourcesS.Bread, 10)); // initial buffer (DEBUG probably)
+			Silver = 30; // testing still
 			PlacePrebuiltBuilding(Registry.BuildingsS.LogCabin, new(0, 0));
 		}
 	}
@@ -318,6 +323,35 @@ public class Faction : IEntity {
 			(other).Briefcase.AddDocument(Document.DocType.AMandatesExportFromB, newdoc);
 		}
 	}
+
+	// *** TRADING *** 
+
+	public bool GetTradeOffers(Faction with, out IEnumerable<TradeOffer> tradeOffers) {
+		var has = tradeInfo.TryGetValue(with, out var list);
+		tradeOffers = list;
+		return has;
+	}
+
+	public void TransferSilver(Faction to, int amount) {
+		Debug.Assert(Silver > 0, "Nonsense to transfer 0 or less silver");
+		Debug.Assert(amount <= Silver, "Not enough silver to transfer");
+
+		to.Silver += amount;
+		Silver -= amount;
+	}
+
+	public int SubtractAndReturnSilver(int amount) {
+		Debug.Assert(Silver > 0, "Nonsense to transfer 0 or less silver");
+		Silver -= amount;
+		return amount;
+	}
+
+	public void ReceiveTransferSilver(int amount) {
+		Debug.Assert(Silver > 0, "Nonsense to transfer 0 or less silver");
+		Silver += amount;
+	}
+
+	// *** VISUALISATION ***
 
 	public override string ToString() {
 		return Name;

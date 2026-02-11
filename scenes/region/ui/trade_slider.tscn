@@ -1,10 +1,18 @@
 [gd_scene format=3 uid="uid://cjdjyaccqxmmy"]
 
+[ext_resource type="Script" uid="uid://c0b6legh32iar" path="res://scenes/region/ui/TradeSlider.cs" id="1_7yg73"]
 [ext_resource type="LabelSettings" uid="uid://btwbnjxri1gdg" path="res://resources/visual/theme/label_styles/8px.tres" id="1_y66re"]
 
-[node name="TradeSlider" type="VBoxContainer" unique_id=73745849]
+[node name="TradeSlider" type="VBoxContainer" unique_id=73745849 node_paths=PackedStringArray("GiveLabel", "GetLabel", "UnitsSlider", "ConfirmButton")]
+offset_right = 138.0
+offset_bottom = 18.0
 size_flags_horizontal = 3
 theme_override_constants/separation = 0
+script = ExtResource("1_7yg73")
+GiveLabel = NodePath("HBoxContainer/Label")
+GetLabel = NodePath("HBoxContainer/Label2")
+UnitsSlider = NodePath("HBoxContainer/MarginContainer/HSlider")
+ConfirmButton = NodePath("HBoxContainer/Button")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=576513228]
 layout_mode = 2
@@ -36,7 +44,9 @@ label_settings = ExtResource("1_y66re")
 horizontal_alignment = 2
 
 [node name="Button" type="Button" parent="HBoxContainer" unique_id=1764679316]
+custom_minimum_size = Vector2(45, 0)
 layout_mode = 2
 focus_mode = 0
 theme_override_font_sizes/font_size = 8
-text = "buy"
+text = "buy (0)"
+alignment = 0
