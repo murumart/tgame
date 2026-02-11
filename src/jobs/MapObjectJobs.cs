@@ -86,6 +86,8 @@ public class ConstructBuildingJob : MapObjectJob {
 		return "";
 	}
 
+	public override string ToString() => $"ConstructBuildingJob({(building == null ? "null" : building.Type.AssetName)})";
+
 }
 
 public class FishByHandJob : Job {
@@ -339,6 +341,8 @@ public class CraftJob : MapObjectJob {
 
 public class ProcessMarketJob : MapObjectJob {
 
+	public override string Title => "Process Market";
+
 	Building marketplace;
 	Faction faction;
 
@@ -346,12 +350,16 @@ public class ProcessMarketJob : MapObjectJob {
 
 	public override bool IsValid => marketplace != null;
 
+	public Faction Faction { get => faction; }
+
 	float timeSpent;
-	readonly Dictionary<Faction, List<TradeOffer>> tradeOffers = new();
+	public readonly Dictionary<Faction, List<TradeOffer>> TradeOffers = new();
+	readonly TimeT timeTaken;
 
 
 	public ProcessMarketJob() {
 		MaxWorkers = 10;
+		timeTaken = GameTime.Hours(12);
 	}
 
 	public override Job Copy() => throw new NotImplementedException();
@@ -370,19 +378,51 @@ public class ProcessMarketJob : MapObjectJob {
 
 	public override void PassTime(TimeT minutes) {
 		timeSpent += GetWorkTime(minutes);
-		while (timeSpent > GameTime.Hours(12)) {
-			timeSpent -= GameTime.Hours(12);
-
+		while (timeSpent > timeTaken) {
+			timeSpent -= timeTaken;
+			TryAddTradeOffer();
 		}
 	}
 
 	void TryAddTradeOffer() {
-		var newpartners = faction.GetTradePartners().Where(a => !tradeOffers.ContainsKey(a)).ToArray();
+		var newpartners = faction.GetTradePartners().Where(a => !TradeOffers.ContainsKey(a)).ToArray();
 		if (newpartners.Length != 0) {
 			var newpartner = newpartners[GD.Randi() % newpartners.Length];
-			tradeOffers.Add(newpartner, new());
-			faction.GetTradeOffers(newpartner, out var offers);
+			TradeOffers.Add(newpartner, new());
+			faction.GetTradeOffers(newpartner, out var offersenu);
+			var offers = offersenu.Where(o => o.IsValid).ToArray();
+			TradeOffers[newpartner].Add(offers[GD.Randi() % offers.Length]);
+		} else {
+			var unaddedOffers = new Dictionary<Faction, TradeOffer[]>();
+			var partnersWithUnaddedOffers = faction.GetTradePartners().Where(p => {
+				var has = faction.GetTradeOffers(p, out var l);
+				var wo = l.Where(o => o.IsValid && !TradeOffers[p].Contains(o)).ToArray();
+				unaddedOffers[p] = wo;
+				return has && wo.Length != 0;
+			}).ToArray();
+			if (partnersWithUnaddedOffers.Length == 0) return; // there are no unadded offers
+			var partner = partnersWithUnaddedOffers[GD.Randi() % partnersWithUnaddedOffers.Length];
+			faction.GetTradeOffers(partner, out var list);
+			var withoutExtant = unaddedOffers[partner][GD.Randi() % unaddedOffers[partner].Length];
+			TradeOffers[partner].Add(withoutExtant);
 		}
+	}
+
+	// --------------------------
+
+	public override string GetProductionDescription() {
+		return "Trade offers from other factions are processed here before you can accept them.";
+	}
+
+	public override float GetProgressEstimate() {
+		return timeSpent / timeTaken;
+	}
+
+	public override string GetStatusDescription() {
+		if (Workers == 0) return "No workers are assigned to process trade.";
+		float timeLeft = timeTaken - timeSpent;
+		timeLeft /= GetWorkTime(1);
+		return GameTime.GetFancyTimeString((TimeT)timeLeft) + " until more trade offers are processed.";
 	}
 
 }

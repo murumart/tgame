@@ -324,7 +324,7 @@ public class Faction : IEntity {
 		}
 	}
 
-	// *** TRADING *** 
+	// *** TRADING ***
 
 	public IEnumerable<Faction> GetTradePartners() => tradeInfo.Keys;
 
@@ -353,10 +353,19 @@ public class Faction : IEntity {
 		Silver += amount;
 	}
 
+	public void SendTradeOffer(Faction to, TradeOffer offer) {
+		Debug.Assert(offer.IsValid, "Trade offer isn't valid");
+		Debug.Assert(to != null);
+		if (!to.tradeInfo.ContainsKey(this)) {
+			to.tradeInfo[this] = new();
+		}
+		to.tradeInfo[this].Add(offer);
+	}
+
 	// *** VISUALISATION ***
 
 	public override string ToString() {
-		return Name;
+		return $"Faction {Name}";
 	}
 
 	public static class Naming {

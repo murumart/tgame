@@ -11,7 +11,7 @@ public abstract class Job {
 	public virtual bool NeedsWorkers => true;
 	public virtual bool IsInternal => false;
 
-	public int Workers { get; protected set; }
+	public int Workers { get; private set; }
 	public uint MaxWorkers { get; protected set; }
 	public abstract float GetWorkTime(TimeT minutes);
 

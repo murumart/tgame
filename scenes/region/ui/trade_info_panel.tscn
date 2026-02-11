@@ -2,13 +2,16 @@
 
 [ext_resource type="Script" uid="uid://1l44wqvg4qr0" path="res://scenes/region/ui/TradeInfoPanel.cs" id="1_6mrm4"]
 [ext_resource type="StyleBox" uid="uid://bvafrlmq6sivc" path="res://resources/visual/theme/sb_lighter.tres" id="1_8n7mn"]
+[ext_resource type="PackedScene" uid="uid://cv6y33io3xxwy" path="res://scenes/region/ui/trade_partner_display.tscn" id="2_5nogp"]
 [ext_resource type="LabelSettings" uid="uid://teuhafm0mc0i" path="res://resources/visual/theme/label_styles/10px.tres" id="2_6mrm4"]
-[ext_resource type="PackedScene" uid="uid://cv6y33io3xxwy" path="res://scenes/region/ui/trade_partner_display.tscn" id="3_5nogp"]
+[ext_resource type="LabelSettings" uid="uid://btwbnjxri1gdg" path="res://resources/visual/theme/label_styles/8px.tres" id="5_5nogp"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_jmbgv"]
 content_margin_left = 2.0
 
-[node name="TradeInfopanel" type="MarginContainer" unique_id=1237886106 node_paths=PackedStringArray("PartnerList")]
+[node name="TradeInfopanel" type="MarginContainer" unique_id=1237886106 node_paths=PackedStringArray("PartnerList", "NoPartnersLabel")]
+offset_right = 167.0
+offset_bottom = 77.0
 size_flags_horizontal = 3
 size_flags_vertical = 0
 theme_override_constants/margin_left = 2
@@ -17,6 +20,8 @@ theme_override_constants/margin_right = 2
 theme_override_constants/margin_bottom = 2
 script = ExtResource("1_6mrm4")
 PartnerList = NodePath("VBoxContainer2/DetailsContainer/MarginContainer2/VBoxContainer/TradeList/TradePartnerDisplay/VBoxContainer/PartnerList")
+NoPartnersLabel = NodePath("VBoxContainer2/DetailsContainer/MarginContainer2/VBoxContainer/TradeList/TradePartnerDisplay/VBoxContainer/NoPartnersLabel")
+PartnerDisplay = ExtResource("2_5nogp")
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="." unique_id=2092343868]
 layout_mode = 2
@@ -88,14 +93,8 @@ label_settings = ExtResource("2_6mrm4")
 [node name="PartnerList" type="VBoxContainer" parent="VBoxContainer2/DetailsContainer/MarginContainer2/VBoxContainer/TradeList/TradePartnerDisplay/VBoxContainer" unique_id=293793374]
 layout_mode = 2
 
-[node name="TradePartnerDisplay" parent="VBoxContainer2/DetailsContainer/MarginContainer2/VBoxContainer/TradeList/TradePartnerDisplay/VBoxContainer/PartnerList" unique_id=864180490 instance=ExtResource("3_5nogp")]
+[node name="NoPartnersLabel" type="Label" parent="VBoxContainer2/DetailsContainer/MarginContainer2/VBoxContainer/TradeList/TradePartnerDisplay/VBoxContainer" unique_id=290936907]
+visible = false
 layout_mode = 2
-
-[node name="TradePartnerDisplay2" parent="VBoxContainer2/DetailsContainer/MarginContainer2/VBoxContainer/TradeList/TradePartnerDisplay/VBoxContainer/PartnerList" unique_id=624423462 instance=ExtResource("3_5nogp")]
-layout_mode = 2
-
-[node name="TradePartnerDisplay3" parent="VBoxContainer2/DetailsContainer/MarginContainer2/VBoxContainer/TradeList/TradePartnerDisplay/VBoxContainer/PartnerList" unique_id=721750623 instance=ExtResource("3_5nogp")]
-layout_mode = 2
-
-[node name="TradePartnerDisplay4" parent="VBoxContainer2/DetailsContainer/MarginContainer2/VBoxContainer/TradeList/TradePartnerDisplay/VBoxContainer/PartnerList" unique_id=403069597 instance=ExtResource("3_5nogp")]
-layout_mode = 2
+text = "No trade partners at this time..."
+label_settings = ExtResource("5_5nogp")

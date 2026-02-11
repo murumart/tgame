@@ -4,7 +4,7 @@
 [ext_resource type="LabelSettings" uid="uid://btwbnjxri1gdg" path="res://resources/visual/theme/label_styles/8px.tres" id="1_y66re"]
 
 [node name="TradeSlider" type="VBoxContainer" unique_id=73745849 node_paths=PackedStringArray("GiveLabel", "GetLabel", "UnitsSlider", "ConfirmButton")]
-offset_right = 138.0
+offset_right = 217.0
 offset_bottom = 18.0
 size_flags_horizontal = 3
 theme_override_constants/separation = 0
@@ -19,6 +19,7 @@ layout_mode = 2
 size_flags_vertical = 3
 
 [node name="Label" type="Label" parent="HBoxContainer" unique_id=1744532103]
+custom_minimum_size = Vector2(34, 0)
 layout_mode = 2
 text = "Resource"
 label_settings = ExtResource("1_y66re")
@@ -32,12 +33,14 @@ theme_override_constants/margin_top = 4
 layout_mode = 2
 size_flags_horizontal = 3
 focus_mode = 0
+max_value = 4.0
+step = 0.5
 rounded = true
 scrollable = false
 ticks_position = 3
 
 [node name="Label2" type="Label" parent="HBoxContainer" unique_id=1707886162]
-custom_minimum_size = Vector2(16, 0)
+custom_minimum_size = Vector2(34, 0)
 layout_mode = 2
 text = "Resource"
 label_settings = ExtResource("1_y66re")
@@ -47,6 +50,6 @@ horizontal_alignment = 2
 custom_minimum_size = Vector2(45, 0)
 layout_mode = 2
 focus_mode = 0
-theme_override_font_sizes/font_size = 8
-text = "buy (0)"
+theme_override_font_sizes/font_size = 6
+text = "Sell resources => (logs x 30)"
 alignment = 0

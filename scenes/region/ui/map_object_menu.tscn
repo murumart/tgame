@@ -113,6 +113,7 @@ fit_content = true
 tab_stops = PackedFloat32Array(5, 10)
 
 [node name="TradeInfopanel" parent="Vbox/JobScrolll/ParametersList" unique_id=1237886106 instance=ExtResource("4_uy06o")]
+visible = false
 layout_mode = 2
 
 [node name="JobInfopanel" parent="Vbox/JobScrolll/ParametersList" unique_id=170020941 instance=ExtResource("2_gxr3b")]

@@ -189,12 +189,36 @@ public partial class TradeOffer {
 
 	public int StoredUnits { get; private set; }
 
-	public readonly int GiveSilverUnit = 0;
-	public readonly ResourceBundle GiveResourcesUnit;
+	readonly int giveSilverUnit;
+	public int GiveSilverUnit {
+		get {
+			Debug.Assert(BuyingWithSilver, "Looking at silver makes no sense when we're not buying with silver");
+			return giveSilverUnit;
+		}
+	}
+	 readonly ResourceBundle giveResourcesUnit;
+	public ResourceBundle GiveResourcesUnit {
+		get {
+			Debug.Assert(!BuyingWithSilver, "Looking at offered resources makes no sense when we're buying with silver");
+			return giveResourcesUnit;
+		}
+	}
 
 	readonly Faction acceptor;
-	public readonly int TakeSilverUnit = 0;
-	public readonly ResourceBundle TakeResourcesUnit;
+	readonly int takeSilverUnit;
+	public int TakeSilverUnit {
+		get {
+			Debug.Assert(!BuyingWithSilver, "No sense looking at getting silver when we're already buying with silver");
+			return takeSilverUnit;
+		}
+	}
+	readonly ResourceBundle takeResourcesUnit;
+	public  ResourceBundle TakeResourcesUnit {
+		get {
+			Debug.Assert(BuyingWithSilver, "No sense looking at getting resources when we're expecting silver for our resources");
+			return takeResourcesUnit;
+		}
+	}
 
 	bool valid = false;
 	public bool IsValid => valid;
@@ -206,13 +230,14 @@ public partial class TradeOffer {
 		Debug.Assert(starter != null);
 		this.starter = starter;
 		Debug.Assert(starter.Silver >= gives * maxUnits, "Don't have enough silver to create trade offer");
+		Debug.Assert(gives > 0, "Need to give MORE THAN 0 silver to make a trade");
 		Debug.Assert(acceptor != null);
 		this.acceptor = acceptor;
 		BuyingWithSilver = true;
 
-		GiveSilverUnit = gives;
+		giveSilverUnit = gives;
 		starter.SubtractAndReturnSilver(gives * maxUnits);
-		TakeResourcesUnit = wants;
+		takeResourcesUnit = wants;
 
 		valid = true;
 	}
@@ -227,9 +252,9 @@ public partial class TradeOffer {
 		this.acceptor = acceptor;
 		BuyingWithSilver = false;
 
-		GiveResourcesUnit = gives;
+		giveResourcesUnit = gives;
 		starter.Resources.GetTransfer(gives.Multiply(StoredUnits));
-		TakeSilverUnit = wants;
+		takeSilverUnit = wants;
 
 		valid = true;
 	}

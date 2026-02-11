@@ -33,10 +33,15 @@ public static class Registry {
 
 		public static readonly IResourceType Logs = Resources.GetAsset("logs");
 		public static readonly IResourceType Rocks = Resources.GetAsset("rock");
+		public static readonly IResourceType Clay = Resources.GetAsset("clay");
 
 		public static readonly IResourceType Fruit = Resources.GetAsset("fruit");
 		public static readonly IResourceType Fish = Resources.GetAsset("fish");
 		public static readonly IResourceType Bread = Resources.GetAsset("bread");
+
+		public static readonly IResourceType[] ResourceTypes = [
+			Logs, Rocks, Clay, Fruit, Fish, Bread,
+		];
 
 		public static IResourceGroup FoodValues { get; private set; }
 

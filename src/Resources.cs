@@ -115,7 +115,7 @@ public partial class ResourceStorage : IEnumerable<KeyValuePair<IResourceType, I
 	IEnumerator IEnumerable.GetEnumerator() {
 		return GetEnumerator();
 	}
-	
+
 }
 
 public partial class ResourceStorage {
@@ -145,6 +145,9 @@ public partial class ResourceStorage {
 		public readonly override string ToString() {
 			return $"{Amount}";
 		}
+
+		public static implicit operator int(InStorage t) => t.Amount;
+		public static implicit operator InStorage(int t) => new(t);
 	}
 
 	public struct ResourceCapacity {

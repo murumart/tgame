@@ -42,7 +42,7 @@ public class Map {
 		List<Region> regions = new();
 		List<Faction> regionFactions = new();
 		for (int i = 0; i < 10; i++) {
-			var region = Region.GetTestCircleRegion(i, 12, new(i * 50, 0));
+			var region = Region.GetTestCircleRegion(i, 12, new(i * 18, i * 15));
 			regions.Add(region);
 			var regionFaction = new Faction(region);
 			regionFactions.Add(regionFaction);
@@ -55,6 +55,12 @@ public class Map {
 			//	60 * 7 + 120 //GameTime.DAYS_PER_WEEK * GameTime.HOURS_PER_DAY * GameTime.MINUTES_PER_HOUR
 			//);
 			//regionFaction.Briefcase.AddDocument(mandate);
+		}
+		foreach (var region in regions) {
+			foreach (var otherregion in regions) {
+				if (region == otherregion) continue;
+				region.AddNeighbor(otherregion);
+			}
 		}
 
 		return new Map(regions, null);
