@@ -22,7 +22,7 @@ namespace scenes.region.ui {
 				var display = PartnerDisplay.Instantiate<TradePartnerDisplay>();
 				PartnerList.AddChild(display);
 				display.Display(me, partner);
-				display.TradeMade += () => Display(me, tradeInfo); // rebuild UI when something is done
+				display.TradedOrCanceled += () => Display(me, tradeInfo); // rebuild UI when something is done
 			}
 			NoPartnersLabel.Visible = tradeInfo.Keys.Count == 0;
 		}

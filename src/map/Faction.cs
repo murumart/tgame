@@ -46,7 +46,8 @@ public class Faction : IEntity {
 	public string DocName => ToString();
 	public Briefcase Briefcase { get; init; }
 
-	readonly Dictionary<Faction, List<TradeOffer>> tradeInfo = new();
+	readonly Dictionary<Faction, List<TradeOffer>> gottenTradeOffers = new();
+	readonly Dictionary<Faction, List<TradeOffer>> sentTradeOffers = new();
 
 	TimeT time;
 
@@ -326,10 +327,16 @@ public class Faction : IEntity {
 
 	// *** TRADING ***
 
-	public IEnumerable<Faction> GetTradePartners() => tradeInfo.Keys;
+	public IEnumerable<Faction> GetTradePartners() => gottenTradeOffers.Keys;
 
-	public bool GetTradeOffers(Faction with, out IEnumerable<TradeOffer> tradeOffers) {
-		var has = tradeInfo.TryGetValue(with, out var list);
+	public bool GetGottenTradeOffers(Faction with, out IEnumerable<TradeOffer> tradeOffers) {
+		var has = gottenTradeOffers.TryGetValue(with, out var list);
+		tradeOffers = list;
+		return has;
+	}
+
+	public bool GetSentTradeOffers(Faction with, out IEnumerable<TradeOffer> tradeOffers) {
+		var has = sentTradeOffers.TryGetValue(with, out var list);
 		tradeOffers = list;
 		return has;
 	}
@@ -356,10 +363,65 @@ public class Faction : IEntity {
 	public void SendTradeOffer(Faction to, TradeOffer offer) {
 		Debug.Assert(offer.IsValid, "Trade offer isn't valid");
 		Debug.Assert(to != null);
-		if (!to.tradeInfo.ContainsKey(this)) {
-			to.tradeInfo[this] = new();
+
+		to.TradeOfferReceived(this, offer);
+		if (!sentTradeOffers.TryGetValue(to, out var mylist)) {
+			mylist = new();
+			sentTradeOffers[to] = mylist;
 		}
-		to.tradeInfo[this].Add(offer);
+		mylist.Add(offer);
+	}
+
+	void TradeOfferReceived(Faction from, TradeOffer offer) {
+		if (!gottenTradeOffers.TryGetValue(from, out var list)) {
+			list = new();
+			gottenTradeOffers[from] = list;
+		}
+		list.Add(offer);
+	}
+
+	public void AcceptTradeOffer(Faction from, TradeOffer offer, int units) {
+		Debug.Assert(offer.IsValid, "This trade offer isn't valid any more");
+		Debug.Assert(gottenTradeOffers.ContainsKey(from), $"We didn't actually get a trade offer from {from}");
+		Debug.Assert(gottenTradeOffers[from].Contains(offer), "We didn't actually get this trade offer..");
+		offer.MakeTrade(units);
+		from.MyTradeOfferWasAccepted(this, offer);
+		if (!offer.IsValid) gottenTradeOffers[from].Remove(offer); // depleted
+	}
+
+	void MyTradeOfferWasAccepted(Faction by, TradeOffer offer) {
+		Debug.Assert(sentTradeOffers.ContainsKey(by), $"We didn't senda get a trade offer to {by}");
+		Debug.Assert(sentTradeOffers[by].Contains(offer), "We didn't actually send this trade offer..");
+		if (!offer.IsValid) sentTradeOffers[by].Remove(offer); // depleted
+	}
+
+	public void RejectTradeOffer(Faction from, TradeOffer offer) {
+		Debug.Assert(offer.IsValid, "This trade offer isn't valid any more");
+		Debug.Assert(gottenTradeOffers.ContainsKey(from), $"We didn't actually get a trade offer from {from}");
+		Debug.Assert(gottenTradeOffers[from].Contains(offer), "We didn't actually get this trade offer..");
+		gottenTradeOffers[from].Remove(offer);
+		from.MyTradeOfferWasRejectedSnif(this, offer);
+	}
+
+	void MyTradeOfferWasRejectedSnif(Faction by, TradeOffer offer) {
+		Debug.Assert(sentTradeOffers.ContainsKey(by), $"We didn't senda get a trade offer to {by}");
+		Debug.Assert(sentTradeOffers[by].Contains(offer), "We didn't actually send this trade offer..");
+		sentTradeOffers[by].Remove(offer);
+		offer.Cancel();
+	}
+
+	public void CancelTradeOffer(Faction with, TradeOffer offer) {
+		Debug.Assert(offer.IsValid, "This trade offer isn't valid any more");
+		Debug.Assert(sentTradeOffers.ContainsKey(with), $"We didn't senda get a trade offer to {with}");
+		Debug.Assert(sentTradeOffers[with].Contains(offer), "We didn't actually send this trade offer..");
+		sentTradeOffers[with].Remove(offer);
+		with.TradeOfferWithMeWasCancelled(this, offer);
+	}
+
+	void TradeOfferWithMeWasCancelled(Faction source, TradeOffer offer) {
+		Debug.Assert(gottenTradeOffers.ContainsKey(source), $"We didn't actually get a trade offer from {source}");
+		Debug.Assert(gottenTradeOffers[source].Contains(offer), "We didn't actually get this trade offer..");
+		gottenTradeOffers[source].Remove(offer);
 	}
 
 	// *** VISUALISATION ***
@@ -376,7 +438,7 @@ public class Faction : IEntity {
 		public static string GenRandomName() {
 			if (syllableCounts.Count == 0) {
 				var f = FileAccess.Open("res://tools/silbitus/syls.txt", FileAccess.ModeFlags.Read);
-				Debug.Assert(FileAccess.GetOpenError() == Error.Ok, "Failed opening syllables file");
+				Debug.Assert(FileAccess.GetOpenError() == Error.Ok, $"Failed opening syllables file: {FileAccess.GetOpenError()}");
 				while (!f.EofReached()) {
 					string line = f.GetLine();
 					if (line.Length <= 1) break;

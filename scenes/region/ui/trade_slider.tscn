@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://c0b6legh32iar" path="res://scenes/region/ui/TradeSlider.cs" id="1_7yg73"]
 [ext_resource type="LabelSettings" uid="uid://btwbnjxri1gdg" path="res://resources/visual/theme/label_styles/8px.tres" id="1_y66re"]
 
-[node name="TradeSlider" type="VBoxContainer" unique_id=73745849 node_paths=PackedStringArray("GiveLabel", "GetLabel", "UnitsSlider", "ConfirmButton")]
+[node name="TradeSlider" type="VBoxContainer" unique_id=73745849 node_paths=PackedStringArray("GiveLabel", "GetLabel", "UnitsSlider", "ConfirmButton", "RejectButton")]
 offset_right = 217.0
 offset_bottom = 18.0
 size_flags_horizontal = 3
@@ -13,10 +13,12 @@ GiveLabel = NodePath("HBoxContainer/Label")
 GetLabel = NodePath("HBoxContainer/Label2")
 UnitsSlider = NodePath("HBoxContainer/MarginContainer/HSlider")
 ConfirmButton = NodePath("HBoxContainer/Button")
+RejectButton = NodePath("HBoxContainer/RejectOfferButton")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=576513228]
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_constants/separation = 1
 
 [node name="Label" type="Label" parent="HBoxContainer" unique_id=1744532103]
 custom_minimum_size = Vector2(34, 0)
@@ -52,4 +54,11 @@ layout_mode = 2
 focus_mode = 0
 theme_override_font_sizes/font_size = 6
 text = "Sell resources => (logs x 30)"
+alignment = 0
+
+[node name="RejectOfferButton" type="Button" parent="HBoxContainer" unique_id=1269524990]
+layout_mode = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 4
+text = "Reject"
 alignment = 0

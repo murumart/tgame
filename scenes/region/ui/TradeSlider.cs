@@ -5,48 +5,71 @@ namespace scenes.region.ui {
 
 	public partial class TradeSlider : VBoxContainer {
 
-		public event Action Confirmed;
+		public event Action OfferChanged;
 
-        [Export] Label GiveLabel;
-        [Export] Label GetLabel;
-        [Export] Slider UnitsSlider;
-        [Export] Button ConfirmButton;
+		[Export] Label GiveLabel;
+		[Export] Label GetLabel;
+		[Export] Slider UnitsSlider;
+		[Export] Button ConfirmButton;
+		[Export] Button RejectButton;
 
 		Faction me;
+		Faction other;
 		TradeOffer offer;
+		int sliderVal = 0;
+		bool myOffer;
 
 
-        public void Display(Faction me, TradeOffer tradeOffer) {
+		public void Display(Faction me, Faction other, TradeOffer tradeOffer, bool myOffer) {
 			this.me = me;
-            Debug.Assert(tradeOffer.IsValid, "This trade offer isn't valid, pleasse don't display");
+			this.other = other;
+			this.myOffer = myOffer;
+			Debug.Assert(tradeOffer.IsValid, "This trade offer isn't valid, pleasse don't display");
 			offer = tradeOffer;
 
-            UnitsSlider.ValueChanged += OnSliderValueChanged;
-			ConfirmButton.Pressed += OnBought;
+			if (!myOffer) {
+				UnitsSlider.ValueChanged += OnSliderValueChanged;
+				ConfirmButton.Pressed += OnBought;
 
-            GiveLabel.Text = tradeOffer.BuyingWithSilver ? tradeOffer.TakeResourcesUnit.Type.AssetName : tradeOffer.TakeSilverUnit + " silver";
-            GetLabel.Text = tradeOffer.BuyingWithSilver ? tradeOffer.GiveSilverUnit + " silver" : tradeOffer.GiveResourcesUnit.Type.AssetName;
-            UnitsSlider.MaxValue = tradeOffer.StoredUnits;
+				GiveLabel.Text = tradeOffer.OffererBuysForSilver ? $"{tradeOffer.RecepientRequiredResourcesUnit.Type.AssetName} x {tradeOffer.RecepientRequiredResourcesUnit.Amount}" : tradeOffer.RecipientPaidSilverUnit + " silver";
+				GetLabel.Text = tradeOffer.OffererBuysForSilver ? tradeOffer.OffererPaidSilverUnit + " silver" : $"{tradeOffer.OffererSoldResourcesUnit.Type.AssetName} x {tradeOffer.OffererSoldResourcesUnit.Amount}";
+				UnitsSlider.MaxValue = tradeOffer.StoredUnits;
+			} else {
+				UnitsSlider.Hide();
+				ConfirmButton.Hide();
+				GiveLabel.Text = tradeOffer.OffererBuysForSilver ? $"{tradeOffer.RecepientRequiredResourcesUnit.Type.AssetName} x {tradeOffer.RecepientRequiredResourcesUnit.Amount}" : tradeOffer.RecipientPaidSilverUnit + " silver";
+				GetLabel.Text = tradeOffer.OffererBuysForSilver ? tradeOffer.OffererPaidSilverUnit + " silver" : $"{tradeOffer.OffererSoldResourcesUnit.Type.AssetName} x {tradeOffer.OffererSoldResourcesUnit.Amount}";
+			}
+			RejectButton.Pressed += OnRejected;
 			ConfirmButton.Disabled = true;
 			OnSliderValueChanged(0);
-        }
+		}
 
-        void OnSliderValueChanged(double to) {
-            var val = (int)to;
-			bool shouldDisable = val == 0;
-			if (offer.BuyingWithSilver) {
-				shouldDisable = shouldDisable || !me.Resources.HasEnough(offer.TakeResourcesUnit.Multiply(val));
-				ConfirmButton.Text = $"Sell resources => ({offer.GiveSilverUnit * val} silver)";
+		void OnSliderValueChanged(double to) {
+			sliderVal = (int)to;
+			bool shouldDisable = sliderVal == 0;
+			if (offer.OffererBuysForSilver) {
+				shouldDisable = shouldDisable || !me.Resources.HasEnough(offer.RecepientRequiredResourcesUnit.Multiply(sliderVal));
+				ConfirmButton.Text = $"Sell resources => ({offer.OffererPaidSilverUnit * sliderVal} silver)";
 			} else {
-				shouldDisable = shouldDisable || me.Silver * val < offer.TakeSilverUnit;
-				ConfirmButton.Text = $"Buy resources => ({offer.GiveResourcesUnit.Type.AssetName} x {offer.GiveResourcesUnit.Multiply(val)})";
+				shouldDisable = shouldDisable || me.Silver * sliderVal < offer.RecipientPaidSilverUnit;
+				ConfirmButton.Text = $"Buy resources => ({offer.OffererSoldResourcesUnit.Type.AssetName} x {offer.OffererSoldResourcesUnit.Multiply(sliderVal)})";
 			}
-            ConfirmButton.Disabled = shouldDisable;
-        }
+			ConfirmButton.Disabled = shouldDisable;
+		}
 
 		void OnBought() {
+			me.AcceptTradeOffer(other, offer, sliderVal);
+			OfferChanged?.Invoke();
+		}
 
-			Confirmed?.Invoke();
+		void OnRejected() {
+			if (!myOffer) {
+				me.RejectTradeOffer(other, offer);
+			} else {
+				me.CancelTradeOffer(other, offer);
+			}
+			OfferChanged?.Invoke();
 		}
 
 	}

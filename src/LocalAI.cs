@@ -116,9 +116,9 @@ public partial class LocalAI {
 		public static Action SendTradeOffer(DecisionFactor[] factors, Faction from, Faction to) {
 			return new(factors, () => {
 				TradeOffer toffer;
-				if (GD.Randf() < 0.5 && from.Silver > 5) {
+				if (GD.Randf() < 0.5 && from.Silver > 10) {
 					IResourceType wantResource = Registry.ResourcesS.ResourceTypes[(int)(GD.Randi() % Registry.ResourcesS.ResourceTypes.Length)];
-					toffer = new(from, (int)(GD.Randi() % (from.Silver - 5) + 1), to, new(wantResource, (int)(GD.Randi() % 6)), 1);
+					toffer = new(from, (int)(GD.Randi() % (from.Silver - 10) + 1), to, new(wantResource, (int)(GD.Randi() % 6) + 1), 1);
 					from.SendTradeOffer(to, toffer);
 				} else {
 					KeyValuePair<IResourceType, ResourceStorage.InStorage> excessiveResource = new(null, 0);

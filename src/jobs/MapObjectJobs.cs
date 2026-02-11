@@ -389,20 +389,20 @@ public class ProcessMarketJob : MapObjectJob {
 		if (newpartners.Length != 0) {
 			var newpartner = newpartners[GD.Randi() % newpartners.Length];
 			TradeOffers.Add(newpartner, new());
-			faction.GetTradeOffers(newpartner, out var offersenu);
+			faction.GetGottenTradeOffers(newpartner, out var offersenu);
 			var offers = offersenu.Where(o => o.IsValid).ToArray();
 			TradeOffers[newpartner].Add(offers[GD.Randi() % offers.Length]);
 		} else {
 			var unaddedOffers = new Dictionary<Faction, TradeOffer[]>();
 			var partnersWithUnaddedOffers = faction.GetTradePartners().Where(p => {
-				var has = faction.GetTradeOffers(p, out var l);
+				var has = faction.GetGottenTradeOffers(p, out var l);
 				var wo = l.Where(o => o.IsValid && !TradeOffers[p].Contains(o)).ToArray();
 				unaddedOffers[p] = wo;
 				return has && wo.Length != 0;
 			}).ToArray();
 			if (partnersWithUnaddedOffers.Length == 0) return; // there are no unadded offers
 			var partner = partnersWithUnaddedOffers[GD.Randi() % partnersWithUnaddedOffers.Length];
-			faction.GetTradeOffers(partner, out var list);
+			faction.GetGottenTradeOffers(partner, out var list);
 			var withoutExtant = unaddedOffers[partner][GD.Randi() % unaddedOffers[partner].Length];
 			TradeOffers[partner].Add(withoutExtant);
 		}

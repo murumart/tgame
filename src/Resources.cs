@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Godot;
 using static ResourceStorage;
 
 public interface IResourceType : IAssetType {
@@ -17,6 +18,7 @@ public struct ResourceBundle {
 
 	public ResourceBundle(IResourceType type, int amount) {
 		Debug.Assert(amount >= 0, $"Resource amount cannot be negative (got {amount})");
+		//if (amount == 0) GD.PushWarning($"Made bundle with 0 amount"); // this happens in Job::AddToStorage because 0-amounts are empty and skipped
 		this.Type = type;
 		this.Amount = amount;
 	}
