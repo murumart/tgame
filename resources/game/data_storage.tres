@@ -23,6 +23,7 @@
 [ext_resource type="Resource" uid="uid://cbynhxq0y3kkl" path="res://resources/game/resource_types/bricks.tres" id="12_7f1xh"]
 [ext_resource type="Resource" uid="uid://bmiejrddiwehn" path="res://resources/game/resource_site_types/savanna_trees.tres" id="12_j5uyn"]
 [ext_resource type="Resource" uid="uid://b1uvd7viwkyac" path="res://resources/game/resource_site_types/rainforest_trees.tres" id="14_2hkqv"]
+[ext_resource type="Resource" uid="uid://cjd64xn7r7mh8" path="res://resources/game/resource_site_types/fishing_spot.tres" id="16_k4mii"]
 [ext_resource type="Resource" uid="uid://ckykt5fdrh727" path="res://resources/game/resource_types/bread.tres" id="17_t4jud"]
 [ext_resource type="Resource" uid="uid://xkt4u6pl6p3" path="res://resources/game/resource_types/fruit.tres" id="18_tycsq"]
 [ext_resource type="Resource" uid="uid://b41i53hgxp8vw" path="res://resources/game/resource_types/grain.tres" id="24_2hkqv"]
@@ -31,6 +32,6 @@
 script = ExtResource("1_wv3fg")
 resourceTypes = Array[Object]([ExtResource("4_xflvh"), ExtResource("6_cosqq"), ExtResource("5_c2mn5"), ExtResource("8_0g2bt"), ExtResource("10_dyo1l"), ExtResource("11_8wepv"), ExtResource("12_7f1xh"), ExtResource("18_tycsq"), ExtResource("17_t4jud"), ExtResource("24_2hkqv")])
 buildingTypes = Array[Object]([ExtResource("1_8bhaa"), ExtResource("3_0g2bt"), ExtResource("1_r67qw"), ExtResource("3_o7ste"), ExtResource("2_km6vq"), ExtResource("4_h1ebs"), ExtResource("7_mrkhr")])
-resourceSiteTypes = Array[Object]([ExtResource("8_tk3xj"), ExtResource("11_n7e6t"), ExtResource("9_tycsq"), ExtResource("11_umw7u"), ExtResource("12_j5uyn"), ExtResource("14_2hkqv"), ExtResource("6_7f1xh")])
+resourceSiteTypes = Array[Object]([ExtResource("8_tk3xj"), ExtResource("11_n7e6t"), ExtResource("9_tycsq"), ExtResource("11_umw7u"), ExtResource("12_j5uyn"), ExtResource("14_2hkqv"), ExtResource("6_7f1xh"), ExtResource("16_k4mii")])
 foodValues = ExtResource("7_t4jud")
 metadata/_custom_type_script = "uid://05g7rc21q2sd"

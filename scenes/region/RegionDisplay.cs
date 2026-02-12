@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Godot;
 using resources.game;
+using scenes.autoload;
 
 namespace scenes.region {
 
@@ -95,7 +96,9 @@ namespace scenes.region {
 			var view = LoadMapObjectView(mopbject);
 			buildingsParent.AddChild(view);
 			mapObjectViews[mopbject.GlobalPosition - region.WorldPosition] = view;
-			view.Position = Tilemaps.TilePosToWorldPos(mopbject.GlobalPosition - region.WorldPosition);
+			var viewpos = Tilemaps.TilePosToWorldPos(mopbject.GlobalPosition - region.WorldPosition);
+			viewpos.Y -= Tilemaps.TileElevationVerticalOffset(mopbject.GlobalPosition, GameMan.Singleton.Game.Map.World);
+			view.Position = viewpos;
 			if (region.LocalFaction.GetJob(mopbject.GlobalPosition - region.WorldPosition, out var job)) {
 				OnJobChanged(job, 0);
 			}

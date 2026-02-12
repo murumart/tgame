@@ -21,6 +21,7 @@
 [ext_resource type="Resource" uid="uid://d08tlsfel81yf" path="res://resources/game/resource_site_types/conifer_woods.tres" id="13_pnmcl"]
 [ext_resource type="Resource" uid="uid://bmiejrddiwehn" path="res://resources/game/resource_site_types/savanna_trees.tres" id="14_nugjq"]
 [ext_resource type="Resource" uid="uid://b1uvd7viwkyac" path="res://resources/game/resource_site_types/rainforest_trees.tres" id="15_a1kp6"]
+[ext_resource type="Resource" uid="uid://cjd64xn7r7mh8" path="res://resources/game/resource_site_types/fishing_spot.tres" id="16_aa3pw"]
 
 [sub_resource type="Curve" id="Curve_7j5km"]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.21091333, 0.051505923), 0.0, 0.0, 0, 0, Vector2(0.38409886, 0.7443265), 0.0, 0.0, 0, 0, Vector2(0.53596926, 0.9231189), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
@@ -131,6 +132,15 @@ MinHumidity = 0.45
 Rarity = 2.9
 metadata/_custom_type_script = "uid://dpr7b2iecx6gm"
 
+[sub_resource type="Resource" id="Resource_f71yy"]
+script = ExtResource("9_1p0hh")
+Target = ExtResource("16_aa3pw")
+MinElevation = -0.3
+MaxElevation = -0.01
+MinTemperature = -0.5
+MaxTemperature = 0.5
+metadata/_custom_type_script = "uid://dpr7b2iecx6gm"
+
 [sub_resource type="Gradient" id="Gradient_3biw4"]
 offsets = PackedFloat32Array(0.5, 1)
 colors = PackedColorArray(0.32941177, 0.40392157, 0.3372549, 1, 0.94509804, 0.9647059, 0.9411765, 1)
@@ -174,7 +184,7 @@ humidityCurve = SubResource("Curve_iffmc")
 temperaturePolarEquatorCurve = SubResource("Curve_h4q0h")
 elevationTemperatureReductionCurve = SubResource("Curve_3biw4")
 populationLandTileCurve = SubResource("Curve_vqee5")
-resourceSiteGenerationParameters = Array[Object]([SubResource("Resource_getmw"), SubResource("Resource_dtgda"), SubResource("Resource_pnmcl"), SubResource("Resource_iffmc"), SubResource("Resource_nugjq"), SubResource("Resource_a1kp6"), SubResource("Resource_aa3pw")])
+resourceSiteGenerationParameters = Array[Object]([SubResource("Resource_getmw"), SubResource("Resource_dtgda"), SubResource("Resource_pnmcl"), SubResource("Resource_iffmc"), SubResource("Resource_nugjq"), SubResource("Resource_a1kp6"), SubResource("Resource_aa3pw"), SubResource("Resource_f71yy")])
 
 [node name="WorldRenderer" type="Node" parent="." unique_id=1180870154 node_paths=PackedStringArray("groundSprite", "RegionSprite", "highlightSprite")]
 script = ExtResource("5_3biw4")

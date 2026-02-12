@@ -16,6 +16,7 @@ namespace scenes.region.resource_mines {
 			{"rubble", GD.Load<Texture2D>("res://scenes/region/resource_mines/rubble.png")},
 			{"savanna trees", GD.Load<Texture2D>("res://scenes/region/resource_mines/savanna_trees.png")},
 			{"rainforest trees", GD.Load<Texture2D>("res://scenes/region/resource_mines/rainforest_trees.png")},
+			{"fishing spot", GD.Load<Texture2D>("res://scenes/region/resource_mines/fishing_spot.png")},
 		};
 
 
