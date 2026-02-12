@@ -7,7 +7,7 @@ using resources.game.resource_types;
 namespace resources.game {
 
 	[GlobalClass]
-	public partial class ResourceGroup : Resource, IResourceGroup {
+	public partial class ResourceGroup : Resource, IAssetGroup<IResourceType, int> {
 
 		[Export] Godot.Collections.Array<ResourceGroupValue> ResourceValues;
 		System.Collections.Generic.OrderedDictionary<IResourceType, int> cached = null;

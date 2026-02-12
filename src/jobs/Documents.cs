@@ -257,6 +257,7 @@ public partial class TradeOffer {
 		this.starter = starter;
 		Debug.Assert(starter.Resources.HasEnough(gives.Multiply(maxUnits)), "Don't have enough resources to create trade offer");
 		Debug.Assert(acceptor != null);
+		Debug.Assert(wants > 0, "Need to take MORE THAN 0 silver to make a trade");
 		this.acceptor = acceptor;
 		OffererGivesRecipentSilver = false;
 
@@ -299,18 +300,28 @@ public partial class TradeOffer {
 		Debug.Assert(units <= StoredUnits, "Can't trade more units than contained in offer");
 		Debug.Assert(CanTrade(units), "Can't even trade Brooooo");
 		if (OffererGivesRecipentSilver) {
-			acceptor.ReceiveTransferSilver(OffererPaidSilverUnit * units);
-			acceptor.Resources.TransferResources(starter.Resources, RecepientRequiredResourcesUnit.Multiply(units));
-			StoredUnits -= units;
+			MakeTradeOffererGivesSilver(units);
 		} else {
-			acceptor.Resources.AddResource(OffererSoldResourcesUnit.Multiply(units));
-			starter.ReceiveTransferSilver(acceptor.SubtractAndReturnSilver(RecipientPaidSilverUnit * units));
-			StoredUnits -= units;
+			MakeTradeAcceptorGivesSilver(units);
 		}
 		Debug.Assert(StoredUnits >= 0);
 		Log("made trade");
 		if (StoredUnits == 0) valid = false;
 		if (!valid) Log("drained...");
+	}
+
+	void MakeTradeOffererGivesSilver(int units) {
+		Debug.Assert(OffererPaidSilverUnit * units > 0, "This shouldn't fail 1.");
+		acceptor.ReceiveTransferSilver(OffererPaidSilverUnit * units);
+		acceptor.Resources.TransferResources(starter.Resources, RecepientRequiredResourcesUnit.Multiply(units));
+		StoredUnits -= units;
+	}
+
+	void MakeTradeAcceptorGivesSilver(int units) {
+		acceptor.Resources.AddResource(OffererSoldResourcesUnit.Multiply(units));
+		Debug.Assert(RecipientPaidSilverUnit * units > 0, "This shouldn't fail 2.");
+		starter.ReceiveTransferSilver(acceptor.SubtractAndReturnSilver(RecipientPaidSilverUnit * units));
+		StoredUnits -= units;
 	}
 
 	public void Log(string message) {

@@ -9,13 +9,13 @@ using resources.visual;
 public class ConstructBuildingJob : MapObjectJob {
 
 	public override string Title => "Construct Building";
-	public override bool IsValid => building != null;
+	public override bool IsValid => Building != null;
 
-	public override Vector2I GlobalPosition => building.GlobalPosition;
+	public override Vector2I GlobalPosition => Building.GlobalPosition;
 
 	readonly List<ResourceBundle> requirements;
 
-	Building building;
+	public Building Building { get; private set; }
 
 
 	public ConstructBuildingJob(List<ResourceBundle> requirements) {
@@ -27,16 +27,16 @@ public class ConstructBuildingJob : MapObjectJob {
 
 	public override void Initialise(Faction ctxFaction, MapObject mapObject) {
 		Debug.Assert(CanInitialise(ctxFaction, mapObject), "Job cannot be initialised!!");
-		building = (Building)mapObject;
+		Building = (Building)mapObject;
 		ConsumeRequirements(requirements.ToArray(), ctxFaction.Resources);
 	}
 
 	public override void Deinitialise(Faction ctxFaction) {
-		if (building.IsConstructed) {
+		if (Building.IsConstructed) {
 			requirements.Clear();
 		} else {
 			RefundRequirements(requirements.ToArray(), ctxFaction.Resources);
-			ctxFaction.RemoveBuilding(building.GlobalPosition - ctxFaction.Region.WorldPosition);
+			ctxFaction.RemoveBuilding(Building.GlobalPosition - ctxFaction.Region.WorldPosition);
 			//building = null;
 		}
 	}
@@ -44,19 +44,19 @@ public class ConstructBuildingJob : MapObjectJob {
 	public List<ResourceBundle> GetRequirements() => requirements;
 
 	public override void PassTime(TimeT minutes) {
-		if (building.IsConstructed) {
+		if (Building.IsConstructed) {
 			return;
 		}
-		building.ProgressBuild(minutes, this);
+		Building.ProgressBuild(minutes, this);
 	}
 
 	public override void CheckDone(Faction regionFaction) {
-		if (building.IsConstructed) {
+		if (Building.IsConstructed) {
 			regionFaction.RemoveJob(this);
 		}
 	}
 
-	public override float GetProgressEstimate() => building.GetBuildProgress();
+	public override float GetProgressEstimate() => Building.GetBuildProgress();
 
 	public override Job Copy() {
 		return new ConstructBuildingJob(requirements);
@@ -67,12 +67,12 @@ public class ConstructBuildingJob : MapObjectJob {
 	}
 
 	public override string GetStatusDescription() {
-		float hoursLeft = ((1 - GetProgressEstimate()) * building.Type.GetHoursToConstruct());
+		float hoursLeft = ((1 - GetProgressEstimate()) * Building.Type.GetHoursToConstruct());
 		float speed = GetWorkTime(1);
 		hoursLeft /= speed;
 		float mins = hoursLeft - (int)hoursLeft;
 		hoursLeft -= mins;
-		GD.Print($"ConstructBuildingJob::GetStatusDescription : {GetProgressEstimate()} {building.Type.GetHoursToConstruct()} {hoursLeft} {speed}");
+		GD.Print($"ConstructBuildingJob::GetStatusDescription : {GetProgressEstimate()} {Building.Type.GetHoursToConstruct()} {hoursLeft} {speed}");
 		var str2 = "The construction will take ";
 		if (hoursLeft > 0) str2 += $"{hoursLeft:0} more hours.";
 		else str2 += $"{mins * 60:0} more minutes.";
@@ -80,13 +80,13 @@ public class ConstructBuildingJob : MapObjectJob {
 	}
 
 	public override string GetProductionDescription() {
-		if (building != null) {
-			return $"A {building.Type.AssetName} will be constructed.";
+		if (Building != null) {
+			return $"A {Building.Type.AssetName} will be constructed.";
 		}
 		return "";
 	}
 
-	public override string ToString() => $"ConstructBuildingJob({(building == null ? "null" : building.Type.AssetName)})";
+	public override string ToString() => $"ConstructBuildingJob({(Building == null ? "null" : Building.Type.AssetName)})";
 
 }
 
@@ -253,23 +253,24 @@ public class CraftJob : MapObjectJob {
 
 	float timeSpent = 0f;
 
-	readonly ResourceBundle[] inputs;
-	readonly ResourceBundle[] outputs;
+	public readonly ResourceBundle[] Inputs;
+	public readonly ResourceBundle[] Outputs;
+
 	public readonly Noun Product;
 	public readonly Verb Process;
 	readonly TimeT timeTaken;
 
 
 	public CraftJob(ResourceBundle[] inputs, ResourceBundle[] outputs, TimeT timeTaken, uint maxWorkers, Noun product, Verb process) {
-		this.inputs = inputs;
-		this.outputs = outputs;
+		this.Inputs = inputs;
+		this.Outputs = outputs;
 		this.timeTaken = timeTaken;
 		Product = product;
 		Process = process;
 		MaxWorkers = maxWorkers;
 	}
 
-	public override Job Copy() => new CraftJob(inputs, outputs, timeTaken, MaxWorkers, Product, Process);
+	public override Job Copy() => new CraftJob(Inputs, Outputs, timeTaken, MaxWorkers, Product, Process);
 
 	public override void Initialise(Faction ctxFaction, MapObject mapObject) {
 		storage = ctxFaction.Resources;
@@ -280,12 +281,12 @@ public class CraftJob : MapObjectJob {
 	public override void Deinitialise(Faction ctxFaction) { }
 
 	public override void PassTime(TimeT minutes) {
-		timeSpent += GetWorkTime(minutes);
-		while (timeSpent > timeTaken) {
-			timeSpent -= timeTaken;
-			if (storage.HasEnough(inputs)) {
-				storage.SubtractResources(inputs);
-				Job.ProvideProduction(outputs, storage);
+		if (storage.HasEnough(Inputs)) {
+			timeSpent += GetWorkTime(minutes);
+			while (timeSpent > timeTaken && storage.HasEnough(Inputs)) {
+				timeSpent -= timeTaken;
+				storage.SubtractResources(Inputs);
+				Job.ProvideProduction(Outputs, storage);
 			}
 		}
 	}
@@ -298,7 +299,7 @@ public class CraftJob : MapObjectJob {
 		else sb.Append($"The workers {Process.Infinitive}...\n");
 
 		GetProductionBulletList(sb);
-		if (inputs.Length > 0) {
+		if (Inputs.Length > 0) {
 			sb.Append("...with the required inputs...\n");
 			GetInputBulletList(sb);
 		}
@@ -308,13 +309,13 @@ public class CraftJob : MapObjectJob {
 	}
 
 	public void GetProductionBulletList(StringBuilder sb) {
-		foreach (var thing in outputs) {
+		foreach (var thing in Outputs) {
 			sb.Append($" * {thing.Type.AssetName} x {thing.Amount}\n");
 		}
 	}
 
 	public void GetInputBulletList(StringBuilder sb) {
-		foreach (var thing in inputs) {
+		foreach (var thing in Inputs) {
 			sb.Append($" * {thing.Type.AssetName} x {thing.Amount}\n");
 		}
 	}

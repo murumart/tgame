@@ -176,22 +176,22 @@ public partial class ResourceStorage {
 
 }
 
-public interface IResourceGroup : IEnumerable<KeyValuePair<IResourceType, int>>, IEnumerable {
+public interface IAssetGroup<Res, Val> : IEnumerable<KeyValuePair<Res, Val>>, IEnumerable where Res : IAssetType {
 
-	public IDictionary<IResourceType, int> GroupValues { get; }
+	public IDictionary<Res, Val> GroupValues { get; }
 
 
-	public bool TryGetValue(IResourceType resourceType, out int val) {
-		return GroupValues.TryGetValue(resourceType, out val);
+	public bool TryGetValue(Res ass, out Val val) {
+		return GroupValues.TryGetValue(ass, out val);
 	}
 
-	public int GetValue(IResourceType resourceType) {
-		var valin = TryGetValue(resourceType, out int val);
-		Debug.Assert(valin, $"There's no value for the item {resourceType.AssetTypeName} in the group");
+	public Val GetValue(Res ass) {
+		var valin = TryGetValue(ass, out Val val);
+		Debug.Assert(valin, $"There's no value for the item {ass.AssetTypeName} in the group");
 		return val;
 	}
 
-	IEnumerator<KeyValuePair<IResourceType, int>> IEnumerable<KeyValuePair<IResourceType, int>>.GetEnumerator() {
+	IEnumerator<KeyValuePair<Res, Val>> IEnumerable<KeyValuePair<Res, Val>>.GetEnumerator() {
 		Debug.Assert(GroupValues != null, "GroupValues shouldn't be null");
 		return GroupValues.GetEnumerator();
 	}

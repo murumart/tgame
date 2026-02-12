@@ -347,7 +347,7 @@ public class Faction : IEntity {
 	}
 
 	public void TransferSilver(Faction to, int amount) {
-		Debug.Assert(Silver > 0, "Nonsense to transfer 0 or less silver");
+		Debug.Assert(amount > 0, "Nonsense to transfer 0 or less silver");
 		Debug.Assert(amount <= Silver, "Not enough silver to transfer");
 
 		to.Silver += amount;
@@ -355,13 +355,14 @@ public class Faction : IEntity {
 	}
 
 	public int SubtractAndReturnSilver(int amount) {
-		Debug.Assert(Silver > 0, "Nonsense to transfer 0 or less silver");
+		Debug.Assert(Silver >= amount, "Can't subtract more silver than have");
+		Debug.Assert(amount > 0, "Nonsense to transfer 0 or less silver");
 		Silver -= amount;
 		return amount;
 	}
 
 	public void ReceiveTransferSilver(int amount) {
-		Debug.Assert(Silver > 0, "Nonsense to transfer 0 or less silver");
+		Debug.Assert(amount > 0, "Nonsense to transfer 0 or less silver");
 		Silver += amount;
 	}
 

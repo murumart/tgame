@@ -16,7 +16,7 @@ public static class Registry {
 		IResourceType[] resourceTypes,
 		IBuildingType[] buildingTypes,
 		IResourceSiteType[] resourceSiteTypes,
-		IResourceGroup foodValues
+		IAssetGroup<IResourceType, int> foodValues
 	) {
 		Resources = new();
 		Buildings = new();
@@ -43,9 +43,9 @@ public static class Registry {
 			Logs, Rocks, Clay, Fruit, Fish, Bread,
 		];
 
-		public static IResourceGroup FoodValues { get; private set; }
+		public static IAssetGroup<IResourceType, int> FoodValues { get; private set; }
 
-		public static void RegisterFoodValues(IResourceGroup fv) {
+		public static void RegisterFoodValues(IAssetGroup<IResourceType, int> fv) {
 			Debug.Assert(FoodValues == null, "Food values already set");
 			FoodValues = fv;
 		}
@@ -59,6 +59,7 @@ public static class Registry {
 		public static readonly IBuildingType BrickHousing = Buildings.GetAsset("brick_housing");
 
 		public static readonly IBuildingType Marketplace = Buildings.GetAsset("marketplace");
+		public static readonly IBuildingType GrainField = Buildings.GetAsset("grain_field");
 
 		public static readonly IBuildingType[] HousingBuildings = [LogCabin, Housing, BrickHousing];
 

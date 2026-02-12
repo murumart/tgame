@@ -53,6 +53,12 @@ namespace scenes.map.ui {
 			ResourceDisplay.Display();
 		}
 
+		public override void _UnhandledKeyInput(InputEvent evt) {
+			if (evt is InputEventKey k) {
+				if (k.Pressed && k.Keycode == Key.Key9) RegionPlayRequested?.Invoke();
+			}
+		}
+
 		public override void _GuiInput(InputEvent evt) {
 			if (evt is InputEventMouseButton) {
 				GetViewport().SetInputAsHandled();

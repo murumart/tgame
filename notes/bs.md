@@ -45,3 +45,17 @@ Plan for short periods and iterate. Make a dependency stack to see what parts of
 
 - Get a mandate for a resource you don't have but a neighboring (non-colony) region does. You have to then trade or extort it from them.
 -
+
+### AI smarts
+
+#### Getting food
+
+Generate a GatherResourceEvent for each type of food resource provider, decision factors should be food amount and existence of these food sources. Generate a trade send job for this food (decision factors having silver and having no source ourselves) and a trade buy job (decision factors having silver, cheaper price, and being low on this food).
+
+But if you gather all the food, there'll be no more food left !? What !? We need to grow crops..
+
+**Example grain field**
+- Create building:
+  - reasonable grain field building count
+- Assign job to it:
+  - has workers
