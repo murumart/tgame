@@ -19,7 +19,8 @@ public partial class OffsettableTilemap : TileMapLayer {
 
 	public override void _TileDataRuntimeUpdate(Vector2I coords, TileData tileData) {
 		var gpos = region.WorldPosition + coords;
-		tileData.TextureOrigin = new(tileData.TextureOrigin.X, Tilemaps.TileElevationVerticalOffset(gpos, world) - 8);
+		tileData.TextureOrigin = new Vector2I(tileData.TextureOrigin.X, Tilemaps.TileElevationVerticalOffset(gpos, world) - 8);
+		tileData.YSortOrigin = -Tilemaps.TileElevationVerticalOffset(gpos, world);
 	}
 
 }
