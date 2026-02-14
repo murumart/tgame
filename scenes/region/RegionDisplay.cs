@@ -30,6 +30,9 @@ namespace scenes.region {
 					DisconnectEvents();
 					valid = false;
 					break;
+				case (int)NotificationReady:
+
+					break;
 			}
 		}
 
@@ -64,6 +67,17 @@ namespace scenes.region {
 				DisplayMapObject(m);
 			}
 			valid = true;
+
+			// debug
+			//if (region == GameMan.Singleton.Game.PlayRegion) {
+			//	UILayer.DebugDisplay(() => {
+			//		return ""
+			//			+ $"mouse: {tilemaps.Ground.GetLocalMousePosition()}\n"
+			//			+ $"to tile: {LocalToTile(tilemaps.Ground.GetLocalMousePosition())}\n"
+			//			+ $"final: {this.GetMouseHoveredTilePos()}\n"
+			//		;
+			//	});
+			//}
 		}
 
 		void ConnectEvents() {
@@ -168,12 +182,26 @@ namespace scenes.region {
 
 		// misc..
 
-		public Vector2I LocalToTile(Vector2 lpos) => tilemaps.Ground.LocalToMap(lpos);
+		public Vector2I LocalToTile(Vector2 lpos) {
+			//return tilemaps.Ground.LocalToMap(lpos);
+			lpos -= (Vector2)Tilemaps.TILE_SIZE * new Vector2(0.5f, 0.25f);
+			lpos += new Vector2(0, 8);
+			int x = Mathf.FloorToInt(lpos.X / Tilemaps.TILE_SIZE.X + lpos.Y / Tilemaps.TILE_SIZE.Y);
+			int y = Mathf.FloorToInt(-lpos.X / Tilemaps.TILE_SIZE.X + lpos.Y / Tilemaps.TILE_SIZE.Y);
+			return new(x, y);
+		}
 
 		public Vector2I GetMouseHoveredTilePos() {
-			var localMousePos = tilemaps.Ground.GetLocalMousePosition();
-			return LocalToTile(localMousePos);
+			return GetMouseHoveredTilePos(tilemaps.Ground.GetLocalMousePosition());
 		}
+
+		public Vector2I GetMouseHoveredTilePos(Vector2 localMousePos) {
+			var tilepos = LocalToTile(localMousePos);
+			localMousePos.Y += Tilemaps.TileElevationVerticalOffset(region.WorldPosition + tilepos, GameMan.Singleton.Game.Map.World);
+			tilepos = LocalToTile(localMousePos);
+			return tilepos;
+		}
+
 
 	}
 

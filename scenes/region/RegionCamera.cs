@@ -7,6 +7,7 @@ namespace scenes.region {
 	public partial class RegionCamera : Camera {
 
 		[Export] Node2D cursor;
+		[Export] Node2D debugCursor;
 		[Export] RegionDisplay regionDisplay;
 		[Export] UI ui;
 
@@ -16,7 +17,7 @@ namespace scenes.region {
 		public override void _Ready() {
 			RemoveChild(ui);
 			UILayer.AddUIChild(ui);
-			ClickedMouseEvent += (ac) => ui.OnLeftMouseClick(ac, regionDisplay.LocalToTile(ac));
+			ClickedMouseEvent += (ac) => ui.OnLeftMouseClick(ac, regionDisplay.GetMouseHoveredTilePos(ac));
 		}
 
 		public override void _Process(double delta) {
@@ -37,7 +38,8 @@ namespace scenes.region {
 		private Vector2I lastTilePos;
 		private void MouseHighlight() {
 			var tilepos = regionDisplay.GetMouseHoveredTilePos();
-			cursor.GlobalPosition = Tilemaps.TilePosToWorldPos(tilepos);
+			debugCursor.GlobalPosition = Tilemaps.TilePosToWorldPos(tilepos);
+			cursor.GlobalPosition = Tilemaps.TilePosToWorldPos(tilepos) + Vector2.Up * Tilemaps.TileElevationVerticalOffset(GameMan.Singleton.Game.PlayRegion.WorldPosition + tilepos, GameMan.Singleton.Game.Map.World);
 			if (tilepos != lastTilePos) {
 				lastTilePos = tilepos;
 				ui.OnTileHighlighted(tilepos, Region);

@@ -1,0 +1,9 @@
+[gd_resource type="LabelSettings" format=3 uid="uid://0tidmu3mudw6"]
+
+[ext_resource type="FontVariation" uid="uid://16wjjwlxw4iw" path="res://resources/visual/font/default_font.tres" id="1_k5k82"]
+
+[resource]
+font = ExtResource("1_k5k82")
+font_size = 8
+outline_size = 1
+outline_color = Color(0, 0, 0, 1)
