@@ -26,7 +26,7 @@ z_index = 0
 
 [node name="Debugcursor" type="Sprite2D" parent="RegionCamera" unique_id=1703989252]
 modulate = Color(0.99215686, 0.3019608, 0.4745098, 1)
-self_modulate = Color(1, 1, 1, 0.1764706)
+self_modulate = Color(1, 1, 1, 0.08627451)
 top_level = true
 material = ExtResource("3_a0jiq")
 texture = ExtResource("4_3pxuv")

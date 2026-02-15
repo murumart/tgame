@@ -53,10 +53,11 @@ public partial class Tilemaps : Node2D {
 		return tilecenter;
 	}
 
+	public const int TILE_ELE_HEIGHT_MULTIPLIER = 6;
 	public static int TileElevationVerticalOffset(Vector2I globalTilePos, World world) {
 		//return 0;
 		var visualEle = Mathf.Max(0f, world.GetElevation(globalTilePos.X, globalTilePos.Y));
-		return (int)(visualEle * 48 * 4);
+		return (int)(visualEle * TILE_SIZE.Y * TILE_ELE_HEIGHT_MULTIPLIER);
 	}
 
 }
