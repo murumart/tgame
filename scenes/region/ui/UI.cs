@@ -283,7 +283,6 @@ namespace scenes.region.ui {
 			if (menuTabs.CurrentTab == (int)Tab.Documents) {
 				documentsDisplay.Display();
 			}
-			Announce($"The hour is now {GameTime.GetDayHourS(timeInMinutes)}", () => GD.Print("yay! !!! hour " + GameTime.GetDayHourS(timeInMinutes)));
 		}
 
 		public void OnLeftMouseClick(Vector2 position, Vector2I tilePosition) {

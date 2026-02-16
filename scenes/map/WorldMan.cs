@@ -53,7 +53,7 @@ namespace scenes.map {
 		}
 
 		public override void _UnhandledInput(InputEvent evt) {
-			if (evt.IsActionPressed("ui_accept") && !worldGenerator.Generating) {
+			if (evt is InputEventKey k && k.Pressed && k.Keycode == Key.Key8 && !worldGenerator.Generating) {
 				GenerateNewWorld();
 			}
 		}

@@ -9,6 +9,7 @@ public partial class Camera : Camera2D {
 	const float ACCEL = 60.0f;
 	const float DECEL = 20.0f;
 
+	Vector2 lastMousePosition;
 	Vector2 velocity = new();
 	float zoomSize = 1.0f;
 
@@ -20,16 +21,27 @@ public partial class Camera : Camera2D {
 	public override void _UnhandledInput(InputEvent evt) {
 		if (evt is InputEventMouseButton bEvent) {
 			MouseButtonInput(bEvent);
+		} else if (evt is InputEventKey kEvent) {
+			if (kEvent.Keycode == Key.Space) {
+				if (kEvent.IsReleased() && dragging) dragging = false;
+				else if (kEvent.IsPressed() && !dragging) {
+					dragging = true;
+					draggingStartPos = GetViewport().GetMousePosition();
+					draggingStartCamPos = Position;
+				}
+			}
 		} else if (evt is InputEventMouseMotion mEvent) {
 			if (dragging) {
+				Input.SetDefaultCursorShape(Input.CursorShape.Drag);
 				var wPos = mEvent.Position;
 				var differ = (draggingStartPos - wPos) / zoomSize;
 				Position = draggingStartCamPos + differ;
-			}
+				lastMousePosition = mEvent.Position;
+			} else Input.SetDefaultCursorShape(Input.CursorShape.Arrow);
 		}
 	}
 
-	protected virtual void ScrollInput(bool up) {}
+	protected virtual void ScrollInput(bool up) { }
 
 	protected virtual void ControlScrollInput(bool up) {
 		if (up) zoomSize = Mathf.Min(zoomSize + 0.1f * zoomSize, 8.0f);
