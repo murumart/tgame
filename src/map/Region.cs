@@ -25,8 +25,8 @@ public class Region {
 
 	readonly HashSet<Region> neighbors = new(); public ICollection<Region> Neighbors => neighbors;
 
-	public int LandTileCount => GroundTiles.Values.Where(t => (t & GroundTileType.Land) != 0).Count();
-	public int OceanTileCount => GroundTiles.Values.Where(t => t == GroundTileType.Ocean).Count();
+	public int LandTileCount => GroundTiles.Values.Where(t => (t & GroundTileType.HasLand) != 0).Count();
+	public int OceanTileCount => GroundTiles.Values.Where(t => (t & GroundTileType.HasLand) == 0).Count();
 
 	public readonly Field<ResourceBundle[]> NaturalResources;
 
@@ -96,7 +96,7 @@ public class Region {
 
 	MapObject CreateMapObjectSpotAndPlace(MapObject.IMapObjectType type, Vector2I position) {
 		Debug.Assert(!HasMapObject(position, out var m), $"there's already a mapobject {m} at position {position}");
-		Debug.Assert((type.GetPlacementAllowed() & GroundTiles[position]) != 0, "Can't place this building here");
+		Debug.Assert(type.IsPlacementAllowed(GroundTiles[position]), $"Can't place map object {type.AssetName} here ({position} on {GroundTiles[position]})");
 		var ob = type.CreateMapObject(WorldPosition + position);
 		mapObjects[position] = ob;
 		NaturalResources.Touch();
@@ -158,7 +158,7 @@ public class Region {
 		for (int i = -radius; i <= radius; i++) {
 			for (int j = -radius; j <= radius; j++) {
 				if (i * i + j * j <= radius * radius) {
-					tiles[new Vector2I(i, j)] = GroundTileType.Grass;
+					tiles[new Vector2I(i, j)] = GroundTileType.HasLand;
 
 					if (i != 0 || j != 0) {
 						if (GD.Randf() < 0.01f) rs.Add(new Vector2I(i, j), Registry.ResourceSitesS.Rock);

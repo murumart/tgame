@@ -37,6 +37,6 @@ description = "Grain is grown here."
 ResourceCosts = null
 CraftingJobs = Array[Object]([SubResource("Resource_860cy")])
 HoursToConstruct = 24.0
-AllowedGroundTiles = 121
+AllowedGroundTiles = 5
 ScenePath = "uid://c8cwdv8n4e3i7"
 metadata/_custom_type_script = "uid://b5xb3tdf3yoon"

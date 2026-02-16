@@ -73,6 +73,10 @@ public class GroundCellType {
 		SourceId = 1,
 		AtlasCoords = Vector2I.Zero,
 	};
+	public readonly static GroundCellType LAND = new() {
+		SourceId = 1,
+		AtlasCoords = new Vector2I(3, 0),
+	};
 	public readonly static GroundCellType GRASS = new() {
 		SourceId = 1,
 		AtlasCoords = Vector2I.Zero,
@@ -94,15 +98,17 @@ public class GroundCellType {
 	public Vector2I AtlasCoords;
 
 
-	public static GroundCellType MatchTileTypeToCell(GroundTileType tile) {
-		return tile switch {
-			GroundTileType.Void => VOID,
-			GroundTileType.Grass => GRASS,
-			GroundTileType.Sand => SAND,
-			GroundTileType.Snow => SNOW,
-			GroundTileType.Ocean => WATER,
-			_ => throw new Exception($"Can't match {tile} to CellType")
-		};
+	public static GroundCellType MatchTileTypeToCell(GroundTileType t) {
+		if ((t & GroundTileType.HasLand) == 0) return GroundCellType.WATER;
+		if ((t & GroundTileType.HasLand) != 0) {
+			if ((t & GroundTileType.HasSand) != 0) return GroundCellType.SAND;
+			if ((t & GroundTileType.HasVeg) != 0) return GroundCellType.GRASS;
+			if ((t & GroundTileType.HasSnow) != 0) return GroundCellType.SNOW;
+			return GroundCellType.LAND;
+		}
+		Debug.Assert(false, "Unimplemented ground type tile");
+		return GroundCellType.VOID;
+
 	}
 
 }

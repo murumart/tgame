@@ -25,7 +25,7 @@ namespace resources.game.building_types {
 		[Export] float HoursToConstruct = 1f;
 		[Export] Special special;
 		[Export] string[] AvailableJobClassNames = Array.Empty<string>();
-		[Export(PropertyHint.Flags)] GroundTileType AllowedGroundTiles = GroundTileType.Land;
+		[Export(PropertyHint.Flags)] GroundTileType AllowedGroundTiles = GroundTileType.HasLand;
 		[Export(PropertyHint.File, "*.tscn")] string ScenePath;
 
 
@@ -71,8 +71,9 @@ namespace resources.game.building_types {
 
 		public string GetDescription() => description;
 
-		public GroundTileType GetPlacementAllowed() {
-			return AllowedGroundTiles;
+		public bool IsPlacementAllowed(GroundTileType on) {
+			//System.Console.WriteLine($"{AllowedGroundTiles} & {on} = {AllowedGroundTiles & on}");
+			return (AllowedGroundTiles & on) == AllowedGroundTiles;
 		}
 	}
 

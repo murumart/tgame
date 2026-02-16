@@ -3,25 +3,25 @@ using Godot;
 
 [Flags]
 public enum GroundTileType : byte {
-	Void  = 0b00000000,
-	Grass = 0b00000001,
-	Sand  = 0b00000010,
-	Snow  = 0b00000100,
-	Land  = 0b01111111,
-	Ocean = 0b10000000,
+	Sea      = 0b00000000,
+	HasLand  = 0b00000001,
+	HasSand  = 0b00000010,
+	HasVeg   = 0b00000100,
+	HasSnow  = 0b00001000,
+	All      = 0b11111111
 }
 
 public static class GroundTileTypeEx {
 	public static string UIString(this GroundTileType t) {
-		return t switch {
-			GroundTileType.Void => "...",
-			GroundTileType.Grass => "grass",
-			GroundTileType.Sand => "sand",
-			GroundTileType.Snow => "snow",
-			GroundTileType.Land => "??all land",
-			GroundTileType.Ocean => "sea",
-			_ => throw new NotImplementedException(),
-		};
+		if (t == GroundTileType.Sea) return "sea";
+		if ((t & GroundTileType.HasLand) != 0) {
+			if ((t & GroundTileType.HasSand) != 0) return "sand";
+			if ((t & GroundTileType.HasVeg) != 0) return "grass";
+			if ((t & GroundTileType.HasSnow) != 0) return "snow";
+			return "land";
+		}
+		Debug.Assert(false, "Unimplemented ground type name");
+		return "???";
 	}
 }
 
@@ -55,8 +55,8 @@ public class World {
 	}
 
 	public GroundTileType GetTile(int x, int y) {
-		if (x < 0 || x >= Longitude) return GroundTileType.Void;
-		if (y < 0 || y >= Latitude) return GroundTileType.Void;
+		if (x < 0 || x >= Longitude) return GroundTileType.Sea;
+		if (y < 0 || y >= Latitude) return GroundTileType.Sea;
 		return Ground[x + y * Longitude];
 	}
 

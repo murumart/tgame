@@ -214,7 +214,7 @@ public class Faction : IEntity {
 	}
 
 	public bool CanPlaceBuilding(IBuildingType type, Vector2I tilepos) {
-		return HasBuildingMaterials(type) && Region.HasBuildingSpace(tilepos) && (Region.GroundTiles[tilepos] & type.GetPlacementAllowed()) != 0;
+		return HasBuildingMaterials(type) && Region.HasBuildingSpace(tilepos) && type.IsPlacementAllowed(Region.GroundTiles[tilepos]);
 	}
 
 	public bool HasBuildingMaterials(IBuildingType type) {

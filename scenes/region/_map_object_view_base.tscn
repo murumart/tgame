@@ -25,6 +25,7 @@ monitorable = false
 polygon = PackedVector2Array(-32, 0, 0, -16, 32, 0, 0, 16)
 
 [node name="IconTransform" type="Node2D" parent="." unique_id=1589336146]
+z_index = 1
 position = Vector2(0, -32)
 
 [node name="IconContainer" type="HBoxContainer" parent="IconTransform" unique_id=1378133112]

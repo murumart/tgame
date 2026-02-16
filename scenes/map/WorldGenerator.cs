@@ -151,11 +151,14 @@ namespace scenes.map {
 					var ele = world.GetElevation(x, y);
 					var humi = world.GetHumidity(x, y);
 					var temp = world.GetTemperature(x, y);
-					var tile = GroundTileType.Sand;
-					if (ele < 0) tile = GroundTileType.Ocean;
-					else if (ele > 0.012f && humi > 0.15f) {
-						if (temp < 0) tile = GroundTileType.Snow;
-						else tile = GroundTileType.Grass;
+					var tile = GroundTileType.Sea;
+					if (ele >= 0) {
+						tile = GroundTileType.HasLand;
+						if (ele <= 0.012f) tile |= GroundTileType.HasSand;
+						else if (humi > 0.15f) {
+							if (temp < 0) tile |= GroundTileType.HasSnow;
+							else tile |= GroundTileType.HasVeg;
+						} else tile |= GroundTileType.HasSand;
 					}
 					world.SetTile(x, y, tile);
 				}
@@ -227,16 +230,14 @@ namespace scenes.map {
 			return map;
 		}
 
-		public Dictionary<Vector2I, Region> GenerateRegionStarts(World world, int regionCount, bool sea = false) {
+		public Dictionary<Vector2I, Region> GenerateRegionStarts(World world, int regionCount) {
 			var startPoses = new Dictionary<Vector2I, Region>();
 			int regionsMade = 0;
-
-			var tileType = !sea ? GroundTileType.Grass : GroundTileType.Ocean;
 
 			while (regionsMade < regionCount) {
 				var tile = new Vector2I(rng.RandiRange(0, world.Longitude - 1), rng.RandiRange(0, world.Latitude - 1));
 				while (
-					world.GetTile(tile.X, tile.Y) != tileType
+					(world.GetTile(tile.X, tile.Y) & GroundTileType.HasVeg) == 0
 					|| startPoses.ContainsKey(tile)
 				) {
 					tile = new Vector2I(rng.RandiRange(0, world.Longitude - 1), rng.RandiRange(0, world.Latitude - 1));
@@ -302,7 +303,6 @@ namespace scenes.map {
 			bool sea = false
 		) {
 			var growthOccurred = false;
-			var tileType = !sea ? GroundTileType.Grass : GroundTileType.Ocean;
 
 			for (int xxx = 0; xxx < iterations; xxx++) for (int i = 0; i < regions.Length; i++) {
 					var region = regions[i];
@@ -313,7 +313,7 @@ namespace scenes.map {
 						addKeys.Clear();
 						for (int dirIx = 0; dirIx < 4; dirIx++) {
 							var ix = rng.RandiRange(0, freeEdges.Count - 1);
-							growthOccurred = GrowRegionInDirection(occupied, addKeys, freeEdges, ix, region, dirIx, world, tileType) || growthOccurred;
+							growthOccurred = GrowRegionInDirection(occupied, addKeys, freeEdges, ix, region, dirIx, world, GroundTileType.All) || growthOccurred;
 							if (freeEdges.Count == 0) break;
 						}
 						foreach (var k in addKeys) {
@@ -379,8 +379,8 @@ namespace scenes.map {
 		) {
 			occupied.TryGetValue(where, out Region there);
 			var local = where - region.WorldPosition;
-			var tileAt = world.GetTile(where.X, where.Y);
-			if (there == null && /*tileAt == allowedTile && */ tileAt != GroundTileType.Void && !addKeys.Contains(local)) {
+			//var tileAt = world.GetTile(where.X, where.Y);
+			if (there == null && /*tileAt == allowedTile && */ !addKeys.Contains(local) && where.X >= 0 && where.X < world.Longitude && where.Y >= 0 && where.Y < world.Latitude) {
 				Debug.Assert(!occupied.ContainsKey(where), "Tile I thought was good to grow onto is already planned to be used!!");
 				addKeys.Add(local);
 				Debug.Assert(!occupied.ContainsKey(where), "Tile I thought was good to grow onto is already occupied!!");

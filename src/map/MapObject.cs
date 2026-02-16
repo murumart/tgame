@@ -26,7 +26,7 @@ public partial class MapObject {
 
 		MapObject CreateMapObject(Vector2I globalPosition);
 		IEnumerable<Job> GetPossibleJobs();
-		GroundTileType GetPlacementAllowed();
+		bool IsPlacementAllowed(GroundTileType on);
 
 	}
 
