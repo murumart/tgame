@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using Godot;
+using scenes.autoload;
 
 public class Population {
 
 	public event Func<uint, uint> FoodRequested;
-	// this feels kind of ugly but something event bussy is useful
 	public event Action<Job, int> JobEmploymentChanged;
 
 	public uint Count { get; private set; }
@@ -19,54 +19,61 @@ public class Population {
 	public float Food { get; private set; }
 	public float Hunger { get; private set; }
 	public bool ArePeopleStarving => Hunger > 0f;
-	const float HUNGER_KILL_LIMIT = 4f;
+	const float HUNGER_KILL_LIMIT = 2f;
 
 	readonly HashSet<Job> employedOnJobs = new();
 
+	public float OngrowingPopulation { get; private set; }
+	
 	TimeT time;
 
 
-	public Population() {
-	}
+	public Population() { }
 
 	public void PassTime(TimeT minutes) {
-		for (TimeT i = 0; i < minutes; i++) {
-			EatFood(1);
+		EatFood(minutes);
+
+		OngrowingPopulation += (GetBirthsIncreaseModifier() * minutes) / GameTime.Years(1);
+		while (OngrowingPopulation >= 1f) {
+			OngrowingPopulation -= 1f;
+			Manifest(1);
 		}
 	}
 
 	public void EatFood(TimeT minutesPassed) {
 		float wantfood = Faction.GetFoodUsageS(Count, EmployedCount);
 		// one unit of food is how much one person eats per day
-		uint onceperday = (uint)((GameTime.HOURS_PER_DAY * GameTime.MINUTES_PER_HOUR / 1) * minutesPassed);
-		wantfood /= onceperday;
+		uint ONCE_PER_DAY = (uint)((GameTime.Days(1)) * 1);
+		wantfood /= ONCE_PER_DAY;
 
-		if (Food < wantfood) {
-			Food += FoodRequested?.Invoke((uint)Mathf.Ceil(wantfood - Food)) ?? 0;
-		}
-
-		var oldfood = Food;
-		if (Food < wantfood) {
-			Food = 0;
-			Hunger += wantfood - Food;
-			while (Hunger > HUNGER_KILL_LIMIT) {
-				Hunger -= HUNGER_KILL_LIMIT;
-				uint reduction = 1;
-				Reduce(reduction);
+		for (uint i = 0; i < minutesPassed; i++) {
+			if (Food < wantfood) {
+				Food += FoodRequested?.Invoke((uint)Mathf.Ceil(wantfood - Food)) ?? 0;
 			}
-		} else {
-			Food -= wantfood;
-			if (Hunger > 0) {
-				if (Food > Hunger) {
-					Food -= Hunger;
-					Hunger = 0;
-				} else {
-					Hunger -= Food;
-					Food = 0;
+
+			var oldfood = Food;
+			if (Food < wantfood) {
+				Food = 0;
+				Hunger += wantfood;
+				while (Hunger > HUNGER_KILL_LIMIT) {
+					Hunger -= HUNGER_KILL_LIMIT;
+					uint reduction = 1;
+					Reduce(reduction);
+				}
+			} else {
+				Food -= wantfood;
+				if (Hunger > 0) {
+					if (Food > Hunger) {
+						Food -= Hunger;
+						Hunger = 0;
+					} else {
+						Hunger -= Food;
+						Food = 0;
+					}
 				}
 			}
+			Debug.Assert(Food <= oldfood, $"Somehow, food increased while eating ({Food} was {oldfood} food)?");
 		}
-		Debug.Assert(oldfood >= Food, $"Somehow, food increased while eating ({Food} was {oldfood} food)?");
 	}
 
 	public void Manifest(uint count) {
@@ -130,6 +137,13 @@ public class Population {
 		if (job.Workers == 0) employedOnJobs.Remove(job);
 		Debug.Assert(job.Workers >= 0, $"Job can't have negative workers ({job.Workers})");
 		JobEmploymentChanged?.Invoke(job, -(int)amount);
+	}
+
+	public float GetBirthsIncreaseModifier() {
+		if (Hunger > 0) return 0f;
+		float lessthanpop = Mathf.Max(0, (float)Count - 1f);
+		float lessthanhoused = Mathf.Max(0, (float)HousedCount - 1f);
+		return (lessthanpop - lessthanhoused) * 0.05f + (lessthanhoused) * 0.5f;
 	}
 
 }
