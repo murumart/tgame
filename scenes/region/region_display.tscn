@@ -6,9 +6,8 @@
 [ext_resource type="Script" uid="uid://bhqa1ti1dqn3q" path="res://scenes/region/OffsettableTilemap.cs" id="4_bwdbp"]
 
 [sub_resource type="Gradient" id="Gradient_bwdbp"]
-interpolation_mode = 2
-offsets = PackedFloat32Array(0.21254355, 0.8466899)
-colors = PackedColorArray(0.42352942, 0.5058824, 0.6313726, 1, 1, 1, 1, 1)
+offsets = PackedFloat32Array(0, 0.3392226, 0.8975265)
+colors = PackedColorArray(0.2509804, 0.32156864, 0.4509804, 1, 0.42352942, 0.5058824, 0.6313726, 1, 1, 1, 1, 1)
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_s3w5i"]
 texture = ExtResource("2_yylbx")

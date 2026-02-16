@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text;
 using Godot;
 using resources.game.building_types;
 using scenes.autoload;
@@ -19,7 +20,7 @@ namespace scenes.region.ui {
 		public event Func<IBuildingType, bool> GetCanBuildEvent;
 		public event Func<ResourceStorage> GetResourcesEvent;
 		public event Func<Faction> GetFactionEvent;
-		public event Func<(uint, uint)> GetFoodAndUsageEvent;
+		public event Func<(float, float)> GetFoodAndUsageEvent;
 
 		public event Func<MapObject, Job> GetMapObjectJobEvent;
 		public event Func<ICollection<Job>> GetJobsEvent;
@@ -115,21 +116,16 @@ namespace scenes.region.ui {
 		}
 
 		public void SetupResourceDisplay() {
+			resourceDisplay.Display(() => $"fps: {Engine.GetFramesPerSecond()}");
 			var fac = GetFaction();
 			resourceDisplay.Display(() => {
 				if (fac.GetPopulationCount() == 0) return "no one lives here.";
 				return $"population: {fac.GetPopulationCount()} "
 					+ $"({fac.HomelessPopulation / (float)fac.Population.Count * 100:0}% homeless, "
-					+ $"{fac.Population.EmployedCount / (float)fac.Population.Count * 100:0}% unemployed, "
+					+ $"{fac.Population.EmployedCount / (float)fac.Population.Count * 100:0}% employed, "
 					+ $"{fac.Population.GetBirthsIncreaseModifier():0} births/year)";
 			});
 			if (fac.GetPopulationCount() != 0) {
-
-				resourceDisplay.Display(() => {
-					var foodAndUsage = GetFoodAndUsage();
-					return $"food: {foodAndUsage.Item1} ({foodAndUsage.Item2} eaten/day)";
-				});
-				resourceDisplay.Display(() => $"fps: {Engine.GetFramesPerSecond()}");
 				var reg = fac.Region;
 				resourceDisplay.Display(() => {
 					return $"silver: {fac.Silver}";
@@ -267,13 +263,19 @@ namespace scenes.region.ui {
 		}
 
 		void DisplayResources() {
-			resourceLabel.Text = "";
+			var sb = new StringBuilder();
 			var resources = GetResourcesEvent?.Invoke();
 			if (resources == null) return;
 			foreach (var p in resources) {
-				resourceLabel.AppendText($"{p.Key.AssetName} x {p.Value.Amount}\n");
+				sb.Append($"{p.Key.AssetName} x {p.Value.Amount}\n");
 			}
-			resourceLabel.AppendText($"\ntotal {resources.ItemAmount}");
+			var (food, foodUsage) = GetFoodAndUsage();
+			sb.Append($"\nfood: {(int)food}\n");
+			sb.Append($"({(int)foodUsage} eaten/day)\n");
+			var leftForDays = food / foodUsage;
+			sb.Append($"(enough for {GameTime.GetFancyTimeString((TimeT)(leftForDays * GameTime.HOURS_PER_DAY * GameTime.MINUTES_PER_HOUR))})\n");
+			sb.Append($"\ntotal {resources.ItemAmount}");
+			resourceLabel.Text = sb.ToString();
 		}
 
 		// utilities
@@ -382,7 +384,7 @@ namespace scenes.region.ui {
 		public List<BuildingType> GetBuildingTypes() => GetBuildingTypesEvent?.Invoke();
 		public ResourceStorage GetResources() => GetResourcesEvent?.Invoke();
 		public Faction GetFaction() => GetFactionEvent?.Invoke();
-		public (uint, uint) GetFoodAndUsage() => GetFoodAndUsageEvent?.Invoke() ?? (1337, 1337);
+		public (float, float) GetFoodAndUsage() => GetFoodAndUsageEvent?.Invoke() ?? (1337, 1337);
 
 		public Job GetMapObjectJob(MapObject mapObject) => GetMapObjectJobEvent?.Invoke(mapObject);
 		public ICollection<Job> GetJobs() => GetJobsEvent?.Invoke();

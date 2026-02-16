@@ -27,10 +27,10 @@ public class FactionActions {
 		return region.GroundTiles.Keys;
 	}
 
-	public (uint, uint) GetFoodAndUsage() {
+	public (float, float) GetFoodAndUsage() {
 		return (
-			(uint)Mathf.Round(faction.GetFood()),
-			(uint)Mathf.Round(faction.GetFoodUsage())
+			faction.GetFood(),
+			faction.GetFoodUsage()
 		);
 	}
 

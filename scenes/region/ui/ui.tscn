@@ -25,7 +25,7 @@ font_color = Color(0.8352941, 0.8392157, 0.85882354, 1)
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_bjdfm"]
 
-[node name="Ui" type="MarginContainer" unique_id=948088031 node_paths=PackedStringArray("buildButton", "agreementsButton", "jobsButton", "menuTabs", "buildingList", "documentsDisplay", "jobsList", "resourceDisplay", "pauseDisplayPanel", "gameSpeedLabel", "pauseButton", "normalSpeedButton", "fastSpeedButton", "resourceLabel", "announcementOkayButton", "announcementText", "announcementTitle", "announcementParent")]
+[node name="Ui" type="MarginContainer" unique_id=948088031 node_paths=PackedStringArray("buildButton", "agreementsButton", "jobsButton", "menuTabs", "buildingList", "documentsDisplay", "jobsList", "resourceDisplay", "pauseDisplayPanel", "gameSpeedLabel", "pauseButton", "normalSpeedButton", "fastSpeedButton", "resourceLabel")]
 z_index = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -52,10 +52,6 @@ pauseButton = NodePath("VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer/
 normalSpeedButton = NodePath("VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer/NormalSpeedButton")
 fastSpeedButton = NodePath("VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer/FastButton")
 resourceLabel = NodePath("VBoxContainer/MarginContainer/Horizon/ResourcesList")
-announcementOkayButton = NodePath("NotifBoxParentParent/NotifBoxParent/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Button")
-announcementText = NodePath("NotifBoxParentParent/NotifBoxParent/PanelContainer/MarginContainer/VBoxContainer/AnnouncementText")
-announcementTitle = NodePath("NotifBoxParentParent/NotifBoxParent/PanelContainer/MarginContainer/VBoxContainer/AnnouncementTitle")
-announcementParent = NodePath("NotifBoxParentParent")
 
 [node name="PausePanel" type="Panel" parent="." unique_id=1758856808]
 visible = false
@@ -134,6 +130,7 @@ a
 aa
 a
 "
+fit_content = true
 
 [node name="Fat" type="Control" parent="VBoxContainer/MarginContainer/Horizon" unique_id=1462543820]
 layout_mode = 2

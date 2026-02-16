@@ -87,7 +87,7 @@ public class GameTime {
 
 	public static string GetFancyTimeString(TimeT minutes) {
 		var hours = minutes / MINUTES_PER_HOUR;
-		var days = hours / DAYS_PER_WEEK;
+		var days = hours / HOURS_PER_DAY;
 		var weeks = days / DAYS_PER_WEEK;
 
 		var daysPlusWeek = days - weeks * DAYS_PER_WEEK;

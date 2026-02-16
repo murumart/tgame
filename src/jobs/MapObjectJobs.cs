@@ -157,6 +157,7 @@ public class GatherResourceJob : MapObjectJob {
 	}
 
 	public GatherResourceJob(int wellix, ResourceSite site) {
+		Debug.Assert(wellix >= 0);
 		MaxWorkers = 10;
 		wellIx = wellix;
 		this.site = site;
@@ -197,8 +198,9 @@ public class GatherResourceJob : MapObjectJob {
 
 		regionFaction.RemoveJob(this);
 		// remove a completely depleted resource site
-		foreach (var well in site.Wells) if (well.HasBunches) return;
-		regionFaction.Uproot(site.GlobalPosition - regionFaction.Region.WorldPosition);
+		// let's try not doing this, actually
+		//foreach (var well in site.Wells) if (well.HasBunches) return;
+		//regionFaction.Uproot(site.GlobalPosition - regionFaction.Region.WorldPosition);
 	}
 
 	// display
