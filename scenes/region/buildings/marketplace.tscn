@@ -6,6 +6,6 @@
 [node name="BuildingBase" unique_id=1775108404 instance=ExtResource("1_7nw8k")]
 
 [node name="Sprite2D" type="Sprite2D" parent="." index="0" unique_id=1759979388]
-position = Vector2(-18, -21)
+position = Vector2(-32, -15)
 texture = ExtResource("2_7nw8k")
 centered = false
