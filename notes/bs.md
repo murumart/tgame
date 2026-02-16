@@ -59,3 +59,32 @@ But if you gather all the food, there'll be no more food left !? What !? We need
   - reasonable grain field building count
 - Assign job to it:
   - has workers
+
+Kui süüa vähe ja vähe toidutegemistööde peal inimesi, peaks inimesi jõuga ehk töölt maha võtma nii et ta saaks uuesti assignida. Veidi hack aga vaata, äkki töötab.
+
+#### Trades
+
+Decision factorid peaksid olema resource wants ja hõbeda hulk. Iga eseme kohta nii siis trade offer. Saatmine suvalisele factionile (vb mängija omale suurema tõenäosusega, et rohkem mäng oleks?)
+
+#### Crafting chains
+
+Seda võiks teha automaatselt. Kui resourceewant mingil lõppproduktil on kõrgem, siis alamproduktide resourcewant peaks kasvama kui seda lõppprodukti pole olemas. Gene crafting chain (ilmselt puu läbimine rekursiivselt lihtsalt), salvesta runi ajaks mällu (struktuur vist puu kus igal sõlmel viidad vanemale (lol scene tree)), kasuta seda, et leida alamaid elemente. Seo approval ratinguga need ülemate asjade resourcewantid.
+
+### Mida teha enne ekspot
+
+- approval rating
+  - see võiks tõusta mingite esemete tekkides (nt mööbel - majadesse mööbeldamise job? tõstaks mingit statti ja approvalit)
+  - kukuks rängalt kui nälgimine käib
+  - gameover kui 0
+- asju mida tarneahelates teha
+  - puidu laudadeks töötlemine
+  - terade jahuks töötlemine
+  - jahu leivaks töötlemine
+- info
+  - alguses notif mängija omaniku nimest
+  - ressursside nimekirjas märgend praegusest nõudmisest
+  - mingi märguande ikoon uute treidide kohta turul
+  - märguannete nimekiri ekraanil kogu aeg, logi tab kus eelmised notifid factioni koha
+    - ära lihtsalt pane rtlabelisse, gene tekst nt kuu kaupa kui nuppu vajutatakse
+- ehitiste eemaldamine
+- ressursiallikate eemaldamine (kui pole ruumi panna midagi kuhugi)
