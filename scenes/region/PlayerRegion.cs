@@ -1,8 +1,5 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using Godot;
-using resources.game;
 using resources.game.building_types;
 using scenes.autoload;
 using scenes.region.ui;
@@ -22,16 +19,10 @@ namespace scenes.region {
 		Faction faction;
 		FactionActions actions;
 
-		// debug
-		LocalAI ai;
-
-
 		public override void _Ready() {
 			region = GameMan.Singleton.Game.PlayRegion;
 			faction = region.LocalFaction;
 			actions = new(region, faction);
-			// debug
-			ai = new GamerAI(actions);
 
 			ui.MapClickEvent += MapClick;
 			ui.RequestBuildEvent += OnUIBuildingPlaceRequested;
@@ -54,10 +45,6 @@ namespace scenes.region {
 			faction.ContractFailedEvent += OnRegionMandateFailed;
 
 			region.MapObjectUpdatedAtEvent += OnRegionMapObjectUpdated;
-
-			ui.PauseRequestedEvent += UiTogglePause;
-			ui.GameSpeedChangeRequestedEvent += UiChangeGameSpeed;
-
 			camera.Region = region;
 
 			regionDisplay.LoadRegion(region);
@@ -109,8 +96,6 @@ namespace scenes.region {
 				ui.GetResourcesEvent -= actions.GetResourceStorage;
 				ui.GetCanBuildEvent -= actions.CanBuild;
 				ui.GetTimeStringEvent -= GetDateTimeString;
-				ui.PauseRequestedEvent -= UiTogglePause;
-				ui.GameSpeedChangeRequestedEvent -= UiChangeGameSpeed;
 				ui.GetMapObjectJobEvent -= actions.GetMapObjectsJob;
 				ui.AddJobRequestedEvent -= actions.AddJob;
 				ui.GetMaxFreeWorkersEvent -= GetJobMaxWorkers;
@@ -165,14 +150,7 @@ namespace scenes.region {
 
 		// notifications
 
-		TimeT _lastTime = 0; // debug
-		void PassTime(TimeT minutes) {
-			//var dt = GameMan.Singleton.Game.Time.Minutes - _lastTime;
-			//if (dt >= 30 && GameMan.Singleton.Game.Time.Minutes >= 60 * 8) {
-			//	ai.Update(GameMan.Singleton.Game.Time.Minutes);
-			//	_lastTime = GameMan.Singleton.Game.Time.Minutes;
-			//}
-		}
+		void PassTime(TimeT minutes) { }
 
 		void HourlyUpdate(TimeT timeInMinutes) {
 			ui.HourlyUpdate(timeInMinutes);
@@ -193,15 +171,6 @@ namespace scenes.region {
 		public string GetDateTimeString() => $"{GetTimeString()} {GameMan.Singleton.Game.Time.GetMonthDay():00}/{GameMan.Singleton.Game.Time.GetMonth() + 1:00}";
 
 		// UI action invokes
-
-		public void UiChangeGameSpeed(float by) {
-			GameMan.Singleton.MultiplyGameSpeed(GameMan.GameSpeedChanger.UI, by);
-		}
-
-		public bool UiTogglePause() {
-			GameMan.Singleton.TogglePause();
-			return GameMan.Singleton.IsPaused;
-		}
 
 		Faction GetFaction() => faction;
 

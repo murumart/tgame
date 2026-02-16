@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Godot;
 using resources.game.building_types;
+using scenes.autoload;
 using static Document;
 using IBuildingType = Building.IBuildingType;
 
@@ -31,9 +32,6 @@ namespace scenes.region.ui {
 
 		public event Func<string> GetTimeStringEvent;
 		public event Func<List<BuildingType>> GetBuildingTypesEvent;
-
-		public event Func<bool> PauseRequestedEvent;
-		public event Action<float> GameSpeedChangeRequestedEvent;
 
 		public enum State {
 			Idle,
@@ -90,9 +88,6 @@ namespace scenes.region.ui {
 			}
 		}
 
-		float gameSpeed = 1f;
-		bool gamePaused = false;
-		bool internalGamePaused = false;
 		bool timeSpeedAlteringDisabled = false;
 
 
@@ -160,7 +155,7 @@ namespace scenes.region.ui {
 
 		void OnPauseButtonPressed() {
 			if (timeSpeedAlteringDisabled) return;
-			gamePaused = PauseRequested();
+			GameMan.Singleton.TogglePause();
 			SetGameSpeedLabelText();
 		}
 
@@ -169,19 +164,17 @@ namespace scenes.region.ui {
 
 		void OnNormalSpeedButtonPressed() {
 			if (timeSpeedAlteringDisabled) return;
-			GameSpeedChangeRequested(NORMAL_SPEED);
-			gameSpeed = NORMAL_SPEED;
+			GameMan.Singleton.MultiplyGameSpeed(GameMan.GameSpeedChanger.UI, NORMAL_SPEED);
 			SetGameSpeedLabelText();
 		}
 
 		void OnFastSpeedButtonPressed() {
 			if (timeSpeedAlteringDisabled) return;
-			GameSpeedChangeRequested(FAST_SPEED);
-			gameSpeed = FAST_SPEED;
+			GameMan.Singleton.MultiplyGameSpeed(GameMan.GameSpeedChanger.UI, FAST_SPEED);
 			SetGameSpeedLabelText();
 		}
 
-		void SetGameSpeedLabelText() => gameSpeedLabel.Text = gamePaused || internalGamePaused ? "paused" : $"{gameSpeed}x game speed";
+		void SetGameSpeedLabelText() => gameSpeedLabel.Text = GameMan.Singleton.IsPaused ? "paused" : $"{GameMan.Singleton.GameSpeed}x game speed";
 
 		// menu activites
 
@@ -204,7 +197,8 @@ namespace scenes.region.ui {
 			resourceDisplay.Display();
 			DisplayResources();
 			SetGameSpeedLabelText();
-			pauseDisplayPanel.Visible = gamePaused || gameSpeed == 0f || internalGamePaused;
+			bool gamePaused = GameMan.Singleton.IsPaused || GameMan.Singleton.GameSpeed == 0f;
+			pauseDisplayPanel.Visible = gamePaused;
 		}
 
 		void DisplayResources() {
@@ -249,9 +243,7 @@ namespace scenes.region.ui {
 			}
 		}
 
-		public void OnRightMouseClick(Vector2 position, Vector2I tilePosition) {
-
-		}
+		public void OnRightMouseClick(Vector2 position, Vector2I tilePosition) { }
 
 		Vector2I inRegionTilepos;
 		public void OnTileHighlighted(Vector2I tilePosition, Region region) {
@@ -283,20 +275,26 @@ namespace scenes.region.ui {
 				}
 				if (old == State.MapObjectMenu) {
 					jobsList.Close();
-					SetTimeSpeedAltering(true);
-					if (!gamePaused) internalGamePaused = PauseRequested();
+					SetTimeSpeedAlteringAllowed(true);
+					if (GameMan.Singleton.IsPaused) GameMan.Singleton.TogglePause();
 				}
 				if (old == State.AgreementsMenu) {
 					SelectTab(Tab.None);
+					SetTimeSpeedAlteringAllowed(true);
+					if (GameMan.Singleton.IsPaused) GameMan.Singleton.TogglePause();
 				}
 			}
 			if (current == State.MapObjectMenu) {
-				SetTimeSpeedAltering(false);
-				if (!gamePaused) internalGamePaused = PauseRequested();
+				SetTimeSpeedAlteringAllowed(false);
+				if (!GameMan.Singleton.IsPaused) GameMan.Singleton.TogglePause();
+			}
+			if (current == State.AgreementsMenu) {
+				SetTimeSpeedAlteringAllowed(false);
+				if (!GameMan.Singleton.IsPaused) GameMan.Singleton.TogglePause();
 			}
 		}
 
-		void SetTimeSpeedAltering(bool to) {
+		void SetTimeSpeedAlteringAllowed(bool to) {
 			timeSpeedAlteringDisabled = !to;
 			pauseButton.Disabled = !to;
 			fastSpeedButton.Disabled = !to;
@@ -307,6 +305,7 @@ namespace scenes.region.ui {
 			state = State.Idle;
 			menuTabs.CurrentTab = -1;
 			buildingList.Reset();
+			UpdateDisplays();
 		}
 
 		public void MapClick(Vector2I tile) => MapClickEvent?.Invoke(tile);
@@ -334,10 +333,6 @@ namespace scenes.region.ui {
 		public Briefcase GetBriefcase() => GetBriefcaseEvent?.Invoke();
 
 		public string GetTimeString() => GetTimeStringEvent?.Invoke() ?? "NEVER";
-
-		public bool PauseRequested() => PauseRequestedEvent?.Invoke() ?? false;
-		public void GameSpeedChangeRequested(float spd) => GameSpeedChangeRequestedEvent?.Invoke(spd);
-
 
 	}
 

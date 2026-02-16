@@ -20,9 +20,10 @@ namespace scenes.autoload {
 		}
 
 		readonly Dictionary<GameSpeedChanger, float> gameSpeedMults = new();
-		float gameSpeed;
-		bool paused = false;
+		float gameSpeed = 1f;
+		bool paused = true;
 		public bool IsPaused => paused;
+		public float GameSpeed => gameSpeed;
 
 
 		public override void _Ready() {
@@ -45,7 +46,7 @@ namespace scenes.autoload {
 			Environment.Exit(1);
 		}
 
-		double timeAccum;
+		double timeAccum = 0.0;
 		const float gameMinutesPerRealSeconds = 2.0f;
 		public override void _Process(double delta) {
 			if (paused) return;
