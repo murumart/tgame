@@ -38,7 +38,7 @@ public class GameTime {
 	public const int HOURS_PER_DAY = 24;
 	public const int DAYS_PER_WEEK = 7;
 	public const int WEEKS_PER_MONTH = 4;
-	public const int MONTHS_PER_YEAR = 0;
+	public const int MONTHS_PER_YEAR = 12;
 
 	TimeT minutes = 0;
 	public TimeT Minutes { get => minutes; }

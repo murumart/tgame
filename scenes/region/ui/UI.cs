@@ -116,27 +116,38 @@ namespace scenes.region.ui {
 
 		public void SetupResourceDisplay() {
 			var fac = GetFaction();
-			resourceDisplay.Display(() => $"pop: {fac.GetPopulationCount()} ({fac.HomelessPopulation} homeless, {fac.UnemployedPopulation} unemployed)");
 			resourceDisplay.Display(() => {
-				var foodAndUsage = GetFoodAndUsage();
-				return $"food: {foodAndUsage.Item1} (usage {foodAndUsage.Item2})";
+				if (fac.GetPopulationCount() == 0) return "no one lives here.";
+				return $"population: {fac.GetPopulationCount()} "
+					+ $"({fac.HomelessPopulation / (float)fac.Population.Count * 100:0}% homeless, "
+					+ $"{fac.Population.EmployedCount / (float)fac.Population.Count * 100:0}% unemployed, "
+					+ $"{fac.Population.GetBirthsIncreaseModifier():0} births/year)";
 			});
-			resourceDisplay.Display(() => $"fps: {Engine.GetFramesPerSecond()}");
-			var reg = fac.Region;
-			resourceDisplay.Display(() => {
-				return $"silver: {fac.Silver}";
-			});
-			resourceDisplay.Display(() => {
-				string txt = $"{inRegionTilepos}";
-				if (reg.GroundTiles.TryGetValue(inRegionTilepos, out GroundTileType tile)) {
-					txt += $" {tile.UIString()}";
-					if (reg.HasMapObject(inRegionTilepos, out MapObject mopject)) {
-						txt += $" with {(mopject.Type as IAssetType).AssetName}";
+			if (fac.GetPopulationCount() != 0) {
+
+				resourceDisplay.Display(() => {
+					var foodAndUsage = GetFoodAndUsage();
+					return $"food: {foodAndUsage.Item1} ({foodAndUsage.Item2} eaten/day)";
+				});
+				resourceDisplay.Display(() => $"fps: {Engine.GetFramesPerSecond()}");
+				var reg = fac.Region;
+				resourceDisplay.Display(() => {
+					return $"silver: {fac.Silver}";
+				});
+				resourceDisplay.Display(() => {
+					string txt = $"{inRegionTilepos}";
+					if (reg.GroundTiles.TryGetValue(inRegionTilepos, out GroundTileType tile)) {
+						txt += $" {tile.UIString()}";
+						if (reg.HasMapObject(inRegionTilepos, out MapObject mopject)) {
+							txt += $" with {(mopject.Type as IAssetType).AssetName}";
+						}
 					}
-				}
-				return txt;
-			});
-			resourceDisplay.Display(() => $"faction: {fac.Name}");
+					return txt;
+				});
+				resourceDisplay.Display(() => $"faction: {fac.Name}");
+			} else {
+				resourceDisplay.Display(() => fac.Name);
+			}
 			resourceDisplay.DisplayFat();
 			var timeLabel = new Label {HorizontalAlignment = HorizontalAlignment.Right};
 			resourceDisplay.Display(() => GetTimeString(), timeLabel);

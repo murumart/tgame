@@ -75,7 +75,7 @@ namespace scenes.region {
 			//		faction.Resources.AddResource(new(r, 50));
 			//}
 			UILayer.DebugDisplay(() => {
-				return "hunger: " + faction.Population.Hunger;
+				return $"hunger: {faction.Population.Hunger}, growing: {faction.Population.OngrowingPopulation}";
 			});
 		}
 

@@ -21,7 +21,7 @@ public abstract partial class LocalAI {
 		chosenScore = idleScore;
 		foreach (ref readonly var action in actions) {
 			var s = action.Score();
-			Debug.Assert(!Mathf.IsNaN(s), $"Got NOT A NUMBER from scoring action {action}");
+			AIAssert(!Mathf.IsNaN(s), $"Got NOT A NUMBER from scoring action {action}");
 			if (s > chosenScore) {
 				chosenScore = s;
 				chosenAction = action;
@@ -70,7 +70,7 @@ public partial class LocalAI {
 
 		public static Action AssignWorkersToJob(DecisionFactor[] factors, FactionActions ac, Job job) {
 			return new(factors, () => {
-				Debug.Assert(job.NeedsWorkers, "Job doesn't \"need workers\"");
+				AIAssert(job.NeedsWorkers, "Job doesn't \"need workers\"", ac);
 				int maxChange = Math.Min((int)ac.GetFreeWorkers(), (int)job.MaxWorkers);
 				maxChange = Math.Min(maxChange, (int)job.MaxWorkers - job.Workers);
 				ac.ChangeJobWorkerCount(job, maxChange);
@@ -79,7 +79,7 @@ public partial class LocalAI {
 
 		public static Action RemoveWorkersFromJob(DecisionFactor[] factors, FactionActions ac, Job job) {
 			return new(factors, () => {
-				Debug.Assert(job.NeedsWorkers, "Job doesn't \"need workers\"");
+				AIAssert(job.NeedsWorkers, "Job doesn't \"need workers\"", ac);
 				int maxChange = (int)job.Workers;
 				ac.ChangeJobWorkerCount(job, -maxChange);
 			}, $"RemoveWorkersFromJob({job})");
@@ -111,7 +111,7 @@ public partial class LocalAI {
 						}
 					}
 				}
-				Debug.Assert(false, "Didn't find resource site to add job to");
+				AIAssert(false, "Didn't find resource site to add job to", ac);
 			}, $"CreateGatherJob({siteType.AssetName}, {wantedResource.AssetName})");
 		}
 
@@ -125,19 +125,19 @@ public partial class LocalAI {
 						}
 					}
 				}
-				Debug.Assert(false, "Didn't find market to add job to");
+				AIAssert(false, "Didn't find market to add job to", ac);
 			}, $"CreateProcessMarketJob()");
 		}
 
 		public static Action PlaceBuildingJob(DecisionFactor[] factors, FactionActions ac, IBuildingType buildingType) {
 			return new(factors, () => {
-				Debug.Assert(ac.Faction.HasBuildingMaterials(buildingType));
+				AIAssert(ac.Faction.HasBuildingMaterials(buildingType), "Don't have building materials", ac);
 				foreach (var pos in ac.GetTiles()) {
 					if (!ac.CanPlaceBuilding(buildingType, pos)) continue;
 					ac.PlaceBuilding(buildingType, pos);
 					return;
 				}
-				Debug.Assert(false, $"No free tiles left to place building {buildingType.AssetName}");
+				AIAssert(false, $"No free tiles left to place building {buildingType.AssetName}", ac);
 			}, $"CreateBuildingJob({buildingType.AssetName})");
 		}
 
@@ -396,7 +396,7 @@ public partial class LocalAI {
 
 }
 
-// profiling
+// profiling && debugging
 public partial class LocalAI {
 
 	public static class Profile {
@@ -434,6 +434,14 @@ public partial class LocalAI {
 			Console.WriteLine(eps + "***************");
 		}
 
+	}
+
+	public void AIAssert(bool cond, string msg) {
+		AIAssert(cond, msg, factionActions);
+	}
+
+	public static void AIAssert(bool cond, string msg, FactionActions fa) {
+		Debug.Assert(cond, $"LocalAI of {(fa?.Faction ?? null)} {msg}");
 	}
 
 }
@@ -570,7 +578,7 @@ public class GamerAI : LocalAI {
 			foreach (var toff in toffs) {
 				toff.Log($"ephemeral actions from TradeOffers with {partner}");
 				if (!toff.IsValid) GD.PushWarning(toff.History);
-				Debug.Assert(toff.IsValid, "This trade offer isn't valid, delete!!!!!");
+				AIAssert(toff.IsValid, "This trade offer isn't valid, delete!!!!!");
 				ephemeralActions.Add(Actions.AcceptTradeOffer([
 					Factors.HasFunctionalMarketplace(factionActions),
 					toff.OffererGivesRecipentSilver
