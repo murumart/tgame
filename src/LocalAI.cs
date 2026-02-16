@@ -458,6 +458,7 @@ public class GamerAI : LocalAI {
 		startActions.Add(CreateGatherJob(Registry.ResourceSitesS.BroadleafWoods, Registry.ResourcesS.Fruit));
 		startActions.Add(CreateGatherJob(Registry.ResourceSitesS.RainforestTrees, Registry.ResourcesS.Logs));
 		startActions.Add(CreateGatherJob(Registry.ResourceSitesS.RainforestTrees, Registry.ResourcesS.Fruit));
+		startActions.Add(CreateGatherJob(Registry.ResourceSitesS.FishingSpot, Registry.ResourcesS.Fish));
 		startActions.Add(CreateGatherJob(Registry.ResourceSitesS.ConiferWoods, Registry.ResourcesS.Logs));
 		startActions.Add(CreateGatherJob(Registry.ResourceSitesS.SavannaTrees, Registry.ResourcesS.Logs));
 		startActions.Add(CreateGatherJob(Registry.ResourceSitesS.Rock, Registry.ResourcesS.Rocks));
