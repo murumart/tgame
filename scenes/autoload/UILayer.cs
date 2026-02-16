@@ -14,6 +14,7 @@ namespace scenes.autoload {
 
 
 		public override void _Ready() {
+			Debug.Assert(singleton == null);
 			singleton = this;
 		}
 

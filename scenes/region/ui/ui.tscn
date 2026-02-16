@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://cf2srkx2edx3u" path="res://scenes/region/ui/build_menu.tscn" id="3_iwag8"]
 [ext_resource type="PackedScene" uid="uid://c7ew6g8hdbgfg" path="res://scenes/region/ui/map_object_menu.tscn" id="3_y7o2c"]
 [ext_resource type="PackedScene" uid="uid://bli7m2dvghbu1" path="res://scenes/region/ui/documents_display.tscn" id="5_iwag8"]
+[ext_resource type="LabelSettings" uid="uid://ddruam7fh1y7l" path="res://resources/visual/theme/label_styles/title.tres" id="5_u27i7"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_suhma"]
 bg_color = Color(0.6, 0.6, 0.6, 0)
@@ -24,7 +25,7 @@ font_color = Color(0.8352941, 0.8392157, 0.85882354, 1)
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_bjdfm"]
 
-[node name="Ui" type="MarginContainer" unique_id=948088031 node_paths=PackedStringArray("buildButton", "agreementsButton", "jobsButton", "menuTabs", "buildingList", "documentsDisplay", "jobsList", "resourceDisplay", "pauseDisplayPanel", "gameSpeedLabel", "pauseButton", "normalSpeedButton", "fastSpeedButton", "resourceLabel")]
+[node name="Ui" type="MarginContainer" unique_id=948088031 node_paths=PackedStringArray("buildButton", "agreementsButton", "jobsButton", "menuTabs", "buildingList", "documentsDisplay", "jobsList", "resourceDisplay", "pauseDisplayPanel", "gameSpeedLabel", "pauseButton", "normalSpeedButton", "fastSpeedButton", "resourceLabel", "announcementOkayButton", "announcementText", "announcementTitle", "announcementParent")]
 z_index = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -51,6 +52,10 @@ pauseButton = NodePath("VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer/
 normalSpeedButton = NodePath("VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer/NormalSpeedButton")
 fastSpeedButton = NodePath("VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer/FastButton")
 resourceLabel = NodePath("VBoxContainer/MarginContainer/Horizon/ResourcesList")
+announcementOkayButton = NodePath("NotifBoxParentParent/NotifBoxParent/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Button")
+announcementText = NodePath("NotifBoxParentParent/NotifBoxParent/PanelContainer/MarginContainer/VBoxContainer/AnnouncementText")
+announcementTitle = NodePath("NotifBoxParentParent/NotifBoxParent/PanelContainer/MarginContainer/VBoxContainer/AnnouncementTitle")
+announcementParent = NodePath("NotifBoxParentParent")
 
 [node name="PausePanel" type="Panel" parent="." unique_id=1758856808]
 visible = false
@@ -221,3 +226,55 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
 ui = NodePath("../../..")
+
+[node name="NotifBoxParentParent" type="ColorRect" parent="." unique_id=568783057]
+visible = false
+layout_mode = 2
+color = Color(0.1882353, 0.21960784, 0.2627451, 0.26666668)
+
+[node name="NotifBoxParent" type="CenterContainer" parent="NotifBoxParentParent" unique_id=1987314547]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="NotifBoxParentParent/NotifBoxParent" unique_id=310932237]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="NotifBoxParentParent/NotifBoxParent/PanelContainer" unique_id=478140880]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="VBoxContainer" type="VBoxContainer" parent="NotifBoxParentParent/NotifBoxParent/PanelContainer/MarginContainer" unique_id=156674531]
+layout_mode = 2
+
+[node name="AnnouncementTitle" type="Label" parent="NotifBoxParentParent/NotifBoxParent/PanelContainer/MarginContainer/VBoxContainer" unique_id=1141706674]
+layout_mode = 2
+text = "announcement title"
+label_settings = ExtResource("5_u27i7")
+
+[node name="AnnouncementText" type="RichTextLabel" parent="NotifBoxParentParent/NotifBoxParent/PanelContainer/MarginContainer/VBoxContainer" unique_id=2067461641]
+layout_mode = 2
+theme_override_font_sizes/normal_font_size = 10
+theme_override_font_sizes/bold_font_size = 10
+theme_override_font_sizes/bold_italics_font_size = 10
+theme_override_font_sizes/italics_font_size = 10
+theme_override_font_sizes/mono_font_size = 10
+text = "Lorem  Ipsum"
+fit_content = true
+
+[node name="HBoxContainer" type="HBoxContainer" parent="NotifBoxParentParent/NotifBoxParent/PanelContainer/MarginContainer/VBoxContainer" unique_id=2124815769]
+layout_mode = 2
+alignment = 1
+
+[node name="Button" type="Button" parent="NotifBoxParentParent/NotifBoxParent/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1241496313]
+layout_mode = 2
+focus_mode = 0
+mouse_default_cursor_shape = 2
+text = "okay"

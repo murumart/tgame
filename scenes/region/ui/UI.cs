@@ -75,6 +75,14 @@ namespace scenes.region.ui {
 
 		[Export] public RichTextLabel resourceLabel;
 
+		// announcement box
+		[Export] Button announcementOkayButton;
+		[Export] RichTextLabel announcementText;
+		[Export] Label announcementTitle;
+		[Export] Control announcementParent;
+
+		public bool AnnouncementActive { get => announcementParent.Visible; }
+
 		// internal
 
 		State _state;
@@ -100,6 +108,8 @@ namespace scenes.region.ui {
 			pauseButton.Pressed += OnPauseButtonPressed;
 			normalSpeedButton.Pressed += OnNormalSpeedButtonPressed;
 			fastSpeedButton.Pressed += OnFastSpeedButtonPressed;
+
+			announcementOkayButton.Pressed += AnnouncementOkayPressed;
 
 			Reset();
 		}
@@ -191,6 +201,50 @@ namespace scenes.region.ui {
 			menuTabs.CurrentTab = (int)which;
 		}
 
+		bool _announcePaused = false;
+
+		readonly struct AnnounceData(string text, string title, Action callback) {
+
+			public readonly string Text = text;
+			public readonly string Title = title;
+			public readonly Action Callback = callback;
+
+		}
+
+		readonly Queue<AnnounceData> queuedAnnouncements = new();
+
+		public void Announce(string text, Action callback = null, string title = "Announcement") {
+			var data = new AnnounceData(text, title, callback);
+			if (AnnouncementActive) queuedAnnouncements.Enqueue(data);
+			else Announce(data);
+		}
+
+		void Announce(AnnounceData announceData) {
+			announcementText.Text = announceData.Text;
+			announcementTitle.Text = announceData.Title;
+			announcementParent.Show();
+			if (announceData.Callback != null) {
+				announcementOkayButton.Connect(Button.SignalName.Pressed, Callable.From(announceData.Callback), (uint)ConnectFlags.OneShot);
+			}
+			if (!GameMan.Singleton.IsPaused) {
+				GameMan.Singleton.TogglePause();
+				_announcePaused = true;
+			}
+		}
+
+		void HideAnnounce() {
+			announcementParent.Hide();
+			if (_announcePaused) {
+				GameMan.Singleton.TogglePause();
+				_announcePaused = false;
+			}
+		}
+
+		void AnnouncementOkayPressed() {
+			HideAnnounce();
+			if (queuedAnnouncements.Count != 0) Announce(queuedAnnouncements.Dequeue());
+		}
+
 		// display
 
 		void UpdateDisplays() {
@@ -204,6 +258,7 @@ namespace scenes.region.ui {
 		void DisplayResources() {
 			resourceLabel.Text = "";
 			var resources = GetResourcesEvent?.Invoke();
+			if (resources == null) return;
 			foreach (var p in resources) {
 				resourceLabel.AppendText($"{p.Key.AssetName} x {p.Value.Amount}\n");
 			}
@@ -228,6 +283,7 @@ namespace scenes.region.ui {
 			if (menuTabs.CurrentTab == (int)Tab.Documents) {
 				documentsDisplay.Display();
 			}
+			Announce($"The hour is now {GameTime.GetDayHourS(timeInMinutes)}", () => GD.Print("yay! !!! hour " + GameTime.GetDayHourS(timeInMinutes)));
 		}
 
 		public void OnLeftMouseClick(Vector2 position, Vector2I tilePosition) {
@@ -306,6 +362,7 @@ namespace scenes.region.ui {
 			menuTabs.CurrentTab = -1;
 			buildingList.Reset();
 			UpdateDisplays();
+			announcementParent.Hide();
 		}
 
 		public void MapClick(Vector2I tile) => MapClickEvent?.Invoke(tile);
