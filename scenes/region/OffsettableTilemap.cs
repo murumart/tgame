@@ -4,9 +4,10 @@ namespace scenes.region;
 
 public partial class OffsettableTilemap : TileMapLayer {
 
-	public Region region;
-	public World world;
-	public bool takeIn;
+	internal Region region;
+	internal World world;
+	internal bool takeIn;
+	internal Gradient heightColorGradient;
 
 	readonly static Color BaseColor = Color.FromHtml("d5d6db");
 
@@ -14,10 +15,11 @@ public partial class OffsettableTilemap : TileMapLayer {
 
 	public override void _TileDataRuntimeUpdate(Vector2I coords, TileData tileData) {
 		var gpos = region.WorldPosition + coords;
-		var voffset = Tilemaps.TileElevationVerticalOffset(gpos, world);
+		float elevation = world.GetElevation(gpos.X, gpos.Y);
+		int voffset = Tilemaps.TileElevationVerticalOffset(elevation);
 		tileData.TextureOrigin = new Vector2I(tileData.TextureOrigin.X, voffset - 8);
 		tileData.YSortOrigin = -voffset;
-		tileData.Modulate = new Color(BaseColor + Colors.White * voffset / (Tilemaps.TILE_SIZE.Y * Tilemaps.TILE_ELE_HEIGHT_MULTIPLIER) * 0.45f, 1f);
+		tileData.Modulate = heightColorGradient.Sample(elevation * 0.5f + 0.5f);
 	}
 
 }

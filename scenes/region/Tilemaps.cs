@@ -8,6 +8,7 @@ public partial class Tilemaps : Node2D {
 
 	public readonly static Vector2I TILE_SIZE = new(64, 32);
 
+	[Export] Gradient heightColorGradient;
 	[Export] OffsettableTilemap ground; public TileMapLayer Ground => ground;
 
 
@@ -22,6 +23,7 @@ public partial class Tilemaps : Node2D {
 		ground.takeIn = true;
 		ground.world = GameMan.Singleton.Game.Map.World;
 		ground.region = from;
+		ground.heightColorGradient = heightColorGradient;
 		foreach (var pair in from.GroundTiles) {
 			var type = GroundCellType.MatchTileTypeToCell(pair.Value);
 			ground.SetCell(pair.Key, type.SourceId, type.AtlasCoords);
@@ -53,10 +55,13 @@ public partial class Tilemaps : Node2D {
 		return tilecenter;
 	}
 
-	public const int TILE_ELE_HEIGHT_MULTIPLIER = 6;
+	public const int TILE_ELE_HEIGHT_MULTIPLIER = 8;
 	public static int TileElevationVerticalOffset(Vector2I globalTilePos, World world) {
-		//return 0;
-		var visualEle = Mathf.Max(0f, world.GetElevation(globalTilePos.X, globalTilePos.Y));
+		return TileElevationVerticalOffset(world.GetElevation(globalTilePos.X, globalTilePos.Y));
+	}
+
+	public static int TileElevationVerticalOffset(float elevation) {
+		var visualEle = Mathf.Max(0f, elevation);
 		return (int)(visualEle * TILE_SIZE.Y * TILE_ELE_HEIGHT_MULTIPLIER);
 	}
 

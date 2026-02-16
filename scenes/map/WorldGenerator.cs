@@ -47,6 +47,7 @@ namespace scenes.map {
 		[Export] Curve humidityCurve;
 		[Export] Curve temperaturePolarEquatorCurve;
 		[Export] Curve elevationTemperatureReductionCurve;
+		[Export] float temperatureNoiseCoef;
 		[Export] Curve populationLandTileCurve;
 		[Export] Godot.Collections.Array<ResourceSiteGenerationParameters> resourceSiteGenerationParameters;
 
@@ -132,6 +133,7 @@ namespace scenes.map {
 						temperaturePolarEquatorCurve.SampleBaked(distanceFromEquator),
 						seawindTemperatureModCurve.SampleBaked(seawind)
 					);
+					temperatureSample += rng.Randf() * temperatureNoiseCoef; // randomizing temp a bit
 					temperatureSample -= elevationTemperatureReductionCurve.SampleBaked(continentSample);
 					temperatureSample = Mathf.Clamp(temperatureSample, -1f, 1f);
 					world.SetTemperature(x, y, temperatureSample);

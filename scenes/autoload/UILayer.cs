@@ -43,6 +43,7 @@ namespace scenes.autoload {
 
 		public static void DebugDisplay(Func<string> output) {
 			var label = new Label();
+			label.LabelSettings = GD.Load<LabelSettings>("res://resources/visual/theme/label_styles/debug.tres");
 			singleton.debugLabelParent.AddChild(label);
 			label.SetMeta("callback", Callable.From(output));
 		}

@@ -116,10 +116,10 @@ script = ExtResource("9_1p0hh")
 Target = ExtResource("14_nugjq")
 MinElevation = 0.02
 MaxElevation = 0.42
-MinTemperature = 0.415
+MinTemperature = 0.39
 MinHumidity = 0.18
 MaxHumidity = 0.395
-Rarity = 0.9
+Rarity = 2.0
 metadata/_custom_type_script = "uid://dpr7b2iecx6gm"
 
 [sub_resource type="Resource" id="Resource_aa3pw"]
@@ -183,6 +183,7 @@ elevationHumidityAdditionCurve = SubResource("Curve_1p0hh")
 humidityCurve = SubResource("Curve_iffmc")
 temperaturePolarEquatorCurve = SubResource("Curve_h4q0h")
 elevationTemperatureReductionCurve = SubResource("Curve_3biw4")
+temperatureNoiseCoef = 0.03
 populationLandTileCurve = SubResource("Curve_vqee5")
 resourceSiteGenerationParameters = Array[Object]([SubResource("Resource_getmw"), SubResource("Resource_dtgda"), SubResource("Resource_pnmcl"), SubResource("Resource_iffmc"), SubResource("Resource_nugjq"), SubResource("Resource_a1kp6"), SubResource("Resource_aa3pw"), SubResource("Resource_f71yy")])
 
