@@ -81,6 +81,14 @@ public class GroundCellType {
 		SourceId = 1,
 		AtlasCoords = Vector2I.Zero,
 	};
+	public readonly static GroundCellType SANDY_GRASS = new() {
+		SourceId = 1,
+		AtlasCoords = Vector2I.One,
+	};
+	public readonly static GroundCellType WATER_BED = new() {
+		SourceId = 1,
+		AtlasCoords = new Vector2I(1, 2),
+	};
 	public readonly static GroundCellType SAND = new() {
 		SourceId = 1,
 		AtlasCoords = new Vector2I(1, 0),
@@ -99,8 +107,12 @@ public class GroundCellType {
 
 
 	public static GroundCellType MatchTileTypeToCell(GroundTileType t) {
-		if ((t & GroundTileType.HasLand) == 0) return GroundCellType.WATER;
+		if ((t & GroundTileType.HasLand) == 0) {
+			if ((t & GroundTileType.HasVeg) != 0) return GroundCellType.WATER_BED;
+			return GroundCellType.WATER;
+		}
 		if ((t & GroundTileType.HasLand) != 0) {
+			if ((t & GroundTileType.HasSand) != 0 && (t & GroundTileType.HasVeg) != 0) return GroundCellType.SANDY_GRASS;
 			if ((t & GroundTileType.HasSand) != 0) return GroundCellType.SAND;
 			if ((t & GroundTileType.HasVeg) != 0) return GroundCellType.GRASS;
 			if ((t & GroundTileType.HasSnow) != 0) return GroundCellType.SNOW;

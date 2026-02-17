@@ -14,7 +14,7 @@ metadata/_custom_type_script = "uid://cbiuqlrd8yyxx"
 [sub_resource type="Resource" id="Resource_xe7w0"]
 script = ExtResource("3_xe7w0")
 resourceType = ExtResource("2_1cfjn")
-minutesPerBunch = 60
+minutesPerBunch = 480
 bunchSize = 2
 minutesPerBunchRegen = 5760
 initialBunches = 140

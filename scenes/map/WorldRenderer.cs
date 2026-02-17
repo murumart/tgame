@@ -53,10 +53,10 @@ public partial class WorldRenderer : Node {
 
 	public void ResetImages() {
 		GD.Print("WorldRenderer::ResetImages : reset images");
-		Image worldImage = Image.CreateEmpty(world.Longitude, world.Latitude, false, Image.Format.Rgba4444);
-		Image regionImage = Image.CreateEmpty(world.Longitude, world.Latitude, false, Image.Format.Rgba4444);
+		Image worldImage = Image.CreateEmpty(world.Width, world.Height, false, Image.Format.Rgba4444);
+		Image regionImage = Image.CreateEmpty(world.Width, world.Height, false, Image.Format.Rgba4444);
 		regionImage.Fill(Colors.White);
-		Image highlightImage = Image.CreateEmpty(world.Longitude, world.Latitude, false, Image.Format.Rgba4444);
+		Image highlightImage = Image.CreateEmpty(world.Width, world.Height, false, Image.Format.Rgba4444);
 		groundSprite.Texture = ImageTexture.CreateFromImage(worldImage);
 		RegionSprite.Texture = ImageTexture.CreateFromImage(regionImage);
 		highlightSprite.Texture = ImageTexture.CreateFromImage(highlightImage);
@@ -74,8 +74,8 @@ public partial class WorldRenderer : Node {
 	void DrawContinents() {
 		if (world == null) return;
 		var worldImage = GetImage(groundSprite);
-		for (int x = 0; x < world.Longitude; x++) {
-			for (int y = 0; y < world.Latitude; y++) {
+		for (int x = 0; x < world.Width; x++) {
+			for (int y = 0; y < world.Height; y++) {
 				const float eleColorThreshold = 0.02f;
 				const float ldarkAmount = 0.15f;
 				float ele = world.GetElevation(x, y);
@@ -94,8 +94,8 @@ public partial class WorldRenderer : Node {
 	void DrawTemperature() {
 		if (world == null) return;
 		var worldImage = GetImage(groundSprite);
-		for (int x = 0; x < world.Longitude; x++) {
-			for (int y = 0; y < world.Latitude; y++) {
+		for (int x = 0; x < world.Width; x++) {
+			for (int y = 0; y < world.Height; y++) {
 				Color color = temperatureGradient.Sample(world.GetTemperature(x, y) * 0.5f + 0.5f);
 				worldImage.SetPixel(x, y, color);
 			}
@@ -107,8 +107,8 @@ public partial class WorldRenderer : Node {
 	void DrawSeaWind() {
 		if (world == null) return;
 		var worldImage = GetImage(groundSprite);
-		for (int x = 0; x < world.Longitude; x++) {
-			for (int y = 0; y < world.Latitude; y++) {
+		for (int x = 0; x < world.Width; x++) {
+			for (int y = 0; y < world.Height; y++) {
 				Color color = seaWindGradient.Sample(world.GetSeaWind(x, y));
 				worldImage.SetPixel(x, y, color);
 			}
@@ -120,8 +120,8 @@ public partial class WorldRenderer : Node {
 	void DrawHumidity() {
 		if (world == null) return;
 		var worldImage = GetImage(groundSprite);
-		for (int x = 0; x < world.Longitude; x++) {
-			for (int y = 0; y < world.Latitude; y++) {
+		for (int x = 0; x < world.Width; x++) {
+			for (int y = 0; y < world.Height; y++) {
 				Color color = humidityGradient.Sample(world.GetHumidity(x, y));
 				worldImage.SetPixel(x, y, color);
 			}
@@ -134,8 +134,8 @@ public partial class WorldRenderer : Node {
 		if (world == null) return;
 		var worldImage = GetImage(groundSprite);
 		var textureImage = GD.Load<Texture2D>("res://scenes/region/tiles1.png").GetImage();
-		for (int x = 0; x < world.Longitude; x++) {
-			for (int y = 0; y < world.Latitude; y++) {
+		for (int x = 0; x < world.Width; x++) {
+			for (int y = 0; y < world.Height; y++) {
 				var tile = world.GetTile(x, y);
 				var celltype = GroundCellType.MatchTileTypeToCell(tile);
 				var v = new Vector2I(celltype.AtlasCoords.X * 64 + 32, celltype.AtlasCoords.Y * 48 + 16);

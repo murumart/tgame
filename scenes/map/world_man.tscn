@@ -48,7 +48,7 @@ point_count = 4
 
 [sub_resource type="Curve" id="Curve_iffmc"]
 _limits = [0.0, 1.0, -1.0, 1.0]
-_data = [Vector2(-1, 0), 0.0, 0.0, 0, 0, Vector2(-0.88397783, 0.19189191), 0.39135125, 0.39135125, 0, 0, Vector2(0.7900553, 0.34648645), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+_data = [Vector2(-1, 0), 0.0, 0.0, 0, 0, Vector2(-0.88397783, 0.19189191), 0.39135125, 0.39135125, 0, 0, Vector2(0.7763579, 0.397561), 0.1550684, 0.1550684, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
 point_count = 4
 
 [sub_resource type="Curve" id="Curve_h4q0h"]

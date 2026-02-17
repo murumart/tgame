@@ -36,9 +36,11 @@ namespace scenes.map {
 				var mousePos = new Vector2I((int)GetGlobalMousePosition().X, (int)GetGlobalMousePosition().Y);
 				return $"{mousePos}";
 			});
+			worldUI.ResourceDisplay.Display(() => $"seed: {world?.Seed ?? 1377}");
 
 			if (GameMan.Singleton.Game.Map.World != null) {
 				map = GameMan.Singleton.Game.Map;
+				world = map.World;
 				worldRenderer.Draw(map.World);
 				worldRenderer.DrawRegions(map.GetRegions());
 				return;
@@ -79,7 +81,7 @@ namespace scenes.map {
 		async void GenerateNewWorld() {
 			this.map = null;
 			worldUI.SelectRegion(null);
-			world = new(worldGenerator.WorldWidth, worldGenerator.WorldHeight);
+			world = new(worldGenerator.WorldWidth, worldGenerator.WorldHeight, GD.Randi());
 			worldGenerator.GenerateContinents(world);
 			worldRenderer.Draw(world);
 

@@ -24,7 +24,7 @@ public class Population {
 	readonly HashSet<Job> employedOnJobs = new();
 
 	public float OngrowingPopulation { get; private set; }
-	
+
 	TimeT time;
 
 
@@ -140,7 +140,7 @@ public class Population {
 	}
 
 	public float GetBirthsIncreaseModifier() {
-		if (Hunger > 0) return 0f;
+		if (ArePeopleStarving) return 0f;
 		float lessthanpop = Mathf.Max(0, (float)Count - 1f);
 		float lessthanhoused = Mathf.Max(0, (float)HousedCount - 1f);
 		return (lessthanpop - lessthanhoused) * 0.05f + (lessthanhoused) * 0.5f;

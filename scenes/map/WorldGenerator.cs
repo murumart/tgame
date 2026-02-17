@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Godot;
-using resouces.game;
 using resources.game;
-using static ResourceSite;
 
 namespace scenes.map {
 
@@ -58,11 +56,11 @@ namespace scenes.map {
 		public bool Generating { get; private set; }
 
 
-		public override void _Ready() {
-			rng = new();
-		}
-
 		public void GenerateContinents(World world) {
+			rng = new() {
+				Seed = world.Seed
+			};
+
 			Generating = true;
 
 			continentNoise.Seed = (int)rng.Randi();
@@ -70,10 +68,10 @@ namespace scenes.map {
 			humidityNoise.Seed = (int)rng.Randi();
 			seawindGainNoise.Seed = (int)rng.Randi();
 
-			var centre = new Vector2(world.Longitude / 2, world.Latitude / 2);
-			var divBySidelen = 1.0f / (float)(Math.Pow(world.Longitude / 2.0, 2) + Math.Pow(world.Latitude / 2.0, 2));
-			for (int x = 0; x < world.Longitude; x++) {
-				for (int y = 0; y < world.Latitude; y++) {
+			var centre = new Vector2(world.Width / 2, world.Height / 2);
+			var divBySidelen = 1.0f / (float)(Math.Pow(world.Width / 2.0, 2) + Math.Pow(world.Height / 2.0, 2));
+			for (int x = 0; x < world.Width; x++) {
+				for (int y = 0; y < world.Height; y++) {
 					var vec = new Vector2(x, y);
 
 					float continentSample = continentNoise.GetNoise2D(x, y);
@@ -86,12 +84,13 @@ namespace scenes.map {
 				}
 			}
 			// creating initial seawind
-			for (int xinc = 0; xinc < world.Longitude; xinc++) {
-				for (int yinc = 0; yinc < world.Latitude; yinc++) {
+			GD.Print("WorldGenerator::GenerateContinents : seawind direction ", world.SeaWindDirection);
+			for (int xinc = 0; xinc < world.Width; xinc++) {
+				for (int yinc = 0; yinc < world.Height; yinc++) {
 					int x = xinc;
 					int y = yinc;
-					if (world.SeaWindDirection.X == -1) x = world.Longitude - xinc - 1;
-					if (world.SeaWindDirection.Y == -1) y = world.Latitude - yinc - 1;
+					if (world.SeaWindDirection.X == -1) x = world.Width - xinc - 1;
+					if (world.SeaWindDirection.Y == -1) y = world.Height - yinc - 1;
 
 					float continentSample = world.GetElevation(x, y);
 					float previousContinentSample = world.GetElevation(x - world.SeaWindDirection.X, y - world.SeaWindDirection.Y);
@@ -107,8 +106,8 @@ namespace scenes.map {
 			}
 			// blurring the seawind
 			float kernelSum = kernel.Sum(k => k.Coef);
-			for (int x = 0; x < world.Longitude; x++) {
-				for (int y = 0; y < world.Latitude; y++) {
+			for (int x = 0; x < world.Width; x++) {
+				for (int y = 0; y < world.Height; y++) {
 					float val = 0;
 					foreach (var p in kernel) {
 						val += world.GetSeaWind(x + p.X, y + p.Y) * p.Coef;
@@ -117,17 +116,17 @@ namespace scenes.map {
 					world.SetSeaWind(x, y, val);
 				}
 			}
-			for (int xinc = 0; xinc < world.Longitude; xinc++) {
-				for (int yinc = 0; yinc < world.Latitude; yinc++) {
+			for (int xinc = 0; xinc < world.Width; xinc++) {
+				for (int yinc = 0; yinc < world.Height; yinc++) {
 					int x = xinc;
 					int y = yinc;
-					if (world.SeaWindDirection.X == -1) x = world.Longitude - xinc - 1;
-					if (world.SeaWindDirection.Y == -1) y = world.Latitude - yinc - 1;
+					if (world.SeaWindDirection.X == -1) x = world.Width - xinc - 1;
+					if (world.SeaWindDirection.Y == -1) y = world.Height - yinc - 1;
 
 					float seawind = world.GetSeaWind(x, y);
 					float continentSample = world.GetElevation(x, y);
 
-					float distanceFromEquator = Math.Abs(y - world.Latitude * 0.5f) / (world.Latitude * 0.5f);
+					float distanceFromEquator = Math.Abs(y - world.Height * 0.5f) / (world.Height * 0.5f);
 					float temperatureSample = Mathf.Lerp(
 						temperatureNoise.GetNoise2D(x, y),
 						temperaturePolarEquatorCurve.SampleBaked(distanceFromEquator),
@@ -146,8 +145,8 @@ namespace scenes.map {
 				}
 			}
 
-			for (int x = 0; x < world.Longitude; x++) {
-				for (int y = 0; y < world.Latitude; y++) {
+			for (int x = 0; x < world.Width; x++) {
+				for (int y = 0; y < world.Height; y++) {
 					var ele = world.GetElevation(x, y);
 					var humi = world.GetHumidity(x, y);
 					var temp = world.GetTemperature(x, y);
@@ -157,9 +156,13 @@ namespace scenes.map {
 						if (ele <= 0.012f) tile |= GroundTileType.HasSand;
 						else if (humi > 0.15f) {
 							if (temp < 0) tile |= GroundTileType.HasSnow;
-							else tile |= GroundTileType.HasVeg;
-						} else tile |= GroundTileType.HasSand;
+							else {
+								tile |= GroundTileType.HasVeg;
+								if (temp > 0.4 && humi < 0.45) tile |= GroundTileType.HasSand;
+							}
+						}
 					}
+					if (humi > 0.45 && rng.Randf() < 0.02 * humi && temp > 0f) tile |= GroundTileType.HasVeg;
 					world.SetTile(x, y, tile);
 				}
 			}
@@ -197,18 +200,6 @@ namespace scenes.map {
 					var humi = world.GetHumidity(wpos.X, wpos.Y);
 					var temp = world.GetTemperature(wpos.X, wpos.Y);
 					ResourceSiteGenerationParameters siteType = null;
-					//foreach (var genpara in resourceSiteGenerationParameters) {
-					//	if (ele < genpara.MinElevation || ele > genpara.MaxElevation) continue;
-					//	if (humi < genpara.MinHumidity || humi > genpara.MaxHumidity) continue;
-					//	if (temp < genpara.MinTemperature || temp > genpara.MaxTemperature) continue;
-					//	var eles =  ResourceSiteGenerationParameters.ParamDistance(genpara.MinElevation, genpara.MaxElevation, ele);
-					//	var humis = ResourceSiteGenerationParameters.ParamDistance(genpara.MinHumidity, genpara.MaxHumidity, humi);
-					//	var temps = ResourceSiteGenerationParameters.ParamDistance(genpara.MinTemperature, genpara.MaxTemperature, temp);
-					//	if (eles + humis + temps < distance) {
-					//		distance = eles + humis + temps;
-					//		siteType = genpara;
-					//	}
-					//}
 					siteType = resourceSiteGenerationParameters[rng.RandiRange(0, resourceSiteGenerationParameters.Count - 1)];
 					if (siteType == null) continue;
 					if (ele < siteType.MinElevation || ele > siteType.MaxElevation) continue;
@@ -235,12 +226,13 @@ namespace scenes.map {
 			int regionsMade = 0;
 
 			while (regionsMade < regionCount) {
-				var tile = new Vector2I(rng.RandiRange(0, world.Longitude - 1), rng.RandiRange(0, world.Latitude - 1));
+				var tile = new Vector2I(rng.RandiRange(0, world.Width - 1), rng.RandiRange(0, world.Height - 1));
 				while (
 					(world.GetTile(tile.X, tile.Y) & GroundTileType.HasVeg) == 0
+					|| (world.GetTile(tile.X, tile.Y) & GroundTileType.HasLand) == 0
 					|| startPoses.ContainsKey(tile)
 				) {
-					tile = new Vector2I(rng.RandiRange(0, world.Longitude - 1), rng.RandiRange(0, world.Latitude - 1));
+					tile = new Vector2I(rng.RandiRange(0, world.Width - 1), rng.RandiRange(0, world.Height - 1));
 				}
 				Debug.Assert(!startPoses.ContainsKey(tile), "Two regions can't start on the same tile!");
 				var region = new Region(regionsMade, tile, new());
@@ -267,7 +259,7 @@ namespace scenes.map {
 				var grew = GrowAllRegionsOneStep(regions, occupied, freeEdgeTiles, world, sea: sea, iterations: 128);
 				Regions = regions;
 				if (!grew) {
-					tw.EmitSignal("finished");
+					tw.EmitSignal(Tween.SignalName.Finished);
 					tw.Stop();
 				}
 			});
@@ -275,7 +267,7 @@ namespace scenes.map {
 			tw.TweenCallback(growCallback);
 			tw.TweenInterval(0.06);
 
-			await ToSignal(tw, "finished");
+			await ToSignal(tw, Tween.SignalName.Finished);
 
 			// fill regionless tiles
 			//for (int x = 0; x < world.Longitude; x++) {
@@ -380,7 +372,7 @@ namespace scenes.map {
 			occupied.TryGetValue(where, out Region there);
 			var local = where - region.WorldPosition;
 			//var tileAt = world.GetTile(where.X, where.Y);
-			if (there == null && /*tileAt == allowedTile && */ !addKeys.Contains(local) && where.X >= 0 && where.X < world.Longitude && where.Y >= 0 && where.Y < world.Latitude) {
+			if (there == null && /*tileAt == allowedTile && */ !addKeys.Contains(local) && where.X >= 0 && where.X < world.Width && where.Y >= 0 && where.Y < world.Height) {
 				Debug.Assert(!occupied.ContainsKey(where), "Tile I thought was good to grow onto is already planned to be used!!");
 				addKeys.Add(local);
 				Debug.Assert(!occupied.ContainsKey(where), "Tile I thought was good to grow onto is already occupied!!");
