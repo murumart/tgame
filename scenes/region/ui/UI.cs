@@ -123,10 +123,14 @@ namespace scenes.region.ui {
 				return $"population: {fac.GetPopulationCount()} "
 					+ $"({fac.HomelessPopulation / (float)fac.Population.Count * 100:0}% homeless, "
 					+ $"{fac.Population.EmployedCount / (float)fac.Population.Count * 100:0}% employed, "
-					+ $"{fac.Population.GetBirthsIncreaseModifier():0} births/year)";
+					+ $"{fac.Population.GetYearlyBirths():0} births/year)";
 			});
 			if (fac.GetPopulationCount() != 0) {
 				var reg = fac.Region;
+				resourceDisplay.Display(() => {
+					float monthlyChange = fac.Population.GetApprovalMonthlyChange();
+					return $"approval: {fac.Population.Approval * 100:0}% ({(monthlyChange >= 0f ? "+" : "")}{monthlyChange * 100:0}%/month)";
+				});
 				resourceDisplay.Display(() => {
 					return $"silver: {fac.Silver}";
 				});

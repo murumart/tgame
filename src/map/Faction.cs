@@ -62,6 +62,7 @@ public class Faction : IEntity {
 		Population = new();
 		Population.FoodRequested += OnGetMoreFoodRequested;
 		Population.JobEmploymentChanged += (j, a) => JobChangedEvent?.Invoke(j, a);
+		Population.SilverRequested += () => Silver;
 		Population.Manifest(initialPopulation);
 
 		Region.SetLocalFaction(this);

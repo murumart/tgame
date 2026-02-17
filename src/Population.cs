@@ -6,6 +6,7 @@ using scenes.autoload;
 public class Population {
 
 	public event Func<uint, uint> FoodRequested;
+	public event Func<int> SilverRequested;
 	public event Action<Job, int> JobEmploymentChanged;
 
 	public uint Count { get; private set; }
@@ -25,19 +26,25 @@ public class Population {
 
 	public float OngrowingPopulation { get; private set; }
 
+	public float Approval { get; private set; }
+
 	TimeT time;
 
 
-	public Population() { }
+	public Population() {
+		Approval = 0.5f;
+	}
 
 	public void PassTime(TimeT minutes) {
 		EatFood(minutes);
 
-		OngrowingPopulation += (GetBirthsIncreaseModifier() * minutes) / GameTime.Years(1);
+		OngrowingPopulation += (GetYearlyBirths() * minutes) / GameTime.Years(1);
 		while (OngrowingPopulation >= 1f) {
 			OngrowingPopulation -= 1f;
 			Manifest(1);
 		}
+
+		Approval = Mathf.Clamp(Approval + (GetApprovalMonthlyChange() * minutes) / GameTime.Months(1), 0f, 1f);
 	}
 
 	public void EatFood(TimeT minutesPassed) {
@@ -139,11 +146,21 @@ public class Population {
 		JobEmploymentChanged?.Invoke(job, -(int)amount);
 	}
 
-	public float GetBirthsIncreaseModifier() {
+	public float GetYearlyBirths() {
 		if (ArePeopleStarving) return 0f;
 		float lessthanpop = Mathf.Max(0, (float)Count - 1f);
 		float lessthanhoused = Mathf.Max(0, (float)HousedCount - 1f);
 		return (lessthanpop - lessthanhoused) * 0.05f + (lessthanhoused) * 0.5f;
+	}
+
+	public float GetApprovalMonthlyChange() {
+		if (Count == 0) return 0f;
+		float a = 0f;
+		if (ArePeopleStarving) a -= 50f;
+		a -= ((float)Count - HousedCount) / Count;
+		int silver = SilverRequested?.Invoke() ?? 0;
+		a += 0.05f * Mathf.Clamp(Mathf.Pow((silver - 30) / 10f, 3), -27f, 27f);
+		return a;
 	}
 
 }

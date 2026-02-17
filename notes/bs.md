@@ -72,21 +72,21 @@ Seda võiks teha automaatselt. Kui resourceewant mingil lõppproduktil on kõrge
 
 ### Mida teha enne ekspot
 
-- approval rating
-  - see võiks tõusta mingite esemete tekkides (nt mööbel - majadesse mööbeldamise job? tõstaks mingit statti ja approvalit)
-  - kukuks rängalt kui nälgimine käib
-  - gameover kui 0
-- asju mida tarneahelates teha
-  - puidu laudadeks töötlemine
-  - terade jahuks töötlemine
-  - jahu leivaks töötlemine
-- info
-  - alguses notif mängija omaniku nimest
-  - ressursside nimekirjas märgend praegusest nõudmisest
-  - mingi märguande ikoon uute treidide kohta turul
-  - märguannete nimekiri ekraanil kogu aeg, logi tab kus eelmised notifid factioni koha
-    - ära lihtsalt pane rtlabelisse, gene tekst nt kuu kaupa kui nuppu vajutatakse
-  - ribad näitamaks kui kaugel mingi mopbjecti tööga ollakse
-  - riba näitab kui depleted a resource site is
-- ehitiste eemaldamine
-- ressursiallikate eemaldamine (kui pole ruumi panna midagi kuhugi)
+- [ ] approval rating
+  - [ ] see võiks tõusta mingite esemete tekkides (nt mööbel - majadesse mööbeldamise job? tõstaks mingit statti ja approvalit)
+  - [ ] kukuks rängalt kui nälgimine käib
+  - [ ] gameover kui 0
+- [ ] asju mida tarneahelates teha
+  - [ ] puidu laudadeks töötlemine
+  - [ ] terade jahuks töötlemine
+  - [ ] jahu leivaks töötlemine
+- [ ] info
+  - [ ] alguses notif mängija omaniku nimest
+  - [ ] ressursside nimekirjas märgend praegusest nõudmisest
+  - [ ] mingi märguande ikoon uute treidide kohta turul
+  - [ ] märguannete nimekiri ekraanil kogu aeg, logi tab kus eelmised notifid factioni koha
+    - [ ] ära lihtsalt pane rtlabelisse, gene tekst nt kuu kaupa kui nuppu vajutatakse
+  - [ ] ribad näitamaks kui kaugel mingi mopbjecti tööga ollakse
+  - [ ] riba näitab kui depleted a resource site is
+- [ ] ehitiste eemaldamine
+- [ ] ressursiallikate eemaldamine (kui pole ruumi panna midagi kuhugi)
