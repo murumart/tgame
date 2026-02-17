@@ -156,6 +156,7 @@ public partial class MapObjectMenu : Control {
 			//}
 			if (b.GetHousingCapacity() > 0 && b.IsConstructed) {
 				sb.Append($"Housing room for {b.GetHousingCapacity()} people.\n");
+				sb.Append(b.HasFurniture ? "Is furnished.\n" : "Is without furniture.\n");
 			}
 		} else if (myMapObject is ResourceSite r) {
 			titleLabel.Text = r.Type.AssetName.Capitalize();

@@ -90,36 +90,6 @@ public class ConstructBuildingJob : MapObjectJob {
 
 }
 
-public class FishByHandJob : Job {
-
-	public override string Title => "Fish by Hand";
-
-	ResourceStorage storage;
-
-
-	public FishByHandJob() {
-		MaxWorkers = 5;
-	}
-
-	public override void Deinitialise(Faction ctxFaction) { }
-
-	public override bool CanInitialise(Faction ctxFaction) => true;
-
-	public override Job Copy() => new FishByHandJob();
-
-	public override void Initialise(Faction ctxFaction) {
-		storage = ctxFaction.Resources;
-	}
-
-	public override void PassTime(TimeT minutes) {
-		GD.Print("FishByHandJob::PassTime : We fish x", minutes);
-	}
-
-	public override float GetWorkTime(TimeT minutes) {
-		throw new NotImplementedException();
-	}
-}
-
 public class GatherResourceJob : MapObjectJob {
 
 	public override string Title {
@@ -374,12 +344,11 @@ public class ProcessMarketJob : MapObjectJob {
 			return tradeOffers;
 		}
 	}
-	readonly TimeT timeTaken;
+	readonly TimeT timeTaken = GameTime.Hours(12);
 
 
 	public ProcessMarketJob() {
 		MaxWorkers = 10;
-		timeTaken = GameTime.Hours(12);
 	}
 
 	public override Job Copy() => throw new NotImplementedException();
@@ -445,5 +414,78 @@ public class ProcessMarketJob : MapObjectJob {
 		timeLeft /= GetWorkTime(1);
 		return GameTime.GetFancyTimeString((TimeT)timeLeft) + " until more trade offers are processed.";
 	}
+
+}
+
+public class AddFurnitureJob : MapObjectJob {
+
+	public override string Title => "Furnish";
+
+	public override Vector2I GlobalPosition => building.GlobalPosition;
+
+	public override bool IsValid => building != null;
+
+	ResourceStorage resources;
+	readonly Building building;
+	readonly TimeT timeTaken = GameTime.Hours(7);
+	float timeSpent = 0f;
+
+	readonly ResourceBundle requirements = new(Registry.ResourcesS.Furniture, 5);
+
+
+	public AddFurnitureJob(Building building) {
+		this.building = building;
+		MaxWorkers = 3;
+	}
+
+	public override Job Copy() {
+		throw new NotImplementedException();
+	}
+
+	public override bool CanInitialise(Faction ctxFaction, MapObject mapObject) {
+		return mapObject is Building b && !b.HasFurniture;
+	}
+
+	public override void Initialise(Faction ctxFaction, MapObject mapObject) {
+		Debug.Assert(ctxFaction != null && mapObject != null);
+		Debug.Assert(mapObject is Building);
+		Debug.Assert(mapObject == building, "This map object is noyt my buildign");
+		Debug.Assert(CanInitialise(ctxFaction, mapObject));
+
+		resources = ctxFaction.Resources;
+	}
+
+	public override void Deinitialise(Faction ctxFaction) { }
+
+	public override float GetWorkTime(TimeT minutes) => minutes * MathF.Pow(Workers, 0.6f);
+
+	public override void PassTime(TimeT minutes) {
+		if (!resources.HasEnough(requirements)) return;
+		timeSpent += GetWorkTime(minutes);
+		if (timeSpent >= timeTaken) {
+			building.HasFurniture = true;
+			resources.SubtractResource(requirements);
+		}
+	}
+
+	public override void CheckDone(Faction regionFaction) {
+		if (building.HasFurniture) regionFaction.RemoveJob(this);
+	}
+
+	public override float GetProgressEstimate() => timeSpent / timeTaken;
+
+	public override string GetResourceRequirementDescription() {
+		return $"Need {requirements.Amount} {requirements.Type.AssetName}";
+	}
+
+	public override string GetStatusDescription() {
+		if (!resources.HasEnough(requirements)) return GetResourceRequirementDescription();
+		if (Workers == 0) return "";
+		float timeLeft = timeTaken - timeSpent;
+		timeLeft /= GetWorkTime(1);
+		return GameTime.GetFancyTimeString((TimeT)timeLeft) + $" until the {building.Type.AssetName} is furnished.";
+	}
+
+	public override string GetProductionDescription() => !resources.HasEnough(requirements) ? "" : $"This {building.Type.AssetName} will be furnished.";
 
 }

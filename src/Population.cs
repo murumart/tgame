@@ -7,6 +7,7 @@ public class Population {
 
 	public event Func<uint, uint> FoodRequested;
 	public event Func<int> SilverRequested;
+	public event Func<float> FurnitureRateRequested;
 	public event Action<Job, int> JobEmploymentChanged;
 
 	public uint Count { get; private set; }
@@ -161,6 +162,7 @@ public class Population {
 			reasons[1].Item2 = "people are starving";
 			reasons[2].Item2 = "there are homeless people";
 			reasons[3].Item2 = "your coffers are";
+			reasons[4].Item2 = "furnidur";
 		}
 		if (Count == 0) {
 			return;
@@ -168,9 +170,12 @@ public class Population {
 		reasons[1].Item1 = ArePeopleStarving ? -50f : 0f;
 		reasons[2].Item1 = -((float)Count - HousedCount) / Count * 0.5f;
 		int silver = SilverRequested?.Invoke() ?? 0;
-		float silverapprovalchange = 0.05f * Mathf.Clamp(Mathf.Pow((silver - 30) / 10f, 3), -27f, 27f);
+		float silverapprovalchange = 0.005f * Mathf.Clamp(Mathf.Pow((silver - 30), 3) / 15f, -27f, 27f);
 		reasons[3].Item1 = silverapprovalchange;
-		reasons[3].Item2 = silverapprovalchange > 0.05f ? "your coffers are full" : silverapprovalchange < -0.05f ? "your faction is poor" : "your budget is just okay";
+		reasons[3].Item2 = silverapprovalchange > 0.005f ? "your coffers are full" : silverapprovalchange < -0.005f ? "your faction is poor" : "your budget is just okay";
+		float furnitureapprovalchange = 0.1f * Mathf.Clamp(Mathf.Pow((FurnitureRateRequested?.Invoke() ?? 0f - 0.1f), 3) / 0.8f, -0.16f, 0.16f);
+		reasons[4].Item1 = furnitureapprovalchange;
+		reasons[4].Item2 = furnitureapprovalchange > 0f ? "people have furniture in their homes" : "people are missing furniture in their homes";
 	}
 
 	public (float, string)[] GetApprovalMonthlyChangeReasons() => reasons;

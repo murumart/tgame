@@ -43,7 +43,8 @@ public partial class Building : MapObject {
 	float constructionProgress; // in minutes
 	public bool IsConstructed => IsConstructedProgress(constructionProgress);
 	public bool IsConstructedProgress(float progress) => progress >= type.GetHoursToConstruct() * 60;
-	public ConstructBuildingJob ConstructionJob;
+
+	public bool HasFurniture;
 
 
 	protected Building(IBuildingType type, Vector2I globalPosition) : base(globalPosition) {
@@ -65,6 +66,12 @@ public partial class Building : MapObject {
 	public uint GetHousingCapacity() => (uint)type.GetPopulationCapacity();
 
 	public override void PassTime(TimeT minutes) { }
+
+	public override IEnumerable<Job> GetAvailableJobs() {
+		var jobs = base.GetAvailableJobs().ToList();
+		if (!HasFurniture) jobs.Add(new AddFurnitureJob(this));
+		return jobs;
+	}
 
 }
 

@@ -45,6 +45,7 @@ public static class Registry {
 		public static readonly IResourceType Grain = Resources.GetAsset("grain");
 		public static readonly IResourceType Flour = Resources.GetAsset("flour");
 		public static readonly IResourceType Bread = Resources.GetAsset("bread");
+		public static readonly IResourceType Furniture = Resources.GetAsset("furniture");
 
 		public static readonly IResourceType[] ResourceTypes = [
 			Logs, Rocks, Clay, Bricks, Fruit, Fish, Grain, Flour, Bread,

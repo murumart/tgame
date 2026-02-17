@@ -62,6 +62,7 @@ public class Faction : IEntity {
 		Population = new();
 		Population.FoodRequested += OnGetMoreFoodRequested;
 		Population.JobEmploymentChanged += (j, a) => JobChangedEvent?.Invoke(j, a);
+		Population.FurnitureRateRequested += GetFurnitureRate;
 		Population.SilverRequested += () => Silver;
 		Population.Manifest(initialPopulation);
 
@@ -194,7 +195,6 @@ public class Faction : IEntity {
 		if (type.TakesTimeToConstruct() || type.HasResourceRequirements()) {
 			var job = new ConstructBuildingJob(type.GetResourceRequirements().ToList());
 			AddMapObjectJob(job, building);
-			building.ConstructionJob = job;
 		}
 		return building;
 	}
@@ -251,6 +251,19 @@ public class Faction : IEntity {
 	public Building GetBuilding(Vector2I at) {
 		Debug.Assert(HasBuilding(at), $"Don't have a building at {at}");
 		return Region.GetMapObject(at) as Building;
+	}
+
+	public float GetFurnitureRate() {
+		float bs = 0f;
+		float fbs = 0f;
+
+		foreach (var mo in Region.GetMapObjects()) if (mo is Building b) {
+				bs += 1f;
+				if (b.HasFurniture) fbs += 1f;
+			}
+
+		if (bs == 0) return 0f;
+		return fbs / bs;
 	}
 
 	private class AnonBuilderJob : ConstructBuildingJob {
