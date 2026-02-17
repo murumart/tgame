@@ -138,7 +138,7 @@ namespace scenes.region.ui {
 					var reasons = fac.Population.GetApprovalMonthlyChangeReasons();
 					foreach (var r in reasons) {
 						if (r.Item1 == 0f) continue;
-						sb.Append(r.Item2).Append('\t').Append($"{(r.Item1 >= 0f ? "+" : "")}{r.Item1 * 100:0}%");
+						sb.Append(r.Item2).Append('\t').Append($"{(r.Item1 >= 0f ? "+" : "")}{r.Item1 * 100:0}%\n");
 					}
 					return sb.ToString();
 				});

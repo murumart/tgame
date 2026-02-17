@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using Godot;
 using resources.game;
 using scenes.autoload;
@@ -29,9 +28,10 @@ namespace scenes.region {
 				case (int)NotificationPredelete:
 					DisconnectEvents();
 					valid = false;
+					GameMan.Singleton.Game.Time.TimePassedEvent -= TimeUpdate;
 					break;
 				case (int)NotificationReady:
-
+					GameMan.Singleton.Game.Time.TimePassedEvent += TimeUpdate;
 					break;
 			}
 		}
@@ -45,10 +45,14 @@ namespace scenes.region {
 				var j = jobsToUndisplay.Dequeue();
 				UndisplayRegionJob(j);
 			}
+		}
+
+		void TimeUpdate(TimeT time) {
 			foreach (var (tpos, mopview) in mapObjectViews) {
-				if (region.GetMapObject(tpos) is Building building) {
-					if (building.IsConstructed) mopview.DisplayBuildingProgress(1.0f, false);
-					else mopview.DisplayBuildingProgress(building.GetBuildProgress());
+				if (region.LocalFaction.GetJob(tpos + region.WorldPosition, out var job)) {
+					mopview.DisplayJobProgress(job.GetProgressEstimate(), show: true, showBuilding: job is ConstructBuildingJob);
+				} else {
+					mopview.DisplayJobProgress(0f, false);
 				}
 			}
 		}
@@ -113,7 +117,7 @@ namespace scenes.region {
 			var viewpos = Tilemaps.TilePosToWorldPos(mopbject.GlobalPosition - region.WorldPosition);
 			viewpos.Y -= Tilemaps.TileElevationVerticalOffset(mopbject.GlobalPosition, GameMan.Singleton.Game.Map.World);
 			view.Position = viewpos;
-			if (region.LocalFaction.GetJob(mopbject.GlobalPosition - region.WorldPosition, out var job)) {
+			if (region.LocalFaction.GetJob(mopbject.GlobalPosition, out var job)) {
 				OnJobChanged(job, 0);
 			}
 		}

@@ -18,7 +18,7 @@ namespace scenes.region {
 		[Export] protected Container iconContainer;
 		protected TextureRect Icon(int i) => (TextureRect)iconContainer.GetChild(i);
 
-		[Export] protected ProgressBar buildingProgressBar;
+		[Export] protected ProgressBar jobProgressBar;
 		[Export] protected Node2D inProgressDisplay;
 
 		protected MapObject mapObjectRef;
@@ -61,11 +61,11 @@ namespace scenes.region {
 			foreach (var c in iconContainer.GetChildren().Cast<TextureRect>()) c.Hide();
 		}
 
-		public void DisplayBuildingProgress(float progress, bool show = true) {
+		public void DisplayJobProgress(float progress, bool show = true, bool showBuilding = false) {
 			Debug.Assert(progress >= 0f && progress <= 1f, "Progress bar value aout of range");
-			buildingProgressBar.Visible = show;
-			buildingProgressBar.Value = progress;
-			inProgressDisplay.Visible = show;
+			jobProgressBar.Visible = show;
+			jobProgressBar.Value = progress;
+			inProgressDisplay.Visible = showBuilding;
 		}
 
 		public static MapObjectView Make(string scenePath, MapObject mapObject) {

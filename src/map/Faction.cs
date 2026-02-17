@@ -109,8 +109,8 @@ public class Faction : IEntity {
 		job.Deinitialise(this);
 	}
 
-	public bool GetJob(Vector2I position, out Job job) {
-		return jobsByPosition.TryGetValue(position, out job);
+	public bool GetJob(Vector2I globalPosition, out Job job) {
+		return jobsByPosition.TryGetValue(globalPosition, out job);
 	}
 
 	public uint GetFreeWorkers() => UnemployedPopulation;

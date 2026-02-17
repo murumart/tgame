@@ -166,7 +166,7 @@ public class Population {
 		if (Count == 0) {
 			return;
 		}
-		if (ArePeopleStarving) reasons[1].Item1 = -50f;
+		reasons[1].Item1 = ArePeopleStarving ? -50f : 0f;
 		if (Count != HousedCount) {
 			reasons[2].Item1 = -((float)Count - HousedCount) / Count * 0.5f;
 		}
