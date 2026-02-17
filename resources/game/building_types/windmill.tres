@@ -1,0 +1,43 @@
+[gd_resource type="Resource" script_class="BuildingType" format=3 uid="uid://5k5kdd5gaux"]
+
+[ext_resource type="Script" uid="uid://cbiuqlrd8yyxx" path="res://resources/visual/Verb.cs" id="1_721p6"]
+[ext_resource type="Script" uid="uid://clkqk6nbux1c1" path="res://resources/visual/Noun.cs" id="2_01v6k"]
+[ext_resource type="Resource" uid="uid://pmrcwo4t316p" path="res://resources/game/resource_types/logs.tres" id="4_01v6k"]
+[ext_resource type="Script" uid="uid://c3n4csk46p0uc" path="res://resources/game/building_types/crafting/CraftingJobDef.cs" id="4_757gq"]
+[ext_resource type="Script" uid="uid://b5xb3tdf3yoon" path="res://resources/game/building_types/BuildingType.cs" id="5_vpym2"]
+[ext_resource type="Resource" uid="uid://nw83fam2omvi" path="res://resources/game/resource_types/rock.tres" id="5_yk4pq"]
+
+[sub_resource type="Resource" id="Resource_dvfb3"]
+script = ExtResource("1_721p6")
+Infinitive = "mill"
+Progressive = "milling"
+metadata/_custom_type_script = "uid://cbiuqlrd8yyxx"
+
+[sub_resource type="Resource" id="Resource_721p6"]
+script = ExtResource("2_01v6k")
+Singular = "flour"
+Plural = "flour"
+metadata/_custom_type_script = "uid://clkqk6nbux1c1"
+
+[sub_resource type="Resource" id="Resource_i1gtf"]
+script = ExtResource("4_757gq")
+inputs = Dictionary[Object, int]({})
+outputs = Dictionary[Object, int]({})
+timeTakenMinutes = 180
+maxWorkers = 4
+Product = SubResource("Resource_721p6")
+Process = SubResource("Resource_dvfb3")
+metadata/_custom_type_script = "uid://c3n4csk46p0uc"
+
+[resource]
+script = ExtResource("5_vpym2")
+name = "windmill"
+description = "Grain can be milled into flour here."
+ResourceCosts = Dictionary[Object, int]({
+ExtResource("4_01v6k"): 15,
+ExtResource("5_yk4pq"): 10
+})
+CraftingJobs = Array[Object]([SubResource("Resource_i1gtf")])
+HoursToConstruct = 56.0
+ScenePath = "uid://cqhuss6qywfl4"
+metadata/_custom_type_script = "uid://b5xb3tdf3yoon"

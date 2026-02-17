@@ -1,0 +1,52 @@
+[gd_resource type="Resource" script_class="BuildingType" format=3 uid="uid://dxva6ovfsuf6w"]
+
+[ext_resource type="Script" uid="uid://cbiuqlrd8yyxx" path="res://resources/visual/Verb.cs" id="1_bqe4q"]
+[ext_resource type="Script" uid="uid://clkqk6nbux1c1" path="res://resources/visual/Noun.cs" id="1_fc1nk"]
+[ext_resource type="Resource" uid="uid://cbynhxq0y3kkl" path="res://resources/game/resource_types/bricks.tres" id="1_hfc2o"]
+[ext_resource type="Script" uid="uid://b5xb3tdf3yoon" path="res://resources/game/building_types/BuildingType.cs" id="1_mvf0r"]
+[ext_resource type="Resource" uid="uid://b1lgcs27h3c62" path="res://resources/game/resource_types/flour.tres" id="1_nw2wf"]
+[ext_resource type="Resource" uid="uid://ckykt5fdrh727" path="res://resources/game/resource_types/bread.tres" id="2_fc1nk"]
+[ext_resource type="Resource" uid="uid://pmrcwo4t316p" path="res://resources/game/resource_types/logs.tres" id="2_u8ysx"]
+[ext_resource type="Script" uid="uid://c3n4csk46p0uc" path="res://resources/game/building_types/crafting/CraftingJobDef.cs" id="3_bqe4q"]
+[ext_resource type="Resource" uid="uid://nw83fam2omvi" path="res://resources/game/resource_types/rock.tres" id="3_vp85r"]
+
+[sub_resource type="Resource" id="Resource_oefw0"]
+script = ExtResource("1_bqe4q")
+Infinitive = "bake"
+Progressive = "baking"
+metadata/_custom_type_script = "uid://cbiuqlrd8yyxx"
+
+[sub_resource type="Resource" id="Resource_bqe4q"]
+script = ExtResource("1_fc1nk")
+Singular = "bread"
+Plural = "bread"
+metadata/_custom_type_script = "uid://clkqk6nbux1c1"
+
+[sub_resource type="Resource" id="Resource_4ddl6"]
+script = ExtResource("3_bqe4q")
+inputs = Dictionary[Object, int]({
+ExtResource("1_nw2wf"): 2,
+null: 0
+})
+outputs = Dictionary[Object, int]({
+ExtResource("2_fc1nk"): 1
+})
+timeTakenMinutes = 60
+maxWorkers = 2
+Product = SubResource("Resource_bqe4q")
+Process = SubResource("Resource_oefw0")
+metadata/_custom_type_script = "uid://c3n4csk46p0uc"
+
+[resource]
+script = ExtResource("1_mvf0r")
+name = "bakery"
+description = "Flour is baked into pastries here."
+ResourceCosts = Dictionary[Object, int]({
+ExtResource("1_hfc2o"): 40,
+ExtResource("2_u8ysx"): 5,
+ExtResource("3_vp85r"): 8
+})
+CraftingJobs = Array[Object]([SubResource("Resource_4ddl6")])
+HoursToConstruct = 56.0
+ScenePath = "uid://cm27dk0vifaoh"
+metadata/_custom_type_script = "uid://b5xb3tdf3yoon"

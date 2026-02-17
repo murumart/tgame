@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="ResourceType" format=3 uid="uid://b1lgcs27h3c62"]
+
+[ext_resource type="Script" uid="uid://coqr05mqlancq" path="res://resources/game/resource_types/ResourceType.cs" id="1_vc4w3"]
+
+[resource]
+script = ExtResource("1_vc4w3")
+name = "flour"
+metadata/_custom_type_script = "uid://coqr05mqlancq"
