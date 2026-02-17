@@ -25,7 +25,7 @@ font_color = Color(0.8352941, 0.8392157, 0.85882354, 1)
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_bjdfm"]
 
-[node name="Ui" type="MarginContainer" unique_id=948088031 node_paths=PackedStringArray("buildButton", "agreementsButton", "jobsButton", "menuTabs", "buildingList", "documentsDisplay", "jobsList", "resourceDisplay", "pauseDisplayPanel", "gameSpeedLabel", "pauseButton", "normalSpeedButton", "fastSpeedButton", "resourceLabel")]
+[node name="Ui" type="MarginContainer" unique_id=948088031 node_paths=PackedStringArray("buildButton", "agreementsButton", "jobsButton", "menuTabs", "buildingList", "documentsDisplay", "jobsList", "resourceDisplay", "pauseDisplayPanel", "gameSpeedLabel", "pauseButton", "normalSpeedButton", "fastSpeedButton", "resourceLabel", "announcementOkayButton", "announcementText", "announcementTitle", "announcementParent")]
 z_index = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -52,6 +52,10 @@ pauseButton = NodePath("VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer/
 normalSpeedButton = NodePath("VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer/NormalSpeedButton")
 fastSpeedButton = NodePath("VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer/FastButton")
 resourceLabel = NodePath("VBoxContainer/MarginContainer/Horizon/ResourcesList")
+announcementOkayButton = NodePath("NotifBoxParentParent/NotifBoxParent/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Okay")
+announcementText = NodePath("NotifBoxParentParent/NotifBoxParent/PanelContainer/MarginContainer/VBoxContainer/AnnouncementText")
+announcementTitle = NodePath("NotifBoxParentParent/NotifBoxParent/PanelContainer/MarginContainer/VBoxContainer/AnnouncementTitle")
+announcementParent = NodePath("NotifBoxParentParent")
 
 [node name="PausePanel" type="Panel" parent="." unique_id=1758856808]
 visible = false
@@ -270,7 +274,7 @@ fit_content = true
 layout_mode = 2
 alignment = 1
 
-[node name="Button" type="Button" parent="NotifBoxParentParent/NotifBoxParent/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1241496313]
+[node name="Okay" type="Button" parent="NotifBoxParentParent/NotifBoxParent/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1241496313]
 layout_mode = 2
 focus_mode = 0
 mouse_default_cursor_shape = 2
