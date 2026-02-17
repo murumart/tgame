@@ -14,10 +14,10 @@ metadata/_custom_type_script = "uid://cbiuqlrd8yyxx"
 [sub_resource type="Resource" id="Resource_l4b5o"]
 script = ExtResource("2_0pfox")
 resourceType = ExtResource("1_l4b5o")
-minutesPerBunch = 60
-bunchSize = 2
-minutesPerBunchRegen = 34560
-initialBunches = 40
+minutesPerBunch = 30
+bunchSize = 1
+minutesPerBunchRegen = 17280
+initialBunches = 80
 Production = SubResource("Resource_e4h3y")
 metadata/_custom_type_script = "uid://bnfatrmjew0vy"
 

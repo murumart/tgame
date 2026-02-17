@@ -56,7 +56,7 @@ But if you gather all the food, there'll be no more food left !? What !? We need
 
 **Example grain field**
 - Create building:
-  - reasonable grain field building count
+  - reasonable grain field building count (should be food gotten divided by food needed orwhatever)
 - Assign job to it:
   - has workers
 

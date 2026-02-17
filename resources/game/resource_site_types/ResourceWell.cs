@@ -9,14 +9,13 @@ namespace resources.game.resource_site_types {
 
 		[Export] ResourceType resourceType;
 		[Export] int minutesPerBunch;
-		[Export] int bunchSize;
 		[Export] int minutesPerBunchRegen;
 		[Export] int initialBunches;
 		[Export] Verb Production;
 
 
 		public ResourceSite.Well GetWell() {
-			return new(resourceType, minutesPerBunch, bunchSize, minutesPerBunchRegen, initialBunches, IsInstanceValid(Production) ? Production : Verb.Make("gather", "gathering"));
+			return new(resourceType, minutesPerBunch, minutesPerBunchRegen, initialBunches, IsInstanceValid(Production) ? Production : Verb.Make("gather", "gathering"));
 
 		}
 

@@ -146,7 +146,7 @@ public partial class ResourceSite : MapObject {
 		foreach (var well in Wells) {
 			var type = well.ResourceType;
 			if (!resourceDict.ContainsKey(type)) resourceDict[type] = new(type, 0);
-			resourceDict[type] = new(type, resourceDict[type].Amount + well.InitialBunches * well.BunchSize);
+			resourceDict[type] = new(type, resourceDict[type].Amount + well.InitialBunches);
 		}
 	}
 
@@ -170,7 +170,6 @@ public partial class ResourceSite {
 
 		public readonly IResourceType ResourceType;
 		public readonly TimeT MinutesPerBunch;
-		public readonly int BunchSize;
 		public readonly TimeT MinutesPerBunchRegen;
 		public readonly int InitialBunches;
 
@@ -183,14 +182,12 @@ public partial class ResourceSite {
 		public Well(
 			IResourceType resourceType,
 			int minutesPerBunch,
-			int bunchSize,
 			int minutesPerBunchRegen,
 			int initialBunches,
 			Verb production
 		) {
 			ResourceType = resourceType;
 			MinutesPerBunch = minutesPerBunch;
-			BunchSize = bunchSize;
 			MinutesPerBunchRegen = minutesPerBunchRegen;
 			InitialBunches = initialBunches;
 			Debug.Assert(production != null, "Need valid Production to consturct Well object");

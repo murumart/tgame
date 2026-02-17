@@ -161,7 +161,7 @@ public partial class MapObjectMenu : Control {
 			sb.Append($"The {r.Type.AssetName} contains exploitable resources...\n");
 			bool reproduce = false;
 			foreach (var well in r.Wells) {
-				sb.Append($" * {well.ResourceType.AssetName} x {well.Bunches * well.BunchSize}\n");
+				sb.Append($" * {well.ResourceType.AssetName} x {well.Bunches}\n");
 				sb.Append($"   This is {100 - ((float)well.Bunches / well.InitialBunches) * 100:0}% depleted.\n");
 				reproduce = reproduce || well.MinutesPerBunchRegen > 0;
 			}

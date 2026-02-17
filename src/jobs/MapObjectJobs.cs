@@ -181,10 +181,10 @@ public class GatherResourceJob : MapObjectJob {
 
 		var well = site.Wells[wellIx];
 
-		while (timeSpent >= well.MinutesPerBunch && storage.CanAdd(well.BunchSize) && well.HasBunches) {
+		while (timeSpent >= well.MinutesPerBunch && storage.CanAdd(1) && well.HasBunches) {
 			timeSpent -= well.MinutesPerBunch;
 			well.Deplete();
-			grant.Add(new(well.ResourceType, well.BunchSize));
+			grant.Add(new(well.ResourceType, 1));
 		}
 
 		if (grant.Count != 0) {
@@ -224,7 +224,7 @@ public class GatherResourceJob : MapObjectJob {
 		else {
 			str = $"{well.Production.Progressive.Capitalize()} ";
 			float time = well.MinutesPerBunch / MathF.Max(GetWorkTime(1), 1);
-			str += $"{well.BunchSize} {well.ResourceType.AssetName} every {GameTime.GetFancyTimeString((TimeT)time)}.\n";
+			str += $"{1} {well.ResourceType.AssetName} every {GameTime.GetFancyTimeString((TimeT)time)}.\n";
 		}
 
 		return str;
