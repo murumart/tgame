@@ -310,6 +310,10 @@ public class CraftJob : MapObjectJob {
 		return sb.ToString();
 	}
 
+	public override float GetProgressEstimate() {
+		return timeSpent / timeTaken;
+	}
+
 	public void GetProductionBulletList(StringBuilder sb) {
 		foreach (var thing in Outputs) {
 			sb.Append($" * {thing.Type.AssetName} x {thing.Amount}\n");

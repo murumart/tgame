@@ -15,8 +15,8 @@ namespace resources.game.resource_site_types {
 
 
 		public ResourceSite.Well GetWell() {
+			Debug.Assert(IsInstanceValid(resourceType), $"Need ResourceWell resourceType to be valid (prod {Production})");
 			return new(resourceType, minutesPerBunch, minutesPerBunchRegen, initialBunches, IsInstanceValid(Production) ? Production : Verb.Make("gather", "gathering"));
-
 		}
 
 	}

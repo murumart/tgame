@@ -4,6 +4,7 @@
 [ext_resource type="Resource" uid="uid://ddqpxr0u07bfp" path="res://resources/game/resource_types/fish.tres" id="2_1cfjn"]
 [ext_resource type="Script" uid="uid://bnfatrmjew0vy" path="res://resources/game/resource_site_types/ResourceWell.cs" id="3_xe7w0"]
 [ext_resource type="Script" uid="uid://ct2a6sqe1m7mx" path="res://resources/game/resource_site_types/ResourceSiteType.cs" id="4_2nepu"]
+[ext_resource type="Resource" uid="uid://nw83fam2omvi" path="res://resources/game/resource_types/rock.tres" id="4_q4uum"]
 
 [sub_resource type="Resource" id="Resource_q4uum"]
 script = ExtResource("1_1cfjn")
@@ -20,9 +21,23 @@ initialBunches = 280
 Production = SubResource("Resource_q4uum")
 metadata/_custom_type_script = "uid://bnfatrmjew0vy"
 
+[sub_resource type="Resource" id="Resource_1cfjn"]
+script = ExtResource("1_1cfjn")
+Infinitive = "dive for"
+Progressive = "diving for"
+metadata/_custom_type_script = "uid://cbiuqlrd8yyxx"
+
+[sub_resource type="Resource" id="Resource_2nepu"]
+script = ExtResource("3_xe7w0")
+resourceType = ExtResource("4_q4uum")
+minutesPerBunch = 180
+initialBunches = 45
+Production = SubResource("Resource_1cfjn")
+metadata/_custom_type_script = "uid://bnfatrmjew0vy"
+
 [resource]
 script = ExtResource("4_2nepu")
 name = "fishing spot"
-mineResources = Array[Object]([SubResource("Resource_xe7w0")])
+mineResources = Array[Object]([SubResource("Resource_xe7w0"), SubResource("Resource_2nepu")])
 ScenePath = "uid://86f5k8lmus4o"
 metadata/_custom_type_script = "uid://ct2a6sqe1m7mx"

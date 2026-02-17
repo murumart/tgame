@@ -166,9 +166,7 @@ public class Population {
 			return;
 		}
 		reasons[1].Item1 = ArePeopleStarving ? -50f : 0f;
-		if (Count != HousedCount) {
-			reasons[2].Item1 = -((float)Count - HousedCount) / Count * 0.5f;
-		}
+		reasons[2].Item1 = -((float)Count - HousedCount) / Count * 0.5f;
 		int silver = SilverRequested?.Invoke() ?? 0;
 		float silverapprovalchange = 0.05f * Mathf.Clamp(Mathf.Pow((silver - 30) / 10f, 3), -27f, 27f);
 		reasons[3].Item1 = silverapprovalchange;

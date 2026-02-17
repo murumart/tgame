@@ -3,11 +3,11 @@
 [ext_resource type="Script" uid="uid://cbiuqlrd8yyxx" path="res://resources/visual/Verb.cs" id="1_721p6"]
 [ext_resource type="Script" uid="uid://clkqk6nbux1c1" path="res://resources/visual/Noun.cs" id="2_01v6k"]
 [ext_resource type="Resource" uid="uid://b41i53hgxp8vw" path="res://resources/game/resource_types/grain.tres" id="3_yk4pq"]
-[ext_resource type="Resource" uid="uid://pmrcwo4t316p" path="res://resources/game/resource_types/logs.tres" id="4_01v6k"]
 [ext_resource type="Script" uid="uid://c3n4csk46p0uc" path="res://resources/game/building_types/crafting/CraftingJobDef.cs" id="4_757gq"]
 [ext_resource type="Resource" uid="uid://b1lgcs27h3c62" path="res://resources/game/resource_types/flour.tres" id="4_vpym2"]
 [ext_resource type="Script" uid="uid://b5xb3tdf3yoon" path="res://resources/game/building_types/BuildingType.cs" id="5_vpym2"]
 [ext_resource type="Resource" uid="uid://nw83fam2omvi" path="res://resources/game/resource_types/rock.tres" id="5_yk4pq"]
+[ext_resource type="Resource" uid="uid://b8507qbvqvdy8" path="res://resources/game/resource_types/lumber.tres" id="7_757gq"]
 
 [sub_resource type="Resource" id="Resource_dvfb3"]
 script = ExtResource("1_721p6")
@@ -40,8 +40,8 @@ script = ExtResource("5_vpym2")
 name = "windmill"
 description = "Grain can be milled into flour here."
 ResourceCosts = Dictionary[Object, int]({
-ExtResource("4_01v6k"): 15,
-ExtResource("5_yk4pq"): 10
+ExtResource("5_yk4pq"): 10,
+ExtResource("7_757gq"): 40
 })
 CraftingJobs = Array[Object]([SubResource("Resource_i1gtf")])
 HoursToConstruct = 56.0

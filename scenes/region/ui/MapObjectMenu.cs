@@ -144,15 +144,16 @@ public partial class MapObjectMenu : Control {
 			}
 			sb.Append(b.Type.GetDescription()).Append('\n');
 			if (IsMarketplaceBuilding && !IsMarketplaceActive) sb.Append("Add a job to process trade activities.").Append('\n');
-			var crafting = b.Type.GetCraftJobs();
-			if (crafting.Length > 0) {
-				sb.Append("Production of the following occurs here...\n");
-				foreach (var craftjob in crafting) {
-					Debug.Assert(craftjob.Process != null, "I wanna verb");
-					sb.Append(craftjob.Process.Progressive.Capitalize()).Append(' ').Append(craftjob.Product.Plural).Append(" gives...\n");
-					craftjob.GetProductionBulletList(sb);
-				}
-			}
+			// this looks kind of ugly and duplicates the job item list selection menu where yu can click on the jovs and see what they do.
+			//var crafting = b.Type.GetCraftJobs();
+			//if (crafting.Length > 0) {
+			//	sb.Append("Production of the following occurs here...\n");
+			//	foreach (var craftjob in crafting) {
+			//		Debug.Assert(craftjob.Process != null, "I wanna verb");
+			//		sb.Append(craftjob.Process.Progressive.Capitalize()).Append(' ').Append(craftjob.Product.Plural).Append(" gives...\n");
+			//		craftjob.GetProductionBulletList(sb);
+			//	}
+			//}
 			if (b.GetHousingCapacity() > 0 && b.IsConstructed) {
 				sb.Append($"Housing room for {b.GetHousingCapacity()} people.\n");
 			}

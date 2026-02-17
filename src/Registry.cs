@@ -230,6 +230,7 @@ public static class ProductionNet {
 		public readonly IResourceType Resource = resource;
 		public Dictionary<LocationNode, HashSet<ProductionNode>> RetrievedFrom = new();
 		public Dictionary<LocationNode, HashSet<ProductionNode>> ConsumedIn = new();
+		public HashSet<BuildingNode> ConsumedConstructing = new();
 
 		public override string ToString() => $"RN({Resource.AssetName})";
 
@@ -255,11 +256,15 @@ public static class ProductionNet {
 				var production = new ProductionNode(consumed, retrieved);
 				productions.Add(production);
 			}
+			var buildingmaterials = building.GetResourceRequirements().Select(r => (Resources[r.Type], r.Amount));
 			var node = new BuildingNode(
 				building,
 				productions.ToArray(),
-				building.GetResourceRequirements().Select(r => (Resources[r.Type], r.Amount)).ToArray()
+				buildingmaterials.ToArray()
 			);
+			foreach (var (t, _) in buildingmaterials) {
+				t.ConsumedConstructing.Add(node);
+			}
 			foreach (var prod in productions) {
 				prod.MadeAt = node;
 				foreach (var (ret, _) in prod.Retrieved) {
@@ -315,6 +320,7 @@ public static class ProductionNet {
 
 		HashSet<ResourceNode> printed = new();
 		void PrintSource(ResourceNode node, int indent) {
+			if (printed.Contains(node) && indent == 0) return;
 			GD.Print(new string(' ', indent) + node);
 			if (printed.Contains(node)) return;
 			printed.Add(node);
@@ -336,12 +342,16 @@ public static class ProductionNet {
 
 		HashSet<ResourceNode> printed = new();
 		void PrintConsumers(ResourceNode node, int indent) {
+			if (printed.Contains(node) && indent == 0) return;
 			GD.Print(new string(' ', indent) + node);
 			if (printed.Contains(node)) return;
 			printed.Add(node);
 			foreach (var (k, v) in node.ConsumedIn) {
 				GD.Print(new string(' ', indent + 2) + " consumed in " + k.Type.AssetName);
 				foreach (var vl in v) PrintProduction(vl, indent + 2);
+			}
+			foreach (var vl in node.ConsumedConstructing) {
+				GD.Print(new string(' ', indent + 2) + "constructing " + vl.Type.AssetName);
 			}
 		}
 

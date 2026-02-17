@@ -186,6 +186,7 @@ public partial class ResourceSite {
 			int initialBunches,
 			Verb production
 		) {
+			Debug.Assert(resourceType != null, "Well resource type cannot be null");
 			ResourceType = resourceType;
 			MinutesPerBunch = minutesPerBunch;
 			MinutesPerBunchRegen = minutesPerBunchRegen;

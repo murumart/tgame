@@ -1,7 +1,7 @@
-using Godot;
-using Godot.Collections;
 using System;
 using System.Collections.Generic;
+using Godot;
+using Godot.Collections;
 using static ResourceSite;
 
 namespace resources.game.resource_site_types {
@@ -28,7 +28,9 @@ namespace resources.game.resource_site_types {
 
 		public List<Well> GetDefaultWells() {
 			List<Well> list = new();
-			foreach (var item in mineResources) list.Add(item.GetWell());
+			foreach (var item in mineResources) {
+				list.Add(item.GetWell());
+			}
 			return list;
 		}
 

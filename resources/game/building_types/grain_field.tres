@@ -5,6 +5,7 @@
 [ext_resource type="Resource" uid="uid://b41i53hgxp8vw" path="res://resources/game/resource_types/grain.tres" id="1_860cy"]
 [ext_resource type="Script" uid="uid://cbiuqlrd8yyxx" path="res://resources/visual/Verb.cs" id="1_w1y7w"]
 [ext_resource type="Script" uid="uid://clkqk6nbux1c1" path="res://resources/visual/Noun.cs" id="2_28vvh"]
+[ext_resource type="Resource" uid="uid://nw83fam2omvi" path="res://resources/game/resource_types/rock.tres" id="5_28vvh"]
 
 [sub_resource type="Resource" id="Resource_ihof6"]
 script = ExtResource("1_w1y7w")
@@ -30,12 +31,36 @@ Product = SubResource("Resource_adydl")
 Process = SubResource("Resource_ihof6")
 metadata/_custom_type_script = "uid://c3n4csk46p0uc"
 
+[sub_resource type="Resource" id="Resource_28vvh"]
+script = ExtResource("1_w1y7w")
+Infinitive = "pick stray"
+Progressive = "picking stray"
+metadata/_custom_type_script = "uid://cbiuqlrd8yyxx"
+
+[sub_resource type="Resource" id="Resource_vsmfv"]
+script = ExtResource("2_28vvh")
+Singular = "rock"
+Plural = "rocks"
+metadata/_custom_type_script = "uid://clkqk6nbux1c1"
+
+[sub_resource type="Resource" id="Resource_w1y7w"]
+script = ExtResource("1_4efhs")
+inputs = Dictionary[Object, int]({})
+outputs = Dictionary[Object, int]({
+ExtResource("5_28vvh"): 1
+})
+timeTakenMinutes = 720
+maxWorkers = 2
+Product = SubResource("Resource_vsmfv")
+Process = SubResource("Resource_28vvh")
+metadata/_custom_type_script = "uid://c3n4csk46p0uc"
+
 [resource]
 script = ExtResource("1_052vu")
 name = "grain field"
 description = "Grain is grown here."
 ResourceCosts = null
-CraftingJobs = Array[Object]([SubResource("Resource_860cy")])
+CraftingJobs = Array[Object]([SubResource("Resource_860cy"), SubResource("Resource_w1y7w")])
 HoursToConstruct = 24.0
 AllowedGroundTiles = 5
 ScenePath = "uid://c8cwdv8n4e3i7"
