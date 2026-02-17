@@ -86,5 +86,7 @@ Seda võiks teha automaatselt. Kui resourceewant mingil lõppproduktil on kõrge
   - mingi märguande ikoon uute treidide kohta turul
   - märguannete nimekiri ekraanil kogu aeg, logi tab kus eelmised notifid factioni koha
     - ära lihtsalt pane rtlabelisse, gene tekst nt kuu kaupa kui nuppu vajutatakse
+  - ribad näitamaks kui kaugel mingi mopbjecti tööga ollakse
+  - riba näitab kui depleted a resource site is
 - ehitiste eemaldamine
 - ressursiallikate eemaldamine (kui pole ruumi panna midagi kuhugi)
