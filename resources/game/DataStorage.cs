@@ -56,6 +56,8 @@ namespace resources.game {
 			ProductionNet.PrintLocations();
 			GD.Print("DataStorage::RegisterThings : GENERATED FOLLOWING CRAFTING GRAPH RESOURCE SOURCES");
 			ProductionNet.PrintSources();
+			GD.Print("DataStorage::RegisterThings : GENERATED FOLLOWING CRAFTING GRAPH RESOURCE CONSUMERS");
+			ProductionNet.PrintConsumers();
 
 		}
 

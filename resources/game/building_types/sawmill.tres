@@ -1,0 +1,45 @@
+[gd_resource type="Resource" script_class="BuildingType" format=3 uid="uid://br65ka4x5qod7"]
+
+[ext_resource type="Script" uid="uid://cbiuqlrd8yyxx" path="res://resources/visual/Verb.cs" id="1_nah57"]
+[ext_resource type="Resource" uid="uid://pmrcwo4t316p" path="res://resources/game/resource_types/logs.tres" id="1_ys222"]
+[ext_resource type="Resource" uid="uid://b8507qbvqvdy8" path="res://resources/game/resource_types/lumber.tres" id="2_l7tkb"]
+[ext_resource type="Script" uid="uid://clkqk6nbux1c1" path="res://resources/visual/Noun.cs" id="2_n2d4o"]
+[ext_resource type="Script" uid="uid://c3n4csk46p0uc" path="res://resources/game/building_types/crafting/CraftingJobDef.cs" id="3_l7tkb"]
+[ext_resource type="Script" uid="uid://b5xb3tdf3yoon" path="res://resources/game/building_types/BuildingType.cs" id="3_n6b3m"]
+
+[sub_resource type="Resource" id="Resource_18xu4"]
+script = ExtResource("1_nah57")
+Infinitive = "saw"
+Progressive = "sawing"
+metadata/_custom_type_script = "uid://cbiuqlrd8yyxx"
+
+[sub_resource type="Resource" id="Resource_6lq7r"]
+script = ExtResource("2_n2d4o")
+Singular = "lumber"
+Plural = "lumber"
+metadata/_custom_type_script = "uid://clkqk6nbux1c1"
+
+[sub_resource type="Resource" id="Resource_n6b3m"]
+script = ExtResource("3_l7tkb")
+inputs = Dictionary[Object, int]({
+ExtResource("1_ys222"): 5
+})
+outputs = Dictionary[Object, int]({
+ExtResource("2_l7tkb"): 6
+})
+timeTakenMinutes = 125
+Product = SubResource("Resource_6lq7r")
+Process = SubResource("Resource_18xu4")
+metadata/_custom_type_script = "uid://c3n4csk46p0uc"
+
+[resource]
+script = ExtResource("3_n6b3m")
+name = "sawmill"
+description = "Here, logs are processed into lumber, a finer crafting material."
+ResourceCosts = Dictionary[Object, int]({
+ExtResource("1_ys222"): 24
+})
+CraftingJobs = Array[Object]([SubResource("Resource_n6b3m")])
+HoursToConstruct = 14.0
+ScenePath = "uid://jtnf51ccjw5e"
+metadata/_custom_type_script = "uid://b5xb3tdf3yoon"

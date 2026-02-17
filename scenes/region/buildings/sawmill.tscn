@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://jtnf51ccjw5e"]
+
+[ext_resource type="PackedScene" uid="uid://pfy55aydpy4t" path="res://scenes/region/buildings/_building_base.tscn" id="1_p4eip"]
+[ext_resource type="Texture2D" uid="uid://d3poxfcgohq88" path="res://scenes/region/buildings/sawmill.png" id="2_p4eip"]
+
+[node name="BuildingBase" unique_id=1801664303 instance=ExtResource("1_p4eip")]
+
+[node name="Sprite2D" type="Sprite2D" parent="." index="0" unique_id=975971127]
+position = Vector2(0, -7)
+texture = ExtResource("2_p4eip")

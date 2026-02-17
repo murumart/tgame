@@ -35,6 +35,7 @@ public static class Registry {
 	public static class ResourcesS {
 
 		public static readonly IResourceType Logs = Resources.GetAsset("logs");
+		public static readonly IResourceType Lumber = Resources.GetAsset("lumber");
 		public static readonly IResourceType Rocks = Resources.GetAsset("rock");
 		public static readonly IResourceType Clay = Resources.GetAsset("clay");
 		public static readonly IResourceType Bricks = Resources.GetAsset("bricks");
@@ -245,7 +246,8 @@ public static class ProductionNet {
 		Debug.Assert(!generated, "Doon't generate stuff when iot's donadalsd");
 		foreach (var res in Registry.Resources.GetAssets()) Resources[res] = new(res);
 
-		foreach (var building in Registry.BuildingsS.CraftingBuildings) {
+		foreach (var building in Registry.Buildings.GetAssets()) {
+			if (building.GetCraftJobs().Length == 0) continue;
 			var productions = new List<ProductionNode>();
 			foreach (var job in building.GetCraftJobs()) {
 				var consumed = job.Inputs?.Select(i => (Resources[i.Type], i.Amount)).ToArray() ?? [];
@@ -308,7 +310,7 @@ public static class ProductionNet {
 		void PrintProduction(ProductionNode p, int indent) {
 			if (p.Consumed.Length == 0) return;
 			GD.Print(new string(' ', indent) + " Production sources ");
-			foreach (var (src, _ )in p.Consumed) PrintSource(src, indent + 2);
+			foreach (var (src, _) in p.Consumed) PrintSource(src, indent + 2);
 		}
 
 		HashSet<ResourceNode> printed = new();
@@ -316,14 +318,34 @@ public static class ProductionNet {
 			GD.Print(new string(' ', indent) + node);
 			if (printed.Contains(node)) return;
 			printed.Add(node);
-			//if (node.RetrievedFrom.Count == 0) return;
 			foreach (var (k, v) in node.RetrievedFrom) {
-				GD.Print(new string(' ', indent + 2)  + " Retrieved from " + k.Type.AssetName);
-				foreach(var vl in v) PrintProduction(vl, indent + 2);
+				GD.Print(new string(' ', indent + 2) + " Retrieved from " + k.Type.AssetName);
+				foreach (var vl in v) PrintProduction(vl, indent + 2);
 			}
 		}
 
 		foreach (var rn in Resources.Values) PrintSource(rn, 0);
+	}
+
+	public static void PrintConsumers() {
+		void PrintProduction(ProductionNode p, int indent) {
+			if (p.Retrieved.Length == 0) return;
+			GD.Print(new string(' ', indent) + " Production consumers ");
+			foreach (var (src, _) in p.Retrieved) PrintConsumers(src, indent + 2);
+		}
+
+		HashSet<ResourceNode> printed = new();
+		void PrintConsumers(ResourceNode node, int indent) {
+			GD.Print(new string(' ', indent) + node);
+			if (printed.Contains(node)) return;
+			printed.Add(node);
+			foreach (var (k, v) in node.ConsumedIn) {
+				GD.Print(new string(' ', indent + 2) + " consumed in " + k.Type.AssetName);
+				foreach (var vl in v) PrintProduction(vl, indent + 2);
+			}
+		}
+
+		foreach (var rn in Resources.Values) PrintConsumers(rn, 0);
 	}
 
 }

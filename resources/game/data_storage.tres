@@ -13,13 +13,14 @@
 [ext_resource type="Resource" uid="uid://pmrcwo4t316p" path="res://resources/game/resource_types/logs.tres" id="6_cosqq"]
 [ext_resource type="Resource" uid="uid://srett0sukua2" path="res://resources/game/building_types/grain_field.tres" id="7_mrkhr"]
 [ext_resource type="Resource" uid="uid://dddpyl71ejv65" path="res://resources/game/resource_groups/food_values.tres" id="7_t4jud"]
-[ext_resource type="Resource" uid="uid://b8507qbvqvdy8" path="res://resources/game/resource_types/boards.tres" id="8_0g2bt"]
 [ext_resource type="Resource" uid="uid://5k5kdd5gaux" path="res://resources/game/building_types/windmill.tres" id="8_andqa"]
 [ext_resource type="Resource" uid="uid://bh5svfg5ua7eb" path="res://resources/game/resource_site_types/rock.tres" id="8_tk3xj"]
 [ext_resource type="Resource" uid="uid://dxva6ovfsuf6w" path="res://resources/game/building_types/bakery.tres" id="9_blgao"]
 [ext_resource type="Resource" uid="uid://bws8feec8sqin" path="res://resources/game/resource_site_types/broadleaf_woods.tres" id="9_tycsq"]
 [ext_resource type="Resource" uid="uid://cvk2heqr2y7qv" path="res://resources/game/resource_types/furniture.tres" id="10_dyo1l"]
+[ext_resource type="Resource" uid="uid://br65ka4x5qod7" path="res://resources/game/building_types/sawmill.tres" id="10_qffbb"]
 [ext_resource type="Resource" uid="uid://lda3p80x02sh" path="res://resources/game/resource_types/clay.tres" id="11_8wepv"]
+[ext_resource type="Resource" uid="uid://dgx3kfwks2tt4" path="res://resources/game/building_types/carpentry.tres" id="11_jidsk"]
 [ext_resource type="Resource" uid="uid://dwcrohuk4oajt" path="res://resources/game/resource_site_types/rubble.tres" id="11_n7e6t"]
 [ext_resource type="Resource" uid="uid://d08tlsfel81yf" path="res://resources/game/resource_site_types/conifer_woods.tres" id="11_umw7u"]
 [ext_resource type="Resource" uid="uid://cbynhxq0y3kkl" path="res://resources/game/resource_types/bricks.tres" id="12_7f1xh"]
@@ -28,13 +29,14 @@
 [ext_resource type="Resource" uid="uid://cjd64xn7r7mh8" path="res://resources/game/resource_site_types/fishing_spot.tres" id="16_k4mii"]
 [ext_resource type="Resource" uid="uid://ckykt5fdrh727" path="res://resources/game/resource_types/bread.tres" id="17_t4jud"]
 [ext_resource type="Resource" uid="uid://xkt4u6pl6p3" path="res://resources/game/resource_types/fruit.tres" id="18_tycsq"]
+[ext_resource type="Resource" uid="uid://b8507qbvqvdy8" path="res://resources/game/resource_types/lumber.tres" id="23_jidsk"]
 [ext_resource type="Resource" uid="uid://b41i53hgxp8vw" path="res://resources/game/resource_types/grain.tres" id="24_2hkqv"]
 [ext_resource type="Resource" uid="uid://b1lgcs27h3c62" path="res://resources/game/resource_types/flour.tres" id="27_wbpcg"]
 
 [resource]
 script = ExtResource("1_wv3fg")
-resourceTypes = Array[Object]([ExtResource("4_xflvh"), ExtResource("6_cosqq"), ExtResource("5_c2mn5"), ExtResource("8_0g2bt"), ExtResource("10_dyo1l"), ExtResource("11_8wepv"), ExtResource("12_7f1xh"), ExtResource("18_tycsq"), ExtResource("17_t4jud"), ExtResource("24_2hkqv"), ExtResource("27_wbpcg")])
-buildingTypes = Array[Object]([ExtResource("1_8bhaa"), ExtResource("3_0g2bt"), ExtResource("1_r67qw"), ExtResource("3_o7ste"), ExtResource("2_km6vq"), ExtResource("4_h1ebs"), ExtResource("7_mrkhr"), ExtResource("8_andqa"), ExtResource("9_blgao")])
+resourceTypes = Array[Object]([ExtResource("4_xflvh"), ExtResource("6_cosqq"), ExtResource("5_c2mn5"), ExtResource("23_jidsk"), ExtResource("10_dyo1l"), ExtResource("11_8wepv"), ExtResource("12_7f1xh"), ExtResource("18_tycsq"), ExtResource("17_t4jud"), ExtResource("24_2hkqv"), ExtResource("27_wbpcg")])
+buildingTypes = Array[Object]([ExtResource("1_8bhaa"), ExtResource("3_0g2bt"), ExtResource("1_r67qw"), ExtResource("3_o7ste"), ExtResource("2_km6vq"), ExtResource("4_h1ebs"), ExtResource("7_mrkhr"), ExtResource("8_andqa"), ExtResource("9_blgao"), ExtResource("10_qffbb"), ExtResource("11_jidsk")])
 resourceSiteTypes = Array[Object]([ExtResource("8_tk3xj"), ExtResource("11_n7e6t"), ExtResource("9_tycsq"), ExtResource("11_umw7u"), ExtResource("12_j5uyn"), ExtResource("14_2hkqv"), ExtResource("6_7f1xh"), ExtResource("16_k4mii")])
 foodValues = ExtResource("7_t4jud")
 metadata/_custom_type_script = "uid://05g7rc21q2sd"

@@ -1,0 +1,48 @@
+[gd_resource type="Resource" script_class="BuildingType" format=3 uid="uid://dgx3kfwks2tt4"]
+
+[ext_resource type="Script" uid="uid://cbiuqlrd8yyxx" path="res://resources/visual/Verb.cs" id="1_3joa8"]
+[ext_resource type="Resource" uid="uid://nw83fam2omvi" path="res://resources/game/resource_types/rock.tres" id="2_2aqh6"]
+[ext_resource type="Script" uid="uid://clkqk6nbux1c1" path="res://resources/visual/Noun.cs" id="2_8kidy"]
+[ext_resource type="Resource" uid="uid://cvk2heqr2y7qv" path="res://resources/game/resource_types/furniture.tres" id="4_8kidy"]
+[ext_resource type="Resource" uid="uid://b8507qbvqvdy8" path="res://resources/game/resource_types/lumber.tres" id="4_dq4dh"]
+[ext_resource type="Script" uid="uid://c3n4csk46p0uc" path="res://resources/game/building_types/crafting/CraftingJobDef.cs" id="5_2rbc1"]
+[ext_resource type="Script" uid="uid://b5xb3tdf3yoon" path="res://resources/game/building_types/BuildingType.cs" id="6_1u11e"]
+
+[sub_resource type="Resource" id="Resource_3joa8"]
+script = ExtResource("1_3joa8")
+Infinitive = "craft"
+Progressive = "crafting"
+metadata/_custom_type_script = "uid://cbiuqlrd8yyxx"
+
+[sub_resource type="Resource" id="Resource_lvao7"]
+script = ExtResource("2_8kidy")
+Singular = "furniture"
+Plural = "furniture"
+metadata/_custom_type_script = "uid://clkqk6nbux1c1"
+
+[sub_resource type="Resource" id="Resource_ws2fj"]
+script = ExtResource("5_2rbc1")
+inputs = Dictionary[Object, int]({
+ExtResource("4_dq4dh"): 5
+})
+outputs = Dictionary[Object, int]({
+ExtResource("4_8kidy"): 2
+})
+timeTakenMinutes = 1140
+maxWorkers = 4
+Product = SubResource("Resource_lvao7")
+Process = SubResource("Resource_3joa8")
+metadata/_custom_type_script = "uid://c3n4csk46p0uc"
+
+[resource]
+script = ExtResource("6_1u11e")
+name = "carpentry"
+description = "Lumber can be processed into finer goods here."
+ResourceCosts = Dictionary[Object, int]({
+ExtResource("4_dq4dh"): 32,
+ExtResource("2_2aqh6"): 16
+})
+CraftingJobs = Array[Object]([SubResource("Resource_ws2fj")])
+HoursToConstruct = 64.0
+ScenePath = "uid://dmfsqx81ubex0"
+metadata/_custom_type_script = "uid://b5xb3tdf3yoon"
