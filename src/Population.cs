@@ -156,7 +156,6 @@ public class Population {
 	(float, string)[] reasons = null;
 	void UpdateApprovalMonthlyChangeReasons() {
 		if (reasons == null) {
-			GD.Print("Population::UpdateApprovalMonthlyChangeReasons : making initial reasons strings");
 			reasons = new (float, string)[5];
 			reasons[0].Item2 = "no people";
 			reasons[1].Item2 = "people are starving";

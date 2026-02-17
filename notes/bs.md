@@ -78,8 +78,8 @@ Seda võiks teha automaatselt. Kui resourceewant mingil lõppproduktil on kõrge
   - [ ] gameover kui 0
 - [ ] asju mida tarneahelates teha
   - [ ] puidu laudadeks töötlemine
-  - [ ] terade jahuks töötlemine
-  - [ ] jahu leivaks töötlemine
+  - [X] terade jahuks töötlemine
+  - [X] jahu leivaks töötlemine
 - [ ] info
   - [ ] alguses notif mängija omaniku nimest
   - [ ] ressursside nimekirjas märgend praegusest nõudmisest

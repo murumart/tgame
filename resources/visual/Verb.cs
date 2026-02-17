@@ -16,6 +16,8 @@ namespace resources.visual {
                 Progressive = prog,
             };
 		}
+
+		public override string ToString() => $"Verb({Infinitive}, {Progressive})";
         
 	}
 

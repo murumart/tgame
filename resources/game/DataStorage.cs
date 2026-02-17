@@ -52,6 +52,10 @@ namespace resources.game {
 			foreach (var ass in Registry.ResourceSites.GetIdAssetPairs()) {
 				GD.PrintT(ass.Key, ass.Value.AssetName);
 			}
+			GD.Print("DataStorage::RegisterThings : GENERATED FOLLOWING CRAFTING GRAPH LOCATIONS");
+			ProductionNet.PrintLocations();
+			GD.Print("DataStorage::RegisterThings : GENERATED FOLLOWING CRAFTING GRAPH RESOURCE SOURCES");
+			ProductionNet.PrintSources();
 
 		}
 

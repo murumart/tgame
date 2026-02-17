@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Godot;
 using static Building;
+using static MapObject;
 using static ResourceSite;
 
 public static class Registry {
@@ -27,6 +28,8 @@ public static class Registry {
 		ResourceSites.RegisterAssets(resourceSiteTypes);
 
 		ResourcesS.RegisterFoodValues(foodValues);
+
+		ProductionNet.Generate();
 	}
 
 	public static class ResourcesS {
@@ -34,13 +37,16 @@ public static class Registry {
 		public static readonly IResourceType Logs = Resources.GetAsset("logs");
 		public static readonly IResourceType Rocks = Resources.GetAsset("rock");
 		public static readonly IResourceType Clay = Resources.GetAsset("clay");
+		public static readonly IResourceType Bricks = Resources.GetAsset("bricks");
 
 		public static readonly IResourceType Fruit = Resources.GetAsset("fruit");
 		public static readonly IResourceType Fish = Resources.GetAsset("fish");
+		public static readonly IResourceType Grain = Resources.GetAsset("grain");
+		public static readonly IResourceType Flour = Resources.GetAsset("flour");
 		public static readonly IResourceType Bread = Resources.GetAsset("bread");
 
 		public static readonly IResourceType[] ResourceTypes = [
-			Logs, Rocks, Clay, Fruit, Fish, Bread,
+			Logs, Rocks, Clay, Bricks, Fruit, Fish, Grain, Flour, Bread,
 		];
 
 		public static IAssetGroup<IResourceType, int> FoodValues { get; private set; }
@@ -58,10 +64,14 @@ public static class Registry {
 		public static readonly IBuildingType Housing = Buildings.GetAsset("housing");
 		public static readonly IBuildingType BrickHousing = Buildings.GetAsset("brick_housing");
 
+		public static readonly IBuildingType Kiln = Buildings.GetAsset("kiln");
 		public static readonly IBuildingType Marketplace = Buildings.GetAsset("marketplace");
 		public static readonly IBuildingType GrainField = Buildings.GetAsset("grain_field");
+		public static readonly IBuildingType Windmill = Buildings.GetAsset("windmill");
+		public static readonly IBuildingType Bakery = Buildings.GetAsset("bakery");
 
 		public static readonly IBuildingType[] HousingBuildings = [LogCabin, Housing, BrickHousing];
+		public static readonly IBuildingType[] CraftingBuildings = [GrainField, Windmill, Bakery, Kiln];
 
 	}
 
@@ -171,6 +181,149 @@ public class Field<T> {
 	public void Touch() {
 		dirty = true;
 		touches++;
+	}
+
+}
+
+public static class ProductionNet {
+
+	public class LocationNode(IMapObjectType type) {
+
+		public readonly IMapObjectType Type = type;
+
+		public override string ToString() => $"Location({Type.AssetName})";
+
+	}
+
+	public class ResourceSiteNode(IResourceSiteType resourceSiteType, ProductionNode[] productions) : LocationNode(resourceSiteType) {
+
+		public readonly IResourceSiteType ResourceSite = resourceSiteType;
+		public readonly ProductionNode[] Productions = productions;
+
+		public override string ToString() => $"ResourceSite({ResourceSite.AssetName}, productions=[{string.Join(", ", (object[])Productions)}])";
+
+	}
+
+	public class BuildingNode(IBuildingType building, ProductionNode[] productions, (ResourceNode, int)[] sourceMaterials) : LocationNode(building) {
+
+		public readonly IBuildingType Building = building;
+		public readonly ProductionNode[] Productions = productions;
+		public readonly (ResourceNode, int)[] SourceMaterials = sourceMaterials;
+
+		public override string ToString() => $"Building(building={Building.AssetName}, productions=[{string.Join(", ", (object[])Productions)}], sourceMaterials=[{string.Join(", ", SourceMaterials)}]";
+
+	}
+
+	public class ProductionNode((ResourceNode, int)[] consumed, (ResourceNode, int)[] retrieved) {
+
+		public readonly (ResourceNode, int)[] Consumed = consumed;
+		public readonly (ResourceNode, int)[] Retrieved = retrieved;
+		public LocationNode MadeAt = null;
+
+		public override string ToString() => $"PR(in=[{string.Join(", ", Consumed)}], out=[{string.Join(", ", Retrieved)}])";
+
+	}
+
+	public class ResourceNode(IResourceType resource) {
+
+		public readonly IResourceType Resource = resource;
+		public Dictionary<LocationNode, HashSet<ProductionNode>> RetrievedFrom = new();
+		public Dictionary<LocationNode, HashSet<ProductionNode>> ConsumedIn = new();
+
+		public override string ToString() => $"RN({Resource.AssetName})";
+
+	}
+
+	static bool generated = false;
+
+	public static readonly Dictionary<IResourceType, ResourceNode> Resources = new();
+	public static readonly Dictionary<IMapObjectType, LocationNode> Locations = new();
+	public static readonly Dictionary<ResourceNode, ProductionNode> ProductionsByConsumption = new();
+	public static readonly Dictionary<ResourceNode, ProductionNode> ProductionsByRetrieval = new();
+
+	public static void Generate() {
+		Debug.Assert(!generated, "Doon't generate stuff when iot's donadalsd");
+		foreach (var res in Registry.Resources.GetAssets()) Resources[res] = new(res);
+
+		foreach (var building in Registry.BuildingsS.CraftingBuildings) {
+			var productions = new List<ProductionNode>();
+			foreach (var job in building.GetCraftJobs()) {
+				var consumed = job.Inputs?.Select(i => (Resources[i.Type], i.Amount)).ToArray() ?? [];
+				var retrieved = job.Outputs?.Select(i => (Resources[i.Type], i.Amount)).ToArray() ?? [];
+				var production = new ProductionNode(consumed, retrieved);
+				productions.Add(production);
+			}
+			var node = new BuildingNode(
+				building,
+				productions.ToArray(),
+				building.GetResourceRequirements().Select(r => (Resources[r.Type], r.Amount)).ToArray()
+			);
+			foreach (var prod in productions) {
+				prod.MadeAt = node;
+				foreach (var (ret, _) in prod.Retrieved) {
+					if (!ret.RetrievedFrom.TryGetValue(node, out var rf)) {
+						rf = new();
+						ret.RetrievedFrom[node] = rf;
+					}
+					rf.Add(prod);
+				}
+				foreach (var (con, _) in prod.Consumed) {
+					if (!con.ConsumedIn.TryGetValue(node, out var ci)) {
+						ci = new();
+						con.ConsumedIn[node] = ci;
+					}
+					ci.Add(prod);
+				}
+			}
+			Locations[building] = node;
+		}
+		foreach (var ressite in Registry.ResourceSites.GetAssets()) {
+			List<ProductionNode> productions = ressite.GetDefaultWells().Select(w => new ProductionNode([], [(Resources[w.ResourceType], 1)])).ToList();
+			var node = new ResourceSiteNode(
+				ressite,
+				productions.ToArray()
+			);
+			foreach (var prod in productions) {
+				prod.MadeAt = node;
+				foreach (var (ret, _) in prod.Retrieved) {
+					if (!ret.RetrievedFrom.TryGetValue(node, out var rf)) {
+						rf = new();
+						ret.RetrievedFrom[node] = rf;
+					}
+					rf.Add(prod);
+				}
+			}
+			Locations[ressite] = node;
+		}
+		generated = true;
+	}
+
+	public static void PrintLocations() {
+		foreach (var res in Locations.Values) {
+			GD.Print(res);
+		}
+	}
+
+	public static void PrintSources() {
+		void PrintProduction(ProductionNode p, int indent) {
+			if (p.Consumed.Length == 0) return;
+			GD.Print(new string(' ', indent) + " Production sources ");
+			foreach (var (src, _ )in p.Consumed) PrintSource(src, indent + 2);
+		}
+
+		HashSet<ResourceNode> printed = new();
+		void PrintSource(ResourceNode node, int indent) {
+			GD.Print(new string(' ', indent) + node);
+			if (printed.Contains(node)) return;
+			printed.Add(node);
+			//if (node.RetrievedFrom.Count == 0) return;
+			foreach (var (k, v) in node.RetrievedFrom) {
+				GD.Print(new string(' ', indent + 2)  + " Retrieved from " + k.Type.AssetName);
+				foreach(var vl in v) PrintProduction(vl, indent + 2);
+			}
+		}
+
+		foreach (var rn in Resources.Values) PrintSource(rn, 0);
 	}
 
 }

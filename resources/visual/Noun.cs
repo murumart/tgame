@@ -9,6 +9,9 @@ namespace resources.visual {
         [Export] public string Singular;
         [Export] public string Plural;
 
+
+        public override string ToString() => $"Noun({Singular}, {Plural})";
+
 	}
 
 }

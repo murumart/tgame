@@ -21,6 +21,7 @@ namespace resouces.game.building_types.crafting {
 				ResourceBundle[] inp = new ResourceBundle[inputs.Count];
 				var keys = inputs.Keys.ToArray<ResourceType>();
 				for (int i = 0; i < inp.Length; i++) {
+					Debug.Assert(keys[i] != null, $"Thing at {i} in inputs keys of {Product}, {Process} is null!");
 					inp[i] = new(keys[i], inputs[keys[i]]);
 				}
 				return inp;
@@ -32,6 +33,7 @@ namespace resouces.game.building_types.crafting {
 				ResourceBundle[] outp = new ResourceBundle[outputs.Count];
 				var keys = outputs.Keys.ToArray<ResourceType>();
 				for (int i = 0; i < outp.Length; i++) {
+					Debug.Assert(keys[i] != null, $"Thing at {i} in outputs keys of {Product}, {Process} is null!");
 					outp[i] = new(keys[i], outputs[keys[i]]);
 				}
 				return outp;

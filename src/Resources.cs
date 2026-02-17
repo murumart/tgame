@@ -17,6 +17,7 @@ public struct ResourceBundle {
 
 
 	public ResourceBundle(IResourceType type, int amount) {
+		Debug.Assert(type != null, "Resource bundle type cannot be null");
 		Debug.Assert(amount >= 0, $"Resource amount cannot be negative (got {amount})");
 		//if (amount == 0) GD.PushWarning($"Made bundle with 0 amount"); // this happens in Job::AddToStorage because 0-amounts are empty and skipped
 		this.Type = type;
