@@ -153,13 +153,38 @@ public class Population {
 		return (lessthanpop - lessthanhoused) * 0.05f + (lessthanhoused) * 0.5f;
 	}
 
+	(float, string)[] reasons = null;
+	void UpdateApprovalMonthlyChangeReasons() {
+		if (reasons == null) {
+			GD.Print("Population::UpdateApprovalMonthlyChangeReasons : making initial reasons strings");
+			reasons = new (float, string)[5];
+			reasons[0].Item2 = "no people";
+			reasons[1].Item2 = "people are starving";
+			reasons[2].Item2 = "there are homeless people";
+			reasons[3].Item2 = "your coffers are";
+		}
+		if (Count == 0) {
+			return;
+		}
+		if (ArePeopleStarving) reasons[1].Item1 = -50f;
+		if (Count != HousedCount) {
+			reasons[2].Item1 = -((float)Count - HousedCount) / Count * 0.5f;
+		}
+		int silver = SilverRequested?.Invoke() ?? 0;
+		float silverapprovalchange = 0.05f * Mathf.Clamp(Mathf.Pow((silver - 30) / 10f, 3), -27f, 27f);
+		reasons[3].Item1 = silverapprovalchange;
+		reasons[3].Item2 = silverapprovalchange > 0.05f ? "your coffers are full" : silverapprovalchange < -0.05f ? "your faction is poor" : "your budget is just okay";
+	}
+
+	public (float, string)[] GetApprovalMonthlyChangeReasons() => reasons;
+
 	public float GetApprovalMonthlyChange() {
+		UpdateApprovalMonthlyChangeReasons();
 		if (Count == 0) return 0f;
 		float a = 0f;
-		if (ArePeopleStarving) a -= 50f;
-		a -= ((float)Count - HousedCount) / Count;
-		int silver = SilverRequested?.Invoke() ?? 0;
-		a += 0.05f * Mathf.Clamp(Mathf.Pow((silver - 30) / 10f, 3), -27f, 27f);
+		foreach (var f in reasons) {
+			a += f.Item1;
+		}
 		return a;
 	}
 

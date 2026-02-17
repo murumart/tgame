@@ -124,12 +124,23 @@ namespace scenes.region.ui {
 					+ $"({fac.HomelessPopulation / (float)fac.Population.Count * 100:0}% homeless, "
 					+ $"{fac.Population.EmployedCount / (float)fac.Population.Count * 100:0}% employed, "
 					+ $"{fac.Population.GetYearlyBirths():0} births/year)";
+			}, () => {
+				return "house and feed your people to make sure a new generation will be born.";
 			});
 			if (fac.GetPopulationCount() != 0) {
 				var reg = fac.Region;
 				resourceDisplay.Display(() => {
 					float monthlyChange = fac.Population.GetApprovalMonthlyChange();
 					return $"approval: {fac.Population.Approval * 100:0}% ({(monthlyChange >= 0f ? "+" : "")}{monthlyChange * 100:0}%/month)";
+				}, () => {
+					var sb = new StringBuilder();
+					sb.Append("your approval rate depends on the state of your ruling. when it drops to zero, you lose. ensure prosperity for your people.\n");
+					var reasons = fac.Population.GetApprovalMonthlyChangeReasons();
+					foreach (var r in reasons) {
+						if (r.Item1 == 0f) continue;
+						sb.Append(r.Item2).Append('\t').Append($"{(r.Item1 >= 0f ? "+" : "")}{r.Item1 * 100:0}%");
+					}
+					return sb.ToString();
 				});
 				resourceDisplay.Display(() => {
 					return $"silver: {fac.Silver}";

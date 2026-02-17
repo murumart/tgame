@@ -3,7 +3,6 @@
 [ext_resource type="Script" uid="uid://nx6ln4b1uxy6" path="res://scenes/ui/ResourceDisplay.cs" id="1_pf40v"]
 
 [node name="ResourceDisplay" type="PanelContainer" unique_id=21541501 node_paths=PackedStringArray("labelsParent")]
-clip_contents = true
 offset_left = 1.0
 offset_right = 217.0
 offset_bottom = 12.0
@@ -11,7 +10,6 @@ script = ExtResource("1_pf40v")
 labelsParent = NodePath("MarginContainer/HBoxContainer")
 
 [node name="MarginContainer" type="MarginContainer" parent="." unique_id=1363979480]
-clip_contents = true
 layout_mode = 2
 theme_override_constants/margin_left = 2
 theme_override_constants/margin_top = 2
@@ -19,6 +17,5 @@ theme_override_constants/margin_right = 2
 theme_override_constants/margin_bottom = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer" unique_id=1715444015]
-clip_contents = true
 layout_mode = 2
 alignment = 1

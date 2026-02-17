@@ -74,7 +74,7 @@ Seda võiks teha automaatselt. Kui resourceewant mingil lõppproduktil on kõrge
 
 - [ ] approval rating
   - [ ] see võiks tõusta mingite esemete tekkides (nt mööbel - majadesse mööbeldamise job? tõstaks mingit statti ja approvalit)
-  - [ ] kukuks rängalt kui nälgimine käib
+  - [X] kukuks rängalt kui nälgimine käib
   - [ ] gameover kui 0
 - [ ] asju mida tarneahelates teha
   - [ ] puidu laudadeks töötlemine
