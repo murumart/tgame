@@ -20,14 +20,14 @@ public partial class Tilemaps : Node2D {
 		var watch = System.Diagnostics.Stopwatch.StartNew();
 		ground.Clear();
 		// see OffsettableTilemap.cs
-		ground.takeIn = true;
-		ground.world = GameMan.Singleton.Game.Map.World;
-		ground.region = from;
-		ground.heightColorGradient = heightColorGradient;
 		foreach (var pair in from.GroundTiles) {
 			var type = GroundCellType.MatchTileTypeToCell(pair.Value);
 			ground.SetCell(pair.Key, type.SourceId, type.AtlasCoords);
 		}
+		ground.takeIn = true;
+		ground.world = GameMan.Singleton.Game.Map.World;
+		ground.region = from;
+		ground.heightColorGradient = heightColorGradient;
 		ground.UpdateInternals();
 		ground.takeIn = false;
 		watch.Stop();

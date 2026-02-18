@@ -38,7 +38,7 @@ namespace scenes.map {
 			});
 			worldUI.ResourceDisplay.Display(() => $"seed: {world?.Seed ?? 1377}");
 
-			if (GameMan.Singleton.Game.Map.World != null) {
+			if (GameMan.Singleton.Game.Map != GameMan.DebugMap) {
 				map = GameMan.Singleton.Game.Map;
 				world = map.World;
 				worldRenderer.Draw(map.World);

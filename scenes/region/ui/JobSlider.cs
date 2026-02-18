@@ -25,7 +25,7 @@ namespace scenes.region.ui {
 			Slider.ValueChanged += ValueChanged;
 			Slider.DragEnded += DragEnded;
 			_ready = true;
-			GD.Print("JobSlider::_Ready : ready");
+			//GD.Print("JobSlider::_Ready : ready");
 		}
 
 		public override void _Notification(int what) {

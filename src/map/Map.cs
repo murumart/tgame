@@ -9,7 +9,7 @@ public class Map {
 	protected readonly List<Region> regions;
 
 	public Dictionary<Vector2I, Region> TileOwners { get; init; }
-
+	
 
 	public Map(ICollection<Region> regions, World world) {
 		this.regions = regions.ToList();
@@ -41,7 +41,7 @@ public class Map {
 
 		List<Region> regions = new();
 		List<Faction> regionFactions = new();
-		for (int i = 0; i < 10; i++) {
+		for (int i = 10; i < 20; i++) {
 			var region = Region.GetTestCircleRegion(i, 12, new(i * 18, i * 15));
 			regions.Add(region);
 			var regionFaction = new Faction(region);
@@ -62,8 +62,12 @@ public class Map {
 				region.AddNeighbor(otherregion);
 			}
 		}
-
-		return new Map(regions, null);
+		var world = new World(1000, 1000, 1);
+		for (int x = 0; x < 1000; x++) for (int y = 0; y < 1000; y++) {
+				world.SetElevation(x, y, 0.2f);
+				world.SetTile(x, y, GroundTileType.HasLand | GroundTileType.HasVeg);
+			}
+		return new Map(regions, world);
 	}
 
 }

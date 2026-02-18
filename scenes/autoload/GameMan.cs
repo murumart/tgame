@@ -11,6 +11,7 @@ namespace scenes.autoload {
 		[Export] DataStorage dataRegistry;
 
 		static GameMan singleton;
+		public static Map DebugMap { get; private set; }
 		public static GameMan Singleton => singleton;
 		Game game;
 		public Game Game => game;
@@ -27,23 +28,16 @@ namespace scenes.autoload {
 
 
 		public override void _Ready() {
-			AppDomain.CurrentDomain.UnhandledException += OnUnhandled;
 			Debug.Assert(singleton == null, "There GameMan can only GameMan Be One");
 			singleton = this;
 
 			dataRegistry.RegisterThings();
 			GD.Print("GameMan::_Ready : GameMan is set up");
 
-			// debug map
-			var map = Map.GetDebugMap();
-			NewGame(map);
-			Game.PlayRegion = map.GetRegion(0);
-		}
-
-		void OnUnhandled(object sender, UnhandledExceptionEventArgs e) {
-			GD.PrintErr("GameMan::OnUnhandled : Groaning in pain and dying");
-			GetTree().Quit(1);
-			Environment.Exit(1);
+			DebugMap = Map.GetDebugMap();
+			NewGame(DebugMap);
+			Game.PlayRegion = DebugMap.GetRegion(0);
+			GD.Print("GameMan::_Ready : debug map generated");
 		}
 
 		double timeAccum = 0.0;

@@ -158,7 +158,7 @@ public class Region {
 		for (int i = -radius; i <= radius; i++) {
 			for (int j = -radius; j <= radius; j++) {
 				if (i * i + j * j <= radius * radius) {
-					tiles[new Vector2I(i, j)] = GroundTileType.HasLand;
+					tiles[new Vector2I(i, j)] = GroundTileType.HasLand | GroundTileType.HasVeg;
 
 					if (i != 0 || j != 0) {
 						if (GD.Randf() < 0.01f) rs.Add(new Vector2I(i, j), Registry.ResourceSitesS.Rock);

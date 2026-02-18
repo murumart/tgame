@@ -47,27 +47,30 @@ namespace scenes.region {
 			region.MapObjectUpdatedAtEvent += OnRegionMapObjectUpdated;
 			camera.Region = region;
 
-			regionDisplay.LoadRegion(region);
 			ui.SetupResourceDisplay();
 
-			// show also neighboring regions and neighbors' neighbors
-			HashSet<Region> secondLevel = new();
-			foreach (var neighbor in region.Neighbors) {
-				var rdisp = RegionDisplay.Instantiate();
-				otherDisplaysParent.AddChild(rdisp);
-				rdisp.Modulate = new Color(0.3f, 0.3f, 0.3f).Lerp(neighbor.LocalFaction.Color, 0.05f);
-				rdisp.Position = Tilemaps.TilePosToWorldPos(neighbor.WorldPosition - region.WorldPosition) - Tilemaps.TILE_SIZE / 2;
-				rdisp.LoadRegion(neighbor);
-				foreach (var n in neighbor.Neighbors) if (n != region && !region.Neighbors.Contains(n)) secondLevel.Add(n);
-			}
-			foreach (var neighbor in secondLevel) {
-				var rdisp = RegionDisplay.Instantiate();
-				otherDisplaysParent.AddChild(rdisp);
-				rdisp.Modulate = new Color(0.1f, 0.1f, 0.1f).Lerp(region.LocalFaction.Color, 0.1f);
-				rdisp.Position = Tilemaps.TilePosToWorldPos(neighbor.WorldPosition - region.WorldPosition) - Tilemaps.TILE_SIZE / 2;
-				rdisp.LoadRegion(neighbor);
-			}
-			secondLevel = null;
+			Callable.From(() => {
+				regionDisplay.LoadRegion(region);
+
+				// show also neighboring regions and neighbors' neighbors
+				HashSet<Region> secondLevel = new();
+				foreach (var neighbor in region.Neighbors) {
+					var rdisp = RegionDisplay.Instantiate();
+					otherDisplaysParent.AddChild(rdisp);
+					rdisp.Modulate = new Color(0.3f, 0.3f, 0.3f).Lerp(neighbor.LocalFaction.Color, 0.05f);
+					rdisp.Position = Tilemaps.TilePosToWorldPos(neighbor.WorldPosition - region.WorldPosition) - Tilemaps.TILE_SIZE / 2;
+					rdisp.LoadRegion(neighbor);
+					foreach (var n in neighbor.Neighbors) if (n != region && !region.Neighbors.Contains(n)) secondLevel.Add(n);
+				}
+				foreach (var neighbor in secondLevel) {
+					var rdisp = RegionDisplay.Instantiate();
+					otherDisplaysParent.AddChild(rdisp);
+					rdisp.Modulate = new Color(0.1f, 0.1f, 0.1f).Lerp(region.LocalFaction.Color, 0.1f);
+					rdisp.Position = Tilemaps.TilePosToWorldPos(neighbor.WorldPosition - region.WorldPosition) - Tilemaps.TILE_SIZE / 2;
+					rdisp.LoadRegion(neighbor);
+				}
+				secondLevel = null;
+			}).CallDeferred();
 
 			// DEBUG add assets
 			//foreach (var r in Registry.Resources.GetAssets()) {
