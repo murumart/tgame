@@ -127,7 +127,7 @@ namespace scenes.region.ui {
 			}, () => {
 				return "house and feed your people to make sure a new generation will be born.";
 			});
-			if (fac.GetPopulationCount() != 0) {
+			if (!fac.IsWild) {
 				var reg = fac.Region;
 				resourceDisplay.Display(() => {
 					float monthlyChange = fac.Population.GetApprovalMonthlyChange();

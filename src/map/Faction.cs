@@ -33,6 +33,7 @@ public class Faction : IEntity {
 	readonly ResourceStorage resourceStorage = new();
 	public ResourceStorage Resources { get => resourceStorage; }
 
+	public bool IsWild { get; private set; }
 	public readonly Population Population;
 
 	public uint HomelessPopulation => Population.Count - Population.HousedCount;
@@ -68,9 +69,10 @@ public class Faction : IEntity {
 
 		Region.SetLocalFaction(this);
 
-		if (Population.Count == 0) {
+		if (Population.Count <= 5) {
 			Name = Naming.GenRandomNatureName();
 			Color = new(1, 1, 0.89f);
+			IsWild = true;
 		} else {
 			Name = Naming.GenRandomName();
 			Color = Color.FromHsv(GD.Randf(), (float)GD.RandRange(0.75, 1.0), 1.0f);

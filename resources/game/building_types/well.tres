@@ -2,15 +2,44 @@
 
 [ext_resource type="Script" uid="uid://b5xb3tdf3yoon" path="res://resources/game/building_types/BuildingType.cs" id="1_7mu2a"]
 [ext_resource type="Resource" uid="uid://nw83fam2omvi" path="res://resources/game/resource_types/rock.tres" id="1_cgu5r"]
+[ext_resource type="Script" uid="uid://cbiuqlrd8yyxx" path="res://resources/visual/Verb.cs" id="1_xt82n"]
 [ext_resource type="Resource" uid="uid://b8507qbvqvdy8" path="res://resources/game/resource_types/lumber.tres" id="2_cgu5r"]
+[ext_resource type="Script" uid="uid://clkqk6nbux1c1" path="res://resources/visual/Noun.cs" id="2_mwcll"]
+[ext_resource type="Resource" uid="uid://dbmt5icgtucsx" path="res://resources/game/resource_types/water.tres" id="3_yhmpp"]
+[ext_resource type="Script" uid="uid://c3n4csk46p0uc" path="res://resources/game/building_types/crafting/CraftingJobDef.cs" id="4_aeehs"]
+
+[sub_resource type="Resource" id="Resource_28jy7"]
+script = ExtResource("1_xt82n")
+Infinitive = "draw"
+Progressive = "drawing"
+metadata/_custom_type_script = "uid://cbiuqlrd8yyxx"
+
+[sub_resource type="Resource" id="Resource_e11ti"]
+script = ExtResource("2_mwcll")
+Singular = "water"
+Plural = "water"
+metadata/_custom_type_script = "uid://clkqk6nbux1c1"
+
+[sub_resource type="Resource" id="Resource_f1fti"]
+script = ExtResource("4_aeehs")
+inputs = Dictionary[Object, int]({})
+outputs = Dictionary[Object, int]({
+ExtResource("3_yhmpp"): 1
+})
+timeTakenMinutes = 15
+maxWorkers = 1
+Product = SubResource("Resource_e11ti")
+Process = SubResource("Resource_28jy7")
+metadata/_custom_type_script = "uid://c3n4csk46p0uc"
 
 [resource]
 script = ExtResource("1_7mu2a")
 name = "well"
+description = "You get water"
 ResourceCosts = Dictionary[Object, int]({
 ExtResource("1_cgu5r"): 10,
-ExtResource("2_cgu5r"): 3
+ExtResource("2_cgu5r"): 5
 })
-CraftingJobs = null
+CraftingJobs = Array[Object]([SubResource("Resource_f1fti")])
 HoursToConstruct = 12.0
 metadata/_custom_type_script = "uid://b5xb3tdf3yoon"

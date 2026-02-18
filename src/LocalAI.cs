@@ -22,6 +22,7 @@ public abstract partial class LocalAI {
 		chosenScore = idleScore;
 		foreach (ref readonly var action in actions) {
 			var s = action.Score();
+			if (GameMan.Singleton.Game.PlayRegion == factionActions.Region) Console.WriteLine($"LocalAI::ChooseAction : {action} scored {s}");
 			AIAssert(!Mathf.IsNaN(s), $"Got NOT A NUMBER from scoring action {action}");
 			if (s > chosenScore) {
 				chosenScore = s;
@@ -43,10 +44,12 @@ public partial class LocalAI {
 
 		public readonly float Score() {
 			//Console.WriteLine($"LocalAI::Action::Score : \tscoring {this}");
-			var ustime = Time.GetTicksUsec();
+			ulong ustime = Time.GetTicksUsec();
 			var score = 1f;
 			foreach (ref readonly DecisionFactor factor in factors.AsSpan()) {
+				ulong sustime = Time.GetTicksUsec();
 				var s = factor.Score();
+				Profile.AddDecisionTime(Time.GetTicksUsec() - sustime, factor.ToString());
 				//Console.WriteLine($"LocalAI::Action::Score : \t\tutility of {factor} is {s}");
 				score *= s;
 				if (s <= 0f) {
@@ -74,6 +77,7 @@ public partial class LocalAI {
 				AIAssert(job.NeedsWorkers, "Job doesn't \"need workers\"", ac);
 				int maxChange = Math.Min((int)ac.GetFreeWorkers(), (int)job.MaxWorkers);
 				maxChange = Math.Min(maxChange, (int)job.MaxWorkers - job.Workers);
+				maxChange = GD.RandRange(maxChange / 2, maxChange);
 				ac.ChangeJobWorkerCount(job, maxChange);
 			}, $"AssignWorkersToJob({job})");
 		}
@@ -142,7 +146,7 @@ public partial class LocalAI {
 			}, $"CreateBuildingJob({buildingType.AssetName})");
 		}
 
-		// unfinished TODO make ok
+		// sucks don't use
 		public static Action CrappySendTradeOffer(DecisionFactor[] factors, Faction from, Faction to) {
 			return new(factors, () => {
 				TradeOffer toffer;
@@ -200,6 +204,16 @@ public partial class LocalAI {
 			}, $"CancelTradeOffer()");
 		}
 
+		public static Action FoodPanicCancelEverything(DecisionFactor[] factors, FactionActions ac) {
+			return new(factors, () => {
+				foreach (var job in ac.GetMapObjectJobs()) {
+					if (job is CraftJob j && j.Outputs.Any(o => Registry.ResourcesS.FoodValues.TryGetValue(o.Type, out var _))) continue;
+					if (job is GatherResourceJob g && Registry.ResourcesS.FoodValues.TryGetValue(g.GetProduction().ResourceType, out var _)) continue;
+					ac.RemoveJob(job);
+				}
+			}, "FoodPanicCancelEverything");
+		}
+
 	}
 
 }
@@ -238,8 +252,8 @@ public partial class LocalAI {
 			return new(() => fac.Score() * with, $"({fac} * {with})");
 		}
 
-		public static DecisionFactor Cube(DecisionFactor fac) {
-			return new(() => { var a = fac.Score(); return a * a * a; }, $"({fac}^3)");
+		public static DecisionFactor Pow(DecisionFactor fac, float up) {
+			return new(() => { var a = fac.Score(); return Mathf.Pow(a, up); }, $"({fac}^{up})");
 		}
 
 		public static DecisionFactor Group(DecisionFactor[] factors) {
@@ -429,6 +443,14 @@ public partial class LocalAI {
 				return 1f - Mathf.Clamp(amt.Count / (float)limit, 0f, 1f);
 			}, $"TradeOfferLimit({limit})");
 		}
+
+		public static DecisionFactor EmploymentRate(FactionActions actions) {
+			return new(() => actions.Faction.GetPopulationCount() == 0 ? 0f : (float)actions.GetUnemployedPopulationCount() / actions.Faction.GetPopulationCount(), "EmploymentRate");
+		}
+
+		public static DecisionFactor ArePeopleStarving(FactionActions actions) {
+			return new(() => actions.Faction.Population.ArePeopleStarving ? 1f : 0f, "ArePeopleStarving");
+		}
 	}
 
 }
@@ -439,6 +461,7 @@ public partial class LocalAI {
 	public static class Profile {
 
 		static readonly Dictionary<string, List<ulong>> ActionTimes = new();
+		static readonly Dictionary<string, List<ulong>> DecisionTimes = new();
 
 
 		public static void AddActionTime(ulong time, string name) {
@@ -449,24 +472,47 @@ public partial class LocalAI {
 			list.Add(time);
 		}
 
+		public static void AddDecisionTime(ulong time, string name) {
+			if (!DecisionTimes.TryGetValue(name, out var list)) {
+				list = new();
+				DecisionTimes[name] = list;
+			}
+			list.Add(time);
+		}
+
+		static void Ep(Dictionary<string, List<ulong>> timess) {
+			if (timess.Count == 0) return; // who care
+			var max = timess.MaxBy(kvp => kvp.Value.Max());
+			const string eps = "LocalAI::Profile::Ep : ";
+			var times = timess.ToList();
+			times.Sort((kvp1, kvp2) => kvp1.Value.Average(l => (double)l).CompareTo(kvp2.Value.Average(l => (double)l)));
+			foreach (var (name, vals) in times) {
+				Console.WriteLine(eps + $"\t{name}:");
+				Console.WriteLine(eps + $"\t\tSCORES: {vals.Count}");
+				Console.WriteLine(eps + $"\t\tAVG   : {vals.Average(l => (double)l)} us");
+				Console.WriteLine(eps + $"\t\tMAX   : {vals.Max()} us");
+				Console.WriteLine(eps + $"\t\tTOTAL : {vals.Sum(l => (long)l)} us");
+			}
+			Console.WriteLine(eps + $"\tOMAX    : {max.Key} {max.Value.Max()} us");
+
+		}
+
 		public static void EndProfiling() {
-			if (ActionTimes.Count == 0) return; // who care
-			var max = ActionTimes.MaxBy(kvp => kvp.Value.Max());
 			const string eps = "LocalAI::Profile::EndProfiling : ";
 			Console.WriteLine(eps + "***************");
 			Console.WriteLine(eps + "PROFILING ENDED");
 			Console.WriteLine(eps + "***************");
 			Console.WriteLine(eps + "");
-			var times = ActionTimes.ToList();
-			times.Sort((kvp1, kvp2) => kvp1.Value.Average(l => (double)l).CompareTo(kvp2.Value.Average(l => (double)l)));
-			foreach (var (name, vals) in times) {
-				Console.WriteLine(eps + $"\t{name}:");
-				Console.WriteLine(eps + $"\t\tCALLS: {vals.Count}");
-				Console.WriteLine(eps + $"\t\tAVG: {vals.Average(l => (double)l)} us");
-				Console.WriteLine(eps + $"\t\tMAX: {vals.Max()} us");
-				Console.WriteLine(eps + $"\t\tTOTAL: {vals.Sum(l => (long)l)} us");
-			}
-			Console.WriteLine(eps + $"\tOMAX: {max.Key} {max.Value.Max()} us");
+			Console.WriteLine(eps + "******************");
+			Console.WriteLine(eps + "ACTION SCORE TIMES");
+			Console.WriteLine(eps + "******************");
+			Console.WriteLine(eps + "");
+			Ep(ActionTimes);
+			Console.WriteLine(eps + "***************************");
+			Console.WriteLine(eps + "DECISION FACTOR SCORE TIMES");
+			Console.WriteLine(eps + "***************************");
+			Console.WriteLine(eps + "");
+			Ep(DecisionTimes);
 			Console.WriteLine(eps + "");
 			Console.WriteLine(eps + "***************");
 			Console.WriteLine(eps + "      BYE      ");
@@ -526,31 +572,26 @@ public class GamerAI : LocalAI {
 			], factionActions, b));
 		}
 		startActions.Add(Actions.PlaceBuildingJob([
-				Factors.OneMinus(Factors.HasMarketplace(actions)),
-				//Factors.HasSpotForBuilding(factionActions, Registry.BuildingsS.Marketplace),
-				Factors.ResourcesNeed(factionActions, Registry.BuildingsS.Marketplace.GetResourceRequirements()),
-			], factionActions, Registry.BuildingsS.Marketplace));
+			Factors.OneMinus(Factors.HasMarketplace(actions)),
+			//Factors.HasSpotForBuilding(factionActions, Registry.BuildingsS.Marketplace),
+			Factors.ResourcesNeed(factionActions, Registry.BuildingsS.Marketplace.GetResourceRequirements()),
+		], factionActions, Registry.BuildingsS.Marketplace));
 
 		startActions.Add(Actions.CreateProcessMarketJob([
-				Factors.OneMinus(Factors.HasFunctionalMarketplace(actions)),
-				Factors.HasMarketplace(actions),
-				Factors.IsMarketplaceConstructed(actions),
-			], actions));
-
-		foreach (var neighbor in actions.Region.Neighbors.Where(r => r.LocalFaction.GetPopulationCount() > 0)) {
-			startActions.Add(Actions.CrappySendTradeOffer([
-				Factors.HasFunctionalMarketplace(factionActions),
-				Factors.TradeOfferLimit(factionActions.Faction, neighbor.LocalFaction, 5),
-				Factors.Const(0.000015f),
-			], actions.Faction, neighbor.LocalFaction));
-		}
+			Factors.OneMinus(Factors.HasFunctionalMarketplace(actions)),
+			Factors.HasMarketplace(actions),
+			Factors.IsMarketplaceConstructed(actions),
+		], actions));
+		startActions.Add(Actions.FoodPanicCancelEverything([
+			Factors.ArePeopleStarving(actions),
+			Factors.EmploymentRate(actions),
+		], actions));
 
 		this.mainActions = startActions.ToArray();
 		this.ephemeralActions = new();
 	}
 
 	public override void PreUpdate(TimeT minute) {
-
 
 		ephemeralActions.Clear();
 		foreach (var mopbject in factionActions.GetMapObjects()) {
@@ -565,44 +606,31 @@ public class GamerAI : LocalAI {
 		}
 		// assigning workers to job
 		foreach (var job in factionActions.GetMapObjectJobs()) {
-			DecisionFactor[] factors = null;
-			DecisionFactor[] negativeFactors = null;
+			List<DecisionFactor> factors = new();
+			List<DecisionFactor> negativeFactors = new();
 			if (job is GatherResourceJob gjob) {
 				var prod = gjob.GetProduction();
-				factors = [
-						Factors.HasFreeWorkers(factionActions),
-						GetResourceWant(prod.ResourceType, Factors.One),
-						Factors.JobHasEmploymentSpots(factionActions, gjob),
-					];
-				negativeFactors = [Factors.Mult(Factors.Cube(Factors.OneMinus(GetResourceWantConstantHungerForMore(prod.ResourceType))), 0.000001f)];
-
+				factors.Add(GetResourceWant(prod.ResourceType, Factors.One));
+				negativeFactors.Add(Factors.Mult(Factors.Pow(Factors.OneMinus(GetResourceWantConstantHungerForMore(prod.ResourceType)), 3f), 0.000001f));
 			} else if (job is ConstructBuildingJob bjob) {
-				factors = [
-					Factors.HasFreeWorkers(factionActions),
-					Factors.OneMinus(Factors.JobEmploymentRate(bjob)),
-					Factors.Max(Factors.BuildingProgress(bjob.Building), 0.5f),
-				];
+				factors.Add(Factors.Max(Factors.BuildingProgress(bjob.Building), 0.5f));
 			} else if (job is ProcessMarketJob pjob) {
-				factors = [
-					Factors.HasFreeWorkers(factionActions),
-					Factors.OneMinus(Factors.JobEmploymentRate(pjob)),
-				];
 			} else if (job is CraftJob cjob) {
-				factors = [
-					Factors.Mult(Factors.Group(cjob.Outputs.Select(o => GetResourceWant(o.Type, 5)).ToArray()), 0.1f),
-					Factors.HasFreeWorkers(factionActions),
-					Factors.OneMinus(Factors.JobEmploymentRate(cjob)),
-				];
+				factors.Add(Factors.Mult(Factors.Group(cjob.Outputs.Select(o => GetResourceWant(o.Type, 5)).ToArray()), 0.1f));
+				factors.Add(Factors.HasFreeWorkers(factionActions));
 			}
+			factors.Add(Factors.Pow(Factors.JobHasEmploymentSpots(factionActions, job), 9f));
+			factors.Add(Factors.HasFreeWorkers(factionActions));
+			factors.Add(Factors.OneMinus(Factors.JobEmploymentRate(job)));
 			if (factors != null) {
-				ephemeralActions.Add(Actions.AssignWorkersToJob(factors, factionActions, job));
+				ephemeralActions.Add(Actions.AssignWorkersToJob(factors.ToArray(), factionActions, job));
 				ephemeralActions.Add(Actions.RemoveWorkersFromJob([
-					Factors.Mult(Factors.OneMinus(Factors.Group(factors)), 0.0000001f),
+					Factors.Mult(Factors.OneMinus(Factors.Group(factors.ToArray())), 0.0000001f),
 					Factors.JobEmploymentRate(job),
 				], factionActions, job));
 			}
 			if (negativeFactors != null) {
-				ephemeralActions.Add(Actions.RemoveJob(negativeFactors, factionActions, job));
+				//ephemeralActions.Add(Actions.RemoveJob(negativeFactors.ToArray(), factionActions, job));
 			}
 		}
 		var marketJob = factionActions.GetProcessMarketJob();

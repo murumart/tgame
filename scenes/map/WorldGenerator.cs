@@ -402,10 +402,12 @@ namespace scenes.map {
 			}
 
 			var aggressors = regions.Where(r => r.LocalFaction.GetPopulationCount() > 20).OrderByDescending(r => r.LocalFaction.GetPopulationCount()).Take(aggressiveRegionCount);
-			GD.Print($"WorldGenerator::War : aggressors {string.Join(", ", aggressors)}");
 			var subs = new Dictionary<Region, HashSet<Region>>();
 			var taken = new HashSet<Region>();
-			foreach (var ag in aggressors) subs[ag] = new();
+			foreach (var ag in aggressors) {
+				subs[ag] = new();
+				taken.Add(ag);
+			}
 
 			int actions = 10;
 			while (actions-- > 0) {
@@ -422,8 +424,7 @@ namespace scenes.map {
 
 		void WarlikeExpand(HashSet<Region> subs, HashSet<Region> taken, Region attacker, uint attackingPop, Region owner) {
 			foreach (var n in attacker.Neighbors) {
-				if (subs.Contains(n)) continue;
-				if (taken.Contains(n)) continue;
+				if (subs.Contains(n) || taken.Contains(n) || n.LocalFaction.IsWild) continue;
 				if (n.LocalFaction.GetPopulationCount() > attackingPop / 2) {
 
 				} else {
