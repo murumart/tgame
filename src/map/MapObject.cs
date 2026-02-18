@@ -69,7 +69,7 @@ public partial class Building : MapObject {
 
 	public override IEnumerable<Job> GetAvailableJobs() {
 		var jobs = base.GetAvailableJobs().ToList();
-		if (!HasFurniture) jobs.Add(new AddFurnitureJob(this));
+		if (!HasFurniture && GetHousingCapacity() > 0) jobs.Add(new AddFurnitureJob(this));
 		return jobs;
 	}
 

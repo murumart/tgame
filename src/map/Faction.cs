@@ -257,7 +257,7 @@ public class Faction : IEntity {
 		float bs = 0f;
 		float fbs = 0f;
 
-		foreach (var mo in Region.GetMapObjects()) if (mo is Building b) {
+		foreach (var mo in Region.GetMapObjects()) if (mo is Building b && b.GetHousingCapacity() > 0) {
 				bs += 1f;
 				if (b.HasFurniture) fbs += 1f;
 			}

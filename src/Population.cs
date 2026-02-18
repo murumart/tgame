@@ -170,10 +170,10 @@ public class Population {
 		reasons[1].Item1 = ArePeopleStarving ? -50f : 0f;
 		reasons[2].Item1 = -((float)Count - HousedCount) / Count * 0.5f;
 		int silver = SilverRequested?.Invoke() ?? 0;
-		float silverapprovalchange = 0.005f * Mathf.Clamp(Mathf.Pow((silver - 30), 3) / 15f, -27f, 27f);
+		float silverapprovalchange = 0.05f * Mathf.Ease(Mathf.Clamp(silver, 0, 50) / 50f, -2f);
 		reasons[3].Item1 = silverapprovalchange;
 		reasons[3].Item2 = silverapprovalchange > 0.005f ? "your coffers are full" : silverapprovalchange < -0.005f ? "your faction is poor" : "your budget is just okay";
-		float furnitureapprovalchange = 0.1f * Mathf.Clamp(Mathf.Pow((FurnitureRateRequested?.Invoke() ?? 0f - 0.1f), 3) / 0.8f, -0.16f, 0.16f);
+		float furnitureapprovalchange = 0.4f * Mathf.Clamp(Mathf.Pow((FurnitureRateRequested?.Invoke() ?? 0f - 0.1f), 3) / 0.8f, -0.16f, 0.16f);
 		reasons[4].Item1 = furnitureapprovalchange;
 		reasons[4].Item2 = furnitureapprovalchange > 0f ? "people have furniture in their homes" : "people are missing furniture in their homes";
 	}

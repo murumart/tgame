@@ -486,6 +486,10 @@ public class AddFurnitureJob : MapObjectJob {
 		return GameTime.GetFancyTimeString((TimeT)timeLeft) + $" until the {building.Type.AssetName} is furnished.";
 	}
 
-	public override string GetProductionDescription() => !resources.HasEnough(requirements) ? "" : $"This {building.Type.AssetName} will be furnished.";
+	public override string GetProductionDescription() {
+		if (resources == null ||!resources.HasEnough(requirements)) return $"This {building.Type.AssetName} will be furnished. ({GetResourceRequirementDescription()})";
+		return $"This {building.Type.AssetName} will be furnished.";
+
+	} 
 
 }

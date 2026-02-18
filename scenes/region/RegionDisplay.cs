@@ -143,7 +143,7 @@ namespace scenes.region {
 		}
 
 		void OnJobChanged(Job job, int __) {
-			GD.Print($"RegionDisplay::OnJobChanged : {job} changed");
+			//GD.Print($"RegionDisplay::OnJobChanged : {job} changed");
 			jobsToDisplay.Enqueue(job);
 		}
 
@@ -158,7 +158,7 @@ namespace scenes.region {
 				if (job.Workers != 0) view.IconSetShow(MapObjectView.IconSetIcons.Workers);
 				else view.IconSetHide(MapObjectView.IconSetIcons.Workers);
 			}
-			GD.Print("RegionDisplay::DisplayRegionJob : job displayed ", job);
+			//GD.Print("RegionDisplay::DisplayRegionJob : job displayed ", job);
 		}
 
 		void OnRegionJobRemoved(Job job) {
