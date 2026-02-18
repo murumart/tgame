@@ -186,21 +186,21 @@ partial class Document {
 public partial class TradeOffer {
 
 	readonly Faction starter;
-	public readonly bool OffererGivesRecipentSilver;
+	public readonly bool OffererGivesRecipientSilver;
 
 	public int StoredUnits { get; private set; }
 
 	readonly int giveSilverUnit;
 	public int OffererPaidSilverUnit {
 		get {
-			Debug.Assert(OffererGivesRecipentSilver, "Looking at silver makes no sense when we're not buying with silver");
+			Debug.Assert(OffererGivesRecipientSilver, "Looking at silver makes no sense when we're not buying with silver");
 			return giveSilverUnit;
 		}
 	}
 	readonly ResourceBundle giveResourcesUnit;
 	public ResourceBundle OffererSoldResourcesUnit {
 		get {
-			Debug.Assert(!OffererGivesRecipentSilver, "Looking at offered resources makes no sense when we're buying with silver");
+			Debug.Assert(!OffererGivesRecipientSilver, "Looking at offered resources makes no sense when we're buying with silver");
 			return giveResourcesUnit;
 		}
 	}
@@ -209,14 +209,14 @@ public partial class TradeOffer {
 	readonly int takeSilverUnit;
 	public int RecipientPaidSilverUnit {
 		get {
-			Debug.Assert(!OffererGivesRecipentSilver, "No sense looking at getting silver when we're already buying with silver");
+			Debug.Assert(!OffererGivesRecipientSilver, "No sense looking at getting silver when we're already buying with silver");
 			return takeSilverUnit;
 		}
 	}
 	readonly ResourceBundle takeResourcesUnit;
 	public ResourceBundle RecepientRequiredResourcesUnit {
 		get {
-			Debug.Assert(OffererGivesRecipentSilver, "No sense looking at getting resources when we're expecting silver for our resources");
+			Debug.Assert(OffererGivesRecipientSilver, "No sense looking at getting resources when we're expecting silver for our resources");
 			return takeResourcesUnit;
 		}
 	}
@@ -239,7 +239,7 @@ public partial class TradeOffer {
 		Debug.Assert(gives > 0, "Need to give MORE THAN 0 silver to make a trade");
 		Debug.Assert(acceptor != null);
 		this.acceptor = acceptor;
-		OffererGivesRecipentSilver = true;
+		OffererGivesRecipientSilver = true;
 
 		giveSilverUnit = gives;
 		starter.SubtractAndReturnSilver(gives * maxUnits);
@@ -259,7 +259,7 @@ public partial class TradeOffer {
 		Debug.Assert(acceptor != null);
 		Debug.Assert(wants > 0, "Need to take MORE THAN 0 silver to make a trade");
 		this.acceptor = acceptor;
-		OffererGivesRecipentSilver = false;
+		OffererGivesRecipientSilver = false;
 
 		giveResourcesUnit = gives;
 		starter.Resources.GetTransfer(gives.Multiply(StoredUnits));
@@ -272,7 +272,7 @@ public partial class TradeOffer {
 
 	public void Cancel() {
 		Debug.Assert(valid, "Trade offer invalid, can't cancel, please delete");
-		if (OffererGivesRecipentSilver) {
+		if (OffererGivesRecipientSilver) {
 			starter.ReceiveTransferSilver(OffererPaidSilverUnit);
 		} else {
 			starter.Resources.AddResource(OffererSoldResourcesUnit);
@@ -287,7 +287,7 @@ public partial class TradeOffer {
 		Debug.Assert(units > 0, "No sense to trade <= 0 units");
 		Debug.Assert(units <= StoredUnits, "Can't trade more units than contained in offer");
 		Log("checking trade possibolity ");
-		if (OffererGivesRecipentSilver) {
+		if (OffererGivesRecipientSilver) {
 			return acceptor.Resources.HasEnough(RecepientRequiredResourcesUnit.Multiply(units));
 		} else {
 			return acceptor.Silver >= RecipientPaidSilverUnit * units;
@@ -299,7 +299,7 @@ public partial class TradeOffer {
 		Debug.Assert(units > 0, "No sense to trade <= 0 units");
 		Debug.Assert(units <= StoredUnits, "Can't trade more units than contained in offer");
 		Debug.Assert(CanTrade(units), "Can't even trade Brooooo");
-		if (OffererGivesRecipentSilver) {
+		if (OffererGivesRecipientSilver) {
 			MakeTradeOffererGivesSilver(units);
 		} else {
 			MakeTradeAcceptorGivesSilver(units);

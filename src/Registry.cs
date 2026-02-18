@@ -72,9 +72,6 @@ public static class Registry {
 		public static readonly IBuildingType Windmill = Buildings.GetAsset("windmill");
 		public static readonly IBuildingType Bakery = Buildings.GetAsset("bakery");
 
-		public static readonly IBuildingType[] HousingBuildings = [LogCabin, Housing, BrickHousing];
-		public static readonly IBuildingType[] CraftingBuildings = [GrainField, Windmill, Bakery, Kiln];
-
 	}
 
 	public static class ResourceSitesS {
@@ -241,8 +238,7 @@ public static class ProductionNet {
 
 	public static readonly Dictionary<IResourceType, ResourceNode> Resources = new();
 	public static readonly Dictionary<IMapObjectType, LocationNode> Locations = new();
-	public static readonly Dictionary<ResourceNode, ProductionNode> ProductionsByConsumption = new();
-	public static readonly Dictionary<ResourceNode, ProductionNode> ProductionsByRetrieval = new();
+
 
 	public static void Generate() {
 		Debug.Assert(!generated, "Doon't generate stuff when iot's donadalsd");

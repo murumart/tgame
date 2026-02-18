@@ -94,3 +94,5 @@ Seda võiks teha automaatselt. Kui resourceewant mingil lõppproduktil on kõrge
 ### Hiljem
 
 Nüüdseks on selgunud, et gatherresourcejob ja craftjob on üsna sarnased - saaks teha nii, et resourceil on lihtsalt list töödest (olgu kumb tahes) ning neid saab mängus valida. Nii et ehitistel saaks ka olla gatherresource, mis mingil hetkel otsa saaks. Siis peaks welle salvestama ka peale töö olemasolu, ilmselt antud koordinaadil lihtsalt. Näiteks kaev (well), millest saab gatherresource vett, see saaks sellel ruudul mingi hetk otsa, peaks ehitama uue kaevu, et vett veel saada. Kui samasse kohta kaev ehitada, ei tohiks sealt vett tulla.
+
+Sõjalises mõttes: barracks ehitis, kus töö treenida. Factionil on max militaarvõimekus, sõltub sellest, kui palju barrackse on. Treening suurendab päris võimekust kuni maxini, võimekus kukub, kui ei treenita. Suure võimekusega saaks ähvardada naabreid?

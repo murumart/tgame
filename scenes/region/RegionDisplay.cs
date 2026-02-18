@@ -50,7 +50,8 @@ namespace scenes.region {
 		void TimeUpdate(TimeT time) {
 			foreach (var (tpos, mopview) in mapObjectViews) {
 				if (region.LocalFaction.GetJob(tpos + region.WorldPosition, out var job)) {
-					mopview.DisplayJobProgress(job.GetProgressEstimate(), show: true, showBuilding: job is ConstructBuildingJob);
+					float progress = job.GetProgressEstimate();
+					mopview.DisplayJobProgress(progress, show: job.Workers != 0 || progress > 0f, showBuilding: job is ConstructBuildingJob);
 				} else {
 					mopview.DisplayJobProgress(0f, false);
 				}

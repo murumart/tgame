@@ -93,7 +93,7 @@ public class Faction : IEntity {
 	}
 
 	void RegisterJob(Vector2I position, Job job) {
-		Debug.Assert(!jobsByPosition.ContainsKey(position), $"There's already a job registred at {position}");
+		Debug.Assert(!jobsByPosition.ContainsKey(position), $"There's already a job registred at {position} ({this} {Region})");
 		jobsByPosition[position] = job;
 		jobs.Add(job);
 	}

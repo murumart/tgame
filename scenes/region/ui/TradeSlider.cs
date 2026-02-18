@@ -31,14 +31,14 @@ namespace scenes.region.ui {
 				UnitsSlider.ValueChanged += OnSliderValueChanged;
 				ConfirmButton.Pressed += OnBought;
 
-				GiveLabel.Text = tradeOffer.OffererGivesRecipentSilver ? $"{tradeOffer.RecepientRequiredResourcesUnit.Type.AssetName} x {tradeOffer.RecepientRequiredResourcesUnit.Amount}" : tradeOffer.RecipientPaidSilverUnit + " silver";
-				GetLabel.Text = tradeOffer.OffererGivesRecipentSilver ? tradeOffer.OffererPaidSilverUnit + " silver" : $"{tradeOffer.OffererSoldResourcesUnit.Type.AssetName} x {tradeOffer.OffererSoldResourcesUnit.Amount}";
+				GiveLabel.Text = tradeOffer.OffererGivesRecipientSilver ? $"{tradeOffer.RecepientRequiredResourcesUnit.Type.AssetName} x {tradeOffer.RecepientRequiredResourcesUnit.Amount}" : tradeOffer.RecipientPaidSilverUnit + " silver";
+				GetLabel.Text = tradeOffer.OffererGivesRecipientSilver ? tradeOffer.OffererPaidSilverUnit + " silver" : $"{tradeOffer.OffererSoldResourcesUnit.Type.AssetName} x {tradeOffer.OffererSoldResourcesUnit.Amount}";
 				UnitsSlider.MaxValue = tradeOffer.StoredUnits;
 			} else {
 				UnitsSlider.Hide();
 				ConfirmButton.Hide();
-				GiveLabel.Text = tradeOffer.OffererGivesRecipentSilver ? $"{tradeOffer.RecepientRequiredResourcesUnit.Type.AssetName} x {tradeOffer.RecepientRequiredResourcesUnit.Amount}" : tradeOffer.RecipientPaidSilverUnit + " silver";
-				GetLabel.Text = tradeOffer.OffererGivesRecipentSilver ? tradeOffer.OffererPaidSilverUnit + " silver" : $"{tradeOffer.OffererSoldResourcesUnit.Type.AssetName} x {tradeOffer.OffererSoldResourcesUnit.Amount}";
+				GiveLabel.Text = tradeOffer.OffererGivesRecipientSilver ? $"{tradeOffer.RecepientRequiredResourcesUnit.Type.AssetName} x {tradeOffer.RecepientRequiredResourcesUnit.Amount}" : tradeOffer.RecipientPaidSilverUnit + " silver";
+				GetLabel.Text = tradeOffer.OffererGivesRecipientSilver ? tradeOffer.OffererPaidSilverUnit + " silver" : $"{tradeOffer.OffererSoldResourcesUnit.Type.AssetName} x {tradeOffer.OffererSoldResourcesUnit.Amount}";
 			}
 			RejectButton.Pressed += OnRejected;
 			ConfirmButton.Disabled = true;
@@ -48,7 +48,7 @@ namespace scenes.region.ui {
 		void OnSliderValueChanged(double to) {
 			sliderVal = (int)to;
 			bool shouldDisable = sliderVal == 0;
-			if (offer.OffererGivesRecipentSilver) {
+			if (offer.OffererGivesRecipientSilver) {
 				shouldDisable = shouldDisable || !me.Resources.HasEnough(offer.RecepientRequiredResourcesUnit.Multiply(sliderVal));
 				ConfirmButton.Text = $"Sell resources => ({offer.OffererPaidSilverUnit * sliderVal} silver)";
 			} else {

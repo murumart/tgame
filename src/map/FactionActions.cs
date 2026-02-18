@@ -57,7 +57,8 @@ public class FactionActions {
 		if (_marketJobCached == null || !_marketJobCached.IsValid) {
 			_marketJobCached = null;
 			foreach (var m in GetMapObjects()) if (m is Building b) if (b.Type.GetSpecial() == IBuildingType.Special.Marketplace && b.IsConstructed) {
-						_marketJobCached = GetMapObjectsJob(m) as ProcessMarketJob;
+						var job = GetMapObjectsJob(m);
+						if (job != null && job is ProcessMarketJob) _marketJobCached = job as ProcessMarketJob;
 					}
 		}
 		return _marketJobCached;

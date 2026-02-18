@@ -6,6 +6,8 @@ public class Game {
 	public readonly GameTime Time;
 	public Region PlayRegion;
 
+	public bool AIPlaysInPlayerRegion = true;
+
 	readonly LocalAI[] regionAIs;
 
 
@@ -28,7 +30,7 @@ public class Game {
 			if (Time.Minutes - _lastAIUpdate >= 30) {
 				var regs = Map.GetRegions();
 				for (int i = 0; i < regionAIs.Length; i++) {
-					if (regs[i] == PlayRegion) continue;
+					if (regs[i] == PlayRegion && !AIPlaysInPlayerRegion) continue;
 					regionAIs[i].PreUpdate(Time.Minutes);
 					regionAIs[i].Update(Time.Minutes);
 				}

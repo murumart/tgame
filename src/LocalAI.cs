@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Godot;
+using scenes.autoload;
 using static Building;
 using static ResourceSite;
 
@@ -142,7 +143,7 @@ public partial class LocalAI {
 		}
 
 		// unfinished TODO make ok
-		public static Action SendTradeOffer(DecisionFactor[] factors, Faction from, Faction to) {
+		public static Action CrappySendTradeOffer(DecisionFactor[] factors, Faction from, Faction to) {
 			return new(factors, () => {
 				TradeOffer toffer;
 				if (GD.Randf() < 0.5 && from.Silver > 10) {
@@ -159,7 +160,25 @@ public partial class LocalAI {
 					toffer = new(from, give, to, give.Amount / (int)(GD.Randf() * 2 + 1) + 1, 1);
 					from.SendTradeOffer(to, toffer);
 				}
-			}, $"SendTradeOffer()");
+			}, $"CrappySendTradeOffer()");
+		}
+
+		public static Action SendTradeOffer(DecisionFactor[] factors, FactionActions ac, int giveSilver, ResourceBundle wantResources) {
+			return new(factors, () => {
+				AIAssert(ac.Faction.Silver >= giveSilver, "Don't have enough silver to make trade offer", ac);
+				var from = ac.Faction;
+				var to = from.Region.Neighbors.ToArray()[GD.Randi() % from.Region.Neighbors.Count].LocalFaction;
+				from.SendTradeOffer(to, new(from, giveSilver, to, wantResources, 1));
+			}, $"SendTradeOffer({giveSilver}, {wantResources})");
+		}
+
+		public static Action SendTradeOffer(DecisionFactor[] factors, FactionActions ac, ResourceBundle giveResources, int wantSilver) {
+			return new(factors, () => {
+				AIAssert(ac.GetResourceStorage().HasEnough(giveResources), "Don't have enough resoucres to make trde offer", ac);
+				var from = ac.Faction;
+				var to = from.Region.Neighbors.ToArray()[GD.Randi() % from.Region.Neighbors.Count].LocalFaction;
+				from.SendTradeOffer(to, new(from, giveResources, to, wantSilver, 1));
+			}, $"SendTradeOffer({giveResources}, {wantSilver})");
 		}
 
 		public static Action AcceptTradeOffer(DecisionFactor[] factors, Faction me, Faction from, TradeOffer offer) {
@@ -193,7 +212,6 @@ public partial class LocalAI {
 			return score();
 		}
 
-
 		public override readonly string ToString() => name;
 
 	}
@@ -224,6 +242,7 @@ public partial class LocalAI {
 		}
 
 		public static DecisionFactor Group(DecisionFactor[] factors) {
+			if (factors.Length == 1) return factors[0];
 			return new(() => {
 				float score = 1.0f;
 				foreach (var fac in factors) {
@@ -245,8 +264,8 @@ public partial class LocalAI {
 			}, "HousingSlotsPerPerson");
 		}
 
-		public static DecisionFactor PeopleHoused(IBuildingType buildingType) {
-			return new(() => buildingType.GetPopulationCapacity() == 0 ? 0f : Mathf.Clamp(buildingType.GetPopulationCapacity() / 50f, 0f, 1f), $"PeopleHoused({buildingType.AssetName})");
+		public static DecisionFactor HousingCapacity(IBuildingType buildingType) {
+			return new(() => buildingType.GetPopulationCapacity() == 0 ? 0f : Mathf.Clamp(buildingType.GetPopulationCapacity() / 50f, 0f, 1f), $"HousingCapacity({buildingType.AssetName})");
 		}
 
 		public static DecisionFactor HasFreeWorkers(FactionActions ac) {
@@ -323,6 +342,17 @@ public partial class LocalAI {
 			}, $"ReasonableBuildingCount({buildingType.AssetName}, {count})");
 		}
 
+		public static DecisionFactor ReasonableBuildingCountByPopulation(FactionActions ac, IBuildingType buildingType, float popForOne) {
+			return new(() => {
+				int foundBuildings = 0;
+				foreach (var mo in ac.GetMapObjects()) {
+					if (mo is Building building && building.Type == buildingType) foundBuildings += 1;
+				}
+				float wantedBuildings = ac.Faction.GetPopulationCount() / popForOne;
+				return 1f - Mathf.Clamp(foundBuildings / wantedBuildings, 0f, 1f);
+			}, $"ReasonableBuildingCountByPopulation({buildingType.AssetName}, {popForOne})");
+		}
+
 		public static DecisionFactor ApprovalRating(FactionActions ac) {
 			return new(() => ac.Faction.Population.Approval, "ApprovalRating");
 		}
@@ -333,8 +363,7 @@ public partial class LocalAI {
 
 		public static DecisionFactor ResourceWant(FactionActions ac, IResourceType resourceType, int want) {
 			return new(() => {
-				var res = ac.GetResourceStorage();
-				var count = res.GetCount(resourceType);
+				var count = ac.GetResourceStorage().GetCount(resourceType);
 				var a = Mathf.Max(0f, (float)(want - count) / want);
 				a -= (100f - want) / 100f;
 				return Mathf.Clamp(a, 0f, 1f);
@@ -343,13 +372,12 @@ public partial class LocalAI {
 
 		public static DecisionFactor ResourceNeed(FactionActions ac, IResourceType resourceType, int need) {
 			return new(() => {
-				var res = ac.GetResourceStorage();
-				return res.HasEnough(new ResourceBundle(resourceType, need)) ? 1f : 0f;
+				return ac.GetResourceStorage().HasEnough(new ResourceBundle(resourceType, need)) ? 1f : 0f;
 			}, $"ResourceNeed({resourceType.AssetName}, {need})");
 		}
 
 		public static DecisionFactor ResourcesNeed(FactionActions ac, ResourceBundle[] resources) {
-			return new(() => ac.GetResourceStorage().HasEnough(resources) ? 1f : 0f, $"ResourcesNeed()");
+			return new(() => ac.GetResourceStorage().HasEnough(resources) ? 1f : 0f, $"ResourcesNeed({string.Join(", ", resources)})");
 		}
 
 		public static DecisionFactor FoodMakingNeed(FactionActions ac) {
@@ -463,13 +491,14 @@ public class GamerAI : LocalAI {
 	readonly List<Action> ephemeralActions;
 	TimeT time;
 
+	readonly HashSet<IBuildingType> farms = [Registry.BuildingsS.GrainField];
+	readonly HashSet<IBuildingType> housing = [Registry.BuildingsS.LogCabin, Registry.BuildingsS.Housing, Registry.BuildingsS.BrickHousing];
+	readonly HashSet<IBuildingType> crafting = [Registry.BuildingsS.Windmill, Registry.BuildingsS.Bakery,  Registry.BuildingsS.Kiln];
+
 
 	public GamerAI(FactionActions actions) : base(actions) {
 
-		this.resourceWants = new() {
-			{Registry.ResourcesS.Logs, Factors.ResourceWant(actions, Registry.ResourcesS.Logs, 60)},
-			{Registry.ResourcesS.Rocks, Factors.ResourceWant(actions, Registry.ResourcesS.Rocks, 30)},
-		};
+		this.resourceWants = new();
 		var startActions = new List<Action>();
 
 		foreach (var rs in Registry.ResourceSites.GetAssets()) {
@@ -477,17 +506,30 @@ public class GamerAI : LocalAI {
 				startActions.Add(CreateGatherJob(rs, w.ResourceType));
 			}
 		}
-
-		startActions.Add(Actions.PlaceBuildingJob([
-				Factors.ReasonableBuildingCount(factionActions, Registry.BuildingsS.GrainField, 4),
-				//Factors.HasSpotForBuilding(factionActions, Registry.BuildingsS.GrainField),
-				Factors.ResourcesNeed(factionActions, Registry.BuildingsS.GrainField.GetResourceRequirements()),
-			], factionActions, Registry.BuildingsS.GrainField));
+		foreach (var b in Registry.Buildings.GetAssets()) {
+			bool isFarm = farms.Contains(b);
+			bool isHousing = housing.Contains(b);
+			bool isCrafting  = crafting.Contains(b);
+			startActions.Add(Actions.PlaceBuildingJob([
+				Factors.ResourcesNeed(factionActions, b.GetResourceRequirements()),
+				isHousing ? Factors.Group([
+					Factors.HomelessnessRate(factionActions),
+					Factors.OneMinus(Factors.HousingSlotsPerPerson(factionActions)),
+					Factors.HousingCapacity(b),
+				]) : Factors.ReasonableBuildingCount(factionActions, b, GD.RandRange(1, 6)),
+				isCrafting ? Factors.Group([
+					Factors.Group(b.GetCraftJobs().Select(j => Factors.Group(j.Outputs.Select(o => GetResourceWant(o.Type, 115)).ToArray())).ToArray())
+				]) : Factors.One,
+				isFarm ? Factors.ReasonableBuildingCountByPopulation(factionActions, b, 12f) : Factors.One,
+				!isHousing && !isFarm && !isCrafting ? Factors.Const(0.001f) : Factors.One,
+			], factionActions, b));
+		}
 		startActions.Add(Actions.PlaceBuildingJob([
 				Factors.OneMinus(Factors.HasMarketplace(actions)),
 				//Factors.HasSpotForBuilding(factionActions, Registry.BuildingsS.Marketplace),
 				Factors.ResourcesNeed(factionActions, Registry.BuildingsS.Marketplace.GetResourceRequirements()),
 			], factionActions, Registry.BuildingsS.Marketplace));
+
 		startActions.Add(Actions.CreateProcessMarketJob([
 				Factors.OneMinus(Factors.HasFunctionalMarketplace(actions)),
 				Factors.HasMarketplace(actions),
@@ -495,26 +537,20 @@ public class GamerAI : LocalAI {
 			], actions));
 
 		foreach (var neighbor in actions.Region.Neighbors.Where(r => r.LocalFaction.GetPopulationCount() > 0)) {
-			startActions.Add(Actions.SendTradeOffer([
+			startActions.Add(Actions.CrappySendTradeOffer([
 				Factors.HasFunctionalMarketplace(factionActions),
 				Factors.TradeOfferLimit(factionActions.Faction, neighbor.LocalFaction, 5),
-				Factors.Const(0.05f),
+				Factors.Const(0.000015f),
 			], actions.Faction, neighbor.LocalFaction));
 		}
-		foreach (var building in Registry.BuildingsS.HousingBuildings) {
-			startActions.Add(Actions.PlaceBuildingJob([
-					//Factors.HasSpotForBuilding(factionActions, building),
-					Factors.HomelessnessRate(factionActions),
-					Factors.OneMinus(Factors.HousingSlotsPerPerson(factionActions)),
-					Factors.ResourcesNeed(factionActions, building.GetResourceRequirements()),
-					Factors.PeopleHoused(building),
-				], factionActions, building));
-		}
+
 		this.mainActions = startActions.ToArray();
 		this.ephemeralActions = new();
 	}
 
 	public override void PreUpdate(TimeT minute) {
+
+
 		ephemeralActions.Clear();
 		foreach (var mopbject in factionActions.GetMapObjects()) {
 			if (mopbject is Building building && factionActions.GetMapObjectsJob(mopbject) == null) {
@@ -537,7 +573,7 @@ public class GamerAI : LocalAI {
 						GetResourceWant(prod.ResourceType, Factors.One),
 						Factors.JobHasEmploymentSpots(factionActions, gjob),
 					];
-				negativeFactors = [Factors.Mult(Factors.Cube(Factors.OneMinus(GetResourceWantConstantHungerForMore(prod.ResourceType))), 0.0001f)];
+				negativeFactors = [Factors.Mult(Factors.Cube(Factors.OneMinus(GetResourceWantConstantHungerForMore(prod.ResourceType))), 0.000001f)];
 
 			} else if (job is ConstructBuildingJob bjob) {
 				factors = [
@@ -560,7 +596,7 @@ public class GamerAI : LocalAI {
 			if (factors != null) {
 				ephemeralActions.Add(Actions.AssignWorkersToJob(factors, factionActions, job));
 				ephemeralActions.Add(Actions.RemoveWorkersFromJob([
-					Factors.Mult(Factors.OneMinus(Factors.Group(factors)), 0.00001f),
+					Factors.Mult(Factors.OneMinus(Factors.Group(factors)), 0.0000001f),
 					Factors.JobEmploymentRate(job),
 				], factionActions, job));
 			}
@@ -575,7 +611,7 @@ public class GamerAI : LocalAI {
 				toff.Log($"ephemeral actions sent to {partner}");
 				ephemeralActions.Add(Actions.CancelTradeOffer([
 					Factors.HasFunctionalMarketplace(factionActions),
-					!toff.OffererGivesRecipentSilver ? GetResourceWantConstantHungerForMore((toff.OffererSoldResourcesUnit.Type)) : Factors.Const(0.015f),
+					!toff.OffererGivesRecipientSilver ? GetResourceWantConstantHungerForMore((toff.OffererSoldResourcesUnit.Type)) : Factors.Const(0.0015f),
 					Factors.SeeNoInterestInTradeOffer(factionActions.Faction, toff, GameTime.Days(8)),
 				], factionActions.Faction, partner, toff));
 			}
@@ -587,7 +623,7 @@ public class GamerAI : LocalAI {
 				AIAssert(toff.IsValid, "This trade offer isn't valid, delete!!!!!");
 				ephemeralActions.Add(Actions.AcceptTradeOffer([
 					Factors.HasFunctionalMarketplace(factionActions),
-					toff.OffererGivesRecipentSilver
+					toff.OffererGivesRecipientSilver
 						? Factors.OneMinus(GetResourceWantConstantHungerForMore(toff.RecepientRequiredResourcesUnit.Type))
 						: GetResourceWantConstantHungerForMore(toff.OffererSoldResourcesUnit.Type),
 					Factors.CanAcceptTradeOffer(toff),
@@ -622,13 +658,13 @@ public class GamerAI : LocalAI {
 	}
 
 	public override void Update(TimeT minute) {
-		Console.WriteLine($"LocalAI::Update : (of {factionActions}) doing update");
+		if (factionActions.Region == GameMan.Singleton.Game.PlayRegion) Console.WriteLine($"LocalAI::Update : (of {factionActions}) doing update");
 		var ustime = Time.GetTicksUsec();
 		var span = mainActions.Concat(ephemeralActions).OrderBy(_ => GD.Randi()).ToArray().AsSpan();
-		ChooseAction(out Action chosenAction, out float chosenScore, span, GD.Randf() * 0.0005f);
+		ChooseAction(out Action chosenAction, out float chosenScore, span, GD.Randf() * 0.000005f);
 		ustime = Time.GetTicksUsec() - ustime;
-		Console.WriteLine($"LocalAI::Update : (of {factionActions}) chose action {chosenAction} (score {chosenScore})!");
-		Console.WriteLine($"LocalAI::Update : choosing took {ustime} us!\n");
+		if (factionActions.Region == GameMan.Singleton.Game.PlayRegion) Console.WriteLine($"LocalAI::Update : (of {factionActions}) chose action {chosenAction} (score {chosenScore})!");
+		if (factionActions.Region == GameMan.Singleton.Game.PlayRegion) Console.WriteLine($"LocalAI::Update : choosing took {ustime} us!\n");
 		chosenAction.Do();
 
 		time = minute;
