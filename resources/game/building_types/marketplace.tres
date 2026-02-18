@@ -14,5 +14,4 @@ CraftingJobs = null
 HoursToConstruct = 60.0
 special = 1
 AvailableJobClassNames = PackedStringArray("ProcessMarketJob")
-ScenePath = "uid://cbm2qqepmuihd"
 metadata/_custom_type_script = "uid://b5xb3tdf3yoon"

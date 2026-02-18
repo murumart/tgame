@@ -34,6 +34,7 @@ public static class Registry {
 
 	public static class ResourcesS {
 
+		public static readonly IResourceType Water = Resources.GetAsset("water");
 		public static readonly IResourceType Logs = Resources.GetAsset("logs");
 		public static readonly IResourceType Lumber = Resources.GetAsset("lumber");
 		public static readonly IResourceType Rocks = Resources.GetAsset("rock");
@@ -44,12 +45,9 @@ public static class Registry {
 		public static readonly IResourceType Fish = Resources.GetAsset("fish");
 		public static readonly IResourceType Grain = Resources.GetAsset("grain");
 		public static readonly IResourceType Flour = Resources.GetAsset("flour");
+		public static readonly IResourceType Dough = Resources.GetAsset("dough");
 		public static readonly IResourceType Bread = Resources.GetAsset("bread");
 		public static readonly IResourceType Furniture = Resources.GetAsset("furniture");
-
-		public static readonly IResourceType[] ResourceTypes = [
-			Logs, Rocks, Clay, Bricks, Fruit, Fish, Grain, Flour, Bread,
-		];
 
 		public static IAssetGroup<IResourceType, int> FoodValues { get; private set; }
 
@@ -129,9 +127,9 @@ public class AssetTypeRegistry<T> where T : IAssetType {
 		return value;
 	}
 
-	public List<T> GetAssets() {
+	public T[] GetAssets() {
 		InitCheck();
-		return assetTypes.ToList();
+		return assetTypes.ToArray();
 	}
 
 	public IEnumerable<KeyValuePair<string, T>> GetIdAssetPairs() {

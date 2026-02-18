@@ -27,11 +27,11 @@ namespace resources.game {
 
 			var buildings = new IBuildingType[buildingTypes.Count];
 			for (int i = 0; i < buildingTypes.Count; i++) buildings[i] = buildingTypes[i];
-			RegisterScenePaths<BuildingType>(buildingTypes);
+			RegisterScenePaths<BuildingType>(buildingTypes, "res://scenes/region/buildings/");
 
 			var mines = new IResourceSiteType[resourceSiteTypes.Count];
 			for (int i = 0; i < resourceSiteTypes.Count; i++) mines[i] = resourceSiteTypes[i];
-			RegisterScenePaths<ResourceSiteType>(resourceSiteTypes);
+			RegisterScenePaths<ResourceSiteType>(resourceSiteTypes, "res://scenes/region/resource_mines/");
 
 			Registry.Register(
 				resourceTypes: resources,
@@ -61,10 +61,19 @@ namespace resources.game {
 
 		}
 
-		static void RegisterScenePaths<U>(IEnumerable<U> scenics) where U : IAssetType, IScenePathetic {
+		static void RegisterScenePaths<U>(IEnumerable<U> scenics, string basePath) where U : IAssetType, IScenePathetic {
 			foreach (var ass in scenics) {
 				var key = ass.GetIdString();
 				Debug.Assert(!scenePaths.ContainsKey(key), $"{key} already has scenePath {scenePaths.GetValueOrDefault(key)}");
+				if (ass.GetScenePath() == null) {
+					// basePath should end with /
+					var scenepath = basePath + ass.AssetName.ToSnakeCase() + ".tscn";
+					if (ResourceLoader.Exists(scenepath, "PackedScene")) {
+						ass.SetScenePath(scenepath);
+					} else {
+						Debug.Assert(false, $"{ass.AssetName} ({ass}) has no valid scene to set");
+					}
+				}
 				Debug.Assert(ass.GetScenePath() != null, $"{ass} has no scene path!");
 				scenePaths[key] = ass.GetScenePath();
 			}
@@ -88,5 +97,6 @@ namespace resources.game {
 public interface IScenePathetic {
 
 	string GetScenePath();
+	void SetScenePath(string scenepath);
 
 }

@@ -30,6 +30,7 @@ namespace resources.game.building_types {
 
 
 		public string GetScenePath() => ScenePath;
+		public void SetScenePath(string scenepath) => ScenePath = scenepath;
 
 		public Special GetSpecial() => special;
 

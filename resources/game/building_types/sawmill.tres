@@ -41,5 +41,4 @@ ExtResource("1_ys222"): 24
 })
 CraftingJobs = Array[Object]([SubResource("Resource_n6b3m")])
 HoursToConstruct = 14.0
-ScenePath = "uid://jtnf51ccjw5e"
 metadata/_custom_type_script = "uid://b5xb3tdf3yoon"

@@ -13,5 +13,4 @@ ExtResource("2_cgu5r"): 3
 })
 CraftingJobs = null
 HoursToConstruct = 12.0
-ScenePath = "uid://b2bo11jryfpr"
 metadata/_custom_type_script = "uid://b5xb3tdf3yoon"

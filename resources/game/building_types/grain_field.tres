@@ -63,5 +63,4 @@ ResourceCosts = null
 CraftingJobs = Array[Object]([SubResource("Resource_860cy"), SubResource("Resource_w1y7w")])
 HoursToConstruct = 24.0
 AllowedGroundTiles = 5
-ScenePath = "uid://c8cwdv8n4e3i7"
 metadata/_custom_type_script = "uid://b5xb3tdf3yoon"
