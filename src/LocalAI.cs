@@ -323,12 +323,20 @@ public partial class LocalAI {
 			}, $"ReasonableBuildingCount({buildingType.AssetName}, {count})");
 		}
 
+		public static DecisionFactor ApprovalRating(FactionActions ac) {
+			return new(() => ac.Faction.Population.Approval, "ApprovalRating");
+		}
+
+		public static DecisionFactor ApprovalRatingChange(FactionActions ac) {
+			return new(() => Mathf.Clamp(ac.Faction.Population.GetApprovalMonthlyChange(), 0f, 1f), "ApprovalRatingChange");
+		}
+
 		public static DecisionFactor ResourceWant(FactionActions ac, IResourceType resourceType, int want) {
 			return new(() => {
 				var res = ac.GetResourceStorage();
 				var count = res.GetCount(resourceType);
 				var a = Mathf.Max(0f, (float)(want - count) / want);
-				a *= a;
+				a -= (100f - want) / 100f;
 				return Mathf.Clamp(a, 0f, 1f);
 			}, $"ResourceWant({resourceType.AssetName}, {want})");
 		}
@@ -420,7 +428,9 @@ public partial class LocalAI {
 			Console.WriteLine(eps + "PROFILING ENDED");
 			Console.WriteLine(eps + "***************");
 			Console.WriteLine(eps + "");
-			foreach (var (name, vals) in ActionTimes) {
+			var times = ActionTimes.ToList();
+			times.Sort((kvp1, kvp2) => kvp1.Value.Average(l => (double)l).CompareTo(kvp2.Value.Average(l => (double)l)));
+			foreach (var (name, vals) in times) {
 				Console.WriteLine(eps + $"\t{name}:");
 				Console.WriteLine(eps + $"\t\tCALLS: {vals.Count}");
 				Console.WriteLine(eps + $"\t\tAVG: {vals.Average(l => (double)l)} us");
@@ -462,15 +472,11 @@ public class GamerAI : LocalAI {
 		};
 		var startActions = new List<Action>();
 
-		startActions.Add(CreateGatherJob(Registry.ResourceSitesS.BroadleafWoods, Registry.ResourcesS.Logs));
-		startActions.Add(CreateGatherJob(Registry.ResourceSitesS.BroadleafWoods, Registry.ResourcesS.Fruit));
-		startActions.Add(CreateGatherJob(Registry.ResourceSitesS.RainforestTrees, Registry.ResourcesS.Logs));
-		startActions.Add(CreateGatherJob(Registry.ResourceSitesS.RainforestTrees, Registry.ResourcesS.Fruit));
-		startActions.Add(CreateGatherJob(Registry.ResourceSitesS.FishingSpot, Registry.ResourcesS.Fish));
-		startActions.Add(CreateGatherJob(Registry.ResourceSitesS.ConiferWoods, Registry.ResourcesS.Logs));
-		startActions.Add(CreateGatherJob(Registry.ResourceSitesS.SavannaTrees, Registry.ResourcesS.Logs));
-		startActions.Add(CreateGatherJob(Registry.ResourceSitesS.Rock, Registry.ResourcesS.Rocks));
-		startActions.Add(CreateGatherJob(Registry.ResourceSitesS.Rubble, Registry.ResourcesS.Rocks));
+		foreach (var rs in Registry.ResourceSites.GetAssets()) {
+			foreach (var w in rs.GetDefaultWells()) {
+				startActions.Add(CreateGatherJob(rs, w.ResourceType));
+			}
+		}
 
 		startActions.Add(Actions.PlaceBuildingJob([
 				Factors.ReasonableBuildingCount(factionActions, Registry.BuildingsS.GrainField, 4),
@@ -569,8 +575,8 @@ public class GamerAI : LocalAI {
 				toff.Log($"ephemeral actions sent to {partner}");
 				ephemeralActions.Add(Actions.CancelTradeOffer([
 					Factors.HasFunctionalMarketplace(factionActions),
-					!toff.OffererGivesRecipentSilver ? GetResourceWantConstantHungerForMore((toff.OffererSoldResourcesUnit.Type)) : Factors.Const(0.15f),
-					Factors.SeeNoInterestInTradeOffer(factionActions.Faction, toff, GameTime.Days(4)),
+					!toff.OffererGivesRecipentSilver ? GetResourceWantConstantHungerForMore((toff.OffererSoldResourcesUnit.Type)) : Factors.Const(0.015f),
+					Factors.SeeNoInterestInTradeOffer(factionActions.Faction, toff, GameTime.Days(8)),
 				], factionActions.Faction, partner, toff));
 			}
 		}
@@ -588,7 +594,7 @@ public class GamerAI : LocalAI {
 				], factionActions.Faction, partner, toff));
 				ephemeralActions.Add(Actions.RejectTradeOffer([
 					Factors.HasFunctionalMarketplace(factionActions),
-					Factors.Mult(Factors.OneMinus(Factors.CanAcceptTradeOffer(toff)), 0.0015f),
+					Factors.Mult(Factors.OneMinus(Factors.CanAcceptTradeOffer(toff)), 0.00015f),
 				], factionActions.Faction, partner, toff));
 			}
 		}
@@ -619,7 +625,7 @@ public class GamerAI : LocalAI {
 		Console.WriteLine($"LocalAI::Update : (of {factionActions}) doing update");
 		var ustime = Time.GetTicksUsec();
 		var span = mainActions.Concat(ephemeralActions).OrderBy(_ => GD.Randi()).ToArray().AsSpan();
-		ChooseAction(out Action chosenAction, out float chosenScore, span, GD.Randf() * 0.005f);
+		ChooseAction(out Action chosenAction, out float chosenScore, span, GD.Randf() * 0.0005f);
 		ustime = Time.GetTicksUsec() - ustime;
 		Console.WriteLine($"LocalAI::Update : (of {factionActions}) chose action {chosenAction} (score {chosenScore})!");
 		Console.WriteLine($"LocalAI::Update : choosing took {ustime} us!\n");

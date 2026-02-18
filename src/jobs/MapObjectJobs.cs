@@ -303,6 +303,8 @@ public class CraftJob : MapObjectJob {
 		return GameTime.GetFancyTimeString((TimeT)timeLeft) + " until more " + Product.Plural + ".";
 	}
 
+	public override string ToString() => $"CraftJob({Process.Infinitive} {Product.Plural})";
+
 
 	public interface ICraftingJobDef {
 

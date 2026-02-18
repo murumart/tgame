@@ -77,7 +77,7 @@ Seda võiks teha automaatselt. Kui resourceewant mingil lõppproduktil on kõrge
   - [X] kukuks rängalt kui nälgimine käib
   - [ ] gameover kui 0
 - [ ] asju mida tarneahelates teha
-  - [ ] puidu laudadeks töötlemine
+  - [X] puidu laudadeks töötlemine
   - [X] terade jahuks töötlemine
   - [X] jahu leivaks töötlemine
 - [ ] info
@@ -90,3 +90,7 @@ Seda võiks teha automaatselt. Kui resourceewant mingil lõppproduktil on kõrge
   - [ ] riba näitab kui depleted a resource site is
 - [ ] ehitiste eemaldamine
 - [ ] ressursiallikate eemaldamine (kui pole ruumi panna midagi kuhugi)
+
+### Hiljem
+
+Nüüdseks on selgunud, et gatherresourcejob ja craftjob on üsna sarnased - saaks teha nii, et resourceil on lihtsalt list töödest (olgu kumb tahes) ning neid saab mängus valida. Nii et ehitistel saaks ka olla gatherresource, mis mingil hetkel otsa saaks. Siis peaks welle salvestama ka peale töö olemasolu, ilmselt antud koordinaadil lihtsalt. Näiteks kaev (well), millest saab gatherresource vett, see saaks sellel ruudul mingi hetk otsa, peaks ehitama uue kaevu, et vett veel saada. Kui samasse kohta kaev ehitada, ei tohiks sealt vett tulla.

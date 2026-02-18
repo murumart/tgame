@@ -167,7 +167,7 @@ public class Population {
 		if (Count == 0) {
 			return;
 		}
-		reasons[1].Item1 = ArePeopleStarving ? -50f : 0f;
+		reasons[1].Item1 = ArePeopleStarving ? -5f : 0f;
 		reasons[2].Item1 = -((float)Count - HousedCount) / Count * 0.5f;
 		int silver = SilverRequested?.Invoke() ?? 0;
 		float silverapprovalchange = 0.05f * Mathf.Ease(Mathf.Clamp(silver, 0, 50) / 50f, -2f);
