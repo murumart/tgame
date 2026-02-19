@@ -69,7 +69,7 @@ namespace scenes.region {
 					if (neighbor == region || region.Neighbors.Contains(neighbor)) continue;
 					var rdisp = RegionDisplay.Instantiate();
 					otherDisplaysParent.AddChild(rdisp);
-					rdisp.Modulate = new Color(0.1f, 0.1f, 0.1f).Lerp(neighbor.LocalFaction.Color, 0.1f);
+					rdisp.Modulate = new Color(0.1f, 0.1f, 0.1f).Lerp(neighbor.LocalFaction.Color.Lightened(0.5f), 0.1f);
 					rdisp.Position = Tilemaps.TilePosToWorldPos(neighbor.WorldPosition - region.WorldPosition) - Tilemaps.TILE_SIZE / 2;
 					rdisp.LoadRegion(neighbor, 2);
 				}
