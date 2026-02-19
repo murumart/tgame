@@ -77,9 +77,9 @@ script = ExtResource("1_vkak1")
 buildButton = NodePath("VBoxContainer2/HBoxContainer/VBoxContainer2/ControlButtons/BuildButton")
 agreementsButton = NodePath("VBoxContainer2/HBoxContainer/VBoxContainer2/ControlButtons/AgreementsButton")
 jobsButton = NodePath("VBoxContainer2/HBoxContainer/VBoxContainer2/ControlButtons/JobsButton")
-menuTabs = NodePath("VBoxContainer/MarginContainer/MenuTabs")
-buildingList = NodePath("VBoxContainer/MarginContainer/MenuTabs/HBoxContainer/BuildMenu")
-documentsDisplay = NodePath("VBoxContainer/MarginContainer/MenuTabs/HBoxContainer2/Agreements")
+menuTabs = NodePath("VBoxContainer2/HBoxContainer/VBoxContainer2/MenuTabs")
+buildingList = NodePath("VBoxContainer2/HBoxContainer/VBoxContainer2/MenuTabs/HBoxContainer/BuildMenu")
+documentsDisplay = NodePath("VBoxContainer2/HBoxContainer/VBoxContainer2/MenuTabs/HBoxContainer2/Agreements")
 mopjectMenu = NodePath("VBoxContainer2/HBoxContainer/MapObjectMenu")
 resourceDisplay = NodePath("VBoxContainer/VBoxContainer/ResourceDisplay")
 pauseDisplayPanel = NodePath("PausePanel")
@@ -305,49 +305,11 @@ size_flags_horizontal = 3
 size_flags_stretch_ratio = 1.9
 mouse_filter = 2
 
-[node name="MenuTabs" type="TabContainer" parent="VBoxContainer/MarginContainer" unique_id=1179149039]
-unique_name_in_owner = true
-layout_mode = 2
-mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBoxEmpty_bjdfm")
-tabs_visible = false
-deselect_enabled = true
-
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/MarginContainer/MenuTabs" unique_id=1032668696]
-visible = false
-layout_mode = 2
-metadata/_tab_index = 0
-
-[node name="BuildMenu" parent="VBoxContainer/MarginContainer/MenuTabs/HBoxContainer" unique_id=1956105093 node_paths=PackedStringArray("ui") instance=ExtResource("3_iwag8")]
-layout_mode = 2
-ui = NodePath("../../../../..")
-
-[node name="Fat" type="Control" parent="VBoxContainer/MarginContainer/MenuTabs/HBoxContainer" unique_id=1181721685]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-size_flags_stretch_ratio = 1.5
-mouse_filter = 2
-
-[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer/MarginContainer/MenuTabs" unique_id=1793221342]
-visible = false
-layout_mode = 2
-metadata/_tab_index = 1
-
-[node name="Agreements" parent="VBoxContainer/MarginContainer/MenuTabs/HBoxContainer2" unique_id=1105556232 node_paths=PackedStringArray("ui") instance=ExtResource("5_iwag8")]
-layout_mode = 2
-ui = NodePath("../../../../..")
-
-[node name="Fat" type="Control" parent="VBoxContainer/MarginContainer/MenuTabs/HBoxContainer2" unique_id=15209670]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.47
-mouse_filter = 2
-
 [node name="VBoxContainer2" type="VBoxContainer" parent="." unique_id=2064159204]
 layout_mode = 2
 mouse_filter = 2
 alignment = 2
+metadata/_edit_lock_ = true
 
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer2" unique_id=22907527]
 layout_mode = 2
@@ -357,6 +319,46 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 1.75
 alignment = 2
+
+[node name="MenuTabs" type="TabContainer" parent="VBoxContainer2/HBoxContainer/VBoxContainer2" unique_id=1179149039]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_bjdfm")
+tabs_visible = false
+deselect_enabled = true
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer2/HBoxContainer/VBoxContainer2/MenuTabs" unique_id=1032668696]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="BuildMenu" parent="VBoxContainer2/HBoxContainer/VBoxContainer2/MenuTabs/HBoxContainer" unique_id=1956105093 node_paths=PackedStringArray("ui") instance=ExtResource("3_iwag8")]
+layout_mode = 2
+ui = NodePath("../../../../../..")
+
+[node name="Fat" type="Control" parent="VBoxContainer2/HBoxContainer/VBoxContainer2/MenuTabs/HBoxContainer" unique_id=1181721685]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 1.5
+mouse_filter = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer2/HBoxContainer/VBoxContainer2/MenuTabs" unique_id=1793221342]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 1
+
+[node name="Agreements" parent="VBoxContainer2/HBoxContainer/VBoxContainer2/MenuTabs/HBoxContainer2" unique_id=1105556232 node_paths=PackedStringArray("ui") instance=ExtResource("5_iwag8")]
+custom_minimum_size = Vector2(0, 180)
+layout_mode = 2
+ui = NodePath("../../../../../..")
+
+[node name="Fat" type="Control" parent="VBoxContainer2/HBoxContainer/VBoxContainer2/MenuTabs/HBoxContainer2" unique_id=15209670]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.47
+mouse_filter = 2
 
 [node name="ControlButtons" type="HBoxContainer" parent="VBoxContainer2/HBoxContainer/VBoxContainer2" unique_id=1935346688]
 layout_mode = 2

@@ -2,8 +2,34 @@
 
 [ext_resource type="FontVariation" uid="uid://dliky8sbpgnxp" path="res://resources/visual/font/title_font.tres" id="1_70gfe"]
 [ext_resource type="FontVariation" uid="uid://16wjjwlxw4iw" path="res://resources/visual/font/default_font.tres" id="1_rjbnf"]
+[ext_resource type="StyleBox" uid="uid://d2iur2ajc1nh" path="res://resources/visual/theme/sb_buttonnormal.tres" id="2_4yw10"]
+[ext_resource type="StyleBox" uid="uid://c0yp07pu7wp0a" path="res://resources/visual/theme/sb_buttonhover.tres" id="2_36fd6"]
 [ext_resource type="StyleBox" uid="uid://cg2fkivtsnr2x" path="res://resources/visual/theme/sb_dark.tres" id="3_3wo1x"]
 [ext_resource type="Texture2D" uid="uid://dlsoj84e70cwb" path="res://resources/visual/theme/icons/circle8x8.svg" id="3_hwdam"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_noo5t"]
+content_margin_left = 2.0
+content_margin_top = 1.0
+content_margin_right = 2.0
+content_margin_bottom = 1.0
+bg_color = Color(0.1882353, 0.21960784, 0.2627451, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sfif7"]
+content_margin_left = 2.0
+content_margin_top = 1.0
+content_margin_right = 2.0
+content_margin_bottom = 1.0
+bg_color = Color(0.1882353, 0.21960784, 0.2627451, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+anti_aliasing = false
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xbfgx"]
 bg_color = Color(0.6, 0.6, 0.6, 0)
@@ -99,7 +125,13 @@ corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
 
 [resource]
+Button/colors/font_color = Color(0.94509804, 0.9647059, 0.9411765, 1)
+Button/colors/font_disabled_color = Color(0.2509804, 0.32156864, 0.4509804, 1)
 Button/fonts/font = ExtResource("1_70gfe")
+Button/styles/disabled = SubResource("StyleBoxFlat_noo5t")
+Button/styles/hover = ExtResource("2_36fd6")
+Button/styles/normal = ExtResource("2_4yw10")
+Button/styles/pressed = SubResource("StyleBoxFlat_sfif7")
 Control/colors/default_color = Color(0.8352941, 0.8392157, 0.85882354, 1)
 Control/colors/font_color = Color(0.8352941, 0.8392157, 0.85882354, 1)
 Control/font_sizes/font_size = 12
@@ -108,6 +140,8 @@ Control/fonts/font = ExtResource("1_rjbnf")
 Control/fonts/normal_font = ExtResource("1_rjbnf")
 Control/styles/focus = SubResource("StyleBoxFlat_xbfgx")
 Control/styles/panel = ExtResource("3_3wo1x")
+PopupMenu/fonts/font = ExtResource("1_rjbnf")
+PopupMenu/styles/hover = ExtResource("2_36fd6")
 ProgressBar/styles/background = SubResource("StyleBoxFlat_nm6iw")
 ProgressBar/styles/fill = SubResource("StyleBoxFlat_i6uvl")
 ScrollBar/styles/grabber = SubResource("StyleBoxFlat_4yw10")

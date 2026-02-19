@@ -22,6 +22,7 @@ layout_mode = 2
 layout_mode = 2
 focus_mode = 0
 theme_override_fonts/font = ExtResource("2_pbugc")
+theme_override_font_sizes/font_size = 10
 toggle_mode = true
 text = "Export Mandate #1"
 flat = true
@@ -29,6 +30,6 @@ alignment = 0
 
 [node name="Body" type="RichTextLabel" parent="MarginContainer/VBoxContainer" unique_id=1407045708]
 layout_mode = 2
-theme_override_font_sizes/normal_font_size = 10
+theme_override_font_sizes/normal_font_size = 8
 text = "This mandated mandate mandate man Date. Dm"
 fit_content = true
