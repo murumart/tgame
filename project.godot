@@ -24,6 +24,7 @@ config/icon="uid://b8g2fakdu1wl2"
 
 UiLayer="*res://scenes/autoload/ui_layer.tscn"
 GameMan="*res://scenes/autoload/game_man.tscn"
+DebugMenu="*uid://cggqb75a8w8r"
 
 [display]
 
@@ -38,6 +39,10 @@ window/vsync/vsync_mode=0
 [dotnet]
 
 project/assembly_name="Colonygame"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/debug_menu/plugin.cfg")
 
 [gui]
 

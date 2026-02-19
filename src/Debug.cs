@@ -10,7 +10,7 @@ internal static class Debug {
 	//https://www.reddit.com/r/godot/comments/obxm0i/comment/hj4htrk/
 	//[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	internal static void Assert(bool cond, string msg = "Assertion failed")
-#if TOOLS
+//#if TOOLS
 		{
 		if (!cond) {
 			var st = new StackTrace(1, true);
@@ -34,9 +34,9 @@ internal static class Debug {
 			//throw new ApplicationException($"Assertion failed: {msg}");
 		}
 	}
-#else
-	{}
-#endif
+//#else
+	//{}
+//#endif
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	internal static void PrintWithStack(params object[] vals)
