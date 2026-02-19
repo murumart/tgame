@@ -162,7 +162,7 @@ public class Population {
 			reasons = new (float, string)[5];
 			reasons[0].Item2 = "no people";
 			reasons[1].Item2 = "people are starving";
-			reasons[2].Item2 = "there are homeless people";
+			reasons[2].Item2 = "not enough housing for people";
 			reasons[3].Item2 = "your coffers are";
 			reasons[4].Item2 = "furnidur";
 		}

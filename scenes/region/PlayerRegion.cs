@@ -37,6 +37,7 @@ namespace scenes.region {
 			ui.DeleteJobEvent += actions.RemoveJob;
 			ui.GetFoodAndUsageEvent += actions.GetFoodAndUsage;
 
+
 			GameMan.Singleton.Game.Time.TimePassedEvent += PassTime;
 			GameMan.Singleton.Game.Time.HourPassedEvent += HourlyUpdate;
 
@@ -47,6 +48,9 @@ namespace scenes.region {
 
 			region.MapObjectUpdatedAtEvent += OnRegionMapObjectUpdated;
 			camera.Region = region;
+
+			ui.TileSelectedEvent += regionDisplay.OnTileSelected;
+			ui.TileDeselectedEvent += regionDisplay.OnTileDeselected;
 
 			ui.SetupResourceDisplay();
 
@@ -69,6 +73,21 @@ namespace scenes.region {
 					rdisp.Position = Tilemaps.TilePosToWorldPos(neighbor.WorldPosition - region.WorldPosition) - Tilemaps.TILE_SIZE / 2;
 					rdisp.LoadRegion(neighbor, 2);
 				}
+
+				if (faction.HasOwningFaction()) {
+					var owner = faction.GetOwningFaction();
+					ui.Announce($"Here, on the margins of the imperial lands of {owner.Name}, "
+						+ $"a fresh administration over the populace of {faction.Name} takes feet. You are at its head and have the power -- and the responsibility -- to "
+						+ $"lead its people toward brightness and prosperity, while serving the fickle needs of your masters in {owner.Name}. "
+						+ "But the regions around you are not asleep -- they, too, buzz with excitement over possible riches in this fresh, untainted Earth. "
+						+ "Nature is there to serve you! Go forth and claim, acquire, secure, in this Fevered World.",
+						title: $"The Story of the Colony of {faction.Name}"
+			   		);
+				}
+				ui.Announce("What brought you here will not bring you much longer forward -- food supplies are dwindling.\n\n"
+					+ "Procure something to eat for your expectant people. Nature, thankfully, can provide fruit and fish, if you just spend the effort to look.",
+					title: "Note Well"
+				);
 			}).CallDeferred();
 
 			// DEBUG add assets
@@ -123,8 +142,10 @@ namespace scenes.region {
 		void MapClick(Vector2I tile) {
 			if (faction.HasBuilding(tile)) {
 				ui.OnBuildingClicked(faction.GetBuilding(tile));
+				ui.TileSelected(tile);
 			} else if (region.HasMapObject(tile, out MapObject mop) && mop is ResourceSite resourceSite) {
 				ui.OnResourceSiteClicked(resourceSite);
+				ui.TileSelected(tile);
 			} else if (!region.GroundTiles.ContainsKey(tile)) {
 				// DEBUG annex
 				//foreach (var ne in region.Neighbors) {

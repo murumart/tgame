@@ -9,8 +9,8 @@ namespace scenes.region {
 
 		public enum IconSetIcons : int {
 			Building,
-			Workers,
 			Gathering,
+			Workers,
 			Max
 		}
 
@@ -20,6 +20,7 @@ namespace scenes.region {
 
 		[Export] protected ProgressBar jobProgressBar;
 		[Export] protected Node2D inProgressDisplay;
+		[Export] protected Sprite2D selectedHighlight;
 
 		protected MapObject mapObjectRef;
 
@@ -81,6 +82,14 @@ namespace scenes.region {
 			Debug.Assert(scn is MapObjectView, "Scene must be a MapObjectView");
 			(scn as MapObjectView).mapObjectRef = mapObject.CreateMapObject(Vector2I.Zero);
 			return (scn as MapObjectView);
+		}
+
+		public void OnSelected() {
+			selectedHighlight.Show();
+		}
+
+		public void OnDeselected() {
+			selectedHighlight.Hide();
 		}
 
 	}

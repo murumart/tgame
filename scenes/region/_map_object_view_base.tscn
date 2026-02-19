@@ -5,13 +5,16 @@
 [ext_resource type="Texture2D" uid="uid://bnwpslv8kyxej" path="res://resources/visual/theme/icons/person.svg" id="3_aj5un"]
 [ext_resource type="Texture2D" uid="uid://dqu7j0ceq2oka" path="res://resources/visual/theme/icons/pickaxe.svg" id="4_y1nj2"]
 [ext_resource type="Texture2D" uid="uid://bhhlnmfifpkb3" path="res://scenes/region/buildings/under_construction.png" id="5_y1nj2"]
+[ext_resource type="Material" uid="uid://cet7ep6cvqk3p" path="res://resources/visual/add_material.tres" id="6_wpbha"]
+[ext_resource type="Texture2D" uid="uid://ethlsfg8xmhk" path="res://scenes/region/iso_mask.png" id="7_4vc1s"]
 
-[node name="MapObjectViewBase" type="Node2D" unique_id=1991676390 node_paths=PackedStringArray("iconTransformParent", "iconContainer", "jobProgressBar", "inProgressDisplay")]
+[node name="MapObjectViewBase" type="Node2D" unique_id=1991676390 node_paths=PackedStringArray("iconTransformParent", "iconContainer", "jobProgressBar", "inProgressDisplay", "selectedHighlight")]
 script = ExtResource("1_cca3c")
 iconTransformParent = NodePath("IconTransform")
 iconContainer = NodePath("IconTransform/IconContainer")
 jobProgressBar = NodePath("IconTransform/VBoxContainer/JobProgress")
 inProgressDisplay = NodePath("InProgressDisplay")
+selectedHighlight = NodePath("SelectedHighlight")
 metadata/_custom_type_script = "uid://1ii2ptr21cmq"
 
 [node name="Clickarea" type="Area2D" parent="." unique_id=1540038721]
@@ -42,16 +45,16 @@ mouse_filter = 2
 texture = ExtResource("2_d5rlf")
 stretch_mode = 2
 
-[node name="Workers" type="TextureRect" parent="IconTransform/IconContainer" unique_id=1976704177]
-layout_mode = 2
-mouse_filter = 2
-texture = ExtResource("3_aj5un")
-stretch_mode = 2
-
 [node name="Gathering" type="TextureRect" parent="IconTransform/IconContainer" unique_id=1929376343]
 layout_mode = 2
 mouse_filter = 2
 texture = ExtResource("4_y1nj2")
+stretch_mode = 2
+
+[node name="Workers" type="TextureRect" parent="IconTransform/IconContainer" unique_id=1976704177]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("3_aj5un")
 stretch_mode = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="IconTransform" unique_id=31811092]
@@ -72,3 +75,9 @@ show_percentage = false
 visible = false
 position = Vector2(0, -6)
 texture = ExtResource("5_y1nj2")
+
+[node name="SelectedHighlight" type="Sprite2D" parent="." unique_id=1089660412]
+visible = false
+modulate = Color(0.5568628, 1, 1, 0.10980392)
+material = ExtResource("6_wpbha")
+texture = ExtResource("7_4vc1s")

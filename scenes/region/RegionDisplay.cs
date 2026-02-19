@@ -222,6 +222,21 @@ namespace scenes.region {
 			SetProcess(false);
 		}
 
+		Vector2I? selectedTile;
+		public void OnTileSelected(Vector2I tile) {
+			if (mapObjectViews.TryGetValue(tile, out var obj)) {
+				obj.OnSelected();
+			}
+			selectedTile = tile;
+		}
+		
+		public void OnTileDeselected() {
+			if (selectedTile != null && mapObjectViews.TryGetValue(selectedTile ?? Vector2I.One, out var obj)) {
+				obj.OnDeselected();
+			}
+			selectedTile = null;
+		}
+
 		// misc..
 
 		public Vector2I LocalToTile(Vector2 lpos) {

@@ -21,6 +21,8 @@ namespace scenes.region.ui {
 		public event Func<ResourceStorage> GetResourcesEvent;
 		public event Func<Faction> GetFactionEvent;
 		public event Func<(float, float)> GetFoodAndUsageEvent;
+		public event Action<Vector2I> TileSelectedEvent;
+		public event Action TileDeselectedEvent;
 
 		public event Func<MapObject, Job> GetMapObjectJobEvent;
 		public event Func<ICollection<Job>> GetJobsEvent;
@@ -64,7 +66,7 @@ namespace scenes.region.ui {
 		[Export] public DocumentsDisplay documentsDisplay;
 
 		// right
-		[Export] public MapObjectMenu jobsList;
+		[Export] public MapObjectMenu mopjectMenu;
 
 		// top bar
 		[Export] ResourceDisplay resourceDisplay;
@@ -137,55 +139,6 @@ namespace scenes.region.ui {
 			announcementOkayButton.Pressed += AnnouncementOkayPressed;
 
 			Reset();
-		}
-
-		public void SetupResourceDisplay() {
-			resourceDisplay.Display(() => $"fps: {Engine.GetFramesPerSecond()}");
-			var fac = GetFaction();
-			resourceDisplay.Display(() => {
-				if (fac.GetPopulationCount() == 0) return "no one lives here.";
-				return $"population: {fac.GetPopulationCount()} "
-					+ $"({fac.HomelessPopulation / (float)fac.Population.Count * 100:0}% homeless, "
-					+ $"{fac.Population.EmployedCount / (float)fac.Population.Count * 100:0}% employed, "
-					+ $"{fac.Population.GetYearlyBirths():0} births/year)";
-			}, () => {
-				return "house and feed your people to make sure a new generation will be born.";
-			});
-			if (!fac.IsWild) {
-				var reg = fac.Region;
-				resourceDisplay.Display(() => {
-					float monthlyChange = fac.Population.GetApprovalMonthlyChange();
-					return $"approval: {fac.Population.Approval * 100:0}% ({(monthlyChange >= 0f ? "+" : "")}{monthlyChange * 100:0}%/month)";
-				}, () => {
-					var sb = new StringBuilder();
-					sb.Append("your approval rate depends on the state of your ruling. when it drops to zero, you lose. ensure prosperity for your people.\n");
-					var reasons = fac.Population.GetApprovalMonthlyChangeReasons();
-					foreach (var r in reasons) {
-						if (r.Item1 == 0f) continue;
-						sb.Append(r.Item2).Append('\t').Append($"{(r.Item1 >= 0f ? "+" : "")}{r.Item1 * 100:0}%\n");
-					}
-					return sb.ToString();
-				});
-				resourceDisplay.Display(() => {
-					return $"silver: {fac.Silver}";
-				});
-				resourceDisplay.Display(() => {
-					string txt = $"{inRegionTilepos}";
-					if (reg.GroundTiles.TryGetValue(inRegionTilepos, out GroundTileType tile)) {
-						txt += $" {tile.UIString()}";
-						if (reg.HasMapObject(inRegionTilepos, out MapObject mopject)) {
-							txt += $" with {(mopject.Type as IAssetType).AssetName}";
-						}
-					}
-					return txt;
-				});
-				resourceDisplay.Display(() => $"faction: {fac.Name}");
-			} else {
-				resourceDisplay.Display(() => fac.Name);
-			}
-			resourceDisplay.DisplayFat();
-			var timeLabel = new Label {HorizontalAlignment = HorizontalAlignment.Right};
-			resourceDisplay.Display(() => GetTimeString(), timeLabel);
 		}
 
 		public override void _Process(double delta) {
@@ -306,6 +259,55 @@ namespace scenes.region.ui {
 
 		// display
 
+		public void SetupResourceDisplay() {
+			resourceDisplay.Display(() => $"fps: {Engine.GetFramesPerSecond()}");
+			var fac = GetFaction();
+			resourceDisplay.Display(() => {
+				if (fac.GetPopulationCount() == 0) return "no one lives here.";
+				return $"population: {fac.GetPopulationCount()} "
+					+ $"({fac.HomelessPopulation / (float)fac.Population.Count * 100:0}% homeless, "
+					+ $"{fac.Population.EmployedCount / (float)fac.Population.Count * 100:0}% employed, "
+					+ $"{fac.Population.GetYearlyBirths():0} births/year)";
+			}, () => {
+				return "house and feed your people to make sure a new generation will be born.";
+			});
+			if (!fac.IsWild) {
+				var reg = fac.Region;
+				resourceDisplay.Display(() => {
+					float monthlyChange = fac.Population.GetApprovalMonthlyChange();
+					return $"approval: {fac.Population.Approval * 100:0}% ({(monthlyChange >= 0f ? "+" : "")}{monthlyChange * 100:0}%/month)";
+				}, () => {
+					var sb = new StringBuilder();
+					sb.Append("your approval rate depends on the state of your ruling. when it drops to zero, you lose. ensure prosperity for your people.\n");
+					var reasons = fac.Population.GetApprovalMonthlyChangeReasons();
+					foreach (var r in reasons) {
+						if (r.Item1 == 0f) continue;
+						sb.Append(r.Item2).Append('\t').Append($"{(r.Item1 >= 0f ? "+" : "")}{r.Item1 * 100:0}%\n");
+					}
+					return sb.ToString();
+				});
+				resourceDisplay.Display(() => {
+					return $"silver: {fac.Silver}";
+				});
+				resourceDisplay.Display(() => {
+					string txt = $"{inRegionTilepos}";
+					if (reg.GroundTiles.TryGetValue(inRegionTilepos, out GroundTileType tile)) {
+						txt += $" {tile.UIString()}";
+						if (reg.HasMapObject(inRegionTilepos, out MapObject mopject)) {
+							txt += $" with {(mopject.Type as IAssetType).AssetName}";
+						}
+					}
+					return txt;
+				});
+				resourceDisplay.Display(() => $"faction: {fac.Name}");
+			} else {
+				resourceDisplay.Display(() => fac.Name);
+			}
+			resourceDisplay.DisplayFat();
+			var timeLabel = new Label {HorizontalAlignment = HorizontalAlignment.Right};
+			resourceDisplay.Display(() => GetTimeString(), timeLabel);
+		}
+
 		void UpdateDisplays() {
 			resourceDisplay.Display();
 			DisplayResources();
@@ -379,13 +381,13 @@ namespace scenes.region.ui {
 		public void OnBuildingClicked(Building building) {
 			Debug.Assert(state == State.Idle, "Can't click on buildings outside of idle state");
 			state = State.MapObjectMenu;
-			jobsList.Open(building);
+			mopjectMenu.Open(building);
 		}
 
 		public void OnResourceSiteClicked(ResourceSite resourceSite) {
 			Debug.Assert(state == State.Idle, "Can't click on resourceSite outside of idle state");
 			state = State.MapObjectMenu;
-			jobsList.Open(resourceSite);
+			mopjectMenu.Open(resourceSite);
 		}
 
 		bool wasPausedBefore = false;
@@ -404,9 +406,10 @@ namespace scenes.region.ui {
 					if (GameMan.Singleton.IsPaused && !wasPausedBefore) GameMan.Singleton.TogglePause();
 				}
 				if (old == State.MapObjectMenu) {
-					jobsList.Close();
+					mopjectMenu.Close();
 					SetTimeSpeedAlteringAllowed(true);
 					if (GameMan.Singleton.IsPaused && !wasPausedBefore) GameMan.Singleton.TogglePause();
+					TileDeselectedEvent?.Invoke();
 				}
 				if (old == State.AgreementsMenu) {
 					SelectTab(Tab.None);
@@ -441,6 +444,7 @@ namespace scenes.region.ui {
 			timeSpeedAlteringDisabled = !to;
 			pauseButton.Disabled = !to;
 			fastSpeedButton.Disabled = !to;
+			fasterSpeedButton.Disabled = !to;
 			normalSpeedButton.Disabled = !to;
 		}
 
@@ -464,6 +468,7 @@ namespace scenes.region.ui {
 		public ResourceStorage GetResources() => GetResourcesEvent?.Invoke();
 		public Faction GetFaction() => GetFactionEvent?.Invoke();
 		public (float, float) GetFoodAndUsage() => GetFoodAndUsageEvent?.Invoke() ?? (1337, 1337);
+		public void TileSelected(Vector2I place) => TileSelectedEvent?.Invoke(place);
 
 		public Job GetMapObjectJob(MapObject mapObject) => GetMapObjectJobEvent?.Invoke(mapObject);
 		public ICollection<Job> GetJobs() => GetJobsEvent?.Invoke();
