@@ -698,7 +698,7 @@ public class GamerAI : LocalAI {
 				Factors.ResourceWant(factionActions, this, resourceType),
 				Factors.FreeWorkerRate(factionActions),
 				Factors.HasFreeResourceSite(factionActions, resourceSiteType, resourceType),
-				Factors.ReasonableGatherJobCount(factionActions, 4, resourceType)
+				Factors.ReasonableGatherJobCount(factionActions, 4, resourceType),
 			], factionActions, resourceSiteType, resourceType);
 	}
 

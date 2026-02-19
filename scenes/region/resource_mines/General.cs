@@ -8,7 +8,7 @@ namespace scenes.region.resource_mines {
 
 		[Export] Sprite2D sprite;
 
-		Dictionary<string, Texture2D> textures = new(){
+		readonly Dictionary<string, Texture2D> textures = new(){
 			{"rock", GD.Load<Texture2D>("res://scenes/region/resource_mines/boulder.png")},
 			{"broadleaf woods", GD.Load<Texture2D>("res://scenes/region/resource_mines/broadleaf_woods.png")},
 			{"clay pit", GD.Load<Texture2D>("res://scenes/region/resource_mines/clay_pit.png")},
@@ -17,6 +17,7 @@ namespace scenes.region.resource_mines {
 			{"savanna trees", GD.Load<Texture2D>("res://scenes/region/resource_mines/savanna_trees.png")},
 			{"rainforest trees", GD.Load<Texture2D>("res://scenes/region/resource_mines/rainforest_trees.png")},
 			{"fishing spot", GD.Load<Texture2D>("res://scenes/region/resource_mines/fishing_spot.png")},
+			{"desert island", GD.Load<Texture2D>("res://scenes/region/resource_mines/desert_island.png")},
 		};
 
 

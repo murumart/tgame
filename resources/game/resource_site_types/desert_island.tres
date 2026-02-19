@@ -1,0 +1,44 @@
+[gd_resource type="Resource" script_class="ResourceSiteType" format=3 uid="uid://bfubh3m6mcfi8"]
+
+[ext_resource type="Resource" uid="uid://pmrcwo4t316p" path="res://resources/game/resource_types/logs.tres" id="1_f2iwy"]
+[ext_resource type="Script" uid="uid://cbiuqlrd8yyxx" path="res://resources/visual/Verb.cs" id="1_j0leu"]
+[ext_resource type="Resource" uid="uid://bc6plc0ceu8uw" path="res://resources/game/resource_types/coconuts.tres" id="1_utkxo"]
+[ext_resource type="Script" uid="uid://bnfatrmjew0vy" path="res://resources/game/resource_site_types/ResourceWell.cs" id="3_hgost"]
+[ext_resource type="Script" uid="uid://ct2a6sqe1m7mx" path="res://resources/game/resource_site_types/ResourceSiteType.cs" id="4_6aij6"]
+
+[sub_resource type="Resource" id="Resource_6aij6"]
+script = ExtResource("1_j0leu")
+Infinitive = "chop"
+Progressive = "chopping"
+metadata/_custom_type_script = "uid://cbiuqlrd8yyxx"
+
+[sub_resource type="Resource" id="Resource_hgost"]
+script = ExtResource("3_hgost")
+resourceType = ExtResource("1_f2iwy")
+minutesPerBunch = 50
+minutesPerBunchRegen = 504000
+initialBunches = 65
+Production = SubResource("Resource_6aij6")
+metadata/_custom_type_script = "uid://bnfatrmjew0vy"
+
+[sub_resource type="Resource" id="Resource_f2iwy"]
+script = ExtResource("1_j0leu")
+Infinitive = "pick"
+Progressive = "picking"
+metadata/_custom_type_script = "uid://cbiuqlrd8yyxx"
+
+[sub_resource type="Resource" id="Resource_j0leu"]
+script = ExtResource("3_hgost")
+resourceType = ExtResource("1_utkxo")
+minutesPerBunch = 200
+minutesPerBunchRegen = 17280
+initialBunches = 30
+Production = SubResource("Resource_f2iwy")
+metadata/_custom_type_script = "uid://bnfatrmjew0vy"
+
+[resource]
+script = ExtResource("4_6aij6")
+name = "desert island"
+mineResources = Array[Object]([SubResource("Resource_hgost"), SubResource("Resource_j0leu")])
+ScenePath = "uid://86f5k8lmus4o"
+metadata/_custom_type_script = "uid://ct2a6sqe1m7mx"
