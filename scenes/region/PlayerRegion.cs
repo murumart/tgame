@@ -43,6 +43,7 @@ namespace scenes.region {
 			ui.GetFactionEvent += GetFaction;
 			ui.GetBriefcaseEvent += GetBriefcase;
 			faction.ContractFailedEvent += OnRegionMandateFailed;
+			faction.Population.ApprovalDroppedToZero += OnApprovalZeroed;
 
 			region.MapObjectUpdatedAtEvent += OnRegionMapObjectUpdated;
 			camera.Region = region;
@@ -107,6 +108,7 @@ namespace scenes.region {
 
 				region.MapObjectUpdatedAtEvent -= OnRegionMapObjectUpdated;
 				faction.ContractFailedEvent -= OnRegionMandateFailed;
+				faction.Population.ApprovalDroppedToZero -= OnApprovalZeroed;
 
 				GameMan.Singleton.Game.Time.HourPassedEvent -= HourlyUpdate;
 				GameMan.Singleton.Game.Time.TimePassedEvent -= PassTime;
@@ -163,6 +165,19 @@ namespace scenes.region {
 		void OnRegionMandateFailed(Document doc) {
 			GD.Print("RegionMan::OnRegionMandateFailed : MY MANDATE FAILED:::::: DAMN");
 			GetTree().ChangeSceneToFile("res://scenes/game_over.tscn");
+		}
+
+		void OnApprovalZeroed() {
+			faction.Population.ApprovalDroppedToZero -= OnApprovalZeroed;
+			ui.Announce("Your policies, good intentioned as they were (ha), still were not enough for your people,"
+				+ " and now they will not listen to you any more. Hopefully you have your bags packed and train booked,"
+				+ " because leaving some space for whom you used to answer to now might be the best for your continued health.",
+				title: "Approval Dropped to Zero",
+				callback: () => {
+					ui.MapClickEvent -= MapClick;
+					ui.GameOver();
+				}
+			);
 		}
 
 		// get information (for UI)

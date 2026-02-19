@@ -48,6 +48,8 @@ namespace scenes.region.ui {
 			Documents,
 		}
 
+		public bool GameIsOver { get; private set; }
+
 		// camera
 		[Export] public RegionCamera Camera;
 
@@ -315,6 +317,10 @@ namespace scenes.region.ui {
 
 		void DisplayResources() {
 			var sb = new StringBuilder();
+			if (GameIsOver) {
+				resourceLabel.Text = sb.ToString();
+				return;
+			}
 			var resources = GetResourcesEvent?.Invoke();
 			if (resources == null) return;
 			foreach (var p in resources) {
@@ -444,6 +450,10 @@ namespace scenes.region.ui {
 			buildingList.Reset();
 			UpdateDisplays();
 			announcementParent.Hide();
+		}
+
+		public void GameOver() {
+			GameIsOver = true;
 		}
 
 		public void MapClick(Vector2I tile) => MapClickEvent?.Invoke(tile);

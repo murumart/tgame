@@ -9,6 +9,7 @@ public class Population {
 	public event Func<int> SilverRequested;
 	public event Func<float> FurnitureRateRequested;
 	public event Action<Job, int> JobEmploymentChanged;
+	public event Action ApprovalDroppedToZero;
 
 	public uint Count { get; private set; }
 
@@ -46,6 +47,7 @@ public class Population {
 		}
 
 		Approval = Mathf.Clamp(Approval + (GetApprovalMonthlyChange() * minutes) / GameTime.Months(1), 0f, 1f);
+		if (Approval == 0f) ApprovalDroppedToZero?.Invoke();
 	}
 
 	public void EatFood(TimeT minutesPassed) {
@@ -167,7 +169,7 @@ public class Population {
 		if (Count == 0) {
 			return;
 		}
-		reasons[1].Item1 = ArePeopleStarving ? -5f : 0f;
+		reasons[1].Item1 = ArePeopleStarving ? -15f : 0f;
 		reasons[2].Item1 = -((float)Count - HousedCount) / Count * 0.5f;
 		int silver = SilverRequested?.Invoke() ?? 0;
 		float silverapprovalchange = 0.05f * Mathf.Ease(Mathf.Clamp(silver - 25, -25, 50) / 50f, -2f);

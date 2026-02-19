@@ -6,7 +6,7 @@ public class Game {
 	public readonly GameTime Time;
 	public Region PlayRegion;
 
-	public bool AIPlaysInPlayerRegion = true;
+	public bool AIPlaysInPlayerRegion = false;
 
 	readonly LocalAI[] regionAIs;
 

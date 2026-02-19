@@ -13,33 +13,6 @@ border_width_right = 4
 border_width_bottom = 4
 border_color = Color(1.6353589, 1.6353589, 0, 1)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_i0op6"]
-bg_color = Color(0.42352942, 0.5058824, 0.6313726, 1)
-corner_radius_top_left = 6
-corner_radius_top_right = 6
-corner_radius_bottom_right = 6
-corner_radius_bottom_left = 6
-expand_margin_top = 1.0
-expand_margin_bottom = 1.0
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3wo1x"]
-bg_color = Color(0.7921569, 0.9019608, 0.8509804, 0.47843137)
-corner_radius_top_left = 6
-corner_radius_top_right = 6
-corner_radius_bottom_right = 6
-corner_radius_bottom_left = 6
-expand_margin_top = 1.0
-expand_margin_bottom = 1.0
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hwdam"]
-bg_color = Color(0.1882353, 0.21960784, 0.2627451, 1)
-corner_radius_top_left = 6
-corner_radius_top_right = 6
-corner_radius_bottom_right = 6
-corner_radius_bottom_left = 6
-expand_margin_top = 1.0
-expand_margin_bottom = 1.0
-
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nm6iw"]
 content_margin_left = 1.0
 content_margin_top = 1.0
@@ -100,6 +73,31 @@ corner_radius_top_right = 3
 corner_radius_bottom_right = 3
 corner_radius_bottom_left = 3
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_i0op6"]
+bg_color = Color(0.42352942, 0.5058824, 0.6313726, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3wo1x"]
+bg_color = Color(0.7921569, 0.9019608, 0.8509804, 0.47843137)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hwdam"]
+content_margin_left = 2.0
+content_margin_top = 2.0
+content_margin_right = 2.0
+content_margin_bottom = 2.0
+bg_color = Color(0.1882353, 0.21960784, 0.2627451, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
 [resource]
 Button/fonts/font = ExtResource("1_70gfe")
 Control/colors/default_color = Color(0.8352941, 0.8392157, 0.85882354, 1)
@@ -110,20 +108,15 @@ Control/fonts/font = ExtResource("1_rjbnf")
 Control/fonts/normal_font = ExtResource("1_rjbnf")
 Control/styles/focus = SubResource("StyleBoxFlat_xbfgx")
 Control/styles/panel = ExtResource("3_3wo1x")
-HSlider/icons/grabber = ExtResource("3_hwdam")
-HSlider/icons/grabber_disabled = ExtResource("3_hwdam")
-HSlider/icons/grabber_highlight = ExtResource("3_hwdam")
-HSlider/icons/tick = null
-HSlider/styles/grabber_area = SubResource("StyleBoxFlat_i0op6")
-HSlider/styles/grabber_area_highlight = SubResource("StyleBoxFlat_3wo1x")
-HSlider/styles/slider = SubResource("StyleBoxFlat_hwdam")
 ProgressBar/styles/background = SubResource("StyleBoxFlat_nm6iw")
 ProgressBar/styles/fill = SubResource("StyleBoxFlat_i6uvl")
 ScrollBar/styles/grabber = SubResource("StyleBoxFlat_4yw10")
 ScrollBar/styles/grabber_highlight = SubResource("StyleBoxFlat_36fd6")
 ScrollBar/styles/grabber_pressed = SubResource("StyleBoxFlat_dixpj")
 ScrollBar/styles/scroll = SubResource("StyleBoxFlat_114oo")
-VSlider/icons/grabber = null
-VSlider/icons/grabber_disabled = null
-VSlider/icons/grabber_highlight = null
-VSlider/icons/tick = null
+Slider/icons/grabber = ExtResource("3_hwdam")
+Slider/icons/grabber_disabled = ExtResource("3_hwdam")
+Slider/icons/grabber_highlight = ExtResource("3_hwdam")
+Slider/styles/grabber_area = SubResource("StyleBoxFlat_i0op6")
+Slider/styles/grabber_area_highlight = SubResource("StyleBoxFlat_3wo1x")
+Slider/styles/slider = SubResource("StyleBoxFlat_hwdam")
