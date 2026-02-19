@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Godot;
 using resources.visual;
+using static ResourceSite;
 
 
 public class ConstructBuildingJob : MapObjectJob {
@@ -94,8 +95,8 @@ public class GatherResourceJob : MapObjectJob {
 
 	public override string Title {
 		get {
-			Debug.Assert(site != null, "Can't get GatherResourceJob Title without site");
-			var well = site.Wells[wellIx];
+			Debug.Assert(Site != null, "Can't get GatherResourceJob Title without site");
+			var well = Site.Wells[wellIx];
 			Debug.Assert(well.Production != null, "Need well's Production to get Title");
 			return $"{well.Production.Infinitive.Capitalize()} " + well.ResourceType.AssetName;
 		}
@@ -103,15 +104,16 @@ public class GatherResourceJob : MapObjectJob {
 
 	public override Vector2I GlobalPosition {
 		get {
-			Debug.Assert(site != null, $"Site of GatherResourceJob ({this}) is null!");
-			return site.GlobalPosition;
+			Debug.Assert(Site != null, $"Site of GatherResourceJob ({this}) is null!");
+			return Site.GlobalPosition;
 		}
 	}
-	public override bool IsValid => site != null;
+	public override bool IsValid => Site != null;
 
 	ResourceStorage storage;
-	readonly ResourceSite site;
+	public readonly ResourceSite Site;
 	readonly int wellIx;
+	public Well Well => Site.Wells[wellIx];
 
 	float timeSpent; // storing as float due to workers
 	readonly List<ResourceBundle> grant = new();
@@ -122,22 +124,22 @@ public class GatherResourceJob : MapObjectJob {
 	}
 
 	public ResourceSite.Well GetProduction() {
-		Debug.Assert(site != null, "need a site to get production");
-		return site.Wells[wellIx];
+		Debug.Assert(Site != null, "need a site to get production");
+		return Site.Wells[wellIx];
 	}
 
 	public GatherResourceJob(int wellix, ResourceSite site) {
 		Debug.Assert(wellix >= 0);
 		MaxWorkers = 10;
 		wellIx = wellix;
-		this.site = site;
+		this.Site = site;
 	}
 
-	public override Job Copy() => new GatherResourceJob(wellIx, site);
+	public override Job Copy() => new GatherResourceJob(wellIx, Site);
 
 	public override void Initialise(Faction ctxFaction, MapObject mapObject) {
 		storage = ctxFaction.Resources;
-		Debug.Assert(site == mapObject, $"Constructor and initialisation sites don't match ({site} vs {mapObject})");
+		Debug.Assert(Site == mapObject, $"Constructor and initialisation sites don't match ({Site} vs {mapObject})");
 		timeSpent = 0f;
 	}
 
@@ -149,12 +151,10 @@ public class GatherResourceJob : MapObjectJob {
 		float ts = GetWorkTime(minutes);
 		timeSpent += ts;
 
-		var well = site.Wells[wellIx];
-
-		while (timeSpent >= well.MinutesPerBunch && storage.CanAdd(1) && well.HasBunches) {
-			timeSpent -= well.MinutesPerBunch;
-			well.Deplete();
-			grant.Add(new(well.ResourceType, 1));
+		while (timeSpent >= Well.MinutesPerBunch && storage.CanAdd(1) && Well.HasBunches) {
+			timeSpent -= Well.MinutesPerBunch;
+			Well.Deplete();
+			grant.Add(new(Well.ResourceType, 1));
 		}
 
 		if (grant.Count != 0) {
@@ -164,7 +164,7 @@ public class GatherResourceJob : MapObjectJob {
 	}
 
 	public override void CheckDone(Faction regionFaction) {
-		if (site.Wells[wellIx].HasBunches) return;
+		if (Well.HasBunches) return;
 
 		regionFaction.RemoveJob(this);
 		// remove a completely depleted resource site
@@ -177,18 +177,18 @@ public class GatherResourceJob : MapObjectJob {
 
 	public override float GetProgressEstimate() {
 		float estimate = 0f;
-		var well = site.Wells[wellIx];
+		var well = Site.Wells[wellIx];
 		estimate = Math.Max(estimate, timeSpent / well.MinutesPerBunch);
 		return estimate;
 	}
 
 	public override string GetProductionDescription() {
-		if (site == null) {
+		if (Site == null) {
 			return Title;
 		}
 		Debug.Assert(Workers >= 0, $"Worker count can't be negative (is {Workers})");
 		var str = $"";
-		var well = site.Wells[wellIx];
+		var well = Site.Wells[wellIx];
 		if (storage == null) str += $"Create a job to {well.Production.Infinitive} {well.ResourceType.AssetName}.";
 		else if (Workers == 0) str += $"Employ workers to {well.Production.Infinitive} {well.ResourceType.AssetName}.";
 		else {
@@ -202,13 +202,13 @@ public class GatherResourceJob : MapObjectJob {
 
 	public override string GetStatusDescription() {
 		if (Workers == 0) return "";
-		var well = site.Wells[wellIx];
+		var well = Site.Wells[wellIx];
 		float timeLeft = well.MinutesPerBunch - timeSpent;
 		timeLeft /= GetWorkTime(1);
 		return GameTime.GetFancyTimeString((TimeT)timeLeft) + " until more " + well.ResourceType.AssetName + ".";
 	}
 
-	public override string ToString() => $"GatherResourceJob({(site != null ? site.Wells[wellIx].ResourceType.AssetName : "?")})";
+	public override string ToString() => $"GatherResourceJob({(Site != null ? Site.Wells[wellIx].ResourceType.AssetName : "?")})";
 
 }
 

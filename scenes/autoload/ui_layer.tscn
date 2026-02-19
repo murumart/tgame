@@ -20,6 +20,7 @@ grow_vertical = 2
 mouse_filter = 2
 
 [node name="DebugLabels" type="VBoxContainer" parent="Control" unique_id=425426708]
+visible = false
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.725

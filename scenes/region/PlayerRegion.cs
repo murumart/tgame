@@ -37,6 +37,15 @@ namespace scenes.region {
 			ui.DeleteJobEvent += actions.RemoveJob;
 			ui.GetFoodAndUsageEvent += actions.GetFoodAndUsage;
 
+			faction.JobRemovedEvent += j => {
+				if (j is ConstructBuildingJob cj && cj.Building.IsConstructed) ui.Notifications.Notify($"The {cj.Building.Type.AssetName} has been constructed.");
+				if (j is GatherResourceJob gj && !gj.Well.HasBunches) ui.Notifications.Notify($"The {gj.Site.Type.AssetName} has been depleted of {gj.Well.ResourceType.AssetName}.");
+			};
+			foreach (var neighbor in region.Neighbors) {
+				neighbor.LocalFaction.Population.PopulationDroppedToZero += () => {
+					ui.Notifications.Notify($"Communication ceases from our neighbor {neighbor.LocalFaction.Name}.");
+				};
+			}
 
 			GameMan.Singleton.Game.Time.TimePassedEvent += PassTime;
 			GameMan.Singleton.Game.Time.HourPassedEvent += HourlyUpdate;
@@ -179,6 +188,40 @@ namespace scenes.region {
 
 		void HourlyUpdate(TimeT timeInMinutes) {
 			ui.HourlyUpdate(timeInMinutes);
+
+			// my beautiful story.
+			TimeT hour = timeInMinutes / GameTime.MINUTES_PER_HOUR;
+			switch (timeInMinutes) {
+				case 8:
+					ui.Notifications.Notify("Your neighbors are coming alive.");
+					break;
+				case 9:
+					ui.Notifications.Notify("(Press the X to dismiss these.) (But pay attention, too.)");
+					break;
+				default: break;
+			}
+			if (hour >= GameTime.HOURS_PER_DAY * GameTime.DAYS_PER_WEEK * GameTime.WEEKS_PER_MONTH && !ui.GameIsOver) {
+				int satisfactionLevel = (int)(faction.Population.Approval * 3);
+				ui.Announce("Congratulations, although it might still be early, for you have survived only one month, but one month "
+					+ "nonetheless full of time.\n\n"
+					+ ((satisfactionLevel == 0)
+						? "And even if your successes thus far have been few, this Earth surely will provide ample opportunities for you to return...?"
+						: (satisfactionLevel == 1)
+							? "Your people grumble not much, but some grumbling is just and warranted by the way this world's hardships leave not behind you and your kin."
+							: (satisfactionLevel == 2)
+								? "There was beauty to your leadership, and grace, but also a required solid fist to squeeze out of the Earth what is rightfully ours. "
+								+ "And well have you squeezed, for we are happy."
+								: "What can even be said about what you have just accomplished?")
+					+ "\n\nWe will part ways here, for now, but with keeping in mind the fanciful ways of time, and chance, we might surely hear tales of your accomplishments again."
+					+ "\n\nYou are done here.",
+					title: "You Survived a Month",
+					callback: () => {
+						ui.Notifications.Notify("You have succeeded.");
+					}
+				);
+				GameMan.Singleton.Game.AIPlaysInPlayerRegion = true;
+				GameOver();
+			}
 		}
 
 		void OnRegionMapObjectUpdated(Vector2I tile) { }
@@ -189,16 +232,22 @@ namespace scenes.region {
 		}
 
 		void OnApprovalZeroed() {
+			if (ui.GameIsOver) return;
 			faction.Population.ApprovalDroppedToZero -= OnApprovalZeroed;
 			ui.Announce("Your policies, good intentioned as they were (ha), still were not enough for your people,"
 				+ " and now they will not listen to you any more. Hopefully you have your bags packed and train booked,"
 				+ " because leaving some space for whom you used to answer to now might be the best for your continued health.",
 				title: "Approval Dropped to Zero",
 				callback: () => {
-					ui.MapClickEvent -= MapClick;
-					ui.GameOver();
+					ui.Notifications.Notify("You have failed.");
 				}
 			);
+			GameOver();
+		}
+
+		void GameOver() {
+			ui.MapClickEvent -= MapClick;
+			ui.GameOver();
 		}
 
 		// get information (for UI)

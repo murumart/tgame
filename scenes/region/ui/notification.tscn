@@ -1,0 +1,27 @@
+[gd_scene format=3 uid="uid://1mqtysebfbnc"]
+
+[ext_resource type="Script" uid="uid://bjmoqjwclj6os" path="res://scenes/region/ui/Notification.cs" id="1_05adb"]
+[ext_resource type="LabelSettings" uid="uid://btwbnjxri1gdg" path="res://resources/visual/theme/label_styles/8px.tres" id="1_qjs0n"]
+
+[node name="Control" type="HBoxContainer" unique_id=1486110663 node_paths=PackedStringArray("label", "dismissButton")]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_05adb")
+label = NodePath("Label")
+dismissButton = NodePath("Button")
+
+[node name="Label" type="Label" parent="." unique_id=1278688608]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "text..."
+label_settings = ExtResource("1_qjs0n")
+autowrap_mode = 2
+
+[node name="Button" type="Button" parent="." unique_id=1159839133]
+layout_mode = 2
+theme_override_font_sizes/font_size = 6
+text = "x"
+flat = true

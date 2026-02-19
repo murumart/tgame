@@ -94,6 +94,8 @@ namespace scenes.region.ui {
 		[Export] Label announcementTitle;
 		[Export] Control announcementParent;
 
+		[Export] public Notifications Notifications;
+
 		public bool AnnouncementActive { get => announcementParent.Visible; }
 
 		// internal
@@ -155,6 +157,13 @@ namespace scenes.region.ui {
 				Camera.StopDragging();
 				panButton.Disabled = false;
 				panButton.MouseFilter = MouseFilterEnum.Stop;
+			}
+			if (@event is InputEventKey k && k.Pressed) {
+				if (k.Keycode == Key.Key6) {
+					if (timeSpeedAlteringDisabled) return;
+					GameMan.Singleton.MultiplyGameSpeed(GameMan.GameSpeedChanger.UI, 1200);
+					SetGameSpeedLabelText();
+				}
 			}
 		}
 

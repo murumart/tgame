@@ -51,6 +51,10 @@ namespace scenes.autoload {
 				Game.PassTime(1);
 				timeAccum -= 1;
 			}
+			while (timeAccum >= 5) {
+				Game.PassTime(1);
+				timeAccum -= 1;
+			}
 		}
 
 		public void MultiplyGameSpeed(GameSpeedChanger who, float amount) {

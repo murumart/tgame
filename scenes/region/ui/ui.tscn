@@ -5,7 +5,9 @@
 [ext_resource type="PackedScene" uid="uid://cf2srkx2edx3u" path="res://scenes/region/ui/build_menu.tscn" id="3_iwag8"]
 [ext_resource type="LabelSettings" uid="uid://dxqtstvq2iau3" path="res://resources/visual/theme/label_styles/six.tres" id="3_ppqjx"]
 [ext_resource type="PackedScene" uid="uid://c7ew6g8hdbgfg" path="res://scenes/region/ui/map_object_menu.tscn" id="3_y7o2c"]
+[ext_resource type="Script" uid="uid://c7u2mvpm3cpkx" path="res://scenes/region/ui/Notifications.cs" id="4_o0d6a"]
 [ext_resource type="PackedScene" uid="uid://bli7m2dvghbu1" path="res://scenes/region/ui/documents_display.tscn" id="5_iwag8"]
+[ext_resource type="PackedScene" uid="uid://1mqtysebfbnc" path="res://scenes/region/ui/notification.tscn" id="5_mgrsp"]
 [ext_resource type="LabelSettings" uid="uid://ddruam7fh1y7l" path="res://resources/visual/theme/label_styles/title.tres" id="5_u27i7"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_suhma"]
@@ -61,7 +63,7 @@ events = [SubResource("InputEventKey_4ggmx")]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_bjdfm"]
 
-[node name="Ui" type="MarginContainer" unique_id=948088031 node_paths=PackedStringArray("buildButton", "agreementsButton", "jobsButton", "menuTabs", "buildingList", "documentsDisplay", "mopjectMenu", "resourceDisplay", "pauseDisplayPanel", "panButton", "zoomLabel", "zoomInButton", "zoomResetButton", "zoomOutButton", "gameSpeedLabel", "pauseButton", "normalSpeedButton", "fastSpeedButton", "fasterSpeedButton", "resourceLabel", "announcementOkayButton", "announcementText", "announcementTitle", "announcementParent")]
+[node name="Ui" type="MarginContainer" unique_id=948088031 node_paths=PackedStringArray("buildButton", "agreementsButton", "jobsButton", "menuTabs", "buildingList", "documentsDisplay", "mopjectMenu", "resourceDisplay", "pauseDisplayPanel", "panButton", "zoomLabel", "zoomInButton", "zoomResetButton", "zoomOutButton", "gameSpeedLabel", "pauseButton", "normalSpeedButton", "fastSpeedButton", "fasterSpeedButton", "resourceLabel", "announcementOkayButton", "announcementText", "announcementTitle", "announcementParent", "Notifications")]
 z_index = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -98,6 +100,7 @@ announcementOkayButton = NodePath("NotifBoxParentParent/NotifBoxParent/PanelCont
 announcementText = NodePath("NotifBoxParentParent/NotifBoxParent/PanelContainer/MarginContainer/VBoxContainer/AnnouncementText")
 announcementTitle = NodePath("NotifBoxParentParent/NotifBoxParent/PanelContainer/MarginContainer/VBoxContainer/AnnouncementTitle")
 announcementParent = NodePath("NotifBoxParentParent")
+Notifications = NodePath("VBoxContainer/MarginContainer/Horizon/HBoxContainer/VBoxContainer/Notifications")
 
 [node name="PausePanel" type="Panel" parent="." unique_id=1758856808]
 visible = false
@@ -305,6 +308,28 @@ size_flags_horizontal = 3
 size_flags_stretch_ratio = 1.9
 mouse_filter = 2
 
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/MarginContainer/Horizon" unique_id=458663461]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/MarginContainer/Horizon/HBoxContainer" unique_id=1228961728]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Notifications" type="VBoxContainer" parent="VBoxContainer/MarginContainer/Horizon/HBoxContainer/VBoxContainer" unique_id=1624733710 node_paths=PackedStringArray("notificationContainer")]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+alignment = 2
+script = ExtResource("4_o0d6a")
+notificationPacked = ExtResource("5_mgrsp")
+notificationContainer = NodePath(".")
+
+[node name="Control" type="Control" parent="VBoxContainer/MarginContainer/Horizon/HBoxContainer/VBoxContainer" unique_id=1606908808]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+mouse_filter = 2
+
 [node name="VBoxContainer2" type="VBoxContainer" parent="." unique_id=2064159204]
 layout_mode = 2
 mouse_filter = 2
@@ -313,11 +338,13 @@ metadata/_edit_lock_ = true
 
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer2" unique_id=22907527]
 layout_mode = 2
+mouse_filter = 2
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="VBoxContainer2/HBoxContainer" unique_id=842305827]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 1.75
+mouse_filter = 2
 alignment = 2
 
 [node name="MenuTabs" type="TabContainer" parent="VBoxContainer2/HBoxContainer/VBoxContainer2" unique_id=1179149039]

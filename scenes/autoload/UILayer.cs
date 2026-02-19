@@ -8,7 +8,7 @@ namespace scenes.autoload {
 	public partial class UILayer : CanvasLayer {
 
 		[Export] HoverInfoPanel infoPanel;
-		[Export] Node debugLabelParent;
+		[Export] Control debugLabelParent;
 
 		static UILayer singleton;
 
@@ -30,6 +30,11 @@ namespace scenes.autoload {
 				var str = cb.Call().AsString();
 				child.Text = str;
 			}
+		}
+
+		public override void _UnhandledKeyInput(InputEvent @event) {
+			var e = @event as InputEventKey;
+			if (e.Keycode == Key.Key7 && e.Pressed) debugLabelParent.Visible = !debugLabelParent.Visible;
 		}
 
 		public static void AddUIChild(Node node) {

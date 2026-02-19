@@ -10,6 +10,7 @@ public class Population {
 	public event Func<float> FurnitureRateRequested;
 	public event Action<Job, int> JobEmploymentChanged;
 	public event Action ApprovalDroppedToZero;
+	public event Action PopulationDroppedToZero;
 
 	public uint Count { get; private set; }
 
