@@ -75,27 +75,6 @@ namespace scenes.region {
 			this.region = region;
 			ConnectEvents();
 			tilemaps.DisplayGround(region);
-			//int minX = region.GroundTiles.Keys.MinBy(p => Tilemaps.TilePosToWorldPos(p).X).X;
-			//int minY = region.GroundTiles.Keys.MinBy(p => Tilemaps.TilePosToWorldPos(p).Y).Y;
-			//int maxX = region.GroundTiles.Keys.MaxBy(p => Tilemaps.TilePosToWorldPos(p).X).X;
-			//int maxY = region.GroundTiles.Keys.MaxBy(p => Tilemaps.TilePosToWorldPos(p).Y).Y;
-			//Vector2I minimal = new(minX, minY);
-			//Vector2I maximal = new(maxX, maxY);
-//
-			//var minxmaxy = Tilemaps.TilePosToWorldPos(new(minX, maxY));
-			//var maxxminy = Tilemaps.TilePosToWorldPos(new(maxX, minY));
-			//var minxminy = Tilemaps.TilePosToWorldPos(new(minX, minY));
-			//var maxxmaxy = Tilemaps.TilePosToWorldPos(new(maxX, maxY));
-//
-			//float minimalX = minxmaxy.X;
-//
-			//if (region == GameMan.Singleton.Game.PlayRegion) {
-			//	GD.Print($"RegionDisplay::LoadRegion : min: {minX}, {minY}, max: {maxX}, {maxY}, wps: {minxmaxy}, {maxxminy}, {minxminy}, {maxxmaxy}");
-			//}
-//
-			//Vector2 rectpos = new(minxmaxy.X, minxminy.Y);
-			//Vector2 rectend = new(maxxminy.X, maxxmaxy.Y);
-			//var visiblerect = new Rect2(rectpos, (rectend - rectpos).Abs());
 			var wposes = region.GroundTiles.Keys.Select(p => Tilemaps.TilePosToWorldPos(p) + Vector2.Up * Tilemaps.TileElevationVerticalOffset(region.WorldPosition + p, GameMan.Singleton.Game.Map.World));
 			float minx = wposes.MinBy(p => p.X).X - Tilemaps.TILE_SIZE.X * 0.5f;
 			float miny = wposes.MinBy(p => p.Y).Y - Tilemaps.TILE_SIZE.Y * 0.5f;
@@ -104,8 +83,8 @@ namespace scenes.region {
 
 			var visiblerect = new Rect2(minx, miny, maxx - minx, maxy - miny);
 			visibilityArea.Rect = visiblerect;
-			visibilityDebug.Position = visiblerect.Position;
-			visibilityDebug.Size = visiblerect.Size;
+			//visibilityDebug.Position = visiblerect.Position;
+			//visibilityDebug.Size = visiblerect.Size;
 			//visibilityDebug.Visible = region == GameMan.Singleton.Game.PlayRegion;
 
 			if (Lod < 2) {
