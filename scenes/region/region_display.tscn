@@ -38,11 +38,16 @@ tile_layout = 5
 tile_size = Vector2i(64, 32)
 sources/1 = SubResource("TileSetAtlasSource_s3w5i")
 
-[node name="RegionDisplay" type="Node2D" unique_id=103253826 node_paths=PackedStringArray("tilemaps", "buildingsParent")]
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_bwdbp"]
+blend_mode = 1
+
+[node name="RegionDisplay" type="Node2D" unique_id=103253826 node_paths=PackedStringArray("tilemaps", "buildingsParent", "visibilityArea", "visibilityDebug")]
 y_sort_enabled = true
 script = ExtResource("1_yylbx")
 tilemaps = NodePath("Tilemaps")
 buildingsParent = NodePath("Tilemaps/Region")
+visibilityArea = NodePath("VisibleOnScreenNotifier2D")
+visibilityDebug = NodePath("ColorRect")
 
 [node name="Tilemaps" type="Node2D" parent="." unique_id=506745576 node_paths=PackedStringArray("ground")]
 y_sort_enabled = true
@@ -64,3 +69,13 @@ y_sort_origin = 16
 
 [node name="Buildings" type="Node2D" parent="Tilemaps" unique_id=1133798205]
 y_sort_enabled = true
+
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="." unique_id=1093525837]
+rect = Rect2(0, 0, 20, 20)
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=36043317]
+material = SubResource("CanvasItemMaterial_bwdbp")
+offset_right = 40.0
+offset_bottom = 40.0
+mouse_filter = 2
+color = Color(1, 1, 0.3254902, 0.1254902)

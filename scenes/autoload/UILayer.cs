@@ -23,10 +23,12 @@ namespace scenes.autoload {
 				var cb = child.GetMeta("callback").AsCallable();
 
 				if (!IsInstanceValid(cb.Target)) {
+					GD.Print($"UILayer::_Process : debug label callback cb.Target is invalid");
 					child.QueueFree();
 					continue;
 				}
-				child.Text = cb.Call().AsString();
+				var str = cb.Call().AsString();
+				child.Text = str;
 			}
 		}
 

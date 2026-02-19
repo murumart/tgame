@@ -11,9 +11,10 @@ public partial class OffsettableTilemap : TileMapLayer {
 
 	readonly static Color BaseColor = Color.FromHtml("d5d6db");
 
-	public override bool _UseTileDataRuntimeUpdate(Vector2I coords) => takeIn;
+	public override bool _UseTileDataRuntimeUpdate(Vector2I coords) => true;
 
 	public override void _TileDataRuntimeUpdate(Vector2I coords, TileData tileData) {
+		if (region == null) return;
 		var gpos = region.WorldPosition + coords;
 		float elevation = world.GetElevation(gpos.X, gpos.Y);
 		int voffset = Tilemaps.TileElevationVerticalOffset(elevation);

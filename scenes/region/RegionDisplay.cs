@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Godot;
 using resources.game;
 using scenes.autoload;
@@ -9,6 +10,8 @@ namespace scenes.region {
 
 		[Export] Tilemaps tilemaps;
 		[Export] Node2D buildingsParent;
+		[Export] VisibleOnScreenNotifier2D visibilityArea;
+		[Export] ColorRect visibilityDebug;
 
 		readonly Dictionary<Vector2I, MapObjectView> mapObjectViews = new();
 		Region region;
@@ -17,6 +20,8 @@ namespace scenes.region {
 
 		readonly Queue<Job> jobsToDisplay = new();
 		readonly Queue<Job> jobsToUndisplay = new();
+
+		public int Lod { get; private set; }
 
 
 		// setup
@@ -31,6 +36,8 @@ namespace scenes.region {
 					GameMan.Singleton.Game.Time.TimePassedEvent -= TimeUpdate;
 					break;
 				case (int)NotificationReady:
+					visibilityArea.ScreenEntered += OnScreenEntered;
+					visibilityArea.ScreenExited += OnScreenExited;
 					GameMan.Singleton.Game.Time.TimePassedEvent += TimeUpdate;
 					break;
 			}
@@ -58,20 +65,56 @@ namespace scenes.region {
 			}
 		}
 
-		public void LoadRegion(Region region) {
+		public void LoadRegion(Region region, int lod) {
 			if (valid) {
 				DisconnectEvents();
 				valid = false;
 			}
+			Lod = lod;
 
 			this.region = region;
 			ConnectEvents();
 			tilemaps.DisplayGround(region);
+			//int minX = region.GroundTiles.Keys.MinBy(p => Tilemaps.TilePosToWorldPos(p).X).X;
+			//int minY = region.GroundTiles.Keys.MinBy(p => Tilemaps.TilePosToWorldPos(p).Y).Y;
+			//int maxX = region.GroundTiles.Keys.MaxBy(p => Tilemaps.TilePosToWorldPos(p).X).X;
+			//int maxY = region.GroundTiles.Keys.MaxBy(p => Tilemaps.TilePosToWorldPos(p).Y).Y;
+			//Vector2I minimal = new(minX, minY);
+			//Vector2I maximal = new(maxX, maxY);
+//
+			//var minxmaxy = Tilemaps.TilePosToWorldPos(new(minX, maxY));
+			//var maxxminy = Tilemaps.TilePosToWorldPos(new(maxX, minY));
+			//var minxminy = Tilemaps.TilePosToWorldPos(new(minX, minY));
+			//var maxxmaxy = Tilemaps.TilePosToWorldPos(new(maxX, maxY));
+//
+			//float minimalX = minxmaxy.X;
+//
+			//if (region == GameMan.Singleton.Game.PlayRegion) {
+			//	GD.Print($"RegionDisplay::LoadRegion : min: {minX}, {minY}, max: {maxX}, {maxY}, wps: {minxmaxy}, {maxxminy}, {minxminy}, {maxxmaxy}");
+			//}
+//
+			//Vector2 rectpos = new(minxmaxy.X, minxminy.Y);
+			//Vector2 rectend = new(maxxminy.X, maxxmaxy.Y);
+			//var visiblerect = new Rect2(rectpos, (rectend - rectpos).Abs());
+			var wposes = region.GroundTiles.Keys.Select(p => Tilemaps.TilePosToWorldPos(p) + Vector2.Up * Tilemaps.TileElevationVerticalOffset(region.WorldPosition + p, GameMan.Singleton.Game.Map.World));
+			float minx = wposes.MinBy(p => p.X).X - Tilemaps.TILE_SIZE.X * 0.5f;
+			float miny = wposes.MinBy(p => p.Y).Y - Tilemaps.TILE_SIZE.Y * 0.5f;
+			float maxx = wposes.MaxBy(p => p.X).X - Tilemaps.TILE_SIZE.X * 0.5f;
+			float maxy = wposes.MaxBy(p => p.Y).Y - Tilemaps.TILE_SIZE.Y * 0.5f;
 
-			foreach (var m in region.GetMapObjects()) {
-				DisplayMapObject(m);
+			var visiblerect = new Rect2(minx, miny, maxx - minx, maxy - miny);
+			visibilityArea.Rect = visiblerect;
+			visibilityDebug.Position = visiblerect.Position;
+			visibilityDebug.Size = visiblerect.Size;
+			//visibilityDebug.Visible = region == GameMan.Singleton.Game.PlayRegion;
+
+			if (Lod < 2) {
+				foreach (var m in region.GetMapObjects()) {
+					DisplayMapObject(m);
+				}
 			}
 			valid = true;
+			OnScreenExited();
 
 			// debug
 			//if (region == GameMan.Singleton.Game.PlayRegion) {
@@ -86,17 +129,21 @@ namespace scenes.region {
 		}
 
 		void ConnectEvents() {
-			region.MapObjectUpdatedAtEvent += OnRegionMapObjectUpdated;
-			region.LocalFaction.JobAddedEvent += OnRegionJobAdded;
-			region.LocalFaction.JobRemovedEvent += OnRegionJobRemoved;
+			if (Lod < 2) {
+				region.MapObjectUpdatedAtEvent += OnRegionMapObjectUpdated;
+				region.LocalFaction.JobAddedEvent += OnRegionJobAdded;
+				region.LocalFaction.JobRemovedEvent += OnRegionJobRemoved;
+			}
 			region.TileChangedAtEvent += OnTileChanged;
 			region.LocalFaction.JobChangedEvent += OnJobChanged;
 		}
 
 		void DisconnectEvents() {
-			region.MapObjectUpdatedAtEvent -= OnRegionMapObjectUpdated;
-			region.LocalFaction.JobAddedEvent -= OnRegionJobAdded;
-			region.LocalFaction.JobRemovedEvent -= OnRegionJobRemoved;
+			if (Lod < 2) {
+				region.MapObjectUpdatedAtEvent -= OnRegionMapObjectUpdated;
+				region.LocalFaction.JobAddedEvent -= OnRegionJobAdded;
+				region.LocalFaction.JobRemovedEvent -= OnRegionJobRemoved;
+			}
 			region.TileChangedAtEvent -= OnTileChanged;
 			region.LocalFaction.JobChangedEvent -= OnJobChanged;
 		}
@@ -183,6 +230,17 @@ namespace scenes.region {
 
 		void OnTileChanged(Vector2I at) {
 			tilemaps.DisplayGround(region);
+		}
+
+		void OnScreenEntered() {
+			tilemaps.Show();
+			//tilemaps.DisplayGround(region);
+			SetProcess(true);
+		}
+
+		void OnScreenExited() {
+			tilemaps.Hide();
+			SetProcess(false);
 		}
 
 		// misc..
