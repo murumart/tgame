@@ -15,6 +15,7 @@ namespace scenes.region {
 
 
 		public override void _Ready() {
+			base._Ready();
 			RemoveChild(ui);
 			UILayer.AddUIChild(ui);
 			ClickedMouseEvent += (ac) => ui.OnLeftMouseClick(ac, regionDisplay.GetMouseHoveredTilePos(ac));

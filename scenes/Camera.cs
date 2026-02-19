@@ -1,5 +1,6 @@
 using System;
 using Godot;
+using scenes.autoload;
 
 public partial class Camera : Camera2D {
 
@@ -13,6 +14,9 @@ public partial class Camera : Camera2D {
 	Vector2 velocity = new();
 	float zoomSize = 1.0f;
 
+	public override void _Ready() {
+		UILayer.DebugDisplay(() => $"dragging: {dragging}");
+	}
 
 	public override void _Process(double delta) {
 		Movement((float)delta);
@@ -24,11 +28,9 @@ public partial class Camera : Camera2D {
 			MouseButtonInput(bEvent);
 		} else if (evt is InputEventKey kEvent) {
 			if (kEvent.Keycode == Key.Space) {
-				if (kEvent.IsReleased() && dragging) dragging = false;
+				if (kEvent.IsReleased() && dragging) StopDragging();
 				else if (kEvent.IsPressed() && !dragging) {
-					dragging = true;
-					draggingStartPos = GetViewport().GetMousePosition();
-					draggingStartCamPos = Position;
+					StartDragging();
 				}
 			}
 		} else if (evt is InputEventMouseMotion mEvent) {
@@ -53,6 +55,16 @@ public partial class Camera : Camera2D {
 	public void ZoomOut(float amt = 0.1f) => zoomSize = Mathf.Max(zoomSize - amt * zoomSize, 0.1f);
 	public void ZoomReset() => zoomSize = 1f;
 
+	public void StartDragging() {
+		dragging = true;
+		draggingStartPos = GetViewport().GetMousePosition();
+		draggingStartCamPos = Position;
+	}
+
+	public void StopDragging() {
+		dragging = false;
+	}
+
 	bool dragging = false;
 	Vector2 draggingStartPos;
 	Vector2 draggingStartCamPos;
@@ -73,11 +85,9 @@ public partial class Camera : Camera2D {
 			return true;
 		} else if (evt.ButtonIndex == MouseButton.Middle) {
 			if (evt.Pressed) {
-				dragging = true;
-				draggingStartPos = evt.Position;
-				draggingStartCamPos = Position;
+				StartDragging();
 			} else {
-				dragging = false;
+				StopDragging();
 			}
 		}
 		if (consumed) GetWindow().SetInputAsHandled();

@@ -69,6 +69,8 @@ namespace scenes.region.ui {
 		[Export] public Panel pauseDisplayPanel;
 
 		// top bar bottom
+		[Export] Button panButton;
+
 		[Export] Label zoomLabel;
 		[Export] Button zoomInButton;
 		[Export] Button zoomResetButton;
@@ -108,6 +110,7 @@ namespace scenes.region.ui {
 
 		// overrides and connections
 
+		bool cursedPanning = true;
 		public override void _Ready() {
 			buildButton.Pressed += () => OnTabButtonPressed(Tab.Build, State.ChoosingBuild);
 			agreementsButton.Pressed += () => OnTabButtonPressed(Tab.Documents, State.AgreementsMenu);
@@ -120,6 +123,14 @@ namespace scenes.region.ui {
 			zoomInButton.Pressed += () => Camera.ZoomIn();
 			zoomOutButton.Pressed += () => Camera.ZoomOut();
 			zoomResetButton.Pressed += () => Camera.ZoomReset();
+
+			panButton.ButtonDown += () => {
+				Camera.StartDragging();
+				cursedPanning = true;
+				panButton.MouseFilter = MouseFilterEnum.Ignore;
+				panButton.Disabled = true;
+			};
+			//panButton.ButtonUp += () => Camera.StopDragging();
 
 			announcementOkayButton.Pressed += AnnouncementOkayPressed;
 
@@ -183,6 +194,12 @@ namespace scenes.region.ui {
 			base._UnhandledInput(@event);
 			if (@event.IsActionPressed("escape")) {
 				Escape();
+			}
+			if (@event is InputEventMouseButton iemb && iemb.ButtonIndex == MouseButton.Left && iemb.IsReleased() && cursedPanning) {
+				cursedPanning = false;
+				Camera.StopDragging();
+				panButton.Disabled = false;
+				panButton.MouseFilter = MouseFilterEnum.Stop;
 			}
 		}
 
@@ -365,34 +382,52 @@ namespace scenes.region.ui {
 			jobsList.Open(resourceSite);
 		}
 
+		bool wasPausedBefore = false;
 		void OnStateChanged(State old, State current) {
 			if (old != current) {
 				if (old == State.ChoosingBuild) {
 					buildingList.Reset();
 					SelectTab(Tab.None);
+					SetTimeSpeedAlteringAllowed(true);
+					if (GameMan.Singleton.IsPaused && !wasPausedBefore) GameMan.Singleton.TogglePause();
 				}
 				if (old == State.PlacingBuild) {
 					buildingList.Reset();
 					buildingList.SetBuildCursor(null);
+					SetTimeSpeedAlteringAllowed(true);
+					if (GameMan.Singleton.IsPaused && !wasPausedBefore) GameMan.Singleton.TogglePause();
 				}
 				if (old == State.MapObjectMenu) {
 					jobsList.Close();
 					SetTimeSpeedAlteringAllowed(true);
-					if (GameMan.Singleton.IsPaused) GameMan.Singleton.TogglePause();
+					if (GameMan.Singleton.IsPaused && !wasPausedBefore) GameMan.Singleton.TogglePause();
 				}
 				if (old == State.AgreementsMenu) {
 					SelectTab(Tab.None);
 					SetTimeSpeedAlteringAllowed(true);
-					if (GameMan.Singleton.IsPaused) GameMan.Singleton.TogglePause();
+					if (GameMan.Singleton.IsPaused && !wasPausedBefore) GameMan.Singleton.TogglePause();
 				}
+			}
+			if (current == State.ChoosingBuild) {
+				SetTimeSpeedAlteringAllowed(false);
+				if (!GameMan.Singleton.IsPaused) {
+					GameMan.Singleton.TogglePause();
+					wasPausedBefore = false;
+				} else wasPausedBefore = true;
 			}
 			if (current == State.MapObjectMenu) {
 				SetTimeSpeedAlteringAllowed(false);
-				if (!GameMan.Singleton.IsPaused) GameMan.Singleton.TogglePause();
+				if (!GameMan.Singleton.IsPaused) {
+					GameMan.Singleton.TogglePause();
+					wasPausedBefore = false;
+				} else wasPausedBefore = true;
 			}
 			if (current == State.AgreementsMenu) {
 				SetTimeSpeedAlteringAllowed(false);
-				if (!GameMan.Singleton.IsPaused) GameMan.Singleton.TogglePause();
+				if (!GameMan.Singleton.IsPaused) {
+					GameMan.Singleton.TogglePause();
+					wasPausedBefore = false;
+				} else wasPausedBefore = true;
 			}
 		}
 
