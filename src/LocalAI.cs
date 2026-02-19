@@ -23,7 +23,6 @@ public abstract partial class LocalAI {
 		foreach (ref readonly var action in actions) {
 			var s = action.Score();
 			if (GameMan.Singleton.Game.PlayRegion == factionActions.Region) Console.WriteLine($"LocalAI::ChooseAction : {action} scored {s}");
-			AIAssert(!Mathf.IsNaN(s), $"Got NOT A NUMBER from scoring action {action}");
 			if (s > chosenScore) {
 				chosenScore = s;
 				chosenAction = action;
@@ -50,6 +49,7 @@ public partial class LocalAI {
 				ulong sustime = Time.GetTicksUsec();
 				var s = factor.Score();
 				Profile.AddDecisionTime(Time.GetTicksUsec() - sustime, factor.ToString());
+				Debug.Assert(!Mathf.IsNaN(s), $"Action {this} Got NOT A NUMBER from scoring decision {factor}");
 				//Console.WriteLine($"LocalAI::Action::Score : \t\tutility of {factor} is {s}");
 				score *= s;
 				if (s <= 0f) {
@@ -143,7 +143,7 @@ public partial class LocalAI {
 					return;
 				}
 				AIAssert(false, $"No free tiles left to place building {buildingType.AssetName}", ac);
-			}, $"CreateBuildingJob({buildingType.AssetName})");
+			}, $"PlaceBuildingJob({buildingType.AssetName})");
 		}
 
 		// sucks don't use
@@ -364,6 +364,7 @@ public partial class LocalAI {
 					if (mo is Building building && building.Type == buildingType) foundBuildings += 1;
 				}
 				float wantedBuildings = ac.Faction.GetPopulationCount() / popForOne;
+				if (wantedBuildings == 0f) return 0f;
 				return 1f - Mathf.Clamp(foundBuildings / wantedBuildings, 0f, 1f);
 			}, $"ReasonableBuildingCountByPopulation({buildingType.AssetName}, {popForOne})");
 		}
@@ -563,11 +564,10 @@ public class GamerAI : LocalAI {
 					Factors.HomelessnessRate(factionActions),
 					Factors.OneMinus(Factors.HousingSlotsPerPerson(factionActions)),
 					Factors.HousingCapacity(b),
-				]) : Factors.ReasonableBuildingCount(factionActions, b, GD.RandRange(1, 6)),
+				]) : isFarm ? Factors.ReasonableBuildingCountByPopulation(factionActions, b, 12f) : Factors.ReasonableBuildingCount(factionActions, b, GD.RandRange(1, 6)),
 				isCrafting ? Factors.Group([
 					Factors.Group(b.GetCraftJobs().Select(j => Factors.Group(j.Outputs.Select(o => GetResourceWant(o.Type, 115)).ToArray())).ToArray())
 				]) : Factors.One,
-				isFarm ? Factors.ReasonableBuildingCountByPopulation(factionActions, b, 12f) : Factors.One,
 				!isHousing && !isFarm && !isCrafting ? Factors.Const(0.001f) : Factors.One,
 			], factionActions, b));
 		}

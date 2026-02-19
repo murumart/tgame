@@ -89,7 +89,9 @@ Seda võiks teha automaatselt. Kui resourceewant mingil lõppproduktil on kõrge
   - [ ] ribad näitamaks kui kaugel mingi mopbjecti tööga ollakse
   - [ ] riba näitab kui depleted a resource site is
 - [ ] ehitiste eemaldamine
+- [ ] buttons for zooming in out
 - [ ] ressursiallikate eemaldamine (kui pole ruumi panna midagi kuhugi)
+- [ ] prepared experience thing, like a world seed and specific region the test player will get dumped into
 
 ### Hiljem
 
