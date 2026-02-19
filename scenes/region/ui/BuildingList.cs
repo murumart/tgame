@@ -84,7 +84,7 @@ public partial class BuildingList : Control {
 		Debug.Assert(ui.GetCanBuild(buildingType), "can't build this...");
 		var scene = MapObjectView.Make(DataStorage.GetScenePath(buildingType), buildingType);
 		Debug.Assert(scene != null, "building display scene canät be null here....w aht...");
-		ui.CameraCursor.AddChild(scene);
+		ui.Camera.Cursor.AddChild(scene);
 		selectedBuildingScene = scene;
 		SelectedBuildingType = buildingType;
 		ui.state = UI.State.PlacingBuild;

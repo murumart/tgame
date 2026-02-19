@@ -49,7 +49,7 @@ namespace scenes.region.ui {
 		}
 
 		// camera
-		[Export] public Node2D CameraCursor;
+		[Export] public RegionCamera Camera;
 
 		// bottom bar buttons
 		[Export] public Button buildButton;
@@ -69,10 +69,16 @@ namespace scenes.region.ui {
 		[Export] public Panel pauseDisplayPanel;
 
 		// top bar bottom
+		[Export] Label zoomLabel;
+		[Export] Button zoomInButton;
+		[Export] Button zoomResetButton;
+		[Export] Button zoomOutButton;
+
 		[Export] public Label gameSpeedLabel;
 		[Export] public Button pauseButton;
 		[Export] public Button normalSpeedButton;
 		[Export] public Button fastSpeedButton;
+		[Export] public Button fasterSpeedButton;
 
 		[Export] public RichTextLabel resourceLabel;
 
@@ -109,6 +115,11 @@ namespace scenes.region.ui {
 			pauseButton.Pressed += OnPauseButtonPressed;
 			normalSpeedButton.Pressed += OnNormalSpeedButtonPressed;
 			fastSpeedButton.Pressed += OnFastSpeedButtonPressed;
+			fasterSpeedButton.Pressed += OnFasterSpeedButtonPressed;
+
+			zoomInButton.Pressed += () => Camera.ZoomIn();
+			zoomOutButton.Pressed += () => Camera.ZoomOut();
+			zoomResetButton.Pressed += () => Camera.ZoomReset();
 
 			announcementOkayButton.Pressed += AnnouncementOkayPressed;
 
@@ -192,7 +203,8 @@ namespace scenes.region.ui {
 		}
 
 		const int NORMAL_SPEED = 1;
-		const int FAST_SPEED = 30;
+		const int FAST_SPEED = 10;
+		const int FASTER_SPEED = 30;
 
 		void OnNormalSpeedButtonPressed() {
 			if (timeSpeedAlteringDisabled) return;
@@ -203,6 +215,12 @@ namespace scenes.region.ui {
 		void OnFastSpeedButtonPressed() {
 			if (timeSpeedAlteringDisabled) return;
 			GameMan.Singleton.MultiplyGameSpeed(GameMan.GameSpeedChanger.UI, FAST_SPEED);
+			SetGameSpeedLabelText();
+		}
+
+		void OnFasterSpeedButtonPressed() {
+			if (timeSpeedAlteringDisabled) return;
+			GameMan.Singleton.MultiplyGameSpeed(GameMan.GameSpeedChanger.UI, FASTER_SPEED);
 			SetGameSpeedLabelText();
 		}
 
@@ -275,6 +293,7 @@ namespace scenes.region.ui {
 			SetGameSpeedLabelText();
 			bool gamePaused = GameMan.Singleton.IsPaused || GameMan.Singleton.GameSpeed == 0f;
 			pauseDisplayPanel.Visible = gamePaused;
+			zoomLabel.Text = $"zoom: {(Camera.Zoom.X >= 1 ? Camera.Zoom.X : Mathf.Remap(Camera.Zoom.X, 1f, 0.1f, 1f, -8f)):0}";
 		}
 
 		void DisplayResources() {

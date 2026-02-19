@@ -86,10 +86,10 @@ Seda võiks teha automaatselt. Kui resourceewant mingil lõppproduktil on kõrge
   - [ ] mingi märguande ikoon uute treidide kohta turul
   - [ ] märguannete nimekiri ekraanil kogu aeg, logi tab kus eelmised notifid factioni koha
     - [ ] ära lihtsalt pane rtlabelisse, gene tekst nt kuu kaupa kui nuppu vajutatakse
-  - [ ] ribad näitamaks kui kaugel mingi mopbjecti tööga ollakse
+  - [X] ribad näitamaks kui kaugel mingi mopbjecti tööga ollakse
   - [ ] riba näitab kui depleted a resource site is
 - [ ] ehitiste eemaldamine
-- [ ] buttons for zooming in out
+- [X] buttons for zooming in out
 - [ ] ressursiallikate eemaldamine (kui pole ruumi panna midagi kuhugi)
 - [ ] prepared experience thing, like a world seed and specific region the test player will get dumped into
 

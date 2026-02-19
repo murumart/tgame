@@ -16,6 +16,7 @@ public partial class Camera : Camera2D {
 
 	public override void _Process(double delta) {
 		Movement((float)delta);
+		Zoom = new Vector2(zoomSize, zoomSize);
 	}
 
 	public override void _UnhandledInput(InputEvent evt) {
@@ -44,9 +45,13 @@ public partial class Camera : Camera2D {
 	protected virtual void ScrollInput(bool up) { }
 
 	protected virtual void ControlScrollInput(bool up) {
-		if (up) zoomSize = Mathf.Min(zoomSize + 0.1f * zoomSize, 8.0f);
-		else zoomSize = Mathf.Max(zoomSize - 0.1f * zoomSize, 0.25f);
+		if (up) ZoomIn();
+		else ZoomOut();
 	}
+
+	public void ZoomIn(float amt = 0.1f) => zoomSize = Mathf.Min(zoomSize + amt * zoomSize, 8.0f);
+	public void ZoomOut(float amt = 0.1f) => zoomSize = Mathf.Max(zoomSize - amt * zoomSize, 0.1f);
+	public void ZoomReset() => zoomSize = 1f;
 
 	bool dragging = false;
 	Vector2 draggingStartPos;
@@ -75,7 +80,6 @@ public partial class Camera : Camera2D {
 				dragging = false;
 			}
 		}
-		Zoom = new Vector2(zoomSize, zoomSize);
 		if (consumed) GetWindow().SetInputAsHandled();
 		return consumed;
 

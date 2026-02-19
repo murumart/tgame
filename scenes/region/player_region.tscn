@@ -1,9 +1,7 @@
 [gd_scene format=3 uid="uid://dfsyk55h5ioh0"]
 
 [ext_resource type="Script" uid="uid://tg0ox5vibsay" path="res://scenes/region/PlayerRegion.cs" id="1_qi5r4"]
-[ext_resource type="Material" uid="uid://cet7ep6cvqk3p" path="res://resources/visual/add_material.tres" id="3_a0jiq"]
 [ext_resource type="PackedScene" uid="uid://cpeaxmkgldt5g" path="res://scenes/region/region_display.tscn" id="3_pmx41"]
-[ext_resource type="Texture2D" uid="uid://ethlsfg8xmhk" path="res://scenes/region/iso_mask.png" id="4_3pxuv"]
 [ext_resource type="PackedScene" uid="uid://b1t88emteoav4" path="res://scenes/region/camera.tscn" id="4_du6xo"]
 
 [node name="PlayerRegion" type="Node" unique_id=531255262 node_paths=PackedStringArray("ui", "camera", "regionDisplay", "otherDisplaysParent")]
@@ -13,23 +11,8 @@ camera = NodePath("RegionCamera")
 regionDisplay = NodePath("Ysort/RegionDisplay")
 otherDisplaysParent = NodePath("Ysort/OtherDisplays")
 
-[node name="RegionCamera" parent="." unique_id=1239662942 node_paths=PackedStringArray("debugCursor", "regionDisplay") instance=ExtResource("4_du6xo")]
-debugCursor = NodePath("Debugcursor")
+[node name="RegionCamera" parent="." unique_id=1239662942 node_paths=PackedStringArray("regionDisplay") instance=ExtResource("4_du6xo")]
 regionDisplay = NodePath("../Ysort/RegionDisplay")
-
-[node name="Ui" parent="RegionCamera" index="0" unique_id=2048202457 node_paths=PackedStringArray("CameraCursor")]
-CameraCursor = NodePath("../Cursor")
-
-[node name="Cursor" parent="RegionCamera" index="1" unique_id=273959931]
-modulate = Color(0.94509804, 0.9647059, 0.9411765, 1)
-z_index = 0
-
-[node name="Debugcursor" type="Sprite2D" parent="RegionCamera" unique_id=1703989252]
-modulate = Color(0.99215686, 0.3019608, 0.4745098, 1)
-self_modulate = Color(1, 1, 1, 0.08627451)
-top_level = true
-material = ExtResource("3_a0jiq")
-texture = ExtResource("4_3pxuv")
 
 [node name="Ysort" type="Node2D" parent="." unique_id=1608065967]
 y_sort_enabled = true
@@ -38,5 +21,3 @@ y_sort_enabled = true
 
 [node name="OtherDisplays" type="Node2D" parent="Ysort" unique_id=135584923]
 y_sort_enabled = true
-
-[editable path="RegionCamera"]

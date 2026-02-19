@@ -6,7 +6,7 @@ namespace scenes.region {
 
 	public partial class RegionCamera : Camera {
 
-		[Export] Node2D cursor;
+		[Export] public Node2D Cursor;
 		[Export] Node2D debugCursor;
 		[Export] RegionDisplay regionDisplay;
 		[Export] UI ui;
@@ -39,7 +39,7 @@ namespace scenes.region {
 		private void MouseHighlight() {
 			var tilepos = regionDisplay.GetMouseHoveredTilePos();
 			debugCursor.GlobalPosition = Tilemaps.TilePosToWorldPos(tilepos);
-			cursor.GlobalPosition = Tilemaps.TilePosToWorldPos(tilepos) + Vector2.Up * Tilemaps.TileElevationVerticalOffset(GameMan.Singleton.Game.PlayRegion.WorldPosition + tilepos, GameMan.Singleton.Game.Map.World);
+			Cursor.GlobalPosition = Tilemaps.TilePosToWorldPos(tilepos) + Vector2.Up * Tilemaps.TileElevationVerticalOffset(GameMan.Singleton.Game.PlayRegion.WorldPosition + tilepos, GameMan.Singleton.Game.Map.World);
 			if (tilepos != lastTilePos) {
 				lastTilePos = tilepos;
 				ui.OnTileHighlighted(tilepos, Region);

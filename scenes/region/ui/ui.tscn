@@ -25,7 +25,7 @@ font_color = Color(0.8352941, 0.8392157, 0.85882354, 1)
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_bjdfm"]
 
-[node name="Ui" type="MarginContainer" unique_id=948088031 node_paths=PackedStringArray("buildButton", "agreementsButton", "jobsButton", "menuTabs", "buildingList", "documentsDisplay", "jobsList", "resourceDisplay", "pauseDisplayPanel", "gameSpeedLabel", "pauseButton", "normalSpeedButton", "fastSpeedButton", "resourceLabel", "announcementOkayButton", "announcementText", "announcementTitle", "announcementParent")]
+[node name="Ui" type="MarginContainer" unique_id=948088031 node_paths=PackedStringArray("buildButton", "agreementsButton", "jobsButton", "menuTabs", "buildingList", "documentsDisplay", "jobsList", "resourceDisplay", "pauseDisplayPanel", "zoomLabel", "zoomInButton", "zoomResetButton", "zoomOutButton", "gameSpeedLabel", "pauseButton", "normalSpeedButton", "fastSpeedButton", "fasterSpeedButton", "resourceLabel", "announcementOkayButton", "announcementText", "announcementTitle", "announcementParent")]
 z_index = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -47,10 +47,15 @@ documentsDisplay = NodePath("VBoxContainer/MarginContainer/MenuTabs/HBoxContaine
 jobsList = NodePath("VBoxContainer/HBoxContainer/MapObjectMenu")
 resourceDisplay = NodePath("VBoxContainer/VBoxContainer/ResourceDisplay")
 pauseDisplayPanel = NodePath("PausePanel")
-gameSpeedLabel = NodePath("VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer/Label")
+zoomLabel = NodePath("VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer/ZoomLabel")
+zoomInButton = NodePath("VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer/ZoomInButton")
+zoomResetButton = NodePath("VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer/NormalZoomButton")
+zoomOutButton = NodePath("VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer/ZoomOutButton")
+gameSpeedLabel = NodePath("VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer/GameSpeedLabel")
 pauseButton = NodePath("VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer/PauseButton")
 normalSpeedButton = NodePath("VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer/NormalSpeedButton")
 fastSpeedButton = NodePath("VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer/FastButton")
+fasterSpeedButton = NodePath("VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer/FasterButton")
 resourceLabel = NodePath("VBoxContainer/MarginContainer/Horizon/ResourcesList")
 announcementOkayButton = NodePath("NotifBoxParentParent/NotifBoxParent/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Okay")
 announcementText = NodePath("NotifBoxParentParent/NotifBoxParent/PanelContainer/MarginContainer/VBoxContainer/AnnouncementText")
@@ -83,31 +88,64 @@ custom_minimum_size = Vector2(60, 0)
 layout_mode = 2
 theme_override_constants/separation = 1
 
-[node name="Label" type="Label" parent="VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer" unique_id=1762454474]
+[node name="ZoomLabel" type="Label" parent="VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer" unique_id=1587801737]
+layout_mode = 2
+text = "zoom: 0%"
+label_settings = SubResource("LabelSettings_suhma")
+
+[node name="ZoomOutButton" type="Button" parent="VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer" unique_id=234190844]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+theme_override_font_sizes/font_size = 6
+text = "🔎︎-"
+
+[node name="NormalZoomButton" type="Button" parent="VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer" unique_id=1810911123]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+theme_override_font_sizes/font_size = 6
+text = "🔎︎"
+
+[node name="ZoomInButton" type="Button" parent="VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer" unique_id=1125127116]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+theme_override_font_sizes/font_size = 6
+text = "🔎︎+"
+
+[node name="GameSpeedLabel" type="Label" parent="VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer" unique_id=1874258017]
 layout_mode = 2
 text = "game speed 3x"
 label_settings = SubResource("LabelSettings_suhma")
 
-[node name="PauseButton" type="Button" parent="VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer" unique_id=234190844]
+[node name="PauseButton" type="Button" parent="VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer" unique_id=1487934798]
 layout_mode = 2
 size_flags_horizontal = 3
 focus_mode = 0
 theme_override_font_sizes/font_size = 6
 text = "||"
 
-[node name="NormalSpeedButton" type="Button" parent="VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer" unique_id=1810911123]
+[node name="NormalSpeedButton" type="Button" parent="VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer" unique_id=1566025682]
 layout_mode = 2
 size_flags_horizontal = 3
 focus_mode = 0
 theme_override_font_sizes/font_size = 6
 text = ">"
 
-[node name="FastButton" type="Button" parent="VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer" unique_id=1125127116]
+[node name="FastButton" type="Button" parent="VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer" unique_id=948338509]
 layout_mode = 2
 size_flags_horizontal = 3
 focus_mode = 0
 theme_override_font_sizes/font_size = 6
 text = ">>"
+
+[node name="FasterButton" type="Button" parent="VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer" unique_id=1115249495]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+theme_override_font_sizes/font_size = 6
+text = ">>>"
 
 [node name="MarginContainer" type="MarginContainer" parent="VBoxContainer" unique_id=385498282]
 layout_mode = 2

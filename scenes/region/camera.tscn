@@ -5,16 +5,25 @@
 [ext_resource type="Material" uid="uid://cet7ep6cvqk3p" path="res://resources/visual/add_material.tres" id="3_snfgk"]
 [ext_resource type="Texture2D" uid="uid://ethlsfg8xmhk" path="res://scenes/region/iso_mask.png" id="4_jowqh"]
 
-[node name="RegionCamera" type="Camera2D" unique_id=633581434 node_paths=PackedStringArray("cursor", "ui")]
+[node name="RegionCamera" type="Camera2D" unique_id=633581434 node_paths=PackedStringArray("Cursor", "debugCursor", "ui")]
 script = ExtResource("1_rxgj5")
-cursor = NodePath("Cursor")
+Cursor = NodePath("Cursor")
+debugCursor = NodePath("Debugcursor")
 ui = NodePath("Ui")
 
-[node name="Ui" parent="." unique_id=2048202457 instance=ExtResource("2_lh5hp")]
+[node name="Ui" parent="." unique_id=2048202457 node_paths=PackedStringArray("Camera") instance=ExtResource("2_lh5hp")]
+Camera = NodePath("..")
 
 [node name="Cursor" type="Sprite2D" parent="." unique_id=273959931]
 self_modulate = Color(1, 1, 1, 0.1764706)
 top_level = true
 z_index = 100
+material = ExtResource("3_snfgk")
+texture = ExtResource("4_jowqh")
+
+[node name="Debugcursor" type="Sprite2D" parent="." unique_id=1002758726]
+modulate = Color(0.99215686, 0.3019608, 0.4745098, 1)
+self_modulate = Color(1, 1, 1, 0.08627451)
+top_level = true
 material = ExtResource("3_snfgk")
 texture = ExtResource("4_jowqh")
