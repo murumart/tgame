@@ -27,7 +27,7 @@ public class Game {
 		Map.PassTime(minutes);
 		Time.PassTime(minutes);
 		if (Time.Minutes > GameTime.Hours(8)) {
-			if (Time.Minutes - _lastAIUpdate >= 30) {
+			if (Time.Minutes - _lastAIUpdate >= 15) {
 				var regs = Map.GetRegions();
 				for (int i = 0; i < regionAIs.Length; i++) {
 					if (regs[i] == PlayRegion && !AIPlaysInPlayerRegion) continue;

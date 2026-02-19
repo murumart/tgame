@@ -82,7 +82,7 @@ namespace scenes.map.ui {
 				+ $"Sea tiles: {region.OceanTileCount}\n"
 				+ $"Population: {(region.LocalFaction.GetPopulationCount())}\n"
 				+ $"Natural Resources: {string.Join(", ", region.NaturalResources.Value.Select(a => a.ToString()))}\n"
-				+ $"Potential Food: {(int)region.GetPotentialFood()}\n"
+				+ $"Potential Food: {(int)region.GetPotentialFoodFirstMonth()}\n"
 				+ $"Map objects: {things}"
 			;
 			factionPlayButton.Disabled = !region.LocalFaction.HasOwningFaction();

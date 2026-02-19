@@ -138,12 +138,14 @@ public class Region {
 		}
 	}
 
-	public float GetPotentialFood() {
+	public float GetPotentialFoodFirstMonth() {
 		float f = 0;
+		float minutesInMonth = GameTime.Months(1);
 		foreach (var mapObject in mapObjects.Values) if (mapObject is ResourceSite rs) foreach (var w in rs.Wells) {
-			var isFood = Registry.ResourcesS.FoodValues.TryGetValue(w.ResourceType, out int value);
+			bool isFood = Registry.ResourcesS.FoodValues.TryGetValue(w.ResourceType, out int value);
 			if (!isFood) continue;
-			f += value * w.Bunches;
+			float bunchesInMonth = minutesInMonth / w.MinutesPerBunch;
+			f += value * Mathf.Min(bunchesInMonth, w.Bunches);
 		}
 		return f;
 	}
