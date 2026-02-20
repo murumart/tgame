@@ -401,6 +401,7 @@ text = "Build"
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
+disabled = true
 text = "Agreements"
 
 [node name="JobsButton" type="Button" parent="VBoxContainer2/HBoxContainer/VBoxContainer2/ControlButtons" unique_id=1354417080]

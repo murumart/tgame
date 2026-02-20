@@ -86,8 +86,8 @@ metadata/_custom_type_script = "uid://dpr7b2iecx6gm"
 [sub_resource type="Resource" id="Resource_pnmcl"]
 script = ExtResource("9_1p0hh")
 Target = ExtResource("12_dtgda")
-MinElevation = 0.16
-Rarity = 0.145
+MinElevation = 0.15
+Rarity = 0.255
 metadata/_custom_type_script = "uid://dpr7b2iecx6gm"
 
 [sub_resource type="Resource" id="Resource_iffmc"]
@@ -99,6 +99,7 @@ MinTemperature = 0.035
 MaxTemperature = 0.4
 MinHumidity = 0.235
 MaxHumidity = 0.505
+Rarity = 1.295
 metadata/_custom_type_script = "uid://dpr7b2iecx6gm"
 
 [sub_resource type="Resource" id="Resource_nugjq"]
@@ -110,6 +111,7 @@ MinTemperature = -0.29
 MaxTemperature = 0.155
 MinHumidity = 0.195
 MaxHumidity = 0.505
+Rarity = 1.595
 metadata/_custom_type_script = "uid://dpr7b2iecx6gm"
 
 [sub_resource type="Resource" id="Resource_a1kp6"]

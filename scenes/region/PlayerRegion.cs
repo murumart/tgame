@@ -191,12 +191,22 @@ namespace scenes.region {
 
 			// my beautiful story.
 			TimeT hour = timeInMinutes / GameTime.MINUTES_PER_HOUR;
-			switch (timeInMinutes) {
+			switch (hour) {
 				case 8:
 					ui.Notifications.Notify("Your neighbors are coming alive.");
 					break;
 				case 9:
 					ui.Notifications.Notify("(Press the X to dismiss these.) (But pay attention, too.)");
+					break;
+				case 37:
+					if (faction.Population.HousedCount < 5) {
+						ui.Notifications.Notify("It's good that you've started building homes for your people. People who feel safe at their own home will consider procreating.");
+					} else {
+						ui.Notifications.Notify("Your people really prefer to live in homes. Even log cabins suffice. With no homeliness, no new generation can be born...");
+					}
+					break;
+				case 74:
+					ui.Notifications.Notify("The marketplace is a building used to trade with your neighboring regions. Who knows, maybe they have something you really want...?");
 					break;
 				default: break;
 			}
@@ -219,7 +229,6 @@ namespace scenes.region {
 						ui.Notifications.Notify("You have succeeded.");
 					}
 				);
-				GameMan.Singleton.Game.AIPlaysInPlayerRegion = true;
 				GameOver();
 			}
 		}
@@ -247,6 +256,7 @@ namespace scenes.region {
 
 		void GameOver() {
 			ui.MapClickEvent -= MapClick;
+			GameMan.Singleton.Game.AIPlaysInPlayerRegion = true;
 			ui.GameOver();
 		}
 

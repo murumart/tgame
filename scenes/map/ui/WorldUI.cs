@@ -36,6 +36,7 @@ namespace scenes.map.ui {
 
 			ResourceDisplay.Display(() => $"fps: {Engine.GetFramesPerSecond()}");
 			ResourceDisplay.Display(() => {
+				if (!camera.IsInsideTree()) return "...";
 				var mousePos = camera.GetMousePos();
 				if (mousePos != oldMousePos) {
 					oldMousePos = mousePos;
@@ -83,7 +84,8 @@ namespace scenes.map.ui {
 				+ $"Population: {(region.LocalFaction.GetPopulationCount())}\n"
 				+ $"Natural Resources: {string.Join(", ", region.NaturalResources.Value.Select(a => a.ToString()))}\n"
 				+ $"Potential Food: {(int)region.GetPotentialFoodFirstMonth()}\n"
-				+ $"Map objects: {things}"
+				+ $"Map objects: {things}\n"
+				+ $"Region IX: {region.WorldIndex}"
 			;
 			factionPlayButton.Disabled = !region.LocalFaction.HasOwningFaction();
 		}

@@ -2,6 +2,7 @@ using System.Linq;
 using Godot;
 using scenes.autoload;
 using scenes.map.ui;
+using scenes.ui;
 
 namespace scenes.map {
 
@@ -33,6 +34,7 @@ namespace scenes.map {
 			camera.Position = new(worldGenerator.WorldWidth * 0.5f, worldGenerator.WorldHeight * 0.5f);
 
 			worldUI.ResourceDisplay.Display(() => {
+				if (GetViewport() == null) return "...";
 				var mousePos = new Vector2I((int)GetGlobalMousePosition().X, (int)GetGlobalMousePosition().Y);
 				return $"{mousePos}";
 			});
@@ -81,7 +83,7 @@ namespace scenes.map {
 		async void GenerateNewWorld() {
 			this.map = null;
 			worldUI.SelectRegion(null);
-			world = new(worldGenerator.WorldWidth, worldGenerator.WorldHeight, GD.Randi());
+			world = new(worldGenerator.WorldWidth, worldGenerator.WorldHeight, MainMenu.useScenarioWorld ? 3083338060 : GD.Randi());
 			worldGenerator.GenerateContinents(world);
 			worldRenderer.Draw(world);
 
@@ -104,6 +106,10 @@ namespace scenes.map {
 		void SetupGame() {
 			GameMan.Singleton.NewGame(map);
 			GD.Print("WorldMan::SetupGame : game set up.");
+			if (MainMenu.useScenarioWorld) {
+				GameMan.Singleton.Game.PlayRegion = map.GetRegion(52);
+				GetTree().ChangeSceneToPacked(regionScene);
+			}
 		}
 
 		void EnterGame() {

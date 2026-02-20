@@ -15,7 +15,7 @@ public class Region {
 	public event Action<Vector2I> TileChangedAtEvent;
 	public void NotifyTileChangedAt(Vector2I p) => TileChangedAtEvent?.Invoke(p);
 
-	readonly int worldIndex;
+	public readonly int WorldIndex;
 
 	public Vector2I WorldPosition { get; init; }
 	public readonly Dictionary<Vector2I, GroundTileType> GroundTiles = new();
@@ -32,7 +32,7 @@ public class Region {
 
 
 	public Region(int index, Vector2I worldPosition, Dictionary<Vector2I, GroundTileType> groundTiles) {
-		this.worldIndex = index;
+		this.WorldIndex = index;
 		WorldPosition = worldPosition;
 		GroundTiles = groundTiles;
 
