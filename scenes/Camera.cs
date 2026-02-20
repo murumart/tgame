@@ -37,9 +37,11 @@ public partial class Camera : Camera2D {
 			if (dragging) {
 				Input.SetDefaultCursorShape(Input.CursorShape.Drag);
 				var wPos = mEvent.Position;
-				var differ = (draggingStartPos - wPos) / zoomSize;
+				//var differ = (draggingStartPos - wPos) / zoomSize;
+				var differ = -mEvent.Relative / zoomSize;
 				Position = draggingStartCamPos + differ;
 				lastMousePosition = mEvent.Position;
+				draggingStartCamPos = Position;
 			} else Input.SetDefaultCursorShape(Input.CursorShape.Arrow);
 		}
 	}
@@ -59,13 +61,15 @@ public partial class Camera : Camera2D {
 		dragging = true;
 		draggingStartPos = GetViewport().GetMousePosition();
 		draggingStartCamPos = Position;
+		DisplayServer.MouseSetMode(DisplayServer.MouseMode.Captured);
 	}
 
 	public void StopDragging() {
 		dragging = false;
+		DisplayServer.MouseSetMode(DisplayServer.MouseMode.Visible);
 	}
 
-	bool dragging = false;
+	protected bool dragging = false;
 	Vector2 draggingStartPos;
 	Vector2 draggingStartCamPos;
 	protected virtual bool MouseButtonInput(InputEventMouseButton evt) {
@@ -79,7 +83,7 @@ public partial class Camera : Camera2D {
 			if (evt.IsCommandOrControlPressed()) ControlScrollInput(false);
 			else ScrollInput(false);
 			consumed = true;
-		} else if (evt.ButtonIndex == MouseButton.Left && evt.Pressed) {
+		} else if (evt.ButtonIndex == MouseButton.Left && evt.Pressed && !dragging) {
 			var wPos = GetCanvasTransform().AffineInverse() * evt.Position;
 			ClickedMouseEvent?.Invoke((Vector2I)wPos);
 			return true;

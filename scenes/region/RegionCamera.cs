@@ -38,6 +38,8 @@ namespace scenes.region {
 
 		private Vector2I lastTilePos;
 		private void MouseHighlight() {
+			debugCursor.Visible = !dragging;
+			Cursor.Visible = !dragging;
 			var tilepos = regionDisplay.GetMouseHoveredTilePos();
 			debugCursor.GlobalPosition = Tilemaps.TilePosToWorldPos(tilepos);
 			Cursor.GlobalPosition = Tilemaps.TilePosToWorldPos(tilepos) + Vector2.Up * Tilemaps.TileElevationVerticalOffset(GameMan.Singleton.Game.PlayRegion.WorldPosition + tilepos, GameMan.Singleton.Game.Map.World);

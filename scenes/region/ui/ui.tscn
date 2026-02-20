@@ -63,6 +63,10 @@ unicode = 52
 [sub_resource type="Shortcut" id="Shortcut_mgrsp"]
 events = [SubResource("InputEventKey_4ggmx")]
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_in6v1"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_v1o57"]
+
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_bjdfm"]
 
 [node name="Ui" type="MarginContainer" unique_id=948088031 node_paths=PackedStringArray("buildButton", "agreementsButton", "jobsButton", "menuTabs", "buildingList", "documentsDisplay", "mopjectMenu", "resourceDisplay", "pauseDisplayPanel", "panButton", "zoomLabel", "zoomInButton", "zoomResetButton", "zoomOutButton", "gameSpeedLabel", "pauseButton", "normalSpeedButton", "fastSpeedButton", "fasterSpeedButton", "resourceLabel", "announcementOkayButton", "announcementText", "announcementTitle", "announcementParent", "Notifications")]
@@ -102,7 +106,7 @@ announcementOkayButton = NodePath("NotifBoxParentParent/NotifBoxParent/PanelCont
 announcementText = NodePath("NotifBoxParentParent/NotifBoxParent/PanelContainer/MarginContainer/VBoxContainer/AnnouncementText")
 announcementTitle = NodePath("NotifBoxParentParent/NotifBoxParent/PanelContainer/MarginContainer/VBoxContainer/AnnouncementTitle")
 announcementParent = NodePath("NotifBoxParentParent")
-Notifications = NodePath("VBoxContainer/MarginContainer/Horizon/HBoxContainer/VBoxContainer/Notifications")
+Notifications = NodePath("VBoxContainer/MarginContainer/Horizon/HBoxContainer/VBoxContainer/ScrollContainer/Notifications")
 
 [node name="PausePanel" type="Panel" parent="." unique_id=1758856808]
 visible = false
@@ -326,7 +330,14 @@ size_flags_horizontal = 3
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Notifications" type="VBoxContainer" parent="VBoxContainer/MarginContainer/Horizon/HBoxContainer/VBoxContainer" unique_id=1624733710 node_paths=PackedStringArray("notificationContainer")]
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer/MarginContainer/Horizon/HBoxContainer/VBoxContainer" unique_id=773180676]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxEmpty_in6v1")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_v1o57")
+horizontal_scroll_mode = 0
+
+[node name="Notifications" type="VBoxContainer" parent="VBoxContainer/MarginContainer/Horizon/HBoxContainer/VBoxContainer/ScrollContainer" unique_id=1624733710 node_paths=PackedStringArray("notificationContainer")]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3

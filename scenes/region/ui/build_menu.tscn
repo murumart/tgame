@@ -28,7 +28,7 @@ layout_mode = 2
 text = "What to build?"
 
 [node name="BuildingList" type="PanelContainer" parent="." unique_id=1838821174]
-custom_minimum_size = Vector2(170, 180)
+custom_minimum_size = Vector2(170, 230)
 layout_mode = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="BuildingList" unique_id=1911995746]
