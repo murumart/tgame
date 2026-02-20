@@ -5,6 +5,8 @@
 [ext_resource type="PackedScene" uid="uid://cf2srkx2edx3u" path="res://scenes/region/ui/build_menu.tscn" id="3_iwag8"]
 [ext_resource type="LabelSettings" uid="uid://dxqtstvq2iau3" path="res://resources/visual/theme/label_styles/six.tres" id="3_ppqjx"]
 [ext_resource type="PackedScene" uid="uid://c7ew6g8hdbgfg" path="res://scenes/region/ui/map_object_menu.tscn" id="3_y7o2c"]
+[ext_resource type="Texture2D" uid="uid://gtl0hfc3nq17" path="res://resources/visual/theme/icons/magnifier.svg" id="4_4ggmx"]
+[ext_resource type="Texture2D" uid="uid://bn7kce0p0hxa5" path="res://resources/visual/theme/icons/hand.svg" id="4_in6v1"]
 [ext_resource type="Script" uid="uid://c7u2mvpm3cpkx" path="res://scenes/region/ui/Notifications.cs" id="4_o0d6a"]
 [ext_resource type="PackedScene" uid="uid://bli7m2dvghbu1" path="res://scenes/region/ui/documents_display.tscn" id="5_iwag8"]
 [ext_resource type="PackedScene" uid="uid://1mqtysebfbnc" path="res://scenes/region/ui/notification.tscn" id="5_mgrsp"]
@@ -134,7 +136,7 @@ theme_override_constants/separation = 0
 
 [node name="Label" type="Label" parent="VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer/VBoxContainer" unique_id=1297909846]
 layout_mode = 2
-text = "space/mouse3"
+text = "space/mouse3/wasd"
 label_settings = ExtResource("3_ppqjx")
 horizontal_alignment = 1
 
@@ -143,7 +145,8 @@ layout_mode = 2
 size_flags_horizontal = 3
 focus_mode = 0
 theme_override_font_sizes/font_size = 6
-text = "✋"
+icon = ExtResource("4_in6v1")
+icon_alignment = 1
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer" unique_id=1044076696]
 layout_mode = 2
@@ -160,7 +163,10 @@ layout_mode = 2
 size_flags_horizontal = 3
 focus_mode = 0
 theme_override_font_sizes/font_size = 6
-text = "🔎︎-"
+text = "-"
+icon = ExtResource("4_4ggmx")
+alignment = 2
+icon_alignment = 1
 
 [node name="VBoxContainer3" type="VBoxContainer" parent="VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer" unique_id=1396089891]
 layout_mode = 2
@@ -176,7 +182,8 @@ layout_mode = 2
 size_flags_horizontal = 3
 focus_mode = 0
 theme_override_font_sizes/font_size = 6
-text = "🔎︎"
+icon = ExtResource("4_4ggmx")
+icon_alignment = 1
 
 [node name="ZoomLabel" type="Label" parent="VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer/VBoxContainer3" unique_id=1587801737]
 layout_mode = 2
@@ -198,7 +205,10 @@ layout_mode = 2
 size_flags_horizontal = 3
 focus_mode = 0
 theme_override_font_sizes/font_size = 6
-text = "🔎︎+"
+text = "+"
+icon = ExtResource("4_4ggmx")
+alignment = 2
+icon_alignment = 1
 
 [node name="VBoxContainer5" type="VBoxContainer" parent="VBoxContainer/VBoxContainer/HBoxContainer/HBoxContainer" unique_id=177402808]
 layout_mode = 2

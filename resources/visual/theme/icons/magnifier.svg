@@ -4,7 +4,7 @@
    data-guides="{&quot;vertical&quot;:[],&quot;horizontal&quot;:[]}"
    version="1.1"
    id="svg35"
-   sodipodi:docname="circle8x8.svg"
+   sodipodi:docname="magnifier.svg"
    inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -19,9 +19,9 @@
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="true"
      showgrid="false"
-     inkscape:zoom="107.125"
-     inkscape:cx="2.0210035"
-     inkscape:cy="4"
+     inkscape:zoom="53.599205"
+     inkscape:cx="4.113867"
+     inkscape:cy="5.6997114"
      inkscape:window-width="1920"
      inkscape:window-height="1126"
      inkscape:window-x="0"
@@ -31,13 +31,15 @@
   <defs
      id="defs32" />
   <path
-     fill="#ffffff"
-     fill-opacity="1"
-     stroke="#000000"
-     stroke-opacity="1"
-     stroke-width="0"
-     id="tSvga3b9842948"
-     title="Ellipse 1"
-     d="M4 0C6.2091 0 8 1.7909 8 4C8 6.2091 6.2091 8 4 8C1.7909 8 0 6.2091 0 4C0 1.7909 1.7909 0 4 0Z"
-     style="transform-origin:4px 4px 0px;fill:#f1f6f0;fill-opacity:1" />
+     id="path108"
+     style="fill:#f1f6f0;stroke-width:1.19187"
+     d="M 5.7951952,0.26522355 A 2.1982655,2.1982655 0 0 0 3.4069114,2.2563008 2.1982655,2.1982655 0 0 0 5.400307,4.6447937 2.1982655,2.1982655 0 0 0 7.7864815,2.651189 2.1982655,2.1982655 0 0 0 5.7951952,0.26522355 Z M 5.7435226,1.0716105 A 1.3024035,1.3024035 0 0 1 6.9226845,2.4844861 1.3024035,1.3024035 0 0 1 5.5095997,3.6659667 1.3024035,1.3024035 0 0 1 4.3283282,2.2505635 1.3024035,1.3024035 0 0 1 5.7435226,1.0716105 Z" />
+  <rect
+     style="fill:#f1f6f0;fill-opacity:1;stroke-width:0.930001"
+     id="rect543"
+     width="1.0931709"
+     height="5.067234"
+     x="5.0714946"
+     y="-0.39141625"
+     transform="rotate(45.036358)" />
 </svg>

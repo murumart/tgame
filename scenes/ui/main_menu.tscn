@@ -1,10 +1,11 @@
 [gd_scene format=3 uid="uid://d272nequ2i4ji"]
 
-[ext_resource type="Script" uid="uid://dnrihucj07oo3" path="res://scenes/ui/MainMenu.cs" id="1_sl1te"]
+[ext_resource type="Script" path="res://scenes/ui/MainMenu.cs" id="1_sl1te"]
 [ext_resource type="Texture2D" uid="uid://bqd6cy58ig4jh" path="res://scenes/ui/sun.png" id="2_1g8jr"]
 [ext_resource type="FontVariation" uid="uid://dliky8sbpgnxp" path="res://resources/visual/font/title_font.tres" id="2_fe2o3"]
 [ext_resource type="Texture2D" uid="uid://cpirspwwfo4f7" path="res://scenes/ui/screenshot.png" id="2_x2yvf"]
 [ext_resource type="Material" uid="uid://cet7ep6cvqk3p" path="res://resources/visual/add_material.tres" id="3_m1kxf"]
+[ext_resource type="LabelSettings" uid="uid://btwbnjxri1gdg" path="res://resources/visual/theme/label_styles/8px.tres" id="6_uhagc"]
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_1g8jr"]
 blend_mode = 3
@@ -39,21 +40,10 @@ font = ExtResource("2_fe2o3")
 font_size = 33
 font_color = Color(0.94509804, 0.9647059, 0.9411765, 1)
 stacked_outline_count = 2
-stacked_shadow_count = 5
 stacked_outline_0/size = 2
 stacked_outline_0/color = Color(0.6431373, 0.77254903, 0.6862745, 1)
 stacked_outline_1/size = 2
 stacked_outline_1/color = Color(0.32941177, 0.40392157, 0.3372549, 1)
-stacked_shadow_0/offset = Vector2(1, 1)
-stacked_shadow_0/color = Color(0.5882353, 0.6627451, 0.75686276, 1)
-stacked_shadow_1/offset = Vector2(2, 2)
-stacked_shadow_1/color = Color(0.42352942, 0.5058824, 0.6313726, 1)
-stacked_shadow_2/offset = Vector2(1, 3)
-stacked_shadow_2/color = Color(0.2509804, 0.32156864, 0.4509804, 1)
-stacked_shadow_3/offset = Vector2(0, 4)
-stacked_shadow_3/color = Color(0.1882353, 0.21960784, 0.2627451, 1)
-stacked_shadow_4/offset = Vector2(1, 5)
-stacked_shadow_4/color = Color(0.1882353, 0.21960784, 0.2627451, 1)
 
 [sub_resource type="Animation" id="Animation_x2yvf"]
 length = 0.001
@@ -149,9 +139,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_sl1te")
-scenarioPlayButton = NodePath("MarginContainer/HBoxContainer/VBoxContainer/Scenario")
-freePlayButton = NodePath("MarginContainer/HBoxContainer/VBoxContainer/Freeplay")
-exitButton = NodePath("MarginContainer/HBoxContainer/VBoxContainer/Exit")
+scenarioPlayButton = NodePath("MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/Scenario")
+freePlayButton = NodePath("MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/Freeplay")
+exitButton = NodePath("MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/Exit")
 
 [node name="TextureRect5" type="TextureRect" parent="." unique_id=1868243846]
 layout_mode = 1
@@ -222,38 +212,57 @@ theme_override_constants/margin_top = 8
 theme_override_constants/margin_right = 8
 theme_override_constants/margin_bottom = 8
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer" unique_id=57995508]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=723751185]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=57995508]
 layout_mode = 2
 alignment = 1
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer" unique_id=1436526434]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=1436526434]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer" unique_id=1245647141]
+[node name="Control3" type="Control" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer" unique_id=980067072]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer" unique_id=1245647141]
 layout_mode = 2
 text = "FEVERED WORLD"
 label_settings = SubResource("LabelSettings_1g8jr")
 
-[node name="Control" type="Control" parent="MarginContainer/HBoxContainer/VBoxContainer" unique_id=744582961]
+[node name="Control" type="Control" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer" unique_id=744582961]
 custom_minimum_size = Vector2(0, 84.965)
 layout_mode = 2
 
-[node name="Scenario" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer" unique_id=113135943]
+[node name="Scenario" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer" unique_id=113135943]
 layout_mode = 2
 text = "Play Scenario"
 
-[node name="Freeplay" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer" unique_id=173957011]
+[node name="Freeplay" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer" unique_id=173957011]
 layout_mode = 2
 text = "Play Free"
 
-[node name="Control2" type="Control" parent="MarginContainer/HBoxContainer/VBoxContainer" unique_id=1035192353]
-custom_minimum_size = Vector2(0, 84.965)
+[node name="Control2" type="Control" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer" unique_id=1035192353]
+custom_minimum_size = Vector2(0, 46.775)
 layout_mode = 2
 
-[node name="Exit" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer" unique_id=1895030500]
+[node name="Exit" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer" unique_id=1895030500]
 layout_mode = 2
 text = "Exit
 "
+
+[node name="Fat" type="Control" parent="MarginContainer/VBoxContainer" unique_id=1437689337]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=1023442635]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer2" unique_id=726788424]
+layout_mode = 2
+text = "murumart 2026 | WIP version"
+label_settings = ExtResource("6_uhagc")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1355955623]
 libraries/ = SubResource("AnimationLibrary_btxxm")
