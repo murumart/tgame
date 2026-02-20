@@ -84,6 +84,7 @@ public partial class MapObjectMenu : Control {
 			tradeInfoPanel.Display(job.Faction, job.TradeOffers);
 		}
 
+		OpenMapObjectInfo();
 		Callable.From(Show).CallDeferred();
 	}
 
@@ -92,7 +93,6 @@ public partial class MapObjectMenu : Control {
 		this.myMapObject = mapObject;
 
 		Open();
-		OpenMapObjectInfo();
 	}
 
 	public void Close() {
