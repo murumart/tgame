@@ -41,7 +41,7 @@ script = ExtResource("1_mvf0r")
 name = "bakery"
 description = "Flour is baked into pastries here."
 ResourceCosts = Dictionary[Object, int]({
-ExtResource("1_hfc2o"): 40,
+ExtResource("1_hfc2o"): 30,
 ExtResource("2_u8ysx"): 5,
 ExtResource("3_vp85r"): 8
 })

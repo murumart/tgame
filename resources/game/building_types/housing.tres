@@ -3,7 +3,6 @@
 [ext_resource type="Script" uid="uid://b5xb3tdf3yoon" path="res://resources/game/building_types/BuildingType.cs" id="1_dxtrb"]
 [ext_resource type="Resource" uid="uid://b8507qbvqvdy8" path="res://resources/game/resource_types/lumber.tres" id="1_qet2r"]
 [ext_resource type="Resource" uid="uid://nw83fam2omvi" path="res://resources/game/resource_types/rock.tres" id="2_qet2r"]
-[ext_resource type="Resource" uid="uid://pmrcwo4t316p" path="res://resources/game/resource_types/logs.tres" id="3_qet2r"]
 
 [resource]
 script = ExtResource("1_dxtrb")
@@ -11,9 +10,8 @@ name = "housing"
 description = "Houses 12 people."
 PopulationCapacity = 12
 ResourceCosts = Dictionary[Object, int]({
-ExtResource("1_qet2r"): 45,
-ExtResource("2_qet2r"): 20,
-ExtResource("3_qet2r"): 10
+ExtResource("1_qet2r"): 40,
+ExtResource("2_qet2r"): 10
 })
 CraftingJobs = null
 HoursToConstruct = 60.0

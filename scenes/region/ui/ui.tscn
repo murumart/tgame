@@ -430,7 +430,7 @@ text = "World"
 
 [node name="MapObjectMenu" parent="VBoxContainer2/HBoxContainer" unique_id=899012506 node_paths=PackedStringArray("ui") instance=ExtResource("3_y7o2c")]
 visible = false
-custom_minimum_size = Vector2(0, 220)
+custom_minimum_size = Vector2(0, 260)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0

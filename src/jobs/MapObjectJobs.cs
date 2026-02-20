@@ -230,19 +230,19 @@ public class CraftJob : MapObjectJob {
 
 	public readonly Noun Product;
 	public readonly Verb Process;
-	readonly TimeT timeTaken;
+	public readonly TimeT TimeTaken;
 
 
 	public CraftJob(ResourceBundle[] inputs, ResourceBundle[] outputs, TimeT timeTaken, uint maxWorkers, Noun product, Verb process) {
 		this.Inputs = inputs;
 		this.Outputs = outputs;
-		this.timeTaken = timeTaken;
+		this.TimeTaken = timeTaken;
 		Product = product;
 		Process = process;
 		MaxWorkers = maxWorkers;
 	}
 
-	public override Job Copy() => new CraftJob(Inputs, Outputs, timeTaken, MaxWorkers, Product, Process);
+	public override Job Copy() => new CraftJob(Inputs, Outputs, TimeTaken, MaxWorkers, Product, Process);
 
 	public override void Initialise(Faction ctxFaction, MapObject mapObject) {
 		storage = ctxFaction.Resources;
@@ -255,8 +255,8 @@ public class CraftJob : MapObjectJob {
 	public override void PassTime(TimeT minutes) {
 		if (storage.HasEnough(Inputs)) {
 			timeSpent += GetWorkTime(minutes);
-			while (timeSpent > timeTaken && storage.HasEnough(Inputs)) {
-				timeSpent -= timeTaken;
+			while (timeSpent > TimeTaken && storage.HasEnough(Inputs)) {
+				timeSpent -= TimeTaken;
 				storage.SubtractResources(Inputs);
 				Job.ProvideProduction(Outputs, storage);
 			}
@@ -275,13 +275,13 @@ public class CraftJob : MapObjectJob {
 			sb.Append("...with the required inputs...\n");
 			GetInputBulletList(sb);
 		}
-		sb.Append($"It takes {GameTime.GetFancyTimeString(timeTaken)} to {Process.Infinitive} one set of {Product.Plural}.");
+		sb.Append($"It takes {GameTime.GetFancyTimeString(TimeTaken)} to {Process.Infinitive} one set of {Product.Plural}.");
 
 		return sb.ToString();
 	}
 
 	public override float GetProgressEstimate() {
-		return timeSpent / timeTaken;
+		return timeSpent / TimeTaken;
 	}
 
 	public void GetProductionBulletList(StringBuilder sb) {
@@ -298,7 +298,7 @@ public class CraftJob : MapObjectJob {
 
 	public override string GetStatusDescription() {
 		if (Workers == 0) return "";
-		float timeLeft = timeTaken - timeSpent;
+		float timeLeft = TimeTaken - timeSpent;
 		timeLeft /= GetWorkTime(1);
 		return GameTime.GetFancyTimeString((TimeT)timeLeft) + " until more " + Product.Plural + ".";
 	}

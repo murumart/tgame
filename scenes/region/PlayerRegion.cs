@@ -198,14 +198,14 @@ namespace scenes.region {
 				case 9:
 					ui.Notifications.Notify("(Press the X to dismiss these.) (But pay attention, too.)");
 					break;
-				case 37:
-					if (faction.Population.HousedCount < 5) {
+				case 48:
+					if (faction.Population.HousedCount > 5) {
 						ui.Notifications.Notify("It's good that you've started building homes for your people. People who feel safe at their own home will consider procreating.");
 					} else {
 						ui.Notifications.Notify("Your people really prefer to live in homes. Even log cabins suffice. With no homeliness, no new generation can be born...");
 					}
 					break;
-				case 74:
+				case 82:
 					ui.Notifications.Notify("The marketplace is a building used to trade with your neighboring regions. Who knows, maybe they have something you really want...?");
 					break;
 				default: break;

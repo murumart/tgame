@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="BuildingType" format=3 uid="uid://cxf4vhnsk21kq"]
 
+[ext_resource type="Resource" uid="uid://b8507qbvqvdy8" path="res://resources/game/resource_types/lumber.tres" id="2_u6rkk"]
 [ext_resource type="Resource" uid="uid://pmrcwo4t316p" path="res://resources/game/resource_types/logs.tres" id="3_ju1dh"]
 [ext_resource type="Script" uid="uid://b5xb3tdf3yoon" path="res://resources/game/building_types/BuildingType.cs" id="4_ufcck"]
 
@@ -8,7 +9,8 @@ script = ExtResource("4_ufcck")
 name = "marketplace"
 description = "Trading with other civilisations occurs here."
 ResourceCosts = Dictionary[Object, int]({
-ExtResource("3_ju1dh"): 20
+ExtResource("3_ju1dh"): 4,
+ExtResource("2_u6rkk"): 4
 })
 CraftingJobs = null
 HoursToConstruct = 60.0

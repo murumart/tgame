@@ -52,8 +52,8 @@ namespace scenes.region.ui {
 				shouldDisable = shouldDisable || !me.Resources.HasEnough(offer.RecepientRequiredResourcesUnit.Multiply(sliderVal));
 				ConfirmButton.Text = $"Sell resources => ({offer.OffererPaidSilverUnit * sliderVal} silver)";
 			} else {
-				shouldDisable = shouldDisable || me.Silver * sliderVal < offer.RecipientPaidSilverUnit;
-				ConfirmButton.Text = $"Buy resources => ({offer.OffererSoldResourcesUnit.Type.AssetName} x {offer.OffererSoldResourcesUnit.Multiply(sliderVal)})";
+				shouldDisable = shouldDisable || me.Silver < offer.RecipientPaidSilverUnit * sliderVal;
+				ConfirmButton.Text = $"Buy ({offer.RecipientPaidSilverUnit * sliderVal}) => {offer.OffererSoldResourcesUnit.Multiply(sliderVal)}";
 			}
 			ConfirmButton.Disabled = shouldDisable;
 		}

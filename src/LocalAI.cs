@@ -188,7 +188,13 @@ public partial class LocalAI {
 				AIAssert(ac.GetResourceStorage().HasEnough(giveResources), "Don't have enough resoucres to make trde offer", ac);
 				var from = ac.Faction;
 				var to = from.Region.Neighbors.ToArray()[GD.Randi() % from.Region.Neighbors.Count].LocalFaction;
-				from.SendTradeOffer(to, new(from, giveResources, to, wantSilver, 1));
+				int singleprice = giveResources.Amount / wantSilver;
+				int units = giveResources.Amount / singleprice;
+				if (units == 0) {
+					from.SendTradeOffer(to, new(from, giveResources, to, wantSilver, 1));
+				} else {
+					from.SendTradeOffer(to, new(from, new(giveResources.Type, singleprice), to, 1, units));
+				}
 			}, $"SendTradeOffer({giveResources}, {wantSilver})");
 		}
 
@@ -322,6 +328,8 @@ public partial class LocalAI {
 			return new(() => job.NeedsWorkers && job.Workers > 0 ? 1.0f : 0.0f, "JobHasEmployees");
 		}
 
+		public static DecisionFactor JobCompletion(Job job) => new(() => Mathf.Clamp(job.GetProgressEstimate(), 0f, 1f), $"JobCompletion({job})");
+
 		public static DecisionFactor HasResourceSiteThatProduces(FactionActions ac, IResourceType need) {
 			return new(() => {
 				foreach (var mop in ac.GetMapObjects()) if (mop is ResourceSite res) {
@@ -423,6 +431,13 @@ public partial class LocalAI {
 		}
 
 		public static DecisionFactor SilverWant() => new(() => 1f, "SilverWant");
+
+		public static DecisionFactor RichnessSpendable(FactionActions ac, int whenRich) {
+			return new(() => {
+				float silver = ac.Faction.Silver;
+				return Mathf.Clamp(silver / whenRich, 0f, 0f);
+			}, $"Richness$pendable({whenRich})");
+		}
 
 		public static DecisionFactor FoodMakingNeed(FactionActions ac) {
 			return new(() => {
@@ -601,7 +616,7 @@ public class GamerAI : LocalAI {
 					Factors.HomelessnessRate(factionActions),
 					Factors.OneMinus(Factors.HousingSlotsPerPerson(factionActions)),
 					Factors.HousingCapacity(b),
-				]) : isFarm ? Factors.ReasonableBuildingCountByPopulation(factionActions, b, 12f) : Factors.ReasonableBuildingCount(factionActions, b, GD.RandRange(1, 6)),
+				]) : isFarm ? Factors.ReasonableBuildingCountByPopulation(factionActions, b, 18f) : Factors.ReasonableBuildingCount(factionActions, b, GD.RandRange(1, 6)),
 				isCrafting ? Factors.Group([
 					Factors.Group(b.GetCraftJobs().Select(j => Factors.Group(j.Outputs.Select(o => Factors.ResourceWant(factionActions, this, o.Type)).ToArray())).ToArray())
 				]) : Factors.One,
@@ -628,11 +643,21 @@ public class GamerAI : LocalAI {
 			int srand1 = (int)(GD.Randi() % 3) + 1;
 			int srand2 = (int)(GD.Randi() % 4) + 1;
 			startActions.Add(Actions.SendTradeOffer([
+				//Factors.HasFunctionalMarketplace(actions), // THESE should be enabled but theyäre too stupid right now to build markerplacers... hack for expo
 				Factors.SentTradeOfferLimit(actions, 10),
 				Factors.ResourceWant(actions, this, res),
 				Factors.SilverNeed(actions, srand1),
 				Factors.OneMinus(Factors.HasResourceSiteThatProduces(actions, res)),
 				Factors.Const(0.3f),
+			], actions, srand1, new ResourceBundle(res, srand1 * srand2)));
+			// boost the econony hopwefull 📈📈📈📈
+			startActions.Add(Actions.SendTradeOffer([
+				//Factors.HasFunctionalMarketplace(actions), // THESE should be enabled but theyäre too stupid right now to build markerplacers... hack for expo
+				Factors.SentTradeOfferLimit(actions, 10),
+				Factors.Mult(Factors.ResourceWant(actions, this, res), 2f),
+				Factors.SilverNeed(actions, srand1),
+				Factors.RichnessSpendable(actions, 45),
+				Factors.Const(0.5f),
 			], actions, srand1, new ResourceBundle(res, srand1 * srand2)));
 		}
 
@@ -648,7 +673,7 @@ public class GamerAI : LocalAI {
 				var aval = building.GetAvailableJobs();
 				foreach (var job in aval) {
 					if (job is CraftJob craftJob) ephemeralActions.Add(Actions.AddMapObjectJob([
-						Factors.Group(craftJob.Outputs.Select(o => Factors.ResourceWant(factionActions, this, o.Type)).ToArray()),
+						Factors.Group(craftJob.Outputs.Select(o => Factors.Mult(Factors.ResourceWant(factionActions, this, o.Type), (float)o.Amount / craftJob.TimeTaken)).ToArray()),
 					], factionActions, mopbject, craftJob));
 				}
 			}
@@ -669,8 +694,8 @@ public class GamerAI : LocalAI {
 				factors.Add(Factors.Mult(Factors.Group(cjob.Outputs.Select(o => Factors.ResourceWant(factionActions, this, o.Type)).ToArray()), 0.1f));
 				factors.Add(Factors.HasFreeWorkers(factionActions));
 				var mopject = factionActions.Region.GetMapObject(cjob.GlobalPosition - factionActions.Region.WorldPosition);
-				IEnumerable<CraftJob> othersPossible = mopject.GetAvailableJobs().Where(j => j is CraftJob cj && cj.Outputs != cjob.Outputs).Cast<CraftJob>();
-				negativeFactors.Add(Factors.Group(othersPossible.Select(p => Factors.Group(p.Outputs.Select(o => Factors.ResourceWant(factionActions, this, o.Type)).ToArray())).ToArray()));
+				//IEnumerable<CraftJob> othersPossible = mopject.GetAvailableJobs().Where(j => j is CraftJob cj && cj.Outputs != cjob.Outputs).Cast<CraftJob>();
+				//negativeFactors.Add(Factors.Group(othersPossible.Select(p => Factors.Group(p.Outputs.Select(o => Factors.ResourceWant(factionActions, this, o.Type)).ToArray())).ToArray()));
 			}
 			factors.Add(Factors.Pow(Factors.JobHasEmploymentSpots(factionActions, job), 9f));
 			factors.Add(Factors.HasFreeWorkers(factionActions));
@@ -679,6 +704,7 @@ public class GamerAI : LocalAI {
 				ephemeralActions.Add(Actions.AssignWorkersToJob(factors.ToArray(), factionActions, job));
 				ephemeralActions.Add(Actions.RemoveWorkersFromJob([
 					Factors.Mult(Factors.OneMinus(Factors.Group(factors.ToArray())), 0.0000001f),
+					Factors.OneMinus(Factors.JobCompletion(job)),
 					Factors.JobEmploymentRate(job),
 					Factors.SentTradeOfferLimit(factionActions, 15),
 				], factionActions, job));
@@ -696,17 +722,18 @@ public class GamerAI : LocalAI {
 			int srand1 = (int)(GD.Randi() % 3) + 1;
 			amount = Mathf.Max(amount / 2, srand1); // ??????? wjhat am I dooing here
 			int silver = amount / (srand1 + 2) + srand1;
-			if (silver == 0) continue; 
+			if (silver == 0) continue;
 			ephemeralActions.Add(Actions.SendTradeOffer([
 				Factors.OneMinus(Factors.ResourceWant(factionActions, this, res)),
 				Factors.SilverWant(),
+				Factors.Const(0.36f),
 			], factionActions, new ResourceBundle(res, amount), silver));
 		}
 		foreach (var (partner, toffs) in factionActions.Faction.GetSentTradeOffers()) {
 			foreach (var toff in toffs) {
 				toff.Log($"ephemeral actions sent to {partner}");
 				ephemeralActions.Add(Actions.CancelTradeOffer([
-					Factors.HasFunctionalMarketplace(factionActions),
+					//Factors.HasFunctionalMarketplace(factionActions), // Gah
 					!toff.OffererGivesRecipientSilver
 						? Factors.ResourceWant(factionActions, this, toff.OffererSoldResourcesUnit.Type)
 						: Factors.Const(0.0015f),
@@ -721,14 +748,14 @@ public class GamerAI : LocalAI {
 				if (!toff.IsValid) GD.PushWarning(toff.History);
 				AIAssert(toff.IsValid, "This trade offer isn't valid, delete!!!!!");
 				ephemeralActions.Add(Actions.AcceptTradeOffer([
-					Factors.HasFunctionalMarketplace(factionActions),
+					//Factors.HasFunctionalMarketplace(factionActions), // Gah
 					Factors.CanAcceptTradeOffer(toff),
 					toff.OffererGivesRecipientSilver
 						? Factors.OneMinus(Factors.ResourceWant(factionActions, this, toff.RecepientRequiredResourcesUnit.Type))
 						: Factors.ResourceWant(factionActions, this, toff.OffererSoldResourcesUnit.Type),
 				], factionActions.Faction, partner, toff));
 				ephemeralActions.Add(Actions.RejectTradeOffer([
-					Factors.HasFunctionalMarketplace(factionActions),
+					//Factors.HasFunctionalMarketplace(factionActions), // Gah
 					Factors.Mult(Factors.OneMinus(Factors.CanAcceptTradeOffer(toff)), 0.00015f),
 				], factionActions.Faction, partner, toff));
 			}

@@ -84,7 +84,8 @@ Seda võiks teha automaatselt. Kui resourceewant mingil lõppproduktil on kõrge
   - [X] alguses notif mängija omaniku nimest
   - [ ] ressursside nimekirjas märgend praegusest nõudmisest
   - [ ] mingi märguande ikoon uute treidide kohta turul
-  - [ ] märguannete nimekiri ekraanil kogu aeg, logi tab kus eelmised notifid factioni koha
+  - [X] märguannete nimekiri ekraanil kogu aeg
+  - [ ] logi tab kus eelmised notifid factioni koha
     - [ ] ära lihtsalt pane rtlabelisse, gene tekst nt kuu kaupa kui nuppu vajutatakse
   - [X] ribad näitamaks kui kaugel mingi mopbjecti tööga ollakse
   - [ ] riba näitab kui depleted a resource site is
@@ -98,3 +99,7 @@ Seda võiks teha automaatselt. Kui resourceewant mingil lõppproduktil on kõrge
 Nüüdseks on selgunud, et gatherresourcejob ja craftjob on üsna sarnased - saaks teha nii, et resourceil on lihtsalt list töödest (olgu kumb tahes) ning neid saab mängus valida. Nii et ehitistel saaks ka olla gatherresource, mis mingil hetkel otsa saaks. Siis peaks welle salvestama ka peale töö olemasolu, ilmselt antud koordinaadil lihtsalt. Näiteks kaev (well), millest saab gatherresource vett, see saaks sellel ruudul mingi hetk otsa, peaks ehitama uue kaevu, et vett veel saada. Kui samasse kohta kaev ehitada, ei tohiks sealt vett tulla.
 
 Sõjalises mõttes: barracks ehitis, kus töö treenida. Factionil on max militaarvõimekus, sõltub sellest, kui palju barrackse on. Treening suurendab päris võimekust kuni maxini, võimekus kukub, kui ei treenita. Suure võimekusega saaks ähvardada naabreid?
+
+Vaja viise ,kuidas mõjutada naabrite tootmist, närb on näha kui ta ei tee telliseid kuigi sa tahaks väga ehitada pagarikoda!!!
+
+Marketplace töötab imelikult, vist lisab kõik offerid mingilt factionilt korraga? Võiks ükshaaval

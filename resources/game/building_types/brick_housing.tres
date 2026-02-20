@@ -11,7 +11,7 @@ description = "Housing for 12 people."
 PopulationCapacity = 12
 ResourceCosts = Dictionary[Object, int]({
 ExtResource("2_h1q1p"): 10,
-ExtResource("3_k3nyl"): 65
+ExtResource("3_k3nyl"): 50
 })
 CraftingJobs = null
 HoursToConstruct = 60.0
