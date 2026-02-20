@@ -308,7 +308,12 @@ namespace scenes.region.ui {
 					}
 					return txt;
 				});
-				resourceDisplay.Display(() => $"faction: {fac.Name}");
+				resourceDisplay.Display(() => {
+					var map = GameMan.Singleton.Game.Map;
+					if (map == null) return "map...?";
+					if (!map.TileOwners.TryGetValue(inRegionTilepos + reg.WorldPosition, out var reg2)) return "faction: ...?";
+					return $"faction: {reg2.LocalFaction.Name}";
+				});
 			} else {
 				resourceDisplay.Display(() => fac.Name);
 			}

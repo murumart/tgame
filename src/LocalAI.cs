@@ -322,6 +322,17 @@ public partial class LocalAI {
 			return new(() => job.NeedsWorkers && job.Workers > 0 ? 1.0f : 0.0f, "JobHasEmployees");
 		}
 
+		public static DecisionFactor HasResourceSiteThatProduces(FactionActions ac, IResourceType need) {
+			return new(() => {
+				foreach (var mop in ac.GetMapObjects()) if (mop is ResourceSite res) {
+						foreach (var w in res.Wells) {
+							if (w.ResourceType == need && w.HasBunches) return 1f;
+						}
+					}
+				return 0f;
+			}, $"HasResourceSiteThatProduces({need.AssetName})");
+		}
+
 		public static DecisionFactor HasFreeResourceSite(FactionActions ac, IResourceSiteType siteType, IResourceType need) {
 			return new(() => {
 				int matchingSites = 0;
@@ -403,6 +414,16 @@ public partial class LocalAI {
 			return new(() => ac.GetResourceStorage().HasEnough(resources) ? 1f : 0f, $"ResourcesNeed({string.Join(", ", resources)})");
 		}
 
+		public static DecisionFactor SilverNeed(FactionActions ac, int amount) {
+			Debug.Assert(amount > 0);
+			return new(() => {
+				if (amount > ac.Faction.Silver) return 0f;
+				return Mathf.Clamp((float)(ac.Faction.Silver - amount) / ac.Faction.Silver, 0f, 1f);
+			}, "SilverNeed");
+		}
+
+		public static DecisionFactor SilverWant() => new(() => 1f, "SilverWant");
+
 		public static DecisionFactor FoodMakingNeed(FactionActions ac) {
 			return new(() => {
 				var res = ac.Faction.GetFoodUsage();
@@ -458,6 +479,14 @@ public partial class LocalAI {
 
 		public static DecisionFactor ArePeopleStarving(FactionActions actions) {
 			return new(() => actions.Faction.Population.ArePeopleStarving ? 1f : 0f, "ArePeopleStarving");
+		}
+
+		public static DecisionFactor SentTradeOfferLimit(FactionActions actions, int limit) {
+			return new(() => {
+				int sent = actions.Faction.GetSentTradeOffers().Sum(kvp => kvp.Value.Count);
+				if (sent == 0f) return 1.0f;
+				return 1f - Mathf.Clamp(sent / (float)limit, 0f, 1f);
+			}, $"TradeOfferLimit({limit})");
 		}
 	}
 
@@ -595,6 +624,18 @@ public class GamerAI : LocalAI {
 			Factors.EmploymentRate(actions),
 		], actions));
 
+		foreach (var res in Registry.Resources.GetAssets()) {
+			int srand1 = (int)(GD.Randi() % 3) + 1;
+			int srand2 = (int)(GD.Randi() % 4) + 1;
+			startActions.Add(Actions.SendTradeOffer([
+				Factors.SentTradeOfferLimit(actions, 10),
+				Factors.ResourceWant(actions, this, res),
+				Factors.SilverNeed(actions, srand1),
+				Factors.OneMinus(Factors.HasResourceSiteThatProduces(actions, res)),
+				Factors.Const(0.3f),
+			], actions, srand1, new ResourceBundle(res, srand1 * srand2)));
+		}
+
 		this.mainActions = startActions.ToList();
 		this.ephemeralActions = new();
 	}
@@ -639,6 +680,7 @@ public class GamerAI : LocalAI {
 				ephemeralActions.Add(Actions.RemoveWorkersFromJob([
 					Factors.Mult(Factors.OneMinus(Factors.Group(factors.ToArray())), 0.0000001f),
 					Factors.JobEmploymentRate(job),
+					Factors.SentTradeOfferLimit(factionActions, 15),
 				], factionActions, job));
 			}
 			if (negativeFactors.Count != 0) {
@@ -647,6 +689,19 @@ public class GamerAI : LocalAI {
 		}
 		var marketJob = factionActions.GetProcessMarketJob();
 		if (marketJob == null) return;
+		// creating trade offeers
+		foreach (var res in Registry.Resources.GetAssets()) {
+			int amount = factionActions.GetResourceStorage().GetCount(res);
+			if (amount < 15) continue;
+			int srand1 = (int)(GD.Randi() % 3) + 1;
+			amount = Mathf.Max(amount / 2, srand1); // ??????? wjhat am I dooing here
+			int silver = amount / (srand1 + 2) + srand1;
+			if (silver == 0) continue; 
+			ephemeralActions.Add(Actions.SendTradeOffer([
+				Factors.OneMinus(Factors.ResourceWant(factionActions, this, res)),
+				Factors.SilverWant(),
+			], factionActions, new ResourceBundle(res, amount), silver));
+		}
 		foreach (var (partner, toffs) in factionActions.Faction.GetSentTradeOffers()) {
 			foreach (var toff in toffs) {
 				toff.Log($"ephemeral actions sent to {partner}");
@@ -656,6 +711,7 @@ public class GamerAI : LocalAI {
 						? Factors.ResourceWant(factionActions, this, toff.OffererSoldResourcesUnit.Type)
 						: Factors.Const(0.0015f),
 					Factors.SeeNoInterestInTradeOffer(factionActions.Faction, toff, GameTime.Days(8)),
+					Factors.Mult(Factors.OneMinus(Factors.SentTradeOfferLimit(factionActions, 15)), 0.3f),
 				], factionActions.Faction, partner, toff));
 			}
 		}
