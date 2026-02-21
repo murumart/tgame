@@ -24,6 +24,7 @@ public partial class MapObjectMenu : Control {
 	[Export] Button addJobConfirmButton;
 
 	[Export] RichTextLabel detailsText;
+	[Export] Button closeButton;
 
 	bool attachedToMapObject = false;
 	State state;
@@ -55,6 +56,7 @@ public partial class MapObjectMenu : Control {
 		addJobItemList.ItemActivated += AddJobConfirmed;
 		addJobConfirmButton.Pressed += AddJobConfirmed;
 		jobInfoPanel.UIRebuildRequested += Open;
+		closeButton.Pressed += Close;
 
 		addJobDescription.Text = "";
 	}
