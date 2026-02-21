@@ -168,14 +168,14 @@ public partial class MapObjectMenu : Control {
 				sb.Append($"   This is {100 - ((float)well.Bunches / well.InitialBunches) * 100:0}% depleted.\n");
 				reproduce = reproduce || well.MinutesPerBunchRegen > 0;
 			}
-			if (reproduce) {
-				sb.Append($"\nSome {("resources")} can regrow...\n");
-				foreach (var well in r.Wells) {
-					if (well.MinutesPerBunchRegen > 0) {
-						sb.Append($" * {well.ResourceType.AssetName} grows every {GameTime.GetFancyTimeString(well.MinutesPerBunchRegen)}.\n");
-					}
-				}
-			}
+			//if (reproduce) {
+			//	sb.Append($"\nSome {("resources")} can regrow...\n");
+			//	foreach (var well in r.Wells) {
+			//		if (well.MinutesPerBunchRegen > 0) {
+			//			sb.Append($" * {well.ResourceType.AssetName} grows every {GameTime.GetFancyTimeString(well.MinutesPerBunchRegen)}.\n");
+			//		}
+			//	}
+			//}
 		} else Debug.Assert(false, "Unimplemented map object name display");
 
 		detailsText.Text = sb.ToString();

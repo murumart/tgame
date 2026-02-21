@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Godot;
 using resources.game;
 using resources.game.building_types;
@@ -7,6 +8,8 @@ using scenes.region.ui;
 using static Building;
 
 public partial class BuildingList : Control {
+
+	static ColorPalette palette = GD.Load<ColorPalette>("res://resources/visual/theme/palette.tres");
 
 	[Export] UI ui;
 	[Export] ItemList itemList;
@@ -93,12 +96,15 @@ public partial class BuildingList : Control {
 
 	public void Update() {
 		itemList.Clear();
-		foreach (var buildingType in ui.GetBuildingTypes()) {
+		var items = ui.GetBuildingTypes().AsEnumerable().ToList();
+		items.Sort((i, j) => ui.GetCanBuild(j).CompareTo(ui.GetCanBuild(i)));
+		foreach (var buildingType in items) {
 			int ix = itemList.AddItem(buildingType.AssetName);
 			// storing buildingtype references locally so if we happen to update the buildingtypes list
 			// in between calls here, we should still get the correct buildings that the visual
 			// ItemList was set up with
 			itemList.SetItemMetadata(ix, Variant.CreateFrom(buildingType));
+			itemList.SetItemCustomBgColor(ix, palette.Colors[ui.GetCanBuild(buildingType) ? 18 : 7]);
 		}
 	}
 
