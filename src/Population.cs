@@ -154,7 +154,7 @@ public class Population {
 		if (ArePeopleStarving) return 0f;
 		float lessthanpop = Mathf.Max(0, (float)Count - 1f);
 		float lessthanhoused = Mathf.Max(0, (float)HousedCount - 1f);
-		return (lessthanpop - lessthanhoused) * 0.05f + (lessthanhoused) * 0.5f;
+		return (lessthanpop - lessthanhoused) * 0.05f + (lessthanhoused) * 0.75f;
 	}
 
 	(float, string)[] reasons = null;

@@ -176,7 +176,7 @@ namespace scenes.region.ui {
 				SelectTab(Tab.None);
 			}
 		}
-		
+
 		void TogglePause() {
 			if (timeSpeedAlteringDisabled) return;
 			GameMan.Singleton.TogglePause();
@@ -281,11 +281,13 @@ namespace scenes.region.ui {
 			resourceDisplay.Display(() => {
 				if (fac.GetPopulationCount() == 0) return "no one lives here.";
 				return $"population: {fac.GetPopulationCount()} "
-					+ $"({fac.HomelessPopulation / (float)fac.Population.Count * 100:0}% homeless, "
-					+ $"{fac.Population.EmployedCount / (float)fac.Population.Count * 100:0}% employed, "
+					+ $"({fac.HomelessPopulation} homeless, "
+					+ $"{fac.Population.EmployedCount} employed, "
 					+ $"{fac.Population.GetYearlyBirths():0} births/year)";
 			}, () => {
-				return "house and feed your people to make sure a new generation will be born.";
+				return "house and feed your people to make sure a new generation will be born.\n"
+					+ $"housing available: {fac.Population.MaxHousing} ({fac.Population.MaxHousing - fac.Population.HousedCount} spots free)"
+				;
 			});
 			if (!fac.IsWild) {
 				var reg = fac.Region;
