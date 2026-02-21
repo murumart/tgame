@@ -139,7 +139,7 @@ public partial class MapObjectMenu : Control {
 		System.Text.StringBuilder sb = new();
 		var reg = ui.GetFaction().Region;
 		if (myMapObject is Building b) {
-			titleLabel.Text = $"{b.Type.AssetName.Capitalize()} {(b.GlobalPosition - reg.WorldPosition)})";
+			titleLabel.Text = $"{b.Type.AssetName.Capitalize()} {(b.GlobalPosition - reg.WorldPosition)}";
 			if (!b.IsConstructed) {
 				sb.Append($"Construction in progress... ({(int)(b.GetBuildProgress() * 100)}%)\n");
 			}

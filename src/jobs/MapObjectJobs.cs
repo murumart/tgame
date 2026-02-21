@@ -267,15 +267,16 @@ public class CraftJob : MapObjectJob {
 
 	public override string GetProductionDescription() {
 		var sb = new StringBuilder();
-		if (Workers == 0) sb.Append($"Add workers to begin {Process.Progressive}...\n");
-		else sb.Append($"The workers {Process.Infinitive}...\n");
+		if (Workers == 0) {
+			sb.Append($"It takes {GameTime.GetFancyTimeString(TimeTaken)} to {Process.Infinitive} one set of {Product.Plural}.\n");
+			sb.Append($"Add workers to begin {Process.Progressive}...\n");
+		} else sb.Append($"The workers {Process.Infinitive}...\n");
 
-		GetProductionBulletList(sb);
 		if (Inputs.Length > 0) {
-			sb.Append("...with the required inputs...\n");
 			GetInputBulletList(sb);
+			sb.Append("\n\tinto ");
 		}
-		sb.Append($"It takes {GameTime.GetFancyTimeString(TimeTaken)} to {Process.Infinitive} one set of {Product.Plural}.");
+		GetProductionBulletList(sb);
 
 		return sb.ToString();
 	}
@@ -284,16 +285,19 @@ public class CraftJob : MapObjectJob {
 		return timeSpent / TimeTaken;
 	}
 
-	public void GetProductionBulletList(StringBuilder sb) {
-		foreach (var thing in Outputs) {
-			sb.Append($" * {thing.Type.AssetName} x {thing.Amount}\n");
+	void GetArrayBulletList(StringBuilder sb, ResourceBundle[] resources) {
+		for (int i = 0; i < resources.Length; ++i) {
+			sb.Append($"{resources[i].Type.AssetName} x {resources[i].Amount}");
+			if (i < resources.Length - 1) sb.Append(" + ");
 		}
 	}
 
+	public void GetProductionBulletList(StringBuilder sb) {
+		GetArrayBulletList(sb, Outputs);
+	}
+
 	public void GetInputBulletList(StringBuilder sb) {
-		foreach (var thing in Inputs) {
-			sb.Append($" * {thing.Type.AssetName} x {thing.Amount}\n");
-		}
+		GetArrayBulletList(sb, Inputs);
 	}
 
 	public override string GetStatusDescription() {
@@ -489,9 +493,9 @@ public class AddFurnitureJob : MapObjectJob {
 	}
 
 	public override string GetProductionDescription() {
-		if (resources == null ||!resources.HasEnough(requirements)) return $"This {building.Type.AssetName} will be furnished. ({GetResourceRequirementDescription()})";
+		if (resources == null || !resources.HasEnough(requirements)) return $"This {building.Type.AssetName} will be furnished. ({GetResourceRequirementDescription()})";
 		return $"This {building.Type.AssetName} will be furnished.";
 
-	} 
+	}
 
 }

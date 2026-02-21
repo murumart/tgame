@@ -34,6 +34,6 @@ horizontal_alignment = 2
 [node name="HSlider" type="HSlider" parent="." unique_id=2031969232]
 layout_mode = 2
 focus_mode = 0
-rounded = true
+step = 0.01
 scrollable = false
 ticks_position = 3

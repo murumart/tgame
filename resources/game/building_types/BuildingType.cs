@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Godot;
-using resouces.game.building_types.crafting;
+using resources.game.building_types.crafting;
 using resources.game.resource_types;
 using static Building;
 using static Building.IBuildingType;

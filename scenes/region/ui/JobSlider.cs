@@ -20,7 +20,6 @@ namespace scenes.region.ui {
 
 		public static JobSlider Instantiate() => Packed.Instantiate<JobSlider>();
 
-
 		public override void _Ready() {
 			Slider.ValueChanged += ValueChanged;
 			Slider.DragEnded += DragEnded;
@@ -58,7 +57,7 @@ namespace scenes.region.ui {
 		}
 
 		public void ValueChanged(double to) {
-			int val = (int)to;
+			int val = Mathf.RoundToInt(Slider.Value);
 
 			MoneyLabel.Text = "" + val + unitSymbol;
 			//ValueChangedCallback(jobIx, val);
@@ -67,7 +66,8 @@ namespace scenes.region.ui {
 		int lastValue = 0;
 		public void DragEnded(bool valueChanged) {
 			if (!valueChanged) return;
-			int val = (int)Slider.Value;
+			int val = Mathf.RoundToInt(Slider.Value);
+			Slider.SetValueNoSignal(val);
 			GD.Print($"JobSlider::DragEnded : val {val} last {lastValue}");
 			ValueChangedCallback(jobIx, val - lastValue);
 			lastValue = val;
