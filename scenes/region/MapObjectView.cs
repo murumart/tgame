@@ -36,7 +36,8 @@ namespace scenes.region {
 			if (!Visible) return;
 			if (!iconContainer.Visible) return;
 			var tf = GetGlobalTransformWithCanvas();
-			iconTransformParent.Scale = tf.Scale.Inverse();
+			var inverse = tf.Scale.Inverse();
+			if (inverse.X < 1) iconTransformParent.Scale = inverse;
 		}
 
 		public override void _Notification(int what) {

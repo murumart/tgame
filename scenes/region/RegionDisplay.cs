@@ -52,17 +52,13 @@ namespace scenes.region {
 				var j = jobsToUndisplay.Dequeue();
 				UndisplayRegionJob(j);
 			}
+			if (GameMan.Singleton.IsPaused) {
+				DisplayJobProgress();
+			}
 		}
 
 		void TimeUpdate(TimeT time) {
-			foreach (var (tpos, mopview) in mapObjectViews) {
-				if (region.LocalFaction.GetJob(tpos + region.WorldPosition, out var job)) {
-					float progress = job.GetProgressEstimate();
-					mopview.DisplayJobProgress(progress, show: job.Workers != 0 || progress > 0f, showBuilding: job is ConstructBuildingJob);
-				} else {
-					mopview.DisplayJobProgress(0f, false);
-				}
-			}
+			DisplayJobProgress();
 		}
 
 		public void LoadRegion(Region region, int lod) {
@@ -154,6 +150,17 @@ namespace scenes.region {
 			mapObjectViews.Remove(tile);
 		}
 
+		void DisplayJobProgress() {
+			foreach (var (tpos, mopview) in mapObjectViews) {
+				if (region.LocalFaction.GetJob(tpos + region.WorldPosition, out var job)) {
+					float progress = job.GetProgressEstimate();
+					mopview.DisplayJobProgress(progress, show: job.Workers != 0 || progress > 0f, showBuilding: job is ConstructBuildingJob);
+				} else {
+					mopview.DisplayJobProgress(0f, false);
+				}
+			}
+		}
+
 		// reactions to notifications
 
 		void OnRegionMapObjectUpdated(Vector2I tile) {
@@ -229,7 +236,7 @@ namespace scenes.region {
 			}
 			selectedTile = tile;
 		}
-		
+
 		public void OnTileDeselected() {
 			if (selectedTile != null && mapObjectViews.TryGetValue(selectedTile ?? Vector2I.One, out var obj)) {
 				obj.OnDeselected();
