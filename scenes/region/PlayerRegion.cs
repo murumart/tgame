@@ -265,7 +265,7 @@ namespace scenes.region {
 		public uint GetJobMaxWorkers() => faction.GetFreeWorkers();
 
 		public string GetTimeString() => $"{GameMan.Singleton.Game.Time.GetDayHour():00}:{GameMan.Singleton.Game.Time.GetHourMinute():00}";
-		public string GetDateTimeString() => $"{GetTimeString()} {GameMan.Singleton.Game.Time.GetMonthDay():00}/{(int)(GameMan.Singleton.Game.Time.GetMonth() + 1):00}";
+		public string GetDateTimeString() => $"{GetTimeString()} {(int)GameMan.Singleton.Game.Time.GetMonthDay():00}/{(int)(GameMan.Singleton.Game.Time.GetMonth() + 1):00}";
 
 		// UI action invokes
 
