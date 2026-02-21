@@ -218,7 +218,3 @@ public partial class ResourceSite {
 	}
 
 }
-
-
-
-

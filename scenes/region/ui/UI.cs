@@ -386,6 +386,10 @@ namespace scenes.region.ui {
 				case State.Idle:
 					MapClick(tilePosition);
 					break;
+				case State.MapObjectMenu:
+					state = State.Idle;
+					MapClick(tilePosition);
+					break;
 				default:
 					break;
 			}

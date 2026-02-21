@@ -137,8 +137,9 @@ public partial class MapObjectMenu : Control {
 		Debug.Assert(attachedToMapObject && myMapObject != null, "Needs a map object to display its info");
 
 		System.Text.StringBuilder sb = new();
+		var reg = ui.GetFaction().Region;
 		if (myMapObject is Building b) {
-			titleLabel.Text = b.Type.AssetName.Capitalize();
+			titleLabel.Text = $"{b.Type.AssetName.Capitalize()} {(b.GlobalPosition - reg.WorldPosition)})";
 			if (!b.IsConstructed) {
 				sb.Append($"Construction in progress... ({(int)(b.GetBuildProgress() * 100)}%)\n");
 			}
@@ -159,7 +160,7 @@ public partial class MapObjectMenu : Control {
 				sb.Append(b.HasFurniture ? "Is furnished.\n" : "Is without furniture.\n");
 			}
 		} else if (myMapObject is ResourceSite r) {
-			titleLabel.Text = r.Type.AssetName.Capitalize();
+			titleLabel.Text = $"{r.Type.AssetName.Capitalize()} {(r.GlobalPosition - reg.WorldPosition)}";
 			sb.Append($"The {r.Type.AssetName} contains exploitable resources...\n");
 			bool reproduce = false;
 			foreach (var well in r.Wells) {
@@ -210,6 +211,3 @@ public partial class MapObjectMenu : Control {
 	}
 
 }
-
-
-
