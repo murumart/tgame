@@ -176,11 +176,15 @@ namespace scenes.region.ui {
 				SelectTab(Tab.None);
 			}
 		}
-
-		void OnPauseButtonPressed() {
+		
+		void TogglePause() {
 			if (timeSpeedAlteringDisabled) return;
 			GameMan.Singleton.TogglePause();
 			SetGameSpeedLabelText();
+		}
+
+		void OnPauseButtonPressed() {
+			TogglePause();
 		}
 
 		const int NORMAL_SPEED = 1;
@@ -189,18 +193,21 @@ namespace scenes.region.ui {
 
 		void OnNormalSpeedButtonPressed() {
 			if (timeSpeedAlteringDisabled) return;
+			if (GameMan.Singleton.IsPaused) TogglePause();
 			GameMan.Singleton.MultiplyGameSpeed(GameMan.GameSpeedChanger.UI, NORMAL_SPEED);
 			SetGameSpeedLabelText();
 		}
 
 		void OnFastSpeedButtonPressed() {
 			if (timeSpeedAlteringDisabled) return;
+			if (GameMan.Singleton.IsPaused) TogglePause();
 			GameMan.Singleton.MultiplyGameSpeed(GameMan.GameSpeedChanger.UI, FAST_SPEED);
 			SetGameSpeedLabelText();
 		}
 
 		void OnFasterSpeedButtonPressed() {
 			if (timeSpeedAlteringDisabled) return;
+			if (GameMan.Singleton.IsPaused) TogglePause();
 			GameMan.Singleton.MultiplyGameSpeed(GameMan.GameSpeedChanger.UI, FASTER_SPEED);
 			SetGameSpeedLabelText();
 		}
