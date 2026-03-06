@@ -83,16 +83,10 @@ Seda võiks teha automaatselt. Kui resourceewant mingil lõppproduktil on kõrge
 - [ ] info
   - [X] alguses notif mängija omaniku nimest
   - [ ] ressursside nimekirjas märgend praegusest nõudmisest
-  - [ ] mingi märguande ikoon uute treidide kohta turul
   - [X] märguannete nimekiri ekraanil kogu aeg
-  - [ ] logi tab kus eelmised notifid factioni koha
-    - [ ] ära lihtsalt pane rtlabelisse, gene tekst nt kuu kaupa kui nuppu vajutatakse
   - [X] ribad näitamaks kui kaugel mingi mopbjecti tööga ollakse
-  - [ ] riba näitab kui depleted a resource site is
-- [ ] ehitiste eemaldamine
 - [X] buttons for zooming in out
-- [ ] ressursiallikate eemaldamine (kui pole ruumi panna midagi kuhugi)
-- [ ] prepared experience thing, like a world seed and specific region the test player will get dumped into
+- [X] prepared experience thing, like a world seed and specific region the test player will get dumped into
 
 ### Hiljem
 
@@ -103,3 +97,31 @@ Sõjalises mõttes: barracks ehitis, kus töö treenida. Factionil on max milita
 Vaja viise ,kuidas mõjutada naabrite tootmist, närb on näha kui ta ei tee telliseid kuigi sa tahaks väga ehitada pagarikoda!!!
 
 Marketplace töötab imelikult, vist lisab kõik offerid mingilt factionilt korraga? Võiks ükshaaval
+
+### Mida teha enne testimist
+
+- [ ] rohkem contenti
+- [ ] rohkem rõhuda maailma osa olemise tundele'
+- [ ] maailma genereerimise menüü koos seadetega
+  ![alt text](worldmakermockup.png)
+- [ ] ressursiallikate eemaldamine (kui pole ruumi panna midagi kuhugi)
+- [ ] ehitiste eemaldamine
+- [ ] info
+  - [ ] logi tab kus eelmised notifid factioni koha
+	- [ ] ära lihtsalt pane rtlabelisse, gene tekst nt kuu kaupa kui nuppu vajutatakse
+	- [ ] mingi märguande ikoon uute treidide kohta turul
+  - [ ] riba näitab kui depleted a resource site is
+- [ ] targem AI
+  - [ ] kurvid utility arvutamiseks
+- [ ] eventid
+  - [ ] kaardi peal hüüumärk koos ajalimiidiga
+  - [ ] pane töölisi sisse et olukorda parandada
+  - võib sõltuda kohast, kus juhtub:
+	- [ ] metsatulekajhu
+	- [ ] kalurite paat läks ümber
+	- [ ]
+
+**Fiksid**:
+
+- [ ] ehitise tööd tulevad ekraanil ette kui ehitamata ehitis eemaldatakse
+- [ ]
