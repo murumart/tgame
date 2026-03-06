@@ -120,6 +120,10 @@ Marketplace töötab imelikult, vist lisab kõik offerid mingilt factionilt korr
 	- [ ] metsatulekajhu
 	- [ ] kalurite paat läks ümber
 	- [ ]
+- [ ] juice+heli
+  - [ ] ehitisi maha pannes sügav heli + tolm
+  - [ ] mingid inimeste particleid töökohtade juures
+- [ ] muusika
 
 **Fiksid**:
 
