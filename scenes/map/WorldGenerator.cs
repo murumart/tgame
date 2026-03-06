@@ -213,20 +213,9 @@ namespace scenes.map {
 					region.CreateResourceSiteAndPlace(siteType.Target, pos);
 				}
 			}
-			// HACK ! ! ! for cool display., re,move afterward
-			if (MainMenu.useScenarioWorld) {
-				Regions[85].CreateResourceSiteAndPlace(Registry.ResourceSitesS.ClayPit, Vector2I.Up * 3);
-			}
-
 			await War(regionsLand, AggressiveFactionCount);
 
 			Map map = new(regionsLand, world);
-			if (MainMenu.useScenarioWorld) { // !!!!! HACK!
-				foreach (var reg in regionsLand) {
-					var pop = reg.LocalFaction.Population;
-					pop.Manifest(pop.Count);
-				}
-			}
 
 			Generating = false;
 			return map;

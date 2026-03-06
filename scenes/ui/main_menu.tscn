@@ -139,7 +139,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_sl1te")
-scenarioPlayButton = NodePath("MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/Scenario")
+scenarioPlayButton = NodePath("")
 freePlayButton = NodePath("MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/Freeplay")
 exitButton = NodePath("MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/Exit")
 
@@ -234,10 +234,6 @@ label_settings = SubResource("LabelSettings_1g8jr")
 [node name="Control" type="Control" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer" unique_id=744582961]
 custom_minimum_size = Vector2(0, 84.965)
 layout_mode = 2
-
-[node name="Scenario" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer" unique_id=113135943]
-layout_mode = 2
-text = "Play Scenario"
 
 [node name="Freeplay" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer" unique_id=173957011]
 layout_mode = 2

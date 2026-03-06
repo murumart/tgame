@@ -210,27 +210,27 @@ namespace scenes.region {
 					break;
 				default: break;
 			}
-			if (hour >= GameTime.HOURS_PER_DAY * GameTime.DAYS_PER_WEEK * GameTime.WEEKS_PER_MONTH && !ui.GameIsOver) {
-				int satisfactionLevel = (int)(faction.Population.Approval * 3);
-				ui.Announce("Congratulations, although it might still be early, for you have survived only one month, but one month "
-					+ "nonetheless full of time.\n\n"
-					+ ((satisfactionLevel == 0)
-						? "And even if your successes thus far have been few, this Earth surely will provide ample opportunities for you to return...?"
-						: (satisfactionLevel == 1)
-							? "Your people grumble not much, but some grumbling is just and warranted by the way this world's hardships leave not behind you and your kin."
-							: (satisfactionLevel == 2)
-								? "There was beauty to your leadership, and grace, but also a required solid fist to squeeze out of the Earth what is rightfully ours. "
-								+ "And well have you squeezed, for we are happy."
-								: "What can even be said about what you have just accomplished?")
-					+ "\n\nWe will part ways here, for now, but with keeping in mind the fanciful ways of time, and chance, we might surely hear tales of your accomplishments again."
-					+ "\n\nYou are done here.",
-					title: "You Survived a Month",
-					callback: () => {
-						ui.Notifications.Notify("You have succeeded.");
-					}
-				);
-				GameOver();
-			}
+			//if (hour >= GameTime.HOURS_PER_DAY * GameTime.DAYS_PER_WEEK * GameTime.WEEKS_PER_MONTH && !ui.GameIsOver) {
+			//	int satisfactionLevel = (int)(faction.Population.Approval * 3);
+			//	ui.Announce("Congratulations, although it might still be early, for you have survived only one month, but one month "
+			//		+ "nonetheless full of time.\n\n"
+			//		+ ((satisfactionLevel == 0)
+			//			? "And even if your successes thus far have been few, this Earth surely will provide ample opportunities for you to return...?"
+			//			: (satisfactionLevel == 1)
+			//				? "Your people grumble not much, but some grumbling is just and warranted by the way this world's hardships leave not behind you and your kin."
+			//				: (satisfactionLevel == 2)
+			//					? "There was beauty to your leadership, and grace, but also a required solid fist to squeeze out of the Earth what is rightfully ours. "
+			//					+ "And well have you squeezed, for we are happy."
+			//					: "What can even be said about what you have just accomplished?")
+			//		+ "\n\nWe will part ways here, for now, but with keeping in mind the fanciful ways of time, and chance, we might surely hear tales of your accomplishments again."
+			//		+ "\n\nYou are done here.",
+			//		title: "You Survived a Month",
+			//		callback: () => {
+			//			ui.Notifications.Notify("You have succeeded.");
+			//		}
+			//	);
+			//	GameOver();
+			//}
 		}
 
 		void OnRegionMapObjectUpdated(Vector2I tile) { }

@@ -83,7 +83,7 @@ namespace scenes.map {
 		async void GenerateNewWorld() {
 			this.map = null;
 			worldUI.SelectRegion(null);
-			world = new(worldGenerator.WorldWidth, worldGenerator.WorldHeight, MainMenu.useScenarioWorld ? 3083338060 : GD.Randi());
+			world = new(worldGenerator.WorldWidth, worldGenerator.WorldHeight, GD.Randi());
 			worldGenerator.GenerateContinents(world);
 			worldRenderer.Draw(world);
 
@@ -106,10 +106,6 @@ namespace scenes.map {
 		void SetupGame() {
 			GameMan.Singleton.NewGame(map);
 			GD.Print("WorldMan::SetupGame : game set up.");
-			if (MainMenu.useScenarioWorld) {
-				GameMan.Singleton.Game.PlayRegion = map.GetRegion(52);
-				GetTree().ChangeSceneToPacked(regionScene);
-			}
 		}
 
 		void EnterGame() {

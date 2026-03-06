@@ -87,7 +87,7 @@ namespace scenes.map.ui {
 				+ $"Map objects: {things}\n"
 				+ $"Region IX: {region.WorldIndex}"
 			;
-			factionPlayButton.Disabled = !region.LocalFaction.HasOwningFaction();
+			factionPlayButton.Disabled = region.LocalFaction.IsWild;
 		}
 
 		void OnDrawModeSelected(long which) {
