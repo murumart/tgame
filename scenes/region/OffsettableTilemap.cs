@@ -6,7 +6,6 @@ public partial class OffsettableTilemap : TileMapLayer {
 
 	internal Region region;
 	internal World world;
-	internal bool takeIn;
 	internal Gradient heightColorGradient;
 
 	readonly static Color BaseColor = Color.FromHtml("d5d6db");

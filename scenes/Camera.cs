@@ -5,6 +5,7 @@ using scenes.autoload;
 public partial class Camera : Camera2D {
 
 	public event Action<Vector2I> ClickedMouseEvent;
+	public event Action ZoomChanged;
 
 	const float SPEED = 360.0f;
 	const float ACCEL = 60.0f;
@@ -20,7 +21,11 @@ public partial class Camera : Camera2D {
 
 	public override void _Process(double delta) {
 		Movement((float)delta);
+		var oldzoom = Zoom;
 		Zoom = new Vector2(zoomSize, zoomSize);
+		if (oldzoom != Zoom) {
+			ZoomChanged?.Invoke();
+		}
 	}
 
 	public override void _UnhandledInput(InputEvent evt) {

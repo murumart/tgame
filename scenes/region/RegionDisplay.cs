@@ -15,6 +15,7 @@ namespace scenes.region {
 
 		readonly Dictionary<Vector2I, MapObjectView> mapObjectViews = new();
 		Region region;
+		Camera camera;
 
 		bool valid = false;
 
@@ -61,7 +62,7 @@ namespace scenes.region {
 			DisplayJobProgress();
 		}
 
-		public void LoadRegion(Region region, int lod) {
+		public void LoadRegion(Region region, int lod, RegionCamera camera) {
 			if (valid) {
 				DisconnectEvents();
 				valid = false;
@@ -69,6 +70,7 @@ namespace scenes.region {
 			Lod = lod;
 
 			this.region = region;
+			this.camera = camera;
 			ConnectEvents();
 			tilemaps.DisplayGround(region);
 			var wposes = region.GroundTiles.Keys.Select(p => Tilemaps.TilePosToWorldPos(p) + Vector2.Up * Tilemaps.TileElevationVerticalOffset(region.WorldPosition + p, GameMan.Singleton.Game.Map.World));
@@ -111,6 +113,7 @@ namespace scenes.region {
 			}
 			region.TileChangedAtEvent += OnTileChanged;
 			region.LocalFaction.JobChangedEvent += OnJobChanged;
+			camera.ZoomChanged += OnZoomChanged;
 		}
 
 		void DisconnectEvents() {
@@ -121,6 +124,13 @@ namespace scenes.region {
 			}
 			region.TileChangedAtEvent -= OnTileChanged;
 			region.LocalFaction.JobChangedEvent -= OnJobChanged;
+			camera.ZoomChanged -= OnZoomChanged;
+		}
+
+		void OnZoomChanged() {
+			foreach (var mopv in mapObjectViews.Values) {
+				mopv.ViewTransformUpdated();
+			}
 		}
 
 		MapObjectView LoadMapObjectView(MapObject mo) {

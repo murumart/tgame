@@ -64,7 +64,7 @@ namespace scenes.region {
 			ui.SetupResourceDisplay();
 
 			Callable.From(() => {
-				regionDisplay.LoadRegion(region, 0);
+				regionDisplay.LoadRegion(region, 0, camera);
 
 				// show also neighboring regions and neighbors' neighbors
 				foreach (var neighbor in region.Neighbors) {
@@ -72,7 +72,7 @@ namespace scenes.region {
 					otherDisplaysParent.AddChild(rdisp);
 					rdisp.Modulate = new Color(0.3f, 0.3f, 0.3f).Lerp(neighbor.LocalFaction.Color, 0.05f);
 					rdisp.Position = Tilemaps.TilePosToWorldPos(neighbor.WorldPosition - region.WorldPosition) - Tilemaps.TILE_SIZE / 2;
-					rdisp.LoadRegion(neighbor, 1);
+					rdisp.LoadRegion(neighbor, 1, camera);
 				}
 				foreach (var neighbor in GameMan.Singleton.Game.Map.GetRegions()) {
 					if (neighbor == region || region.Neighbors.Contains(neighbor)) continue;
@@ -80,7 +80,7 @@ namespace scenes.region {
 					otherDisplaysParent.AddChild(rdisp);
 					rdisp.Modulate = new Color(0.1f, 0.1f, 0.1f).Lerp(neighbor.LocalFaction.Color.Lightened(0.5f), 0.1f);
 					rdisp.Position = Tilemaps.TilePosToWorldPos(neighbor.WorldPosition - region.WorldPosition) - Tilemaps.TILE_SIZE / 2;
-					rdisp.LoadRegion(neighbor, 2);
+					rdisp.LoadRegion(neighbor, 2, camera);
 				}
 
 				if (faction.HasOwningFaction()) {

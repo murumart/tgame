@@ -32,9 +32,7 @@ namespace scenes.region {
 			IconSetHide();
 		}
 
-		public override void _Process(double delta) {
-			if (!Visible) return;
-			if (!iconContainer.Visible) return;
+		public void ViewTransformUpdated() {
 			var tf = GetGlobalTransformWithCanvas();
 			var inverse = tf.Scale.Inverse();
 			if (inverse.X < 1) iconTransformParent.Scale = inverse;

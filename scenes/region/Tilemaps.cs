@@ -24,12 +24,10 @@ public partial class Tilemaps : Node2D {
 			var type = GroundCellType.MatchTileTypeToCell(pair.Value);
 			ground.SetCell(pair.Key, type.SourceId, type.AtlasCoords);
 		}
-		ground.takeIn = true;
 		ground.world = GameMan.Singleton.Game.Map.World;
 		ground.region = from;
 		ground.heightColorGradient = heightColorGradient;
 		ground.UpdateInternals();
-		ground.takeIn = false;
 		watch.Stop();
 		var elapsedMs = watch.ElapsedMilliseconds;
 		GD.Print("Tilemaps::DisplayGround : displaying ground took " + elapsedMs + " ms");
