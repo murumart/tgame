@@ -397,7 +397,7 @@ namespace scenes.map {
 
 				var faction = new Faction(
 					region,
-					initialPopulation: (uint)initPop
+					initialPopulation: (uint)initPop * 3
 				);
 			}
 
