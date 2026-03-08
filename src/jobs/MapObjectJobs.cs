@@ -331,7 +331,7 @@ public class ProcessMarketJob : MapObjectJob {
 
 	public override Vector2I GlobalPosition => marketplace.GlobalPosition;
 
-	public override bool IsValid => marketplace != null;
+	public override bool IsValid => marketplace != null && faction != null;
 
 	public Faction Faction { get => faction; }
 

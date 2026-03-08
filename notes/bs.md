@@ -124,6 +124,7 @@ Marketplace töötab imelikult, vist lisab kõik offerid mingilt factionilt korr
   - [ ] ehitisi maha pannes sügav heli + tolm
   - [ ] mingid inimeste particleid töökohtade juures
 - [ ] muusika
+- [ ] seadete menüü
 
 **Fiksid**:
 

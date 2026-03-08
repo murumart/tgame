@@ -252,6 +252,10 @@ public partial class LocalAI {
 			return new(() => val, $"{val}");
 		}
 
+		public static DecisionFactor Curve(DecisionFactor fac, Curve curve) {
+			return new(() => curve.SampleBaked(fac.Score()), $"Curve({fac})");
+		}
+
 		public static DecisionFactor Max(DecisionFactor fac, float with) {
 			return new(() => Mathf.Max(with, fac.Score()), $"Max({fac}, {with})");
 		}
@@ -594,8 +598,12 @@ public class GamerAI : LocalAI {
 	readonly HashSet<IBuildingType> housing = [Registry.BuildingsS.LogCabin, Registry.BuildingsS.Housing, Registry.BuildingsS.BrickHousing];
 	readonly HashSet<IBuildingType> crafting = [Registry.BuildingsS.Windmill, Registry.BuildingsS.Bakery,  Registry.BuildingsS.Kiln];
 
+	static readonly Curve sendTradeOfferCurve = GD.Load<Curve>("res://resources/game/ai/send_trade_offer.tres");
+
 
 	public GamerAI(FactionActions actions) : base(actions) {
+
+		Debug.Assert(sendTradeOfferCurve != null);
 
 		this.ResourceWants = new();
 		var startActions = new List<Action>();
@@ -643,16 +651,17 @@ public class GamerAI : LocalAI {
 			int srand1 = (int)(GD.Randi() % 3) + 1;
 			int srand2 = (int)(GD.Randi() % 4) + 1;
 			startActions.Add(Actions.SendTradeOffer([
-				//Factors.HasFunctionalMarketplace(actions), // THESE should be enabled but theyäre too stupid right now to build markerplacers... hack for expo
-				Factors.SentTradeOfferLimit(actions, 10),
-				Factors.ResourceWant(actions, this, res),
-				Factors.SilverNeed(actions, srand1),
-				Factors.OneMinus(Factors.HasResourceSiteThatProduces(actions, res)),
-				Factors.Const(0.3f),
+				Factors.Curve(Factors.Group([
+					Factors.HasFunctionalMarketplace(actions),
+					Factors.SentTradeOfferLimit(actions, 10),
+					Factors.ResourceWant(actions, this, res),
+					Factors.SilverNeed(actions, srand1),
+					Factors.OneMinus(Factors.HasResourceSiteThatProduces(actions, res)),
+				]), sendTradeOfferCurve),
 			], actions, srand1, new ResourceBundle(res, srand1 * srand2)));
 			// boost the econony hopwefull 📈📈📈📈
 			startActions.Add(Actions.SendTradeOffer([
-				//Factors.HasFunctionalMarketplace(actions), // THESE should be enabled but theyäre too stupid right now to build markerplacers... hack for expo
+				Factors.HasFunctionalMarketplace(actions),
 				Factors.SentTradeOfferLimit(actions, 10),
 				Factors.Mult(Factors.ResourceWant(actions, this, res), 2f),
 				Factors.SilverNeed(actions, srand1),

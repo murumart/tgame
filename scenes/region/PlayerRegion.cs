@@ -116,6 +116,10 @@ namespace scenes.region {
 				GD.Print("PlayerRegion::_UnhandledKeyInput : DEBUG: moving back to world scene");
 				GetTree().ChangeSceneToFile("res://scenes/map/world_man.tscn");
 			}
+			if (evt.Pressed && evt.Keycode == Key.Key9) {
+				GameMan.Singleton.Game.AIPlaysInPlayerRegion = !GameMan.Singleton.Game.AIPlaysInPlayerRegion;
+				GD.Print("PlayerRegion::_UnhandledKeyInput : DEBUG: ai plays in player region is " + GameMan.Singleton.Game.AIPlaysInPlayerRegion);
+			}
 		}
 
 		public override void _Notification(int what) { // teardown
