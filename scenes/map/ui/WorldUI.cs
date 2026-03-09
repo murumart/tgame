@@ -56,7 +56,7 @@ namespace scenes.map.ui {
 
 		public override void _UnhandledKeyInput(InputEvent evt) {
 			if (evt is InputEventKey k) {
-				if (k.Pressed && k.Keycode == Key.Key9) RegionPlayRequested?.Invoke();
+				if (k.Pressed && k.Keycode == Key.Key7 && selectedRegion != null) RegionPlayRequested?.Invoke();
 			}
 		}
 
@@ -78,7 +78,11 @@ namespace scenes.map.ui {
 			factionTitleLabel.Text = region.LocalFaction.Name;
 			var things = string.Join(", ", region.GetMapObjects().Select(a => ((IAssetType)a.Type).AssetName).Distinct());
 			factionInfoLabel.Text =
-				(region.LocalFaction.HasOwningFaction() ? "Colony of " + region.LocalFaction.GetOwningFaction() : "Sovereign territory") + "\n"
+				(region.LocalFaction.HasOwningFaction()
+					? "Colony of " + region.LocalFaction.GetOwningFaction()
+					: region.LocalFaction.IsWild
+						? "Howling wilderness"
+						: "Sovereign territory") + "\n"
 				+ $"Land tiles: {region.LandTileCount}\n"
 				+ $"Sea tiles: {region.OceanTileCount}\n"
 				+ $"Population: {(region.LocalFaction.GetPopulationCount())}\n"

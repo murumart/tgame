@@ -96,7 +96,7 @@ Sõjalises mõttes: barracks ehitis, kus töö treenida. Factionil on max milita
 
 Vaja viise ,kuidas mõjutada naabrite tootmist, närb on näha kui ta ei tee telliseid kuigi sa tahaks väga ehitada pagarikoda!!!
 
-Marketplace töötab imelikult, vist lisab kõik offerid mingilt factionilt korraga? Võiks ükshaaval
+Marketplace töötab imelikult, vist lisab kõik offerid mingilt factionilt korraga? Võiks ükshaaval. Ja kas üldse on vaja marketplace ehitist, et treide teha? Oleks hea kui ehitamise süsteemil oleks kasutusi, aga mugavuse kohapealt pole vist loogiline, et marketplace töötab nii nagu ta töötab. Äkki lihtsalt mingi treidide tabi unlockimiseks see ehitada? Vaja ka mängijale võimalus offereid saata.
 
 ### Mida teha enne testimist
 

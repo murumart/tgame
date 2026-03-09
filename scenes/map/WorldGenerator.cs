@@ -38,6 +38,7 @@ namespace scenes.map {
 		[Export] public int WorldHeight;
 		[Export] int LandRegionCount;
 		[Export] int AggressiveFactionCount;
+		[Export] Curve elevationCurve;
 		[Export] Curve islandCurve;
 		[Export] Curve seawindElevationDifferenceReductionCurve;
 		[Export] Curve seawindTemperatureModCurve;
@@ -79,7 +80,7 @@ namespace scenes.map {
 
 					float distanceSqFromCentre = centre.DistanceSquaredTo(vec) * divBySidelen;
 					continentSample -= islandCurve.SampleBaked(distanceSqFromCentre);
-					continentSample = Mathf.Clamp(continentSample, -1f, 1f);
+					continentSample = Mathf.Clamp(elevationCurve.SampleBaked(continentSample), -1f, 1f);
 
 					world.SetElevation(x, y, continentSample);
 				}
@@ -154,12 +155,12 @@ namespace scenes.map {
 					var tile = GroundTileType.Sea;
 					if (ele >= 0) {
 						tile = GroundTileType.HasLand;
-						if (ele <= 0.012f) tile |= GroundTileType.HasSand;
+						if (ele <= 0.012f || humi < 0.02f || temp > 0.9f) tile |= GroundTileType.HasSand;
 						else if (humi > 0.15f) {
 							if (temp < 0) tile |= GroundTileType.HasSnow;
 							else {
 								tile |= GroundTileType.HasVeg;
-								if (temp > 0.4 && humi < 0.45) tile |= GroundTileType.HasSand;
+								if (temp > 0.55 && humi < 0.45) tile |= GroundTileType.HasSand;
 							}
 						}
 					}
@@ -397,7 +398,8 @@ namespace scenes.map {
 
 				var faction = new Faction(
 					region,
-					initialPopulation: (uint)initPop * 3
+					initialPopulation: (uint)initPop * 3,
+					initialSilver:(uint)(region.LandTileCount * 0.1 + 1)
 				);
 			}
 

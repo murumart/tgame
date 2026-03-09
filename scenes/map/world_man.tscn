@@ -24,6 +24,11 @@
 [ext_resource type="Resource" uid="uid://cjd64xn7r7mh8" path="res://resources/game/resource_site_types/fishing_spot.tres" id="16_aa3pw"]
 [ext_resource type="Resource" uid="uid://bfubh3m6mcfi8" path="res://resources/game/resource_site_types/desert_island.tres" id="17_f71yy"]
 
+[sub_resource type="Curve" id="Curve_f71yy"]
+_limits = [-1.5, 1.5, -1.0, 1.0]
+_data = [Vector2(-1, -1), 0.0, 0.0, 0, 0, Vector2(-0.5738637, -0.7223463), 0.0, 0.0, 0, 0, Vector2(-0.0113636255, 0.026815653), 0.0, 0.0, 0, 0, Vector2(0.23863637, 0.30167603), 0.0, 0.0, 0, 0, Vector2(0.40340912, 0.47597778), 0.76692706, 0.76692706, 0, 0, Vector2(0.66477275, 0.6938548), 0.80259824, 0.80259824, 0, 0, Vector2(0.9034091, 1.5), 15.97761, 0.0, 0, 0]
+point_count = 7
+
 [sub_resource type="Curve" id="Curve_7j5km"]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.21091333, 0.051505923), 0.0, 0.0, 0, 0, Vector2(0.38409886, 0.7443265), 0.0, 0.0, 0, 0, Vector2(0.53596926, 0.9231189), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
 point_count = 5
@@ -119,7 +124,7 @@ script = ExtResource("9_1p0hh")
 Target = ExtResource("14_nugjq")
 MinElevation = 0.02
 MaxElevation = 0.485
-MinTemperature = 0.39
+MinTemperature = 0.45
 MinHumidity = 0.145
 MaxHumidity = 0.395
 Rarity = 2.0
@@ -187,6 +192,7 @@ WorldWidth = 640
 WorldHeight = 420
 LandRegionCount = 174
 AggressiveFactionCount = 40
+elevationCurve = SubResource("Curve_f71yy")
 islandCurve = SubResource("Curve_7j5km")
 seawindElevationDifferenceReductionCurve = SubResource("Curve_a3btc")
 seawindTemperatureModCurve = SubResource("Curve_t34eq")

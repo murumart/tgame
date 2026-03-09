@@ -53,7 +53,7 @@ public class Faction : IEntity {
 	TimeT time;
 
 
-	public Faction(Region region, uint initialPopulation = 30) {
+	public Faction(Region region, uint initialPopulation = 30, uint initialSilver = 30) {
 
 		Region = region;
 		Briefcase = new();
@@ -77,7 +77,7 @@ public class Faction : IEntity {
 			Name = Naming.GenRandomName();
 			Color = Color.FromHsv(GD.Randf(), (float)GD.RandRange(0.75, 1.0), 1.0f);
 			Resources.AddResource(new(Registry.ResourcesS.Bread, 10)); // initial buffer (DEBUG probably)
-			Silver = 30; // testing still
+			Silver = (int)initialSilver;
 			PlacePrebuiltBuilding(Registry.BuildingsS.LogCabin, new(0, 0));
 		}
 	}
