@@ -34,6 +34,12 @@ namespace scenes.map {
 		[Export] FastNoiseLite humidityNoise;
 		[Export] FastNoiseLite seawindGainNoise;
 
+		readonly struct NoiseHomeParams(FastNoiseLite noise, float frequency) {
+			public readonly FastNoiseLite Noise => noise;
+			public readonly float Frequency => frequency;
+		}
+		NoiseHomeParams[] noises;
+
 		[Export] public int WorldWidth;
 		[Export] public int WorldHeight;
 		[Export] int LandRegionCount;
@@ -58,10 +64,23 @@ namespace scenes.map {
 		public bool Generating { get; private set; }
 
 
-		public void GenerateContinents(World world) {
+		public override void _Ready() {
+			noises = [
+				new(continentNoise, continentNoise.Frequency),
+				new(temperatureNoise, temperatureNoise.Frequency),
+				new(humidityNoise, humidityNoise.Frequency),
+				new(seawindGainNoise, seawindGainNoise.Frequency),
+			];
+		}
+
+		public async Task GenerateContinents(World world, float noiseScale = 1f, float baseDepth = 0f) {
 			rng = new() {
 				Seed = world.Seed
 			};
+
+			foreach (var noise in noises) {
+				noise.Noise.Frequency = noise.Frequency * noiseScale;
+			}
 
 			Generating = true;
 
@@ -71,20 +90,25 @@ namespace scenes.map {
 			seawindGainNoise.Seed = (int)rng.Randi();
 
 			var centre = new Vector2(world.Width / 2, world.Height / 2);
-			var divBySidelen = 1.0f / (float)(Math.Pow(world.Width / 2.0, 2) + Math.Pow(world.Height / 2.0, 2));
+			var wsize = new Vector2(world.Width, world.Height);
+			int longerAxis = (int)(world.Width > world.Height ? Vector2.Axis.X : Vector2.Axis.Y);
+			int shorterAxis = (int)(world.Width > world.Height ? Vector2.Axis.X : Vector2.Axis.Y);
 			for (int x = 0; x < world.Width; x++) {
 				for (int y = 0; y < world.Height; y++) {
+					// pretend that the world is circle shaped
 					var vec = new Vector2(x, y);
+					vec /= wsize;
+
+					float distanceSqFromCentre = (Vector2.One * 0.5f).DistanceSquaredTo(vec) * 1.7f;
 
 					float continentSample = continentNoise.GetNoise2D(x, y);
-
-					float distanceSqFromCentre = centre.DistanceSquaredTo(vec) * divBySidelen;
 					continentSample -= islandCurve.SampleBaked(distanceSqFromCentre);
-					continentSample = Mathf.Clamp(elevationCurve.SampleBaked(continentSample), -1f, 1f);
+					continentSample = Mathf.Clamp(baseDepth + elevationCurve.SampleBaked(continentSample), -1f, 1f);
 
 					world.SetElevation(x, y, continentSample);
 				}
 			}
+			await Task.Delay(1);
 			// creating initial seawind
 			GD.Print("WorldGenerator::GenerateContinents : seawind direction ", world.SeaWindDirection);
 			for (int xinc = 0; xinc < world.Width; xinc++) {
@@ -106,6 +130,7 @@ namespace scenes.map {
 					world.SetSeaWind(x, y, seawind);
 				}
 			}
+			await Task.Delay(1);
 			// blurring the seawind
 			float kernelSum = kernel.Sum(k => k.Coef);
 			for (int x = 0; x < world.Width; x++) {
@@ -146,6 +171,7 @@ namespace scenes.map {
 					world.SetHumidity(x, y, humiditySample);
 				}
 			}
+			await Task.Delay(1);
 
 			for (int x = 0; x < world.Width; x++) {
 				for (int y = 0; y < world.Height; y++) {
@@ -168,6 +194,7 @@ namespace scenes.map {
 					world.SetTile(x, y, tile);
 				}
 			}
+			await Task.Delay(1);
 			Generating = false;
 		}
 
@@ -257,7 +284,7 @@ namespace scenes.map {
 
 			var tw = CreateTween().SetLoops(0);
 			var growCallback = Callable.From(() => {
-				var grew = GrowAllRegionsOneStep(regions, occupied, freeEdgeTiles, world, sea: sea, iterations: 128);
+				var grew = GrowAllRegionsOneStep(regions, occupied, freeEdgeTiles, world, sea: sea, iterations: 1);
 				Regions = regions;
 				if (!grew) {
 					tw.EmitSignal(Tween.SignalName.Finished);

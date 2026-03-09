@@ -4,6 +4,8 @@ using scenes.autoload;
 
 public partial class Camera : Camera2D {
 
+	[Export] public bool CanMoveWithKeyboard = true;
+
 	public event Action<Vector2I> ClickedMouseEvent;
 	public event Action ZoomChanged;
 
@@ -20,7 +22,7 @@ public partial class Camera : Camera2D {
 	}
 
 	public override void _Process(double delta) {
-		Movement((float)delta);
+		if (CanMoveWithKeyboard) Movement((float)delta);
 		var oldzoom = Zoom;
 		Zoom = new Vector2(zoomSize, zoomSize);
 		if (oldzoom != Zoom) {

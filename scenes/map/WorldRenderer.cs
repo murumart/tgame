@@ -156,8 +156,8 @@ public partial class WorldRenderer : Node {
 				DrawContinents();
 				break;
 			case DrawMode.Ground:
-					DrawGround();
-					break;
+				DrawGround();
+				break;
 			case DrawMode.SeaWind:
 				DrawSeaWind();
 				break;
@@ -174,7 +174,7 @@ public partial class WorldRenderer : Node {
 		if (regions == null) return;
 		var image = GetImage(RegionSprite);
 		foreach (var region in regions) {
-			var color = region.LocalFaction.Color.Lightened(0.5f);
+			var color = region.LocalFaction?.Color.Lightened(0.5f) ?? Color.FromHsv(region.WorldIndex / (float)regions.Length, 1f, 1f);
 			if (region.LocalFaction != null && region.LocalFaction.HasOwningFaction()) color = region.LocalFaction.GetOwningFaction().Region.LocalFaction.Color.Darkened(0.25f);
 			foreach (var px in region.GroundTiles.Keys) {
 				image.SetPixelv(px + region.WorldPosition, color);

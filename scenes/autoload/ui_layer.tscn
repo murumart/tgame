@@ -30,6 +30,7 @@ anchor_right = 0.73300004
 anchor_bottom = 0.689
 offset_right = 0.15997314
 offset_bottom = 103.95999
+mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_nuntr")
 metadata/_edit_use_anchors_ = true
 

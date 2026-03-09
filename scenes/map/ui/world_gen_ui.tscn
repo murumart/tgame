@@ -1,0 +1,392 @@
+[gd_scene format=3 uid="uid://cq3tmeo4vasbf"]
+
+[ext_resource type="Script" uid="uid://fyvt15l3gl24" path="res://scenes/map/ui/WorldGenUi.cs" id="1_psavt"]
+[ext_resource type="LabelSettings" uid="uid://ddruam7fh1y7l" path="res://resources/visual/theme/label_styles/title.tres" id="1_vu3sd"]
+[ext_resource type="StyleBox" uid="uid://bvafrlmq6sivc" path="res://resources/visual/theme/sb_lighter.tres" id="2_nf5g8"]
+[ext_resource type="Script" uid="uid://dr5e3dfpjl6hw" path="res://scenes/map/WorldGenerator.cs" id="3_77t5k"]
+[ext_resource type="Script" uid="uid://jdld04xxcpmv" path="res://scenes/map/WorldRenderer.cs" id="3_brgba"]
+[ext_resource type="Gradient" uid="uid://bwm3e3btidxww" path="res://resources/visual/map/continent_gradient.tres" id="4_ortkg"]
+[ext_resource type="FastNoiseLite" uid="uid://cf0v3ea3na5un" path="res://scenes/map/noises/continental.tres" id="4_psavt"]
+[ext_resource type="Gradient" uid="uid://ypkjsovb40j4" path="res://resources/visual/map/temperature_gradient.tres" id="5_itdqw"]
+[ext_resource type="FastNoiseLite" uid="uid://elpkgdjffs74" path="res://scenes/map/noises/temperature.tres" id="5_wddjc"]
+[ext_resource type="FastNoiseLite" uid="uid://dubsuvs1ouru5" path="res://scenes/map/noises/humidity.tres" id="6_6lrtn"]
+[ext_resource type="Gradient" uid="uid://w5sdtmt8u44c" path="res://resources/visual/map/humidity_gradient.tres" id="6_pnj5n"]
+[ext_resource type="FastNoiseLite" uid="uid://bfyvnr33jlpag" path="res://scenes/map/noises/seawind_gain.tres" id="7_muf1k"]
+[ext_resource type="Resource" uid="uid://c2hf677ph58lg" path="res://resources/game/resource_site_types/clay_pit.tres" id="8_q3l1s"]
+[ext_resource type="Script" uid="uid://dpr7b2iecx6gm" path="res://resources/game/resource_site_types/ResourceSiteGenerationParameters.cs" id="9_sif2q"]
+[ext_resource type="Resource" uid="uid://bh5svfg5ua7eb" path="res://resources/game/resource_site_types/rock.tres" id="10_14sxt"]
+[ext_resource type="Resource" uid="uid://dwcrohuk4oajt" path="res://resources/game/resource_site_types/rubble.tres" id="11_toa58"]
+[ext_resource type="Resource" uid="uid://bws8feec8sqin" path="res://resources/game/resource_site_types/broadleaf_woods.tres" id="12_70smt"]
+[ext_resource type="Resource" uid="uid://d08tlsfel81yf" path="res://resources/game/resource_site_types/conifer_woods.tres" id="13_jtvop"]
+[ext_resource type="Resource" uid="uid://bmiejrddiwehn" path="res://resources/game/resource_site_types/savanna_trees.tres" id="14_u7h10"]
+[ext_resource type="Resource" uid="uid://b1uvd7viwkyac" path="res://resources/game/resource_site_types/rainforest_trees.tres" id="15_1n8x5"]
+[ext_resource type="Resource" uid="uid://cjd64xn7r7mh8" path="res://resources/game/resource_site_types/fishing_spot.tres" id="16_nb2q8"]
+[ext_resource type="Resource" uid="uid://bfubh3m6mcfi8" path="res://resources/game/resource_site_types/desert_island.tres" id="17_nshhs"]
+[ext_resource type="Script" uid="uid://dvsrcgoginxgl" path="res://scenes/Camera.cs" id="23_wddjc"]
+
+[sub_resource type="Curve" id="Curve_y27hg"]
+_limits = [-1.5, 1.5, -1.0, 1.0]
+_data = [Vector2(-1, -1), 0.0, 0.0, 0, 0, Vector2(-0.5738637, -0.7223463), 0.0, 0.0, 0, 0, Vector2(-0.0113636255, 0.026815653), 0.0, 0.0, 0, 0, Vector2(0.23863637, 0.30167603), 0.0, 0.0, 0, 0, Vector2(0.40340912, 0.47597778), 0.76692706, 0.76692706, 0, 0, Vector2(0.66477275, 0.6938548), 0.80259824, 0.80259824, 0, 0, Vector2(0.9034091, 1.5), 15.97761, 0.0, 0, 0]
+point_count = 7
+
+[sub_resource type="Curve" id="Curve_8evwd"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.21091333, 0.051505923), 0.0, 0.0, 0, 0, Vector2(0.38409886, 0.7443265), 0.0, 0.0, 0, 0, Vector2(0.53596926, 0.9231189), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 5
+
+[sub_resource type="Curve" id="Curve_l1l36"]
+_limits = [0.0, 1.0, -1.0, 1.0]
+_data = [Vector2(0.012905836, 0), 0.0, 0.0, 0, 0, Vector2(0.018, 0.042), 0.0, 0.0, 0, 0, Vector2(0.045, 0.044), 0.0, 0.0, 0, 0, Vector2(0.09096575, 0.24204344), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="Curve" id="Curve_fvhq4"]
+_data = [Vector2(0, 0.42378378), 0.0, 0.0, 0, 0, Vector2(0.4944751, 0.5643243), 0.0, 0.0, 0, 0, Vector2(1, 0.8939557), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="Curve" id="Curve_7cu7j"]
+_limits = [0.0, 2.0, 0.0, 1.0]
+_data = [Vector2(0, 2), 0.0, 0.0, 0, 0, Vector2(0.097939156, 0.3102436), 0.0, 0.0, 0, 0, Vector2(0.38676095, 0.04947877), 0.0, 0.0, 0, 0, Vector2(1, 0.0102523565), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="Curve" id="Curve_mt0vv"]
+_limits = [-1.0, 1.0, -1.0, 1.0]
+_data = [Vector2(-0.07556212, 0.06507754), 0.0, 0.0, 0, 0, Vector2(-0.00270617, 0.005616784), 0.8166316, 0.0, 0, 0, Vector2(0.91319716, -0.034276605), 0.0, 0.0, 0, 0, Vector2(1, -1), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="Curve" id="Curve_bxlgn"]
+_limits = [0.0, 1.0, -1.0, 1.0]
+_data = [Vector2(-1, 0), 0.0, 0.0, 0, 0, Vector2(-0.88397783, 0.19189191), 0.39135125, 0.39135125, 0, 0, Vector2(0.7763579, 0.397561), 0.1550684, 0.1550684, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="Curve" id="Curve_ipoxy"]
+_limits = [-1.0, 1.0, 0.0, 1.0]
+_data = [Vector2(0, 0.8748331), 0.0, -1.3312594, 0, 0, Vector2(1, -0.515913), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_ts8ib"]
+_limits = [0.0, 1.0, -1.0, 1.0]
+_data = [Vector2(0.34254146, 0), 0.0, 0.0, 0, 0, Vector2(1, 1), 2.3344877, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_7544e"]
+_limits = [0.0, 500.0, 0.0, 1200.0]
+_data = [Vector2(0, 0), 0.0, 0.24459472, 0, 0, Vector2(1200, 195.57611), 0.35408792, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Resource" id="Resource_getmw"]
+script = ExtResource("9_sif2q")
+Target = ExtResource("8_q3l1s")
+MinElevation = 0.01
+MinHumidity = 0.38
+Rarity = 0.1
+metadata/_custom_type_script = "uid://dpr7b2iecx6gm"
+
+[sub_resource type="Resource" id="Resource_dtgda"]
+script = ExtResource("9_sif2q")
+Target = ExtResource("10_14sxt")
+MinElevation = 0.4
+MaxHumidity = 0.795
+Rarity = 0.65
+metadata/_custom_type_script = "uid://dpr7b2iecx6gm"
+
+[sub_resource type="Resource" id="Resource_pnmcl"]
+script = ExtResource("9_sif2q")
+Target = ExtResource("11_toa58")
+MinElevation = 0.15
+Rarity = 0.255
+metadata/_custom_type_script = "uid://dpr7b2iecx6gm"
+
+[sub_resource type="Resource" id="Resource_iffmc"]
+script = ExtResource("9_sif2q")
+Target = ExtResource("12_70smt")
+MinElevation = 0.02
+MaxElevation = 0.42
+MinTemperature = 0.035
+MaxTemperature = 0.4
+MinHumidity = 0.235
+MaxHumidity = 0.505
+Rarity = 1.295
+metadata/_custom_type_script = "uid://dpr7b2iecx6gm"
+
+[sub_resource type="Resource" id="Resource_nugjq"]
+script = ExtResource("9_sif2q")
+Target = ExtResource("13_jtvop")
+MinElevation = 0.025
+MaxElevation = 0.74
+MinTemperature = -0.29
+MaxTemperature = 0.155
+MinHumidity = 0.195
+MaxHumidity = 0.505
+Rarity = 1.595
+metadata/_custom_type_script = "uid://dpr7b2iecx6gm"
+
+[sub_resource type="Resource" id="Resource_a1kp6"]
+script = ExtResource("9_sif2q")
+Target = ExtResource("14_u7h10")
+MinElevation = 0.02
+MaxElevation = 0.485
+MinTemperature = 0.45
+MinHumidity = 0.145
+MaxHumidity = 0.395
+Rarity = 2.0
+metadata/_custom_type_script = "uid://dpr7b2iecx6gm"
+
+[sub_resource type="Resource" id="Resource_aa3pw"]
+script = ExtResource("9_sif2q")
+Target = ExtResource("15_1n8x5")
+MinElevation = 0.02
+MaxElevation = 0.8
+MinTemperature = 0.45
+MinHumidity = 0.45
+Rarity = 2.9
+metadata/_custom_type_script = "uid://dpr7b2iecx6gm"
+
+[sub_resource type="Resource" id="Resource_f71yy"]
+script = ExtResource("9_sif2q")
+Target = ExtResource("16_nb2q8")
+MinElevation = -0.3
+MaxElevation = -0.01
+MinTemperature = -0.5
+MaxTemperature = 0.5
+metadata/_custom_type_script = "uid://dpr7b2iecx6gm"
+
+[sub_resource type="Resource" id="Resource_6ybvo"]
+script = ExtResource("9_sif2q")
+Target = ExtResource("17_nshhs")
+MinElevation = -1.0
+MaxElevation = 0.0
+MinTemperature = 0.2
+MinHumidity = 0.42
+Rarity = 0.66
+metadata/_custom_type_script = "uid://dpr7b2iecx6gm"
+
+[sub_resource type="Gradient" id="Gradient_htr2q"]
+offsets = PackedFloat32Array(0.5, 1)
+colors = PackedColorArray(0.32941177, 0.40392157, 0.3372549, 1, 0.94509804, 0.9647059, 0.9411765, 1)
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_pdks8"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_e51lx"]
+blend_mode = 1
+
+[node name="WorldGenUI" type="MarginContainer" unique_id=1511327676 node_paths=PackedStringArray("worldGenerator", "worldRenderer", "camera", "genRegionsButton", "worldSeedLabel", "worldWidthSpinbox", "worldHeightSpinbox", "noiseScaleSpinbox", "depthSpinbox")]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+script = ExtResource("1_psavt")
+worldGenerator = NodePath("HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/SubViewportContainer/WorldDisplay/WorldGenerator")
+worldRenderer = NodePath("HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/SubViewportContainer/WorldDisplay/WorldRenderer")
+camera = NodePath("HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/SubViewportContainer/WorldDisplay/Camera2D")
+genRegionsButton = NodePath("HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/GenRegionsButton")
+worldSeedLabel = NodePath("HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/SeedLabel")
+worldWidthSpinbox = NodePath("HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer/Width")
+worldHeightSpinbox = NodePath("HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer2/Height")
+noiseScaleSpinbox = NodePath("HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/NoiseScale")
+depthSpinbox = NodePath("HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/BaseDepth")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1929638013]
+layout_mode = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="HBoxContainer" unique_id=450601763]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/PanelContainer" unique_id=235060085]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/PanelContainer/MarginContainer" unique_id=1286367096]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HBoxContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1028957730]
+layout_mode = 2
+text = "new world"
+label_settings = ExtResource("1_vu3sd")
+
+[node name="Label2" type="Label" parent="HBoxContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=754279911]
+layout_mode = 2
+text = "Seed"
+
+[node name="SeedLabel" type="LineEdit" parent="HBoxContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1769054741]
+layout_mode = 2
+focus_mode = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1911514008]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer" unique_id=1353233287]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer" unique_id=1924643486]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer" unique_id=2009554349]
+layout_mode = 2
+text = "Width"
+
+[node name="Width" type="SpinBox" parent="HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer" unique_id=900889718]
+layout_mode = 2
+min_value = 32.0
+max_value = 1024.0
+step = 16.0
+value = 768.0
+rounded = true
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer" unique_id=569289972]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label2" type="Label" parent="HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer2" unique_id=988676581]
+layout_mode = 2
+text = "Height"
+
+[node name="Height" type="SpinBox" parent="HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer2" unique_id=368086368]
+layout_mode = 2
+min_value = 32.0
+max_value = 1024.0
+step = 16.0
+value = 512.0
+rounded = true
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer" unique_id=209627697]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer2" unique_id=1250900637]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer" unique_id=694713801]
+layout_mode = 2
+text = "Landform  Scale"
+
+[node name="NoiseScale" type="SpinBox" parent="HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer" unique_id=752350732]
+layout_mode = 2
+min_value = 0.125
+max_value = 2.0
+step = 0.125
+value = 1.0
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer2" unique_id=1813350141]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label2" type="Label" parent="HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer2" unique_id=158002057]
+layout_mode = 2
+text = "Base Depth"
+
+[node name="BaseDepth" type="SpinBox" parent="HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer2" unique_id=1612201695]
+layout_mode = 2
+min_value = -1.0
+max_value = 1.0
+step = 0.05
+
+[node name="GenRegionsButton" type="Button" parent="HBoxContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1412439628]
+layout_mode = 2
+focus_mode = 0
+text = "grow regions"
+
+[node name="PanelContainer2" type="PanelContainer" parent="HBoxContainer" unique_id=1866558799]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
+
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/PanelContainer2" unique_id=1611469656]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/PanelContainer2/MarginContainer" unique_id=631015003]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer" unique_id=1595479937]
+layout_mode = 2
+text = "Map"
+label_settings = ExtResource("1_vu3sd")
+horizontal_alignment = 1
+
+[node name="PanelContainer" type="PanelContainer" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer" unique_id=327481644]
+clip_contents = true
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = ExtResource("2_nf5g8")
+
+[node name="TextureRect" type="TextureRect" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/PanelContainer" unique_id=1964925385]
+layout_mode = 2
+mouse_filter = 2
+expand_mode = 2
+stretch_mode = 5
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/PanelContainer" unique_id=1836119842]
+layout_mode = 2
+stretch = true
+mouse_target = true
+
+[node name="WorldDisplay" type="SubViewport" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/SubViewportContainer" unique_id=309516746]
+transparent_bg = true
+handle_input_locally = false
+snap_2d_transforms_to_pixel = true
+canvas_item_default_texture_filter = 0
+oversampling = false
+size = Vector2i(304, 325)
+render_target_update_mode = 4
+
+[node name="WorldGenerator" type="Node" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/SubViewportContainer/WorldDisplay" unique_id=941712464]
+script = ExtResource("3_77t5k")
+continentNoise = ExtResource("4_psavt")
+temperatureNoise = ExtResource("5_wddjc")
+humidityNoise = ExtResource("6_6lrtn")
+seawindGainNoise = ExtResource("7_muf1k")
+WorldWidth = 640
+WorldHeight = 420
+LandRegionCount = 174
+AggressiveFactionCount = 40
+elevationCurve = SubResource("Curve_y27hg")
+islandCurve = SubResource("Curve_8evwd")
+seawindElevationDifferenceReductionCurve = SubResource("Curve_l1l36")
+seawindTemperatureModCurve = SubResource("Curve_fvhq4")
+seawindHumidityReductionCurve = SubResource("Curve_7cu7j")
+elevationHumidityAdditionCurve = SubResource("Curve_mt0vv")
+humidityCurve = SubResource("Curve_bxlgn")
+temperaturePolarEquatorCurve = SubResource("Curve_ipoxy")
+elevationTemperatureReductionCurve = SubResource("Curve_ts8ib")
+temperatureNoiseCoef = 0.03
+populationLandTileCurve = SubResource("Curve_7544e")
+resourceSiteGenerationParameters = Array[Object]([SubResource("Resource_getmw"), SubResource("Resource_dtgda"), SubResource("Resource_pnmcl"), SubResource("Resource_iffmc"), SubResource("Resource_nugjq"), SubResource("Resource_a1kp6"), SubResource("Resource_aa3pw"), SubResource("Resource_f71yy"), SubResource("Resource_6ybvo")])
+
+[node name="WorldRenderer" type="Node" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/SubViewportContainer/WorldDisplay" unique_id=298074584 node_paths=PackedStringArray("groundSprite", "RegionSprite", "highlightSprite")]
+script = ExtResource("3_brgba")
+groundSprite = NodePath("Ground")
+RegionSprite = NodePath("Regions")
+highlightSprite = NodePath("Highlight")
+elevationGradient = ExtResource("4_ortkg")
+temperatureGradient = ExtResource("5_itdqw")
+seaWindGradient = SubResource("Gradient_htr2q")
+humidityGradient = ExtResource("6_pnj5n")
+
+[node name="Ground" type="Sprite2D" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/SubViewportContainer/WorldDisplay/WorldRenderer" unique_id=813748711]
+centered = false
+
+[node name="Regions" type="Sprite2D" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/SubViewportContainer/WorldDisplay/WorldRenderer" unique_id=1844162579]
+modulate = Color(1.288, 1.288, 1.288, 0.204)
+material = SubResource("CanvasItemMaterial_pdks8")
+centered = false
+
+[node name="Highlight" type="Sprite2D" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/SubViewportContainer/WorldDisplay/WorldRenderer" unique_id=907489087]
+modulate = Color(1, 1, 1, 0.26666668)
+material = SubResource("CanvasItemMaterial_e51lx")
+centered = false
+
+[node name="Camera2D" type="Camera2D" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/SubViewportContainer/WorldDisplay" unique_id=1390201607]
+script = ExtResource("23_wddjc")
+CanMoveWithKeyboard = false
