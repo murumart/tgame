@@ -27,7 +27,7 @@ public abstract partial class LocalAI {
 			float delta = currentTime - lastUsed.GetValueOrDefault(action.ToString(), 0);
 			float debounce = Mathf.Pow(Mathf.Clamp(delta / (4 * GameTime.MINUTES_PER_HOUR), 0f, 1f), 4);
 			float s = action.Score() * debounce;
-			if (GameMan.Singleton.Game.PlayRegion == factionActions.Region) Console.WriteLine($"LocalAI::ChooseAction : {action} scored {s}");
+			//if (GameMan.Singleton.Game.PlayRegion == factionActions.Region) Console.WriteLine($"LocalAI::ChooseAction : {action} scored {s}");
 			if (s > chosenScore) {
 				chosenScore = s;
 				chosenAction = action;
@@ -461,10 +461,10 @@ public partial class LocalAI {
 			return new(() => tradeOffer.CanTrade(tradeOffer.StoredUnits) ? 1.0f : 0.0f, $"CanAcceptTradeOffer");
 		}
 
-		public static DecisionFactor HasFunctionalMarketplace(FactionActions ac) {
+		public static DecisionFactor MarketplaceIsBeingWorkedAt(FactionActions ac) {
 			return new(() => {
 				var job = ac.GetProcessMarketJob();
-				if (job != null) return 1.0f;
+				if (job != null && job.Workers > 0) return 1.0f;
 				return 0f;
 			}, "HasFunctionalMarketplace");
 		}
@@ -482,6 +482,14 @@ public partial class LocalAI {
 				if (mp.IsConstructed) return 1f;
 				return 0f;
 			}, "IsMarketplaceConstructed");
+		}
+
+		public static DecisionFactor MarketplaceJobExists(FactionActions ac) {
+			return new(() => {
+				var job = ac.GetProcessMarketJob();
+				if (job != null) return 1.0f;
+				return 0f;
+			}, "MarketplaceJobExists");
 		}
 
 		public static DecisionFactor TradeOfferLimit(Faction me, Faction other, int limit) {
@@ -638,7 +646,7 @@ public class GamerAI : LocalAI {
 		], factionActions, Registry.BuildingsS.Marketplace));
 
 		startActions.Add(Actions.CreateProcessMarketJob([
-			Factors.OneMinus(Factors.HasFunctionalMarketplace(actions)),
+			Factors.OneMinus(Factors.MarketplaceJobExists(actions)),
 			Factors.HasMarketplace(actions),
 			Factors.IsMarketplaceConstructed(actions),
 		], actions));
@@ -652,7 +660,7 @@ public class GamerAI : LocalAI {
 			int srand2 = (int)(GD.Randi() % 4) + 1;
 			startActions.Add(Actions.SendTradeOffer([
 				Factors.Curve(Factors.Group([
-					Factors.HasFunctionalMarketplace(actions),
+					Factors.MarketplaceIsBeingWorkedAt(actions),
 					Factors.SentTradeOfferLimit(actions, 10),
 					Factors.ResourceWant(actions, this, res),
 					Factors.SilverNeed(actions, srand1),
@@ -660,14 +668,14 @@ public class GamerAI : LocalAI {
 				]), sendTradeOfferCurve),
 			], actions, srand1, new ResourceBundle(res, srand1 * srand2)));
 			// boost the econony hopwefull 📈📈📈📈
-			startActions.Add(Actions.SendTradeOffer([
-				Factors.HasFunctionalMarketplace(actions),
-				Factors.SentTradeOfferLimit(actions, 10),
-				Factors.Mult(Factors.ResourceWant(actions, this, res), 2f),
-				Factors.SilverNeed(actions, srand1),
-				Factors.RichnessSpendable(actions, 45),
-				Factors.Const(0.5f),
-			], actions, srand1, new ResourceBundle(res, srand1 * srand2)));
+			//startActions.Add(Actions.SendTradeOffer([
+			//	Factors.MarketplaceIsBeingWorkedAt(actions),
+			//	Factors.SentTradeOfferLimit(actions, 10),
+			//	Factors.Mult(Factors.ResourceWant(actions, this, res), 2f),
+			//	Factors.SilverNeed(actions, srand1),
+			//	Factors.RichnessSpendable(actions, 45),
+			//	Factors.Const(0.5f),
+			//], actions, srand1, new ResourceBundle(res, srand1 * srand2)));
 		}
 
 		this.mainActions = startActions.ToList();
@@ -723,26 +731,25 @@ public class GamerAI : LocalAI {
 			}
 		}
 		var marketJob = factionActions.GetProcessMarketJob();
-		if (marketJob == null) return;
+		if (marketJob == null || marketJob.Workers == 0) return;
 		// creating trade offeers
 		foreach (var res in Registry.Resources.GetAssets()) {
-			int amount = factionActions.GetResourceStorage().GetCount(res);
-			if (amount < 15) continue;
+			int inStorage = factionActions.GetResourceStorage().GetCount(res);
+			if (inStorage < 15) continue;
 			int srand1 = (int)(GD.Randi() % 3) + 1;
-			amount = Mathf.Max(amount / 2, srand1); // ??????? wjhat am I dooing here
-			int silver = amount / (srand1 + 2) + srand1;
+			int tradeAmount = Mathf.Max(inStorage / 2, srand1); // ??????? wjhat am I dooing here
+			int silver = tradeAmount / (srand1 + 2) + srand1;
 			if (silver == 0) continue;
 			ephemeralActions.Add(Actions.SendTradeOffer([
-				Factors.OneMinus(Factors.ResourceWant(factionActions, this, res)),
+				Factors.OneMinus(Factors.Mult(Factors.ResourceWant(factionActions, this, res), tradeAmount)),
 				Factors.SilverWant(),
 				Factors.Const(0.36f),
-			], factionActions, new ResourceBundle(res, amount), silver));
+			], factionActions, new ResourceBundle(res, tradeAmount), silver));
 		}
 		foreach (var (partner, toffs) in factionActions.Faction.GetSentTradeOffers()) {
 			foreach (var toff in toffs) {
 				toff.Log($"ephemeral actions sent to {partner}");
 				ephemeralActions.Add(Actions.CancelTradeOffer([
-					//Factors.HasFunctionalMarketplace(factionActions), // Gah
 					!toff.OffererGivesRecipientSilver
 						? Factors.ResourceWant(factionActions, this, toff.OffererSoldResourcesUnit.Type)
 						: Factors.Const(0.0015f),
@@ -757,14 +764,13 @@ public class GamerAI : LocalAI {
 				if (!toff.IsValid) GD.PushWarning(toff.History);
 				AIAssert(toff.IsValid, "This trade offer isn't valid, delete!!!!!");
 				ephemeralActions.Add(Actions.AcceptTradeOffer([
-					//Factors.HasFunctionalMarketplace(factionActions), // Gah
+					//Factors.MarketplaceIsBeingWorkedAt(factionActions), // don't need this, are checking above
 					Factors.CanAcceptTradeOffer(toff),
 					toff.OffererGivesRecipientSilver
 						? Factors.OneMinus(Factors.ResourceWant(factionActions, this, toff.RecepientRequiredResourcesUnit.Type))
 						: Factors.ResourceWant(factionActions, this, toff.OffererSoldResourcesUnit.Type),
 				], factionActions.Faction, partner, toff));
 				ephemeralActions.Add(Actions.RejectTradeOffer([
-					//Factors.HasFunctionalMarketplace(factionActions), // Gah
 					Factors.Mult(Factors.OneMinus(Factors.CanAcceptTradeOffer(toff)), 0.00015f),
 				], factionActions.Faction, partner, toff));
 			}
@@ -772,7 +778,7 @@ public class GamerAI : LocalAI {
 	}
 
 	public override void Update(TimeT minute) {
-		if (factionActions.Region == GameMan.Singleton.Game.PlayRegion) Console.WriteLine($"LocalAI::Update : (of {factionActions}) doing update");
+		//if (factionActions.Region == GameMan.Singleton.Game.PlayRegion) Console.WriteLine($"LocalAI::Update : (of {factionActions}) doing update");
 		var ustime = Time.GetTicksUsec();
 		// shuffle and evaluate only 30 actions
 		var span = mainActions.Concat(ephemeralActions).OrderBy(_ => GD.Randi()).Take(30).ToArray().AsSpan();
