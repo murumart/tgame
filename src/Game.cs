@@ -39,4 +39,9 @@ public class Game {
 		}
 	}
 
+	public LocalAI GetRegionAI(Region region) {
+		Debug.Assert(region.WorldIndex >= 0 && region.WorldIndex < regionAIs.Length, $"{region.WorldIndex} vs {regionAIs.Length}");
+		return regionAIs[region.WorldIndex];
+	}
+
 }

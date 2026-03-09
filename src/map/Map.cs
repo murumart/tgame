@@ -42,7 +42,7 @@ public class Map {
 		List<Region> regions = new();
 		List<Faction> regionFactions = new();
 		for (int i = 10; i < 20; i++) {
-			var region = Region.GetTestCircleRegion(i, 12, new(i * 18, i * 15));
+			var region = Region.GetTestCircleRegion(i - 10, 12, new(i * 18, i * 15));
 			regions.Add(region);
 			var regionFaction = new Faction(region);
 			regionFactions.Add(regionFaction);

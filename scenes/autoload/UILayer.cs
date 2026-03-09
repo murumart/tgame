@@ -50,8 +50,10 @@ namespace scenes.autoload {
 		}
 
 		public static void DebugDisplay(Func<string> output) {
-			var label = new Label();
-			label.LabelSettings = GD.Load<LabelSettings>("res://resources/visual/theme/label_styles/debug.tres");
+			var label = new Label {
+				LabelSettings = GD.Load<LabelSettings>("res://resources/visual/theme/label_styles/debug.tres"),
+				TabStops = [32f],
+			};
 			singleton.debugLabelParent.AddChild(label);
 			label.SetMeta("callback", Callable.From(output));
 		}

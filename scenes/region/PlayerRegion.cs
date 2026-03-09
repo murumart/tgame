@@ -104,6 +104,8 @@ namespace scenes.region {
 			//		GD.Print("RegionMan::_Ready : adding resource ", r);
 			//		faction.Resources.AddResource(new(r, 50));
 			//}
+			UILayer.DebugDisplay(() => "Last Action Info:\n" + GameMan.Singleton.Game.GetRegionAI(region).profiling.LastActionInfo());
+			UILayer.DebugDisplay(() => "Last Decision Info:\n" + GameMan.Singleton.Game.GetRegionAI(region).profiling.LastDecisionInfo());
 			UILayer.DebugDisplay(() => {
 				return $"hunger: {faction.Population.Hunger}, growing: {faction.Population.OngrowingPopulation}";
 			});
@@ -144,7 +146,7 @@ namespace scenes.region {
 
 				GameMan.Singleton.Game.Time.HourPassedEvent -= HourlyUpdate;
 				GameMan.Singleton.Game.Time.TimePassedEvent -= PassTime;
-				LocalAI.Profile.EndProfiling();
+				LocalAI.Profiling.EndProfiling();
 
 				ui.QueueFree();
 			}

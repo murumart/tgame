@@ -1,9 +1,12 @@
 [gd_resource type="LabelSettings" format=3 uid="uid://0tidmu3mudw6"]
 
-[ext_resource type="FontVariation" uid="uid://16wjjwlxw4iw" path="res://resources/visual/font/default_font.tres" id="1_k5k82"]
+[sub_resource type="SystemFont" id="SystemFont_2nr1f"]
+font_names = PackedStringArray("Monospace")
+font_weight = 700
 
 [resource]
-font = ExtResource("1_k5k82")
-font_size = 8
+line_spacing = 1.0
+font = SubResource("SystemFont_2nr1f")
+font_size = 6
 outline_size = 1
 outline_color = Color(0, 0, 0, 1)

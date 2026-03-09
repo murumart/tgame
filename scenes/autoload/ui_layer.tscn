@@ -3,10 +3,12 @@
 [ext_resource type="Script" uid="uid://twrusuvwm4pu" path="res://scenes/autoload/UILayer.cs" id="1_4ql2r"]
 [ext_resource type="PackedScene" uid="uid://3kvcwdnxdp36" path="res://scenes/region/ui/hover_info_panel.tscn" id="2_nuntr"]
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_nuntr"]
+
 [node name="UiLayer" type="CanvasLayer" unique_id=1064052168 node_paths=PackedStringArray("infoPanel", "debugLabelParent")]
 script = ExtResource("1_4ql2r")
 infoPanel = NodePath("Infopanel")
-debugLabelParent = NodePath("Control/DebugLabels")
+debugLabelParent = NodePath("Control/DebugLabels/VBoxContainer")
 
 [node name="Infopanel" parent="." unique_id=1644599086 instance=ExtResource("2_nuntr")]
 
@@ -19,14 +21,20 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="DebugLabels" type="VBoxContainer" parent="Control" unique_id=425426708]
-visible = false
+[node name="DebugLabels" type="ScrollContainer" parent="Control" unique_id=1863737310]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.725
-anchor_top = 0.6888889
-anchor_right = 0.725
+anchor_left = 0.029166667
+anchor_top = 0.45833334
+anchor_right = 0.73300004
 anchor_bottom = 0.689
-offset_right = 124.0
+offset_right = 0.15997314
 offset_bottom = 103.95999
+theme_override_styles/panel = SubResource("StyleBoxEmpty_nuntr")
 metadata/_edit_use_anchors_ = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/DebugLabels" unique_id=93419399]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Godot;
 using scenes.autoload;
 using static Building;
@@ -17,7 +18,10 @@ public abstract partial class LocalAI {
 	public abstract void PreUpdate(TimeT moment);
 	public abstract void Update(TimeT moment);
 
+	public readonly Profiling profiling = new();
+
 	readonly Dictionary<string, TimeT> lastUsed = new();
+
 
 	// actions should be shuffled when input
 	protected void ChooseAction(out Action chosenAction, out float chosenScore, Span<Action> actions, TimeT currentTime, float idleScore = 0f) {
@@ -26,7 +30,7 @@ public abstract partial class LocalAI {
 		foreach (ref readonly var action in actions) {
 			float delta = currentTime - lastUsed.GetValueOrDefault(action.ToString(), 0);
 			float debounce = Mathf.Pow(Mathf.Clamp(delta / (4 * GameTime.MINUTES_PER_HOUR), 0f, 1f), 4);
-			float s = action.Score() * debounce;
+			float s = action.Score(profiling) * debounce;
 			//if (GameMan.Singleton.Game.PlayRegion == factionActions.Region) Console.WriteLine($"LocalAI::ChooseAction : {action} scored {s}");
 			if (s > chosenScore) {
 				chosenScore = s;
@@ -47,14 +51,14 @@ public partial class LocalAI {
 			act();
 		}
 
-		public readonly float Score() {
+		public readonly float Score(Profiling profiling) {
 			//Console.WriteLine($"LocalAI::Action::Score : \tscoring {this}");
 			ulong ustime = Time.GetTicksUsec();
 			float score = 1f;
 			foreach (ref readonly DecisionFactor factor in factors.AsSpan()) {
 				ulong sustime = Time.GetTicksUsec();
 				float s = factor.Score();
-				Profile.AddDecisionTime(Time.GetTicksUsec() - sustime, factor.ToString());
+				profiling.LogDecisionFactor(Time.GetTicksUsec() - sustime, s, factor.ToString());
 				Debug.Assert(!Mathf.IsNaN(s), $"Action {this} Got NOT A NUMBER from scoring decision {factor}");
 				//Console.WriteLine($"LocalAI::Action::Score : \t\tutility of {factor} is {s}");
 				score *= s;
@@ -63,7 +67,7 @@ public partial class LocalAI {
 				}
 			}
 			ustime = Time.GetTicksUsec() - ustime;
-			Profile.AddActionTime(ustime, name);
+			profiling.LogAction(ustime, score, name);
 			//Console.WriteLine($"LocalAI::Action::Score : \tscored *{score}* (took {ustime} us)");
 			return score;
 		}
@@ -223,7 +227,7 @@ public partial class LocalAI {
 					if (job is GatherResourceJob g && Registry.ResourcesS.FoodValues.TryGetValue(g.GetProduction().ResourceType, out var _)) continue;
 					ac.RemoveJob(job);
 				}
-			}, "FoodPanicCancelEverything");
+			}, "FoodPANIC!!!CancelEverything");
 		}
 
 	}
@@ -466,7 +470,7 @@ public partial class LocalAI {
 				var job = ac.GetProcessMarketJob();
 				if (job != null && job.Workers > 0) return 1.0f;
 				return 0f;
-			}, "HasFunctionalMarketplace");
+			}, "MarketplaceIsBeingWorkedAt");
 		}
 
 		public static DecisionFactor HasMarketplace(FactionActions ac) {
@@ -522,40 +526,70 @@ public partial class LocalAI {
 // profiling && debugging
 public partial class LocalAI {
 
-	public static class Profile {
+	public class Profiling {
 
-		static readonly Dictionary<string, List<ulong>> ActionTimes = new();
-		static readonly Dictionary<string, List<ulong>> DecisionTimes = new();
+		readonly Dictionary<string, List<(ulong, float)>> ActionInfo = new();
+		readonly static Dictionary<string, List<(ulong, float)>> ClassActionInfo = new();
+		readonly Dictionary<string, List<(ulong, float)>> DecisionInfo = new();
+		readonly static Dictionary<string, List<(ulong, float)>> ClassDecisionInfo = new();
 
 
-		public static void AddActionTime(ulong time, string name) {
-			if (!ActionTimes.TryGetValue(name, out var list)) {
+		public void LogAction(ulong time, float score, string name) {
+			if (!ActionInfo.TryGetValue(name, out var list)) {
 				list = new();
-				ActionTimes[name] = list;
+				ActionInfo[name] = list;
 			}
-			list.Add(time);
+			list.Add((time, score));
+
+			if (!ClassActionInfo.TryGetValue(name, out list)) {
+				list = new();
+				ClassActionInfo[name] = list;
+			}
+			list.Add((time, score));
 		}
 
-		public static void AddDecisionTime(ulong time, string name) {
-			if (!DecisionTimes.TryGetValue(name, out var list)) {
+		public void LogDecisionFactor(ulong time, float score, string name) {
+			if (!DecisionInfo.TryGetValue(name, out var list)) {
 				list = new();
-				DecisionTimes[name] = list;
+				DecisionInfo[name] = list;
 			}
-			list.Add(time);
+			list.Add((time, score));
+
+			if (!ClassDecisionInfo.TryGetValue(name, out list)) {
+				list = new();
+				ClassDecisionInfo[name] = list;
+			}
+			list.Add((time, score));
 		}
 
-		static void Ep(Dictionary<string, List<ulong>> timess) {
+		public string LastActionInfo() => LastInfo(ActionInfo);
+		public string LastDecisionInfo() => LastInfo(DecisionInfo);
+
+		string LastInfo(Dictionary<string, List<(ulong, float)>> timess) {
+			StringBuilder sb = new();
+			var keys = timess.Keys.ToList();
+			keys.Sort((k1, k2) => timess[k2].Last().Item2.CompareTo(timess[k1].Last().Item2));
+			int longestKey = keys.Count > 0 ? keys?.MaxBy(k => k.Length).Length ?? 0 : 0;
+			sb.Append("key".PadRight(longestKey)).Append($"{("score"), -20}{("time"), -10}\n");
+			foreach (var k in keys) {
+				var (ltime, lscore) = timess[k].Last();
+				sb.Append(k.PadRight(longestKey)).Append($"{lscore:0.000000, -20}").Append($"{ltime, -10}\n");
+			}
+			return sb.ToString();
+		}
+
+		static void Ep(Dictionary<string, List<(ulong, float)>> timess) {
 			if (timess.Count == 0) return; // who care
 			var max = timess.MaxBy(kvp => kvp.Value.Max());
 			const string eps = "LocalAI::Profile::Ep : ";
 			var times = timess.ToList();
-			times.Sort((kvp1, kvp2) => kvp1.Value.Average(l => (double)l).CompareTo(kvp2.Value.Average(l => (double)l)));
+			times.Sort((kvp1, kvp2) => kvp1.Value.Average(l => (double)l.Item1).CompareTo(kvp2.Value.Average(l => (double)l.Item1)));
 			foreach (var (name, vals) in times) {
 				Console.WriteLine(eps + $"\t{name}:");
 				Console.WriteLine(eps + $"\t\tSCORES: {vals.Count}");
-				Console.WriteLine(eps + $"\t\tAVG   : {vals.Average(l => (double)l)} us");
+				Console.WriteLine(eps + $"\t\tAVG   : {vals.Average(l => (double)l.Item1)} us");
 				Console.WriteLine(eps + $"\t\tMAX   : {vals.Max()} us");
-				Console.WriteLine(eps + $"\t\tTOTAL : {vals.Sum(l => (long)l)} us");
+				Console.WriteLine(eps + $"\t\tTOTAL : {vals.Sum(l => (long)l.Item1)} us");
 			}
 			Console.WriteLine(eps + $"\tOMAX    : {max.Key} {max.Value.Max()} us");
 
@@ -571,12 +605,12 @@ public partial class LocalAI {
 			Console.WriteLine(eps + "ACTION SCORE TIMES");
 			Console.WriteLine(eps + "******************");
 			Console.WriteLine(eps + "");
-			Ep(ActionTimes);
+			Ep(ClassActionInfo);
 			Console.WriteLine(eps + "***************************");
 			Console.WriteLine(eps + "DECISION FACTOR SCORE TIMES");
 			Console.WriteLine(eps + "***************************");
 			Console.WriteLine(eps + "");
-			Ep(DecisionTimes);
+			Ep(ClassDecisionInfo);
 			Console.WriteLine(eps + "");
 			Console.WriteLine(eps + "***************");
 			Console.WriteLine(eps + "      BYE      ");
