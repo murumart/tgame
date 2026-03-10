@@ -6,7 +6,9 @@
 [ext_resource type="Script" uid="uid://dr5e3dfpjl6hw" path="res://scenes/map/WorldGenerator.cs" id="3_77t5k"]
 [ext_resource type="Script" uid="uid://jdld04xxcpmv" path="res://scenes/map/WorldRenderer.cs" id="3_brgba"]
 [ext_resource type="FastNoiseLite" uid="uid://cf0v3ea3na5un" path="res://scenes/map/noises/continental.tres" id="4_psavt"]
+[ext_resource type="Script" uid="uid://3don1v6ha6ia" path="res://scenes/map/WorldMan.cs" id="4_q3l1s"]
 [ext_resource type="Gradient" uid="uid://ypkjsovb40j4" path="res://resources/visual/map/temperature_gradient.tres" id="5_itdqw"]
+[ext_resource type="PackedScene" uid="uid://dfsyk55h5ioh0" path="res://scenes/region/player_region.tscn" id="5_sif2q"]
 [ext_resource type="FastNoiseLite" uid="uid://elpkgdjffs74" path="res://scenes/map/noises/temperature.tres" id="5_wddjc"]
 [ext_resource type="FastNoiseLite" uid="uid://dubsuvs1ouru5" path="res://scenes/map/noises/humidity.tres" id="6_6lrtn"]
 [ext_resource type="Gradient" uid="uid://w5sdtmt8u44c" path="res://resources/visual/map/humidity_gradient.tres" id="6_pnj5n"]
@@ -23,15 +25,17 @@
 [ext_resource type="Resource" uid="uid://bfubh3m6mcfi8" path="res://resources/game/resource_site_types/desert_island.tres" id="17_nshhs"]
 [ext_resource type="Gradient" uid="uid://dqpagals78i71" path="res://resources/visual/map/elevation_gradient.tres" id="20_wddjc"]
 [ext_resource type="Script" uid="uid://dvsrcgoginxgl" path="res://scenes/Camera.cs" id="23_wddjc"]
+[ext_resource type="PackedScene" uid="uid://oq1d8aheub65" path="res://scenes/map/ui/world_ui.tscn" id="24_6lrtn"]
 
 [sub_resource type="Curve" id="Curve_y27hg"]
 _limits = [-1.5, 1.5, -1.0, 1.0]
-_data = [Vector2(-1, -1), 0.0, 0.0, 0, 0, Vector2(-0.5738637, -0.7223463), 0.0, 0.0, 0, 0, Vector2(-0.0113636255, 0.026815653), 0.0, 0.0, 0, 0, Vector2(0.23863637, 0.30167603), 0.0, 0.0, 0, 0, Vector2(0.40340912, 0.47597778), 0.76692706, 0.76692706, 0, 0, Vector2(0.66477275, 0.6938548), 0.80259824, 0.80259824, 0, 0, Vector2(0.9034091, 1.5), 15.97761, 0.0, 0, 0]
+_data = [Vector2(-1, -1), 0.0, 0.0, 0, 0, Vector2(-0.5170455, -0.7223463), 0.0, 0.0, 0, 0, Vector2(-0.13068187, 0.018435836), 0.0, 0.0, 0, 0, Vector2(0.09090912, 0.3234638), 0.0, 0.0, 0, 0, Vector2(0.25568175, 0.5195532), 0.76692706, 0.76692706, 0, 0, Vector2(0.48863637, 0.7156426), 0.98604953, 0.98604953, 0, 0, Vector2(0.9034091, 1.5), 9.412289, 0.0, 0, 0]
 point_count = 7
 
 [sub_resource type="Curve" id="Curve_8evwd"]
-_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.21091333, 0.051505923), 0.0, 0.0, 0, 0, Vector2(0.38409886, 0.7443265), 0.0, 0.0, 0, 0, Vector2(0.53596926, 0.9231189), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
-point_count = 5
+_limits = [0.0, 4.0, 0.0, 1.0]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.116477266, 0), 0.0, 0.0, 0, 0, Vector2(0.33806816, 0.6882684), 0.0, 0.0, 0, 0, Vector2(0.41761363, 1.1240225), 2.7268546, 2.7268546, 0, 0, Vector2(0.47727272, 1.3273745), 0.0, 0.0, 0, 0, Vector2(1, 4), 0.0, 0.0, 0, 0]
+point_count = 6
 
 [sub_resource type="Curve" id="Curve_l1l36"]
 _limits = [0.0, 1.0, -1.0, 1.0]
@@ -54,7 +58,7 @@ point_count = 4
 
 [sub_resource type="Curve" id="Curve_bxlgn"]
 _limits = [0.0, 1.0, -1.0, 1.0]
-_data = [Vector2(-1, 0), 0.0, 0.0, 0, 0, Vector2(-0.88397783, 0.19189191), 0.39135125, 0.39135125, 0, 0, Vector2(0.7763579, 0.397561), 0.1550684, 0.1550684, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+_data = [Vector2(-1, 0), 0.0, 0.0, 0, 0, Vector2(-0.88397783, 0.19189191), 0.39135125, 0.39135125, 0, 0, Vector2(0.625, 0.4117319), 0.1550684, 0.1550684, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
 point_count = 4
 
 [sub_resource type="Curve" id="Curve_ipoxy"]
@@ -478,9 +482,16 @@ transparent_bg = true
 handle_input_locally = false
 snap_2d_transforms_to_pixel = true
 canvas_item_default_texture_filter = 0
-oversampling = false
 size = Vector2i(300, 288)
 render_target_update_mode = 4
+
+[node name="WorldMan" type="Node" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/SubViewportContainer/WorldDisplay" unique_id=1551707263 node_paths=PackedStringArray("worldGenerator", "worldRenderer", "worldUI", "camera")]
+script = ExtResource("4_q3l1s")
+worldGenerator = NodePath("../WorldGenerator")
+worldRenderer = NodePath("../WorldRenderer")
+regionScene = ExtResource("5_sif2q")
+worldUI = NodePath("../../../WorldUI")
+camera = NodePath("../Camera2D")
 
 [node name="WorldGenerator" type="Node" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/SubViewportContainer/WorldDisplay" unique_id=941712464]
 script = ExtResource("3_77t5k")
@@ -531,3 +542,7 @@ centered = false
 [node name="Camera2D" type="Camera2D" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/SubViewportContainer/WorldDisplay" unique_id=1390201607]
 script = ExtResource("23_wddjc")
 CanMoveWithKeyboard = false
+
+[node name="WorldUI" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer" unique_id=1536136679 node_paths=PackedStringArray("camera") instance=ExtResource("24_6lrtn")]
+layout_mode = 2
+camera = NodePath("../SubViewportContainer/WorldDisplay/Camera2D")

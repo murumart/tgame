@@ -6,9 +6,8 @@ namespace scenes.map.ui;
 
 public partial class WorldUI : Control {
 
-	public event Action<int> WorldDisplaySelected;
-	public event Action<bool> RegionsDisplaySet;
-	public event Func<Vector2, (float, float, float)> WorldTileInfoRequested;
+	public event Func<Vector2I, (float, float, float)> WorldTileInfoRequested;
+	public event Func<Vector2I, Region> RegionRequested;
 	public event Action RegionPlayRequested;
 
 	[Export] public ResourceDisplay ResourceDisplay;
@@ -18,23 +17,19 @@ public partial class WorldUI : Control {
 	[Export] RichTextLabel factionInfoLabel;
 	[Export] Button factionPlayButton;
 
-	[Export] OptionButton drawModeSelect;
-	[Export] CheckBox regionDisplaySet;
-
 	Region selectedRegion;
 	public Region SelectedRegion => selectedRegion;
 
 
 	public override void _Ready() {
 		factionPlayButton.Pressed += () => RegionPlayRequested?.Invoke();
-		drawModeSelect.ItemSelected += OnDrawModeSelected;
-		regionDisplaySet.Toggled += on => RegionsDisplaySet?.Invoke(on);
 		factionPanel.GuiInput += _GuiInput;
 
-		ResourceDisplay.Display(() => $"fps: {Engine.GetFramesPerSecond()}");
+		camera.ClickedMouseEvent += MouseClicked;
+
 		ResourceDisplay.Display(() => {
 			if (!camera.IsInsideTree()) return "...";
-			var mousePos = camera.GetMousePos();
+			var mousePos = (Vector2I)camera.GetMousePos();
 			if (mousePos != oldMousePos) {
 				oldMousePos = mousePos;
 				var tileInfo =  WorldTileInfoRequested?.Invoke(mousePos) ?? (-4f, -4f, -4f);
@@ -49,6 +44,12 @@ public partial class WorldUI : Control {
 	(float, float, float) oldTileInfo;
 	public override void _Process(double delta) {
 		ResourceDisplay.Display();
+	}
+
+	void MouseClicked(Vector2I where) {
+		var region = RegionRequested?.Invoke(where) ?? null;
+		if (region == null) return;
+		SelectRegion(region);
 	}
 
 	public override void _UnhandledKeyInput(InputEvent evt) {
@@ -89,10 +90,6 @@ public partial class WorldUI : Control {
 			+ $"Region IX: {region.WorldIndex}"
 		;
 		factionPlayButton.Disabled = region.LocalFaction.IsWild;
-	}
-
-	void OnDrawModeSelected(long which) {
-		WorldDisplaySelected?.Invoke((int)which);
 	}
 
 }

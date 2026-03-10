@@ -276,7 +276,6 @@ namespace scenes.region.ui {
 		// display
 
 		public void SetupResourceDisplay() {
-			resourceDisplay.Display(() => $"fps: {Engine.GetFramesPerSecond()}");
 			var fac = GetFaction();
 			resourceDisplay.Display(() => {
 				if (fac.GetPopulationCount() == 0) return "no one lives here.";

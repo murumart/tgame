@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Godot;
+using scenes.autoload;
 
 namespace scenes.map.ui;
 
@@ -51,6 +52,7 @@ public partial class WorldGenUi : MarginContainer {
 
 	void NewWorld() {
 		this.world = new((int)worldWidthSpinbox.Value, (int)worldHeightSpinbox.Value, (uint)Convert.ToUInt32(worldSeedLabel.Text));
+		GameMan.Singleton.NewGame(new([], world));
 	}
 
 	async Task GenerateContinents() => await worldGenerator.GenerateContinents(world, (float)noiseScaleSpinbox.Value, (float)depthSpinbox.Value);
@@ -154,6 +156,8 @@ public partial class WorldGenUi : MarginContainer {
 		tw.Stop();
 
 		worldRenderer.DrawRegions(map.GetRegions());
+
+		GameMan.Singleton.NewGame(map);
 		OnEndGenerating();
 	}
 

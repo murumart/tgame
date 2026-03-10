@@ -104,8 +104,11 @@ namespace scenes.map {
 					float distanceSqFromCentre = (Vector2.One * 0.5f).DistanceSquaredTo(vec) * 1.7f;
 
 					float continentSample = continentNoise.GetNoise2D(x, y);
-					continentSample -= islandCurve.SampleBaked(distanceSqFromCentre);
-					continentSample = Mathf.Clamp(baseDepth + elevationCurve.SampleBaked(continentSample), -1f, 1f);
+					continentSample = Mathf.Clamp(
+						baseDepth
+						+ elevationCurve.SampleBaked(continentSample)
+						- islandCurve.SampleBaked(distanceSqFromCentre),
+					-1f, 1f);
 
 					world.SetElevation(x, y, continentSample);
 				}

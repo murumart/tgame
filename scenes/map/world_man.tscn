@@ -237,4 +237,5 @@ centered = false
 script = ExtResource("6_h4q0h")
 
 [node name="WorldUI" parent="." unique_id=317421206 node_paths=PackedStringArray("camera") instance=ExtResource("7_vqee5")]
+visible = false
 camera = NodePath("../Camera")
