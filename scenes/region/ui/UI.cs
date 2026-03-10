@@ -277,9 +277,9 @@ namespace scenes.region.ui {
 
 		public void SetupResourceDisplay() {
 			var fac = GetFaction();
-			resourceDisplay.Display(() => {
-				if (fac.GetPopulationCount() == 0) return "no one lives here.";
-				return $"population: {fac.GetPopulationCount()} "
+			resourceDisplay.Display(c => {
+				if (fac.GetPopulationCount() == 0) (c as Label).Text = "no one lives here.";
+				(c as Label).Text = $"population: {fac.GetPopulationCount()} "
 					+ $"({fac.HomelessPopulation} homeless, "
 					+ $"{fac.Population.EmployedCount} employed, "
 					+ $"{fac.Population.GetYearlyBirths():0} births/year)";
@@ -290,9 +290,9 @@ namespace scenes.region.ui {
 			});
 			if (!fac.IsWild) {
 				var reg = fac.Region;
-				resourceDisplay.Display(() => {
+				resourceDisplay.Display(c => {
 					float monthlyChange = fac.Population.GetApprovalMonthlyChange();
-					return $"approval: {fac.Population.Approval * 100:0}% ({(monthlyChange >= 0f ? "+" : "")}{monthlyChange * 100:0}%/month)";
+					(c as Label).Text = $"approval: {fac.Population.Approval * 100:0}% ({(monthlyChange >= 0f ? "+" : "")}{monthlyChange * 100:0}%/month)";
 				}, () => {
 					var sb = new StringBuilder();
 					sb.Append("your approval rate depends on the state of your ruling. when it drops to zero, you lose. ensure prosperity for your people.\n");
@@ -303,10 +303,10 @@ namespace scenes.region.ui {
 					}
 					return sb.ToString();
 				});
-				resourceDisplay.Display(() => {
-					return $"silver: {fac.Silver}";
+				resourceDisplay.Display(c => {
+					(c as Label).Text = $"silver: {fac.Silver}";
 				});
-				resourceDisplay.Display(() => {
+				resourceDisplay.Display(c => {
 					string txt = $"{inRegionTilepos}";
 					if (reg.GroundTiles.TryGetValue(inRegionTilepos, out GroundTileType tile)) {
 						txt += $" {tile.UIString()}";
@@ -314,20 +314,23 @@ namespace scenes.region.ui {
 							txt += $" with {(mopject.Type as IAssetType).AssetName}";
 						}
 					}
-					return txt;
+					(c as Label).Text = txt;
 				});
-				resourceDisplay.Display(() => {
+				resourceDisplay.Display(c => {
 					var map = GameMan.Singleton.Game.Map;
-					if (map == null) return "map...?";
-					if (!map.TileOwners.TryGetValue(inRegionTilepos + reg.WorldPosition, out var reg2)) return "faction: ...?";
-					return $"faction: {reg2.LocalFaction.Name}";
+					if (map == null) (c as Label).Text = "map...?";
+					else if (!map.TileOwners.TryGetValue(inRegionTilepos + reg.WorldPosition, out var reg2)) (c as Label).Text = "faction: ...?";
+					else (c as Label).Text = $"faction: {reg2.LocalFaction.Name}";
 				});
 			} else {
-				resourceDisplay.Display(() => fac.Name);
+				resourceDisplay.Display(c => (c as Label).Text = fac.Name);
 			}
 			resourceDisplay.DisplayFat();
-			var timeLabel = new Label {HorizontalAlignment = HorizontalAlignment.Right};
-			resourceDisplay.Display(() => GetTimeString(), timeLabel);
+			var timeLabel = new Label {
+				HorizontalAlignment = HorizontalAlignment.Right,
+				LabelSettings = GD.Load<LabelSettings>("res://resources/visual/theme/label_styles/8px.tres"),
+			};
+			resourceDisplay.Display(c => (c as Label).Text = GetTimeString(), timeLabel);
 		}
 
 		void UpdateDisplays() {

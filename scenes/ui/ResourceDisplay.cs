@@ -9,17 +9,17 @@ public partial class ResourceDisplay : PanelContainer {
 
 	[Export] Container labelsParent;
 
-	class LabelInfo(Label label, Func<string> display, Func<string> hoverInfo = null, Control hoverInfoControl = null, RichTextLabel hoverInfoLabel = null) {
+	class LabelInfo(Control target, Action<Control> display, Func<string> hoverInfo = null, Control hoverInfoControl = null, RichTextLabel hoverInfoLabel = null) {
 
-		public readonly Label Label = label;
+		public readonly Control Target = target;
 		public readonly Control HoverInfoPanel = hoverInfoControl;
 		public readonly RichTextLabel HoverInfoLabel = hoverInfoLabel;
-		public readonly Func<string> MainDisplay = display;
-		public readonly Func<string> HoverInfo = hoverInfo;
+		public readonly Action<Control> MainDisplay = display;
+		public readonly Func<String> HoverInfo = hoverInfo;
 		public bool Hovered = false;
 
 		public void Display() {
-			Label.Text = MainDisplay();
+			MainDisplay(Target);
 			if (HoverInfo != null && Hovered) {
 				Debug.Assert(IsInstanceValid(HoverInfoLabel));
 				HoverInfoLabel.Text = HoverInfo();
@@ -31,26 +31,28 @@ public partial class ResourceDisplay : PanelContainer {
 	readonly List<LabelInfo> labels = new();
 
 
-	public void Display(Func<string> what, Func<string> extraInfo = null) {
-		Display(what, new() { MouseFilter = MouseFilterEnum.Stop }, extraInfo: extraInfo);
+	public void Display(Action<Control> what, Func<string> extraInfo = null) {
+		Display(what, new Label() {
+			MouseFilter = MouseFilterEnum.Stop,
+			LabelSettings = labelSettings,
+		}, extraInfo: extraInfo);
 	}
 
-	public void Display(Func<string> what, Label label, Func<string> extraInfo = null) {
-		Debug.Assert(label != null && IsInstanceValid(label), $"Label {label} is invalid");
-		labelsParent.AddChild(label);
-		label.LabelSettings = labelSettings;
+	public void Display(Action<Control> what, Control display, Func<string> extraInfo = null) {
+		Debug.Assert(display != null && IsInstanceValid(display), $"Display {display} is invalid");
+		labelsParent.AddChild(display);
 
 		var panel = panelScene.Instantiate<Control>();
-		label.AddChild(panel);
+		display.AddChild(panel);
 
-		var labelInfo = new LabelInfo(label, what, hoverInfo: extraInfo, hoverInfoControl: panel, hoverInfoLabel: panel.GetNode<RichTextLabel>(panel.GetMeta("label", new NodePath()).AsNodePath()));
+		var labelInfo = new LabelInfo(display, what, hoverInfo: extraInfo, hoverInfoControl: panel, hoverInfoLabel: panel.GetNode<RichTextLabel>(panel.GetMeta("label", new NodePath()).AsNodePath()));
 
 		if (extraInfo != null) {
-			label.MouseEntered += () => {
+			display.MouseEntered += () => {
 				labelInfo.Hovered = true;
 				panel.Show();
 			};
-			label.MouseExited += () => {
+			display.MouseExited += () => {
 				labelInfo.Hovered = false;
 				panel.Hide();
 			};

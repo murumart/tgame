@@ -27,15 +27,15 @@ public partial class WorldUI : Control {
 
 		camera.ClickedMouseEvent += MouseClicked;
 
-		ResourceDisplay.Display(() => {
-			if (!camera.IsInsideTree()) return "...";
+		ResourceDisplay.Display(c => {
+			if (!camera.IsInsideTree()) (c as Label).Text =  "...";
 			var mousePos = (Vector2I)camera.GetMousePos();
 			if (mousePos != oldMousePos) {
 				oldMousePos = mousePos;
 				var tileInfo =  WorldTileInfoRequested?.Invoke(mousePos) ?? (-4f, -4f, -4f);
 				oldTileInfo = tileInfo;
 			}
-			return $"ele: {oldTileInfo.Item1} temp: {oldTileInfo.Item2} humi: {oldTileInfo.Item3}";
+			(c as Label).Text = $"ele: {oldTileInfo.Item1} temp: {oldTileInfo.Item2} humi: {oldTileInfo.Item3}";
 		});
 		ResourceDisplay.DisplayFat();
 	}

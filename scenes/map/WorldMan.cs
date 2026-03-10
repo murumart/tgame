@@ -34,12 +34,12 @@ namespace scenes.map {
 
 			camera.ClickedMouseEvent += MouseClicked;
 
-			worldUI.ResourceDisplay.Display(() => {
-				if (GetViewport() == null) return "...";
+			worldUI.ResourceDisplay.Display(c => {
+				if (GetViewport() == null) (c as Label).Text =  "...";
 				var mousePos = (Vector2I)camera.GetMousePos();
-				return $"{mousePos}";
+				(c as Label).Text =  $"{mousePos}";
 			});
-			worldUI.ResourceDisplay.Display(() => $"seed: {World?.Seed ?? 1377}");
+			worldUI.ResourceDisplay.Display(c => (c as Label).Text = $"seed: {World?.Seed ?? 1377}");
 		}
 
 		void MouseClicked(Vector2I pos) {
