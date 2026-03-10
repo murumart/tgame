@@ -34,9 +34,10 @@ namespace scenes.map {
 		[Export] FastNoiseLite humidityNoise;
 		[Export] FastNoiseLite seawindGainNoise;
 
-		readonly struct NoiseHomeParams(FastNoiseLite noise, float frequency) {
+		readonly struct NoiseHomeParams(FastNoiseLite noise, float frequency, float frac) {
 			public readonly FastNoiseLite Noise => noise;
 			public readonly float Frequency => frequency;
+			public readonly float FractalLacunarity => frac;
 		}
 		NoiseHomeParams[] noises;
 
@@ -66,10 +67,10 @@ namespace scenes.map {
 
 		public override void _Ready() {
 			noises = [
-				new(continentNoise, continentNoise.Frequency),
-				new(temperatureNoise, temperatureNoise.Frequency),
-				new(humidityNoise, humidityNoise.Frequency),
-				new(seawindGainNoise, seawindGainNoise.Frequency),
+				new(continentNoise, continentNoise.Frequency, continentNoise.FractalLacunarity),
+				new(temperatureNoise, temperatureNoise.Frequency, temperatureNoise.FractalLacunarity),
+				new(humidityNoise, humidityNoise.Frequency, humidityNoise.FractalLacunarity),
+				new(seawindGainNoise, seawindGainNoise.Frequency, seawindGainNoise.FractalLacunarity),
 			];
 		}
 
@@ -80,6 +81,7 @@ namespace scenes.map {
 
 			foreach (var noise in noises) {
 				noise.Noise.Frequency = noise.Frequency * noiseScale;
+				noise.Noise.FractalLacunarity = noise.FractalLacunarity / Mathf.Pow(noiseScale, 0.25f);
 			}
 
 			Generating = true;

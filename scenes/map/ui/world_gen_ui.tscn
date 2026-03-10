@@ -168,7 +168,7 @@ colors = PackedColorArray(0.32941177, 0.40392157, 0.3372549, 1, 0.94509804, 0.96
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_e51lx"]
 blend_mode = 1
 
-[node name="WorldGenUI" type="MarginContainer" unique_id=1511327676 node_paths=PackedStringArray("worldGenerator", "worldRenderer", "camera", "genRegionsButton", "worldSeedLabel", "worldWidthSpinbox", "worldHeightSpinbox", "noiseScaleSpinbox", "depthSpinbox")]
+[node name="WorldGenUI" type="MarginContainer" unique_id=1511327676 node_paths=PackedStringArray("worldGenerator", "worldRenderer", "camera", "genRegionsButton", "worldSeedLabel", "worldSeedRandomButton", "worldWidthSpinbox", "worldHeightSpinbox", "noiseScaleSpinbox", "depthSpinbox")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -183,7 +183,8 @@ worldGenerator = NodePath("HBoxContainer/PanelContainer2/MarginContainer/VBoxCon
 worldRenderer = NodePath("HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/SubViewportContainer/WorldDisplay/WorldRenderer")
 camera = NodePath("HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/SubViewportContainer/WorldDisplay/Camera2D")
 genRegionsButton = NodePath("HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/GenRegionsButton")
-worldSeedLabel = NodePath("HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/SeedLabel")
+worldSeedLabel = NodePath("HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/SeedLabel")
+worldSeedRandomButton = NodePath("HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/SeedRandomiserButton")
 worldWidthSpinbox = NodePath("HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer/Width")
 worldHeightSpinbox = NodePath("HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer2/Height")
 noiseScaleSpinbox = NodePath("HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/NoiseScale")
@@ -215,9 +216,18 @@ label_settings = ExtResource("1_vu3sd")
 layout_mode = 2
 text = "Seed"
 
-[node name="SeedLabel" type="LineEdit" parent="HBoxContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1769054741]
+[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=64718373]
 layout_mode = 2
+
+[node name="SeedLabel" type="LineEdit" parent="HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1769054741]
+layout_mode = 2
+size_flags_horizontal = 3
 focus_mode = 1
+
+[node name="SeedRandomiserButton" type="Button" parent="HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=347868431]
+layout_mode = 2
+focus_mode = 0
+text = "↻"
 
 [node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1911514008]
 layout_mode = 2
@@ -271,7 +281,7 @@ text = "Landform  Scale"
 [node name="NoiseScale" type="SpinBox" parent="HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer" unique_id=752350732]
 layout_mode = 2
 min_value = 0.125
-max_value = 2.0
+max_value = 8.0
 step = 0.125
 value = 1.0
 
@@ -334,7 +344,6 @@ mouse_target = true
 
 [node name="WorldDisplay" type="SubViewport" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/SubViewportContainer" unique_id=309516746]
 transparent_bg = true
-handle_input_locally = false
 snap_2d_transforms_to_pixel = true
 canvas_item_default_texture_filter = 0
 oversampling = false

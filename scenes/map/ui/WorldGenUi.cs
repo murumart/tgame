@@ -11,6 +11,7 @@ public partial class WorldGenUi : MarginContainer {
 
 	[Export] Button genRegionsButton;
 	[Export] LineEdit worldSeedLabel;
+	[Export] Button worldSeedRandomButton;
 	[Export] SpinBox worldWidthSpinbox;
 	[Export] SpinBox worldHeightSpinbox;
 	[Export] SpinBox noiseScaleSpinbox;
@@ -30,6 +31,7 @@ public partial class WorldGenUi : MarginContainer {
 		depthSpinbox.ValueChanged += OnDepthChanged;
         
 		worldSeedLabel.TextSubmitted += OnWorldSeedEntered;
+		worldSeedRandomButton.Pressed += OnWorldSeedRandomiseRequested;
 
 		worldSeedLabel.Text = "" + GD.Randi();
 
@@ -58,6 +60,11 @@ public partial class WorldGenUi : MarginContainer {
 		if (!what.IsValidInt()) {
 			worldSeedLabel.Text = "" + what.Hash();
 		}
+		await SomethingChanged();
+	}
+
+	async void OnWorldSeedRandomiseRequested() {
+		worldSeedLabel.Text = "" + GD.Randi();
 		await SomethingChanged();
 	}
 
@@ -93,6 +100,7 @@ public partial class WorldGenUi : MarginContainer {
 		noiseScaleSpinbox.Editable = false;
 		depthSpinbox.Editable = false;
 		worldSeedLabel.Editable = false;
+		worldSeedRandomButton.Disabled = true;
 	}
 
 	void OnEndGenerating() {
@@ -102,6 +110,7 @@ public partial class WorldGenUi : MarginContainer {
 		noiseScaleSpinbox.Editable = true;
 		depthSpinbox.Editable = true;
 		worldSeedLabel.Editable = true;
+		worldSeedRandomButton.Disabled = false;
 	}
 
 	async void OnGenRegionsPressed() {
