@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Godot;
 
@@ -17,6 +18,9 @@ public partial class WorldGenUi : MarginContainer {
 	[Export] SpinBox noiseScaleSpinbox;
 	[Export] SpinBox depthSpinbox;
 
+	[Export] Godot.Collections.Array<CheckButton> drawLayerButtons;
+	[Export] CheckButton regionDisplayCheck;
+
 	Map map;
 	World world;
 
@@ -29,20 +33,24 @@ public partial class WorldGenUi : MarginContainer {
 		worldHeightSpinbox.ValueChanged += OnWorldHeightChanged;
 		noiseScaleSpinbox.ValueChanged += OnNoiseScaleChanged;
 		depthSpinbox.ValueChanged += OnDepthChanged;
-        
+
 		worldSeedLabel.TextSubmitted += OnWorldSeedEntered;
 		worldSeedRandomButton.Pressed += OnWorldSeedRandomiseRequested;
+
+		foreach (var but in drawLayerButtons) but.Pressed += OnDrawLayersChanged;
+		regionDisplayCheck.Toggled += OnRegionDisplayChanged;
 
 		worldSeedLabel.Text = "" + GD.Randi();
 
 		NewWorld();
 		Task.Run(() => GenerateContinents()).GetAwaiter().GetResult();
 
+		SetRendererParams();
 		OnWorldGenerated();
 	}
 
 	void NewWorld() {
-		this.world = new((int)worldWidthSpinbox.Value, (int)worldHeightSpinbox.Value, (uint)worldSeedLabel.Text.ToFloat());
+		this.world = new((int)worldWidthSpinbox.Value, (int)worldHeightSpinbox.Value, (uint)Convert.ToUInt32(worldSeedLabel.Text));
 	}
 
 	async Task GenerateContinents() => await worldGenerator.GenerateContinents(world, (float)noiseScaleSpinbox.Value, (float)depthSpinbox.Value);
@@ -52,6 +60,8 @@ public partial class WorldGenUi : MarginContainer {
 	}
 
 	void OnWorldGenerated() {
+		worldRenderer.World = world;
+		worldRenderer.ResetImages();
 		DisplayWorld(world);
 		camera.Position = new(world.Width * 0.5f, world.Height * 0.5f);
 	}
@@ -84,14 +94,33 @@ public partial class WorldGenUi : MarginContainer {
 		await SomethingChanged();
 	}
 
-    async Task SomethingChanged() {
-        Debug.Assert(!worldGenerator.Generating);
+	async Task SomethingChanged() {
+		Debug.Assert(!worldGenerator.Generating);
 		OnStartGenerating();
 		NewWorld();
 		await GenerateContinents();
 		OnWorldGenerated();
 		OnEndGenerating();
-    }
+	}
+
+	void SetRendererParams() {
+		WorldRenderer.DrawLayers a = 0;
+		if (drawLayerButtons[0].ButtonPressed) a |= WorldRenderer.DrawLayers.Ground;
+		if (drawLayerButtons[1].ButtonPressed) a |= WorldRenderer.DrawLayers.Elevation;
+		if (drawLayerButtons[2].ButtonPressed) a |= WorldRenderer.DrawLayers.Temperature;
+		if (drawLayerButtons[3].ButtonPressed) a |= WorldRenderer.DrawLayers.Humidity;
+		if (drawLayerButtons[4].ButtonPressed) a |= WorldRenderer.DrawLayers.SeaWind;
+		worldRenderer.DrawMode = a;
+	}
+
+	void OnDrawLayersChanged() {
+		SetRendererParams();
+		DisplayWorld(world);
+	}
+
+	void OnRegionDisplayChanged(bool to) {
+		worldRenderer.RegionSprite.Visible = to;
+	}
 
 	void OnStartGenerating() {
 		genRegionsButton.Disabled = true;

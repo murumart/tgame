@@ -22,7 +22,7 @@ namespace scenes.map {
 			UILayer.AddUIChild(worldUI);
 			worldUI.SelectRegion(null);
 			worldUI.RegionPlayRequested += EnterGame;
-			worldUI.WorldDisplaySelected += which => worldRenderer.drawMode = (WorldRenderer.DrawMode)which;
+			worldUI.WorldDisplaySelected += which => worldRenderer.DrawMode = (WorldRenderer.DrawLayers)which;
 			worldUI.RegionsDisplaySet += on => worldRenderer.RegionSprite.Visible = on;
 			worldUI.WorldTileInfoRequested += where => {
 				var w = new Vector2I((int)where.X, (int)where.Y);

@@ -52,8 +52,8 @@ public class World {
 		SeaWind = new byte[Width * Height];
 		for (int i = 0; i < Width * Height; i++) SeaWind[i] = byte.MaxValue;
 		Humidity = new byte[Width * Height];
-		SeaWindDirection = new(Mathf.PosMod((int)seed * 2 - 1, 2), Mathf.PosMod((int)seed * 2 - 1, 2)); // -1 or 1
-		GD.Print("World::World : seawind direction ", SeaWindDirection);
+		SeaWindDirection = new((int)(seed / 2 % 2 * 2) - 1, (int)(seed % 2 * 2) - 1); // -1 or 1
+		GD.Print($"World::World : seed: {seed}, seawind direction ", SeaWindDirection);
 	}
 
 	public void SetTile(int x, int y, GroundTileType tile) {

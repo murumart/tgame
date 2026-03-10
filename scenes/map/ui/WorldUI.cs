@@ -30,9 +30,6 @@ public partial class WorldUI : Control {
 		drawModeSelect.ItemSelected += OnDrawModeSelected;
 		regionDisplaySet.Toggled += on => RegionsDisplaySet?.Invoke(on);
 		factionPanel.GuiInput += _GuiInput;
-		for (int i = 0; i < (int)WorldRenderer.DrawMode.Max; i++) {
-			drawModeSelect.AddItem((WorldRenderer.DrawMode)(i) + "");
-		}
 
 		ResourceDisplay.Display(() => $"fps: {Engine.GetFramesPerSecond()}");
 		ResourceDisplay.Display(() => {

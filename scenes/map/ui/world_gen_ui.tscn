@@ -5,7 +5,6 @@
 [ext_resource type="StyleBox" uid="uid://bvafrlmq6sivc" path="res://resources/visual/theme/sb_lighter.tres" id="2_nf5g8"]
 [ext_resource type="Script" uid="uid://dr5e3dfpjl6hw" path="res://scenes/map/WorldGenerator.cs" id="3_77t5k"]
 [ext_resource type="Script" uid="uid://jdld04xxcpmv" path="res://scenes/map/WorldRenderer.cs" id="3_brgba"]
-[ext_resource type="Gradient" uid="uid://bwm3e3btidxww" path="res://resources/visual/map/continent_gradient.tres" id="4_ortkg"]
 [ext_resource type="FastNoiseLite" uid="uid://cf0v3ea3na5un" path="res://scenes/map/noises/continental.tres" id="4_psavt"]
 [ext_resource type="Gradient" uid="uid://ypkjsovb40j4" path="res://resources/visual/map/temperature_gradient.tres" id="5_itdqw"]
 [ext_resource type="FastNoiseLite" uid="uid://elpkgdjffs74" path="res://scenes/map/noises/temperature.tres" id="5_wddjc"]
@@ -22,6 +21,7 @@
 [ext_resource type="Resource" uid="uid://b1uvd7viwkyac" path="res://resources/game/resource_site_types/rainforest_trees.tres" id="15_1n8x5"]
 [ext_resource type="Resource" uid="uid://cjd64xn7r7mh8" path="res://resources/game/resource_site_types/fishing_spot.tres" id="16_nb2q8"]
 [ext_resource type="Resource" uid="uid://bfubh3m6mcfi8" path="res://resources/game/resource_site_types/desert_island.tres" id="17_nshhs"]
+[ext_resource type="Gradient" uid="uid://dqpagals78i71" path="res://resources/visual/map/elevation_gradient.tres" id="20_wddjc"]
 [ext_resource type="Script" uid="uid://dvsrcgoginxgl" path="res://scenes/Camera.cs" id="23_wddjc"]
 
 [sub_resource type="Curve" id="Curve_y27hg"]
@@ -168,7 +168,7 @@ colors = PackedColorArray(0.32941177, 0.40392157, 0.3372549, 1, 0.94509804, 0.96
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_e51lx"]
 blend_mode = 1
 
-[node name="WorldGenUI" type="MarginContainer" unique_id=1511327676 node_paths=PackedStringArray("worldGenerator", "worldRenderer", "camera", "genRegionsButton", "worldSeedLabel", "worldSeedRandomButton", "worldWidthSpinbox", "worldHeightSpinbox", "noiseScaleSpinbox", "depthSpinbox")]
+[node name="WorldGenUI" type="MarginContainer" unique_id=1511327676 node_paths=PackedStringArray("worldGenerator", "worldRenderer", "camera", "genRegionsButton", "worldSeedLabel", "worldSeedRandomButton", "worldWidthSpinbox", "worldHeightSpinbox", "noiseScaleSpinbox", "depthSpinbox", "drawLayerButtons", "regionDisplayCheck")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -179,9 +179,9 @@ theme_override_constants/margin_top = 4
 theme_override_constants/margin_right = 4
 theme_override_constants/margin_bottom = 4
 script = ExtResource("1_psavt")
-worldGenerator = NodePath("HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/SubViewportContainer/WorldDisplay/WorldGenerator")
-worldRenderer = NodePath("HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/SubViewportContainer/WorldDisplay/WorldRenderer")
-camera = NodePath("HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/SubViewportContainer/WorldDisplay/Camera2D")
+worldGenerator = NodePath("HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/SubViewportContainer/WorldDisplay/WorldGenerator")
+worldRenderer = NodePath("HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/SubViewportContainer/WorldDisplay/WorldRenderer")
+camera = NodePath("HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/SubViewportContainer/WorldDisplay/Camera2D")
 genRegionsButton = NodePath("HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/GenRegionsButton")
 worldSeedLabel = NodePath("HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/SeedLabel")
 worldSeedRandomButton = NodePath("HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/SeedRandomiserButton")
@@ -189,6 +189,8 @@ worldWidthSpinbox = NodePath("HBoxContainer/PanelContainer/MarginContainer/VBoxC
 worldHeightSpinbox = NodePath("HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer2/Height")
 noiseScaleSpinbox = NodePath("HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/NoiseScale")
 depthSpinbox = NodePath("HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/BaseDepth")
+drawLayerButtons = [NodePath("HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle6/HBoxContainer/Ground"), NodePath("HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle/HBoxContainer/Elevation"), NodePath("HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle2/HBoxContainer/Temperature"), NodePath("HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle3/HBoxContainer/Humidity"), NodePath("HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle4/HBoxContainer/SeaWind")]
+regionDisplayCheck = NodePath("HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle5/HBoxContainer/Regions")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1929638013]
 layout_mode = 2
@@ -325,32 +327,162 @@ text = "Map"
 label_settings = ExtResource("1_vu3sd")
 horizontal_alignment = 1
 
+[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer" unique_id=1677683817]
+layout_mode = 2
+alignment = 2
+
+[node name="Label" type="Label" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1332683967]
+layout_mode = 2
+text = "Draw:"
+
+[node name="Toggle" type="VBoxContainer" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer" unique_id=948927762]
+layout_mode = 2
+theme_override_constants/separation = 1
+
+[node name="Label" type="Label" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle" unique_id=2060912578]
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
+text = "Elevation"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle" unique_id=200434925]
+layout_mode = 2
+alignment = 1
+
+[node name="Elevation" type="CheckButton" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle/HBoxContainer" unique_id=2014568890]
+layout_mode = 2
+size_flags_horizontal = 0
+focus_mode = 0
+theme_override_font_sizes/font_size = 8
+button_pressed = true
+
+[node name="Toggle6" type="VBoxContainer" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer" unique_id=2111804092]
+layout_mode = 2
+theme_override_constants/separation = 1
+
+[node name="Label" type="Label" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle6" unique_id=751736089]
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
+text = "Ground"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle6" unique_id=1958536977]
+layout_mode = 2
+alignment = 1
+
+[node name="Ground" type="CheckButton" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle6/HBoxContainer" unique_id=602709018]
+layout_mode = 2
+size_flags_horizontal = 0
+focus_mode = 0
+theme_override_font_sizes/font_size = 8
+button_pressed = true
+
+[node name="Toggle2" type="VBoxContainer" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1924677808]
+layout_mode = 2
+theme_override_constants/separation = 1
+
+[node name="Label" type="Label" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle2" unique_id=936843093]
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
+text = "Temperature"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle2" unique_id=768691772]
+layout_mode = 2
+alignment = 1
+
+[node name="Temperature" type="CheckButton" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle2/HBoxContainer" unique_id=168483072]
+layout_mode = 2
+size_flags_horizontal = 0
+focus_mode = 0
+theme_override_font_sizes/font_size = 8
+
+[node name="Toggle3" type="VBoxContainer" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer" unique_id=43392811]
+layout_mode = 2
+theme_override_constants/separation = 1
+
+[node name="Label" type="Label" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle3" unique_id=289948624]
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
+text = "Humidity"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle3" unique_id=2138510194]
+layout_mode = 2
+alignment = 1
+
+[node name="Humidity" type="CheckButton" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle3/HBoxContainer" unique_id=1818692404]
+layout_mode = 2
+size_flags_horizontal = 0
+focus_mode = 0
+theme_override_font_sizes/font_size = 8
+
+[node name="Toggle4" type="VBoxContainer" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1220046447]
+layout_mode = 2
+theme_override_constants/separation = 1
+
+[node name="Label" type="Label" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle4" unique_id=1547993254]
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
+text = "Rain Shade"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle4" unique_id=860876023]
+layout_mode = 2
+alignment = 1
+
+[node name="SeaWind" type="CheckButton" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle4/HBoxContainer" unique_id=1585179034]
+layout_mode = 2
+size_flags_horizontal = 0
+focus_mode = 0
+theme_override_font_sizes/font_size = 8
+
+[node name="Toggle5" type="VBoxContainer" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1584321303]
+layout_mode = 2
+theme_override_constants/separation = 1
+
+[node name="Label" type="Label" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle5" unique_id=1474660639]
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
+text = "Regions"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle5" unique_id=1560101084]
+layout_mode = 2
+alignment = 1
+
+[node name="Regions" type="CheckButton" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle5/HBoxContainer" unique_id=279698078]
+layout_mode = 2
+size_flags_horizontal = 0
+focus_mode = 0
+theme_override_font_sizes/font_size = 8
+button_pressed = true
+
 [node name="PanelContainer" type="PanelContainer" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer" unique_id=327481644]
-clip_contents = true
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_styles/panel = ExtResource("2_nf5g8")
 
-[node name="TextureRect" type="TextureRect" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/PanelContainer" unique_id=1964925385]
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/PanelContainer" unique_id=213202555]
 layout_mode = 2
-mouse_filter = 2
-expand_mode = 2
-stretch_mode = 5
+theme_override_constants/margin_left = 2
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 2
+theme_override_constants/margin_bottom = 2
 
-[node name="SubViewportContainer" type="SubViewportContainer" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/PanelContainer" unique_id=1836119842]
+[node name="PanelContainer" type="PanelContainer" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer" unique_id=422537045]
+clip_children = 1
+layout_mode = 2
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer" unique_id=1836119842]
 layout_mode = 2
 stretch = true
 mouse_target = true
 
-[node name="WorldDisplay" type="SubViewport" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/SubViewportContainer" unique_id=309516746]
+[node name="WorldDisplay" type="SubViewport" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/SubViewportContainer" unique_id=309516746]
 transparent_bg = true
+handle_input_locally = false
 snap_2d_transforms_to_pixel = true
 canvas_item_default_texture_filter = 0
 oversampling = false
-size = Vector2i(304, 325)
+size = Vector2i(300, 288)
 render_target_update_mode = 4
 
-[node name="WorldGenerator" type="Node" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/SubViewportContainer/WorldDisplay" unique_id=941712464]
+[node name="WorldGenerator" type="Node" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/SubViewportContainer/WorldDisplay" unique_id=941712464]
 script = ExtResource("3_77t5k")
 continentNoise = ExtResource("4_psavt")
 temperatureNoise = ExtResource("5_wddjc")
@@ -373,29 +505,29 @@ temperatureNoiseCoef = 0.03
 populationLandTileCurve = SubResource("Curve_7544e")
 resourceSiteGenerationParameters = Array[Object]([SubResource("Resource_getmw"), SubResource("Resource_dtgda"), SubResource("Resource_pnmcl"), SubResource("Resource_iffmc"), SubResource("Resource_nugjq"), SubResource("Resource_a1kp6"), SubResource("Resource_aa3pw"), SubResource("Resource_f71yy"), SubResource("Resource_6ybvo")])
 
-[node name="WorldRenderer" type="Node" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/SubViewportContainer/WorldDisplay" unique_id=298074584 node_paths=PackedStringArray("groundSprite", "RegionSprite", "highlightSprite")]
+[node name="WorldRenderer" type="Node" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/SubViewportContainer/WorldDisplay" unique_id=298074584 node_paths=PackedStringArray("groundSprite", "RegionSprite", "highlightSprite")]
 script = ExtResource("3_brgba")
 groundSprite = NodePath("Ground")
 RegionSprite = NodePath("Regions")
 highlightSprite = NodePath("Highlight")
-elevationGradient = ExtResource("4_ortkg")
+elevationGradient = ExtResource("20_wddjc")
 temperatureGradient = ExtResource("5_itdqw")
 seaWindGradient = SubResource("Gradient_htr2q")
 humidityGradient = ExtResource("6_pnj5n")
 
-[node name="Ground" type="Sprite2D" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/SubViewportContainer/WorldDisplay/WorldRenderer" unique_id=813748711]
+[node name="Ground" type="Sprite2D" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/SubViewportContainer/WorldDisplay/WorldRenderer" unique_id=813748711]
 centered = false
 
-[node name="Regions" type="Sprite2D" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/SubViewportContainer/WorldDisplay/WorldRenderer" unique_id=1844162579]
+[node name="Regions" type="Sprite2D" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/SubViewportContainer/WorldDisplay/WorldRenderer" unique_id=1844162579]
 modulate = Color(1.288, 1.288, 1.288, 0.204)
 material = SubResource("CanvasItemMaterial_pdks8")
 centered = false
 
-[node name="Highlight" type="Sprite2D" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/SubViewportContainer/WorldDisplay/WorldRenderer" unique_id=907489087]
+[node name="Highlight" type="Sprite2D" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/SubViewportContainer/WorldDisplay/WorldRenderer" unique_id=907489087]
 modulate = Color(1, 1, 1, 0.26666668)
 material = SubResource("CanvasItemMaterial_e51lx")
 centered = false
 
-[node name="Camera2D" type="Camera2D" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/SubViewportContainer/WorldDisplay" unique_id=1390201607]
+[node name="Camera2D" type="Camera2D" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/SubViewportContainer/WorldDisplay" unique_id=1390201607]
 script = ExtResource("23_wddjc")
 CanMoveWithKeyboard = false
