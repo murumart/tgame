@@ -35,6 +35,7 @@ namespace scenes.autoload {
 		public override void _UnhandledKeyInput(InputEvent @event) {
 			var e = @event as InputEventKey;
 			if (e.Keycode == Key.Key7 && e.Pressed) debugLabelParent.Visible = !debugLabelParent.Visible;
+			if (e.Keycode == Key.F12 && e.Pressed) Screenshot();
 		}
 
 		public static void AddUIChild(Node node) {
@@ -56,6 +57,17 @@ namespace scenes.autoload {
 			};
 			singleton.debugLabelParent.AddChild(label);
 			label.SetMeta("callback", Callable.From(output));
+		}
+
+		public static void Screenshot() {
+			if (!DirAccess.DirExistsAbsolute("user://fevered_world/screenshots")) {
+				DirAccess.MakeDirRecursiveAbsolute("user://fevered_world/screenshots");
+			}
+			var img = singleton.GetViewport().GetTexture().GetImage();
+			string name = "" + Time.GetDatetimeStringFromSystem();
+			if (!name.IsValidFileName()) name = "" + name.Hash();
+			name += ".png";
+			img.SavePng("user://fevered_world/screenshots/" + name);
 		}
 
 	}

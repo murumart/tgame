@@ -11,7 +11,10 @@ config_version=5
 [application]
 
 config/name="Colony/strategy game"
+config/version="0.5.0"
 run/main_scene="uid://d272nequ2i4ji"
+config/use_custom_user_dir=true
+config/custom_user_dir_name="murumart"
 config/features=PackedStringArray("4.6", "C#", "Mobile")
 run/max_fps=120
 boot_splash/bg_color=Color(0.34901962, 0.24313726, 0.2784314, 1)
