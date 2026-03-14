@@ -18,7 +18,7 @@ public partial class Camera : Camera2D {
 	float zoomSize = 1.0f;
 
 	public override void _Ready() {
-		UILayer.DebugDisplay(() => $"dragging: {dragging}");
+		UILayer.DebugDisplay(() => $"dragging: {dragging}, start: {draggingStartPos}");
 	}
 
 	public override void _Process(double delta) {
@@ -64,19 +64,23 @@ public partial class Camera : Camera2D {
 	public void ZoomOut(float amt = 0.1f) => zoomSize = Mathf.Max(zoomSize - amt * zoomSize, 0.1f);
 	public void ZoomReset() => zoomSize = 1f;
 
-	public void StartDragging() {
+	public void StartDragging(bool warpBack = false) {
 		dragging = true;
-		draggingStartPos = GetViewport().GetMousePosition();
+		draggingStartPos = DisplayServer.MouseGetPosition();
 		draggingStartCamPos = Position;
-		DisplayServer.MouseSetMode(DisplayServer.MouseMode.Captured);
+		if (warpBack) DisplayServer.MouseSetMode(DisplayServer.MouseMode.Captured);
+		this.warpBack = warpBack;
 	}
 
 	public void StopDragging() {
 		dragging = false;
 		DisplayServer.MouseSetMode(DisplayServer.MouseMode.Visible);
+		if (warpBack) DisplayServer.WarpMouse((Vector2I)draggingStartPos);
+		warpBack = false;
 	}
 
 	protected bool dragging = false;
+	bool warpBack = false;
 	Vector2 draggingStartPos;
 	Vector2 draggingStartCamPos;
 	protected virtual bool MouseButtonInput(InputEventMouseButton evt) {

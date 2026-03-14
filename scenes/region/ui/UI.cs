@@ -131,7 +131,7 @@ public partial class UI : Control {
 		zoomResetButton.Pressed += () => Camera.ZoomReset();
 
 		panButton.ButtonDown += () => {
-			Camera.StartDragging();
+			Camera.StartDragging(true);
 			cursedPanning = true;
 			panButton.MouseFilter = MouseFilterEnum.Ignore;
 			panButton.Disabled = true;
