@@ -7,6 +7,8 @@ namespace scenes.map.ui;
 
 public partial class WorldGenUi : MarginContainer {
 
+	public event Action GoBackEvent;
+
 	[Export] WorldGenerator worldGenerator;
 	[Export] WorldRenderer worldRenderer;
 	[Export] Camera camera;
@@ -18,6 +20,8 @@ public partial class WorldGenUi : MarginContainer {
 	[Export] SpinBox worldHeightSpinbox;
 	[Export] SpinBox noiseScaleSpinbox;
 	[Export] SpinBox depthSpinbox;
+
+	[Export] Button backButton;
 
 	[Export] Godot.Collections.Array<CheckButton> drawLayerButtons;
 	[Export] CheckButton regionDisplayCheck;
@@ -37,6 +41,8 @@ public partial class WorldGenUi : MarginContainer {
 
 		worldSeedLabel.TextSubmitted += OnWorldSeedEntered;
 		worldSeedRandomButton.Pressed += OnWorldSeedRandomiseRequested;
+
+		backButton.Pressed += () => GoBackEvent?.Invoke();
 
 		foreach (var but in drawLayerButtons) but.Pressed += OnDrawLayersChanged;
 		regionDisplayCheck.Toggled += OnRegionDisplayChanged;

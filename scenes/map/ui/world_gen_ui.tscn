@@ -172,7 +172,7 @@ colors = PackedColorArray(0.32941177, 0.40392157, 0.3372549, 1, 0.94509804, 0.96
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_e51lx"]
 blend_mode = 1
 
-[node name="WorldGenUI" type="MarginContainer" unique_id=1511327676 node_paths=PackedStringArray("worldGenerator", "worldRenderer", "camera", "genRegionsButton", "worldSeedLabel", "worldSeedRandomButton", "worldWidthSpinbox", "worldHeightSpinbox", "noiseScaleSpinbox", "depthSpinbox", "drawLayerButtons", "regionDisplayCheck")]
+[node name="WorldGenUI" type="MarginContainer" unique_id=1511327676 node_paths=PackedStringArray("worldGenerator", "worldRenderer", "camera", "genRegionsButton", "worldSeedLabel", "worldSeedRandomButton", "worldWidthSpinbox", "worldHeightSpinbox", "noiseScaleSpinbox", "depthSpinbox", "backButton", "drawLayerButtons", "regionDisplayCheck")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -193,6 +193,7 @@ worldWidthSpinbox = NodePath("HBoxContainer/PanelContainer/MarginContainer/VBoxC
 worldHeightSpinbox = NodePath("HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer2/Height")
 noiseScaleSpinbox = NodePath("HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/NoiseScale")
 depthSpinbox = NodePath("HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/BaseDepth")
+backButton = NodePath("HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/BackButton")
 drawLayerButtons = [NodePath("HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle6/HBoxContainer/Ground"), NodePath("HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle/HBoxContainer/Elevation"), NodePath("HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle2/HBoxContainer/Temperature"), NodePath("HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle3/HBoxContainer/Humidity"), NodePath("HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle4/HBoxContainer/SeaWind")]
 regionDisplayCheck = NodePath("HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle5/HBoxContainer/Regions")
 
@@ -309,6 +310,15 @@ step = 0.05
 layout_mode = 2
 focus_mode = 0
 text = "grow regions"
+
+[node name="Fat" type="Control" parent="HBoxContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1602607816]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="BackButton" type="Button" parent="HBoxContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1693475961]
+layout_mode = 2
+focus_mode = 0
+text = "Back"
 
 [node name="PanelContainer2" type="PanelContainer" parent="HBoxContainer" unique_id=1866558799]
 layout_mode = 2
