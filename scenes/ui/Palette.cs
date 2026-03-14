@@ -27,7 +27,7 @@ public static class Palette {
 	public static Color Chardonnay => GetColor(12);
 	public static Color DairyCream => GetColor(13);
 	public static Color Pavlova => GetColor(14);
-	public static Color GreenBrass => GetColor(15);
+	public static Color BrassGreen => GetColor(15);
 	public static Color Camo => GetColor(16);
 	public static Color MediumForestGreen => GetColor(17);
 	public static Color LunarGreen => GetColor(18);
