@@ -29,7 +29,7 @@ public partial class UI : Control {
 	public event Action<MapObject, MapObjectJob> AddJobRequestedEvent;
 	public event Func<uint> GetMaxFreeWorkersEvent;
 	public event Action<Job, int> ChangeJobWorkerCountEvent;
-	public event Action<Job> DeleteJobEvent;
+	public event Action<Job> RemoveJobEvent;
 
 	public event Func<Briefcase> GetBriefcaseEvent;
 
@@ -514,7 +514,7 @@ public partial class UI : Control {
 	}
 
 	public void ChangeJobWorkerCount(Job job, int amount) => ChangeJobWorkerCountEvent?.Invoke(job, amount);
-	public void DeleteJob(Job job) => DeleteJobEvent?.Invoke(job);
+	public void RemoveJob(Job job) => RemoveJobEvent?.Invoke(job);
 
 	public Briefcase GetBriefcase() => GetBriefcaseEvent?.Invoke();
 

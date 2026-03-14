@@ -34,7 +34,7 @@ namespace scenes.region {
 			ui.AddJobRequestedEvent += actions.AddJob;
 			ui.GetMaxFreeWorkersEvent += GetJobMaxWorkers;
 			ui.ChangeJobWorkerCountEvent += actions.ChangeJobWorkerCount;
-			ui.DeleteJobEvent += actions.RemoveJob;
+			ui.RemoveJobEvent += actions.RemoveJob;
 			ui.GetFoodAndUsageEvent += actions.GetFoodAndUsage;
 
 			faction.JobRemovedEvent += j => {

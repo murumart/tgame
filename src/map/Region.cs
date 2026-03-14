@@ -89,7 +89,9 @@ public class Region {
 
 	public void RemoveMapObject(Vector2I tile) {
 		Debug.Assert(HasMapObject(tile), $"There is no map object to remove at {tile}");
+		var ob = mapObjects[tile];
 		mapObjects.Remove(tile);
+		ob.Remove();
 		NotifyMapObjectUpdateAt(tile);
 		NaturalResources.Touch();
 	}

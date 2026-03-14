@@ -10,6 +10,8 @@ public abstract partial class MapObject {
 	protected Vector2I position; public Vector2I GlobalPosition { get => position; }
 	public abstract IMapObjectType Type { get; }
 
+	public bool Removed { get; private set; }
+
 	public virtual IEnumerable<Job> GetAvailableJobs() => Type.GetPossibleJobs();
 
 	protected MapObject(Vector2I globalPosition) {
@@ -17,6 +19,8 @@ public abstract partial class MapObject {
 	}
 
 	public abstract void PassTime(TimeT minutes);
+
+	public void Remove() => Removed = true;
 
 }
 

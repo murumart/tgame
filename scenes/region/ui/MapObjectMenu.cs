@@ -71,6 +71,9 @@ public partial class MapObjectMenu : Control {
 		if (ExtantJob == null && AvailableJobs.Count != 0) {
 			if (myMapObject is Building building && building.IsConstructed) {
 				OpenAddJobScreen();
+			} else if (myMapObject.Removed) {
+				Close();
+				return;
 			} else {
 				OpenAddJobScreen();
 			}
