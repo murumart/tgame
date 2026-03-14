@@ -25,6 +25,7 @@ public struct ResourceBundle {
 	}
 
 	public readonly ResourceBundle Multiply(int coef) => new(Type, Amount * coef);
+	public readonly ResourceBundle Divide(int coef) => new(Type, Mathf.Max(1, Amount / coef));
 
 	public override readonly string ToString() => $"{Type.AssetName} x {Amount}";
 

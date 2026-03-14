@@ -105,14 +105,14 @@ Marketplace töötab imelikult, vist lisab kõik offerid mingilt factionilt korr
 - [ ] maailma genereerimise menüü koos seadetega
   ![alt text](worldmakermockup.png)
 - [ ] ressursiallikate eemaldamine (kui pole ruumi panna midagi kuhugi)
-- [ ] ehitiste eemaldamine
+- [X] ehitiste eemaldamine
 - [ ] info
   - [ ] logi tab kus eelmised notifid factioni koha
 	- [ ] ära lihtsalt pane rtlabelisse, gene tekst nt kuu kaupa kui nuppu vajutatakse
 	- [ ] mingi märguande ikoon uute treidide kohta turul
   - [ ] riba näitab kui depleted a resource site is
 - [ ] targem AI
-  - [ ] kurvid utility arvutamiseks
+  - [X] kurvid utility arvutamiseks
 - [ ] eventid
   - [ ] kaardi peal hüüumärk koos ajalimiidiga
   - [ ] pane töölisi sisse et olukorda parandada
@@ -128,5 +128,5 @@ Marketplace töötab imelikult, vist lisab kõik offerid mingilt factionilt korr
 
 **Fiksid**:
 
-- [ ] ehitise tööd tulevad ekraanil ette kui ehitamata ehitis eemaldatakse
+- [X] ehitise tööd tulevad ekraanil ette kui ehitamata ehitis eemaldatakse
 - [ ]

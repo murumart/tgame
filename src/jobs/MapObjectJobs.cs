@@ -59,10 +59,6 @@ public class ConstructBuildingJob : MapObjectJob {
 
 	public override float GetProgressEstimate() => Building.GetBuildProgress();
 
-	public override Job Copy() {
-		return new ConstructBuildingJob(requirements);
-	}
-
 	public override float GetWorkTime(TimeT minutes) {
 		return minutes * Mathf.Pow(Workers, 0.7f);
 	}
@@ -88,6 +84,77 @@ public class ConstructBuildingJob : MapObjectJob {
 	}
 
 	public override string ToString() => $"ConstructBuildingJob({(Building == null ? "null" : Building.Type.AssetName)})";
+
+}
+
+public class DemolishBuildingJob : MapObjectJob {
+
+	public override string Title => "Demolish Building";
+	public override bool IsValid => Building != null;
+
+	public override Vector2I GlobalPosition => Building.GlobalPosition;
+
+	public Building Building { get; private set; }
+
+
+	public DemolishBuildingJob() {
+		MaxWorkers = 35;
+	}
+
+	float timeSpent = 0f;
+	readonly TimeT timeTaken = GameTime.Hours(24);
+
+	public override bool CanInitialise(Faction ctxFaction, MapObject building) => (building as Building).IsConstructed;
+
+	public override void Initialise(Faction ctxFaction, MapObject mapObject) {
+		Debug.Assert(CanInitialise(ctxFaction, mapObject), "Job cannot be initialised!!");
+		Building = (Building)mapObject;
+	}
+
+	public override void Deinitialise(Faction ctxFaction) {
+		if (timeSpent >= timeTaken) {
+			var returns = Building.Type.GetResourceRequirements().Select(r => r.Divide(2)).ToArray();
+			RefundRequirements(returns, ctxFaction.Resources);
+			ctxFaction.RemoveBuilding(Building.GlobalPosition - ctxFaction.Region.WorldPosition);
+		}
+	}
+
+	public override void PassTime(TimeT minutes) {
+		timeSpent += GetWorkTime(minutes);
+	}
+
+	public override void CheckDone(Faction regionFaction) {
+		if (timeSpent >= timeTaken) {
+			regionFaction.RemoveJob(this);
+		}
+	}
+
+	public override float GetProgressEstimate() => timeSpent / timeTaken;
+
+	public override float GetWorkTime(TimeT minutes) {
+		return minutes * Mathf.Pow(Workers, 0.7f);
+	}
+
+	public override string GetStatusDescription() {
+		float hoursLeft = ((1 - GetProgressEstimate()) * Building.Type.GetHoursToConstruct());
+		float speed = GetWorkTime(1);
+		hoursLeft /= speed;
+		float mins = hoursLeft - (int)hoursLeft;
+		hoursLeft -= mins;
+		var str2 = "Demolishing the building will take ";
+		if (hoursLeft > 0) str2 += $"{hoursLeft:0} more hours.";
+		else str2 += $"{mins * 60:0} more minutes.";
+		return str2;
+	}
+
+	public override string GetProductionDescription() {
+		if (Building != null) {
+			return $"The {Building.Type.AssetName} will be demolished.";
+		}
+		return "";
+	}
+
+	public override string ToString() => $"DemolishBuildingJob({(Building == null ? "null" : Building.Type.AssetName)})";
 
 }
 
@@ -134,8 +201,6 @@ public class GatherResourceJob : MapObjectJob {
 		wellIx = wellix;
 		this.Site = site;
 	}
-
-	public override Job Copy() => new GatherResourceJob(wellIx, Site);
 
 	public override void Initialise(Faction ctxFaction, MapObject mapObject) {
 		storage = ctxFaction.Resources;
@@ -241,8 +306,6 @@ public class CraftJob : MapObjectJob {
 		Process = process;
 		MaxWorkers = maxWorkers;
 	}
-
-	public override Job Copy() => new CraftJob(Inputs, Outputs, TimeTaken, MaxWorkers, Product, Process);
 
 	public override void Initialise(Faction ctxFaction, MapObject mapObject) {
 		storage = ctxFaction.Resources;
@@ -357,8 +420,6 @@ public class ProcessMarketJob : MapObjectJob {
 		MaxWorkers = 10;
 	}
 
-	public override Job Copy() => throw new NotImplementedException();
-
 	public override void Deinitialise(Faction ctxFaction) {
 		faction = null;
 	}
@@ -442,10 +503,6 @@ public class AddFurnitureJob : MapObjectJob {
 	public AddFurnitureJob(Building building) {
 		this.building = building;
 		MaxWorkers = 3;
-	}
-
-	public override Job Copy() {
-		throw new NotImplementedException();
 	}
 
 	public override bool CanInitialise(Faction ctxFaction, MapObject mapObject) {

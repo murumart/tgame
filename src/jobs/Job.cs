@@ -21,8 +21,6 @@ public abstract class Job {
 	/// <param name="ctxFaction">The faction that will own this job</param>
 	public abstract void Initialise(Faction ctxFaction);
 
-	public abstract Job Copy();
-
 	/// <summary>
 	/// Call before removing job. Can uninitialise things here.
 	/// Workers get removed in RegionFaction.
