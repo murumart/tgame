@@ -21,13 +21,24 @@ public partial class Notifications : VBoxContainer {
 		}
 	}
 
-	public Notification Notify(string text, Action callback = null, float timeLimit = 0f) {
+	public Notification Notify(
+		string text,
+		Action callback = null,
+        float timeLimit = 0f,
+        bool isDismissable = true,
+        (Color, Color)? gradientColors = null,
+        bool isPulsing = false
+	) {
 		var notif = notificationPacked.Instantiate<Notification>();
-		notif.SetText(text);
-		notif.SetCallback(callback);
+		notif
+            .SetText(text)
+            .SetCallback(callback)
+		    .SetDismissable(isDismissable);
 		if (timeLimit > 0f) notif.SetTimeLimit(timeLimit);
 		notificationContainer.AddChild(notif);
 		notificationContainer.MoveChild(notif, 0);
+        if (gradientColors is (Color, Color) cols) notif.SetGradient(cols.Item1, cols.Item2);
+        notif.SetPulsing(isPulsing);
 
 		var tw = CreateTween().SetParallel().SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.Out);
 		tw.TweenProperty(notif, "modulate:a", 1.0f, 0.3f).From(0.0f);

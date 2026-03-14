@@ -3,6 +3,7 @@ using Godot;
 using resources.game.building_types;
 using scenes.autoload;
 using scenes.region.ui;
+using scenes.ui;
 using static Building;
 using static Document;
 
@@ -195,8 +196,22 @@ namespace scenes.region {
 
 		void PassTime(TimeT minutes) { }
 
+		Notification foodWarningNotification = null;
+
 		void HourlyUpdate(TimeT timeInMinutes) {
 			ui.HourlyUpdate(timeInMinutes);
+
+			if (faction.Population.ArePeopleStarving && foodWarningNotification == null) {
+				foodWarningNotification = ui.Notifications.Notify(
+					"STARVATION BESETS YOU. Scramble to find something to feed your people!",
+					gradientColors: (new Color(Palette.BrownRust, 0.0f), Palette.BrownRust),
+					isDismissable: false,
+					isPulsing: true
+				);
+			} else if (!faction.Population.ArePeopleStarving && foodWarningNotification != null && !foodWarningNotification.IsDismissing) {
+				foodWarningNotification.Dismiss();
+				foodWarningNotification = null;
+			}
 
 			// my beautiful story.
 			TimeT hour = timeInMinutes / GameTime.MINUTES_PER_HOUR;
