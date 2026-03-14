@@ -11,6 +11,7 @@
 [ext_resource type="PackedScene" uid="uid://bli7m2dvghbu1" path="res://scenes/region/ui/documents_display.tscn" id="5_iwag8"]
 [ext_resource type="PackedScene" uid="uid://1mqtysebfbnc" path="res://scenes/region/ui/notification.tscn" id="5_mgrsp"]
 [ext_resource type="LabelSettings" uid="uid://ddruam7fh1y7l" path="res://resources/visual/theme/label_styles/title.tres" id="5_u27i7"]
+[ext_resource type="PackedScene" uid="uid://d1tbr5mkayrjf" path="res://scenes/region/ui/jobs_list.tscn" id="10_v1o57"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_suhma"]
 bg_color = Color(0.6, 0.6, 0.6, 0)
@@ -69,7 +70,7 @@ events = [SubResource("InputEventKey_4ggmx")]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_bjdfm"]
 
-[node name="Ui" type="MarginContainer" unique_id=948088031 node_paths=PackedStringArray("buildButton", "agreementsButton", "jobsButton", "menuTabs", "buildingList", "documentsDisplay", "mopjectMenu", "resourceDisplay", "pauseDisplayPanel", "panButton", "zoomLabel", "zoomInButton", "zoomResetButton", "zoomOutButton", "gameSpeedLabel", "pauseButton", "normalSpeedButton", "fastSpeedButton", "fasterSpeedButton", "resourceLabel", "announcementOkayButton", "announcementText", "announcementTitle", "announcementParent", "Notifications")]
+[node name="Ui" type="MarginContainer" unique_id=948088031 node_paths=PackedStringArray("buildButton", "agreementsButton", "jobsButton", "menuTabs", "buildingList", "documentsDisplay", "jobsList", "mopjectMenu", "resourceDisplay", "pauseDisplayPanel", "panButton", "zoomLabel", "zoomInButton", "zoomResetButton", "zoomOutButton", "gameSpeedLabel", "pauseButton", "normalSpeedButton", "fastSpeedButton", "fasterSpeedButton", "resourceLabel", "announcementOkayButton", "announcementText", "announcementTitle", "announcementParent", "Notifications")]
 z_index = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -88,6 +89,7 @@ jobsButton = NodePath("VBoxContainer2/HBoxContainer/VBoxContainer2/ControlButton
 menuTabs = NodePath("VBoxContainer2/HBoxContainer/VBoxContainer2/MenuTabs")
 buildingList = NodePath("VBoxContainer2/HBoxContainer/VBoxContainer2/MenuTabs/HBoxContainer/BuildMenu")
 documentsDisplay = NodePath("VBoxContainer2/HBoxContainer/VBoxContainer2/MenuTabs/HBoxContainer2/Agreements")
+jobsList = NodePath("VBoxContainer2/HBoxContainer/VBoxContainer2/MenuTabs/HBoxContainer3/Jobs")
 mopjectMenu = NodePath("VBoxContainer2/HBoxContainer/MapObjectMenu")
 resourceDisplay = NodePath("VBoxContainer/VBoxContainer/ResourceDisplay")
 pauseDisplayPanel = NodePath("PausePanel")
@@ -408,6 +410,21 @@ size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.47
 mouse_filter = 2
 
+[node name="HBoxContainer3" type="HBoxContainer" parent="VBoxContainer2/HBoxContainer/VBoxContainer2/MenuTabs" unique_id=823039302]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 2
+
+[node name="Jobs" parent="VBoxContainer2/HBoxContainer/VBoxContainer2/MenuTabs/HBoxContainer3" unique_id=207157808 node_paths=PackedStringArray("ui") instance=ExtResource("10_v1o57")]
+layout_mode = 2
+ui = NodePath("../../../../../..")
+
+[node name="Fat" type="Control" parent="VBoxContainer2/HBoxContainer/VBoxContainer2/MenuTabs/HBoxContainer3" unique_id=1738852857]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.47
+mouse_filter = 2
+
 [node name="ControlButtons" type="HBoxContainer" parent="VBoxContainer2/HBoxContainer/VBoxContainer2" unique_id=1935346688]
 layout_mode = 2
 mouse_filter = 2
@@ -429,7 +446,6 @@ text = "Agreements"
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
-disabled = true
 text = "Jobs"
 
 [node name="WorldButton" type="Button" parent="VBoxContainer2/HBoxContainer/VBoxContainer2/ControlButtons" unique_id=1836012613]

@@ -1,0 +1,94 @@
+[gd_scene format=3 uid="uid://d1tbr5mkayrjf"]
+
+[ext_resource type="Script" uid="uid://cltsihrj1kbib" path="res://scenes/region/ui/JobsList.cs" id="1_4rrfw"]
+[ext_resource type="PackedScene" uid="uid://bit7aavyxpq38" path="res://scenes/region/ui/job_info_panel.tscn" id="1_747j8"]
+[ext_resource type="LabelSettings" uid="uid://btwbnjxri1gdg" path="res://resources/visual/theme/label_styles/8px.tres" id="3_awxvm"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_4rrfw"]
+
+[node name="Jobs" type="VBoxContainer" unique_id=207157808 node_paths=PackedStringArray("jobsContainer", "infoLabel")]
+custom_minimum_size = Vector2(300, 280)
+theme_override_constants/separation = 0
+script = ExtResource("1_4rrfw")
+infopanelScene = ExtResource("1_747j8")
+jobsContainer = NodePath("PanelContainer/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/VBoxContainer/CurrentArrangements/Box")
+infoLabel = NodePath("PanelContainer/MarginContainer/VBoxContainer/InfoLabel")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=383365566]
+layout_mode = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="HBoxContainer" unique_id=2000854201]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/PanelContainer" unique_id=1646764740]
+layout_mode = 2
+theme_override_constants/margin_left = 2
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 2
+
+[node name="Label" type="Label" parent="HBoxContainer/PanelContainer/MarginContainer" unique_id=1816412975]
+layout_mode = 2
+text = "Jobs"
+
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=1839175678]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer" unique_id=1842381053]
+layout_mode = 2
+theme_override_constants/margin_left = 2
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 2
+theme_override_constants/margin_bottom = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer" unique_id=2097140006]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="RichTextLabel" type="RichTextLabel" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=139428180]
+layout_mode = 2
+theme_override_font_sizes/normal_font_size = 8
+bbcode_enabled = true
+text = "Jobs you've assigned. See where all your workers have gone."
+fit_content = true
+
+[node name="InfoLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=1206253423]
+layout_mode = 2
+text = "No soul works"
+label_settings = ExtResource("3_awxvm")
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=1636022425]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_right = 4
+
+[node name="ScrollContainer" type="ScrollContainer" parent="PanelContainer/MarginContainer/VBoxContainer/MarginContainer" unique_id=1204230431]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_4rrfw")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer" unique_id=1866407931]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 0
+
+[node name="CurrentArrangements" type="MarginContainer" parent="PanelContainer/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/VBoxContainer" unique_id=1767236566]
+layout_mode = 2
+theme_override_constants/margin_left = 1
+theme_override_constants/margin_top = 1
+theme_override_constants/margin_right = 1
+theme_override_constants/margin_bottom = 1
+
+[node name="Box" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/VBoxContainer/CurrentArrangements" unique_id=620403429]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="JobInfopanel" parent="PanelContainer/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/VBoxContainer/CurrentArrangements/Box" unique_id=1362104975 instance=ExtResource("1_747j8")]
+layout_mode = 2
+
+[node name="JobInfopanel2" parent="PanelContainer/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/VBoxContainer/CurrentArrangements/Box" unique_id=1659745359 instance=ExtResource("1_747j8")]
+layout_mode = 2
+
+[node name="JobInfopanel3" parent="PanelContainer/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/VBoxContainer/CurrentArrangements/Box" unique_id=928745550 instance=ExtResource("1_747j8")]
+layout_mode = 2

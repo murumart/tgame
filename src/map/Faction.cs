@@ -116,6 +116,10 @@ public class Faction : IEntity {
 		return jobsByPosition.TryGetValue(globalPosition, out job);
 	}
 
+	public IEnumerable<Job> GetJobs() {
+		return jobsByPosition.Values;
+	}
+
 	public uint GetFreeWorkers() => UnemployedPopulation;
 
 	public bool CanEmployWorkers(Job job, int amount) {
@@ -459,6 +463,7 @@ public class Faction : IEntity {
 	public override string ToString() {
 		return $"Faction {Name}";
 	}
+
 
 	public static class Naming {
 

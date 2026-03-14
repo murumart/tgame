@@ -128,13 +128,12 @@ public partial class MapObjectMenu : Control {
 		jobInfoPanel.Show();
 		addJobMenu.Hide();
 
-		uint sliderMax = 0;
 		if (ExtantJob == null) {
 			jobInfoPanel.Hide();
 			return;
 		}
 		jobInfoPanel.Show();
-		if (ExtantJob.NeedsWorkers) sliderMax = Math.Min(ui.GetMaxFreeWorkers() + (uint)ExtantJob.Workers, ExtantJob.MaxWorkers);
+		uint sliderMax = JobInfoPanel.GetSliderMax(ExtantJob, ui.GetMaxFreeWorkers());
 		jobInfoPanel.Display(ui, ExtantJob, 0, sliderMax, JobWorkerCountChanged);
 	}
 
@@ -187,7 +186,7 @@ public partial class MapObjectMenu : Control {
 	}
 
 	void JobWorkerCountChanged(int ix, int by) {
-		GD.Print("JobsList::JobWorkerCountChanged : worker count changed by ", by);
+		GD.Print("MapObjectMenu::JobWorkerCountChanged : worker count changed by ", by);
 		ui.ChangeJobWorkerCount(ExtantJob, by);
 		OpenViewJobScreen(); // rebuild ui entirely in a lazy unoptimised manner
 	}

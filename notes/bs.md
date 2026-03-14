@@ -108,9 +108,10 @@ Marketplace töötab imelikult, vist lisab kõik offerid mingilt factionilt korr
 - [X] ehitiste eemaldamine
 - [ ] info
   - [ ] logi tab kus eelmised notifid factioni koha
-	- [ ] ära lihtsalt pane rtlabelisse, gene tekst nt kuu kaupa kui nuppu vajutatakse
-	- [ ] mingi märguande ikoon uute treidide kohta turul
-  - [ ] riba näitab kui depleted a resource site is
+    - [ ] ära lihtsalt pane rtlabelisse, gene tekst nt kuu kaupa kui nuppu vajutatakse
+    - [ ] mingi märguande ikoon uute treidide kohta turul
+    - [ ] riba näitab kui depleted a resource site is
+  - [X] tööde menüü
 - [ ] targem AI
   - [X] kurvid utility arvutamiseks
 - [ ] eventid
@@ -123,6 +124,7 @@ Marketplace töötab imelikult, vist lisab kõik offerid mingilt factionilt korr
 - [ ] juice+heli
   - [ ] ehitisi maha pannes sügav heli + tolm
   - [ ] mingid inimeste particleid töökohtade juures
+  - [ ] kõigile nuppudele hover + click
 - [ ] muusika
 - [ ] seadete menüü
 

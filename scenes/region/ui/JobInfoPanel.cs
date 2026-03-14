@@ -6,12 +6,14 @@ namespace scenes.region.ui;
 public partial class JobInfoPanel : Control {
 
 	public event Action UIRebuildRequested;
+	public event Action JobFocusRequested;
 
 	[ExportGroup("Nodes")]
 	[Export] RichTextLabel infoLabel;
 	[Export] Label titleLabel;
 	[Export] Container informationList;
-	[Export] public Button DeleteJobButton;
+	[Export] Button DeleteJobButton;
+	[Export] Button FocusOnJobButton;
 	[Export] JobSlider workerCountSlider;
 
 	UI ui;
@@ -20,6 +22,7 @@ public partial class JobInfoPanel : Control {
 
 	public override void _Ready() {
 		DeleteJobButton.Pressed += RemoveJob;
+		FocusOnJobButton.Pressed += JumpToJob;
 	}
 
 	public void Display(UI ui, Job job, int jobIndex, uint sliderMax, Action<int, int> workersSelected) {
@@ -44,6 +47,15 @@ public partial class JobInfoPanel : Control {
 	void RemoveJob() {
 		ui.RemoveJob(jobBox);
 		UIRebuildRequested?.Invoke();
+	}
+
+	void JumpToJob() {
+		JobFocusRequested?.Invoke();
+	}
+
+	public static uint GetSliderMax(Job job, uint maxFreeWorkers) {
+		if (!job.NeedsWorkers) return 0;
+		return Math.Min(maxFreeWorkers + (uint)job.Workers, job.MaxWorkers);
 	}
 
 }

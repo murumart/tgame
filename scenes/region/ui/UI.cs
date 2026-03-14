@@ -25,7 +25,7 @@ public partial class UI : Control {
 	public event Action TileDeselectedEvent;
 
 	public event Func<MapObject, Job> GetMapObjectJobEvent;
-	public event Func<ICollection<Job>> GetJobsEvent;
+	public event Func<IEnumerable<Job>> GetJobsEvent;
 	public event Action<MapObject, MapObjectJob> AddJobRequestedEvent;
 	public event Func<uint> GetMaxFreeWorkersEvent;
 	public event Action<Job, int> ChangeJobWorkerCountEvent;
@@ -42,12 +42,14 @@ public partial class UI : Control {
 		PlacingBuild,
 		MapObjectMenu,
 		AgreementsMenu,
+		JobsMenu,
 	}
 
 	public enum Tab : int {
 		None = -1, // because TabContainer -1 = none selected
 		Build,
 		Documents,
+		Jobs,
 	}
 
 	public bool GameIsOver { get; private set; }
@@ -64,6 +66,7 @@ public partial class UI : Control {
 	[Export] public TabContainer menuTabs;
 	[Export] public BuildingList buildingList;
 	[Export] public DocumentsDisplay documentsDisplay;
+	[Export] public JobsList jobsList;
 
 	// right
 	[Export] public MapObjectMenu mopjectMenu;
@@ -120,6 +123,7 @@ public partial class UI : Control {
 	public override void _Ready() {
 		buildButton.Pressed += () => OnTabButtonPressed(Tab.Build, State.ChoosingBuild);
 		agreementsButton.Pressed += () => OnTabButtonPressed(Tab.Documents, State.AgreementsMenu);
+		jobsButton.Pressed += () => OnTabButtonPressed(Tab.Jobs, State.JobsMenu);
 
 		pauseButton.Pressed += OnPauseButtonPressed;
 		normalSpeedButton.Pressed += OnNormalSpeedButtonPressed;
@@ -225,6 +229,8 @@ public partial class UI : Control {
 			buildingList.Show();
 		} else if (which == Tab.Documents) {
 			documentsDisplay.Display(GetBriefcase());
+		} else if (which == Tab.Jobs) {
+			jobsList.Display();
 		}
 		menuTabs.CurrentTab = (int)which;
 	}
@@ -376,6 +382,9 @@ public partial class UI : Control {
 		if (state == State.AgreementsMenu) {
 			state = State.Idle;
 		}
+		if (state == State.JobsMenu) {
+			state = State.Idle;
+		}
 	}
 
 	public void HourlyUpdate(TimeT timeInMinutes) {
@@ -444,27 +453,17 @@ public partial class UI : Control {
 				if (GameMan.Singleton.IsPaused && !wasPausedBefore) GameMan.Singleton.TogglePause();
 				TileDeselectedEvent?.Invoke();
 			}
-			if (old == State.AgreementsMenu) {
+			if (old == State.AgreementsMenu || old == State.JobsMenu) {
 				SelectTab(Tab.None);
 				SetTimeSpeedAlteringAllowed(true);
 				if (GameMan.Singleton.IsPaused && !wasPausedBefore) GameMan.Singleton.TogglePause();
 			}
 		}
-		if (current == State.ChoosingBuild) {
-			SetTimeSpeedAlteringAllowed(false);
-			if (!GameMan.Singleton.IsPaused) {
-				GameMan.Singleton.TogglePause();
-				wasPausedBefore = false;
-			} else wasPausedBefore = true;
-		}
-		if (current == State.MapObjectMenu) {
-			SetTimeSpeedAlteringAllowed(false);
-			if (!GameMan.Singleton.IsPaused) {
-				GameMan.Singleton.TogglePause();
-				wasPausedBefore = false;
-			} else wasPausedBefore = true;
-		}
-		if (current == State.AgreementsMenu) {
+		if (current == State.ChoosingBuild
+			|| current == State.MapObjectMenu
+			|| current == State.AgreementsMenu
+			|| current == State.JobsMenu
+		) {
 			SetTimeSpeedAlteringAllowed(false);
 			if (!GameMan.Singleton.IsPaused) {
 				GameMan.Singleton.TogglePause();
@@ -504,7 +503,7 @@ public partial class UI : Control {
 	public void TileSelected(Vector2I place) => TileSelectedEvent?.Invoke(place);
 
 	public Job GetMapObjectJob(MapObject mapObject) => GetMapObjectJobEvent?.Invoke(mapObject);
-	public ICollection<Job> GetJobs() => GetJobsEvent?.Invoke();
+	public IEnumerable<Job> GetJobs() => GetJobsEvent?.Invoke();
 	public void AddJobRequested(MapObject mapObject, MapObjectJob job) => AddJobRequestedEvent?.Invoke(mapObject, job);
 	public void AddJobRequested(Job job) => throw new NotImplementedException("Cant add jobs without building yet");
 	public uint GetMaxFreeWorkers() {
