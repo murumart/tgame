@@ -51,13 +51,6 @@ item_0/text = "Housing"
 item_1/text = "Well"
 item_2/text = "Idk"
 
-[node name="ResourceList" type="RichTextLabel" parent="BuildingList/MarginContainer/VBoxContainer" unique_id=1303932614]
-layout_mode = 2
-size_flags_vertical = 3
-size_flags_stretch_ratio = 0.33
-bbcode_enabled = true
-text = "you need my resources. to construct these building aa a a a a a a  aa aaa aaaaa aa aa aaa a a  a aa a a aa a a a aa a aaa a a"
-
 [node name="HBoxContainer" type="HBoxContainer" parent="BuildingList/MarginContainer/VBoxContainer" unique_id=1348484348]
 layout_mode = 2
 alignment = 2
@@ -67,3 +60,10 @@ unique_name_in_owner = true
 layout_mode = 2
 disabled = true
 text = "select"
+
+[node name="ResourceList" type="RichTextLabel" parent="BuildingList/MarginContainer/VBoxContainer" unique_id=1303932614]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.33
+bbcode_enabled = true
+text = "you need my resources. to construct these building aa a a a a a a  aa aaa aaaaa aa aa aaa a a  a aa a a aa a a a aa a aaa a a"

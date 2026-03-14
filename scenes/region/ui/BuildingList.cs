@@ -5,11 +5,10 @@ using resources.game;
 using resources.game.building_types;
 using scenes.region;
 using scenes.region.ui;
+using scenes.ui;
 using static Building;
 
 public partial class BuildingList : Control {
-
-	static ColorPalette palette = GD.Load<ColorPalette>("res://resources/visual/theme/palette.tres");
 
 	[Export] UI ui;
 	[Export] ItemList itemList;
@@ -104,7 +103,7 @@ public partial class BuildingList : Control {
 			// in between calls here, we should still get the correct buildings that the visual
 			// ItemList was set up with
 			itemList.SetItemMetadata(ix, Variant.CreateFrom(buildingType));
-			itemList.SetItemCustomBgColor(ix, palette.Colors[ui.GetCanBuild(buildingType) ? 18 : 7]);
+			itemList.SetItemCustomBgColor(ix, ui.GetCanBuild(buildingType) ? Palette.LunarGreen : Palette.Dune);
 		}
 	}
 

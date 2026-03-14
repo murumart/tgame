@@ -1,9 +1,8 @@
 using Godot;
 using scenes.region;
+using scenes.ui;
 
 public partial class WorldRenderer : Node {
-
-	ColorPalette palette = GD.Load<ColorPalette>("uid://cr4o125t00hli");
 
 	[Export] Sprite2D groundSprite;
 	[Export] public Sprite2D RegionSprite;
@@ -76,7 +75,7 @@ public partial class WorldRenderer : Node {
 
 			}
 		} else {
-			worldImage.Fill(palette.Colors[23]);
+			worldImage.Fill(Palette.WhiteSmoke);
 		}
 		if ((DrawMode & DrawLayers.Temperature) != 0) {
 			for (int x = 0; x < world.Width; x++) {
