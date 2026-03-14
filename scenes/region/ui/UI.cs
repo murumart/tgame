@@ -16,7 +16,7 @@ public partial class UI : Control {
 
 	public event Action<Vector2I> MapClickEvent;
 
-	public event Action<IBuildingType, Vector2I> RequestBuildEvent;
+	public event Func<IBuildingType, Vector2I, bool> RequestBuildEvent;
 	public event Func<IBuildingType, bool> GetCanBuildEvent;
 	public event Func<ResourceStorage> GetResourcesEvent;
 	public event Func<Faction> GetFactionEvent;
@@ -291,9 +291,9 @@ public partial class UI : Control {
 		if (!fac.IsWild) {
 			var reg = fac.Region;
 			resourceDisplay.Display(c => {
-					float monthlyChange = fac.Population.GetApprovalMonthlyChange();
-					(c as ApprovalMeter).Display(fac.Population.Approval, monthlyChange);
-				},
+				float monthlyChange = fac.Population.GetApprovalMonthlyChange();
+				(c as ApprovalMeter).Display(fac.Population.Approval, monthlyChange);
+			},
 				GD.Load<PackedScene>("res://scenes/region/ui/approval_meter.tscn").Instantiate<ApprovalMeter>(),
 				() => {
 					var sb = new StringBuilder();
@@ -387,7 +387,9 @@ public partial class UI : Control {
 	public void OnLeftMouseClick(Vector2 position, Vector2I tilePosition) {
 		switch (state) {
 			case State.PlacingBuild:
-				RequestBuild(buildingList.SelectedBuildingType, tilePosition);
+				if (RequestBuild(buildingList.SelectedBuildingType, tilePosition) && !Input.IsKeyPressed(Key.Alt)) {
+					state = State.Idle;
+				}
 				break;
 			case State.Idle:
 				MapClick(tilePosition);
@@ -493,7 +495,7 @@ public partial class UI : Control {
 
 	public void MapClick(Vector2I tile) => MapClickEvent?.Invoke(tile);
 
-	public void RequestBuild(IBuildingType a, Vector2I b) => RequestBuildEvent?.Invoke(a, b);
+	public bool RequestBuild(IBuildingType a, Vector2I b) => RequestBuildEvent?.Invoke(a, b) ?? false;
 	public bool GetCanBuild(IBuildingType btype) => GetCanBuildEvent?.Invoke(btype) ?? false;
 	public List<BuildingType> GetBuildingTypes() => GetBuildingTypesEvent?.Invoke();
 	public ResourceStorage GetResources() => GetResourcesEvent?.Invoke();
