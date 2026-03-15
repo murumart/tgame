@@ -29,6 +29,7 @@ public class Faction : IEntity {
 
 	readonly List<Job> jobs = new();
 	readonly Dictionary<Vector2I, Job> jobsByPosition = new();
+	readonly Dictionary<Vector2I, Problem> problems = new();
 
 	readonly ResourceStorage resourceStorage = new();
 	public ResourceStorage Resources { get => resourceStorage; }
@@ -291,6 +292,11 @@ public class Faction : IEntity {
 			job.PassTime(minutes);
 			job.CheckDone(this);
 		}
+		for (int i = problems.Count - 1; i > -1; i -= 1) {
+			var (_, problem) = problems.ElementAt(i);
+			problem.IncreaseProblem(minutes);
+			problem.CheckDone(this);
+		}
 		Population.PassTime(minutes);
 		time += minutes;
 		// building time is passed in Region
@@ -343,6 +349,14 @@ public class Faction : IEntity {
 			);
 			(other).Briefcase.AddDocument(Document.DocType.AMandatesExportFromB, newdoc);
 		}
+	}
+
+	// *** PROBLEMS ***
+
+	public void RemoveProblem(Vector2I where) {
+		bool has = problems.TryGetValue(where, out var problem);
+		Debug.Assert(has, $"Don't have problem at {where}");
+		problems.Remove(where);
 	}
 
 	// *** TRADING ***
