@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using Godot;
 using scenes.autoload;
+using scenes.ui;
 
 namespace scenes.region.ui;
 
@@ -23,7 +25,7 @@ public partial class Notifications : VBoxContainer {
 
 	public Notification Notify(
 		string text,
-		Action callback = null,
+		Action closingCallback = null,
         float timeLimit = 0f,
         bool isDismissable = true,
         (Color, Color)? gradientColors = null,
@@ -32,7 +34,7 @@ public partial class Notifications : VBoxContainer {
 		var notif = notificationPacked.Instantiate<Notification>();
 		notif
             .SetText(text)
-            .SetCallback(callback)
+            .SetCallback(closingCallback)
 		    .SetDismissable(isDismissable);
 		if (timeLimit > 0f) notif.SetTimeLimit(timeLimit);
 		notificationContainer.AddChild(notif);
@@ -45,6 +47,19 @@ public partial class Notifications : VBoxContainer {
 		//tw.SetTrans(Tween.TransitionType.Elastic).TweenProperty(notif, "position:y", notif.Position.Y, 0.0f).From(notificationContainer.Size.Y);
 
 		return notif;
+	}
+
+	readonly Dictionary<Problem, Notification> problemNotifications = new();
+
+	public void Notify(Problem problem) {
+		var notif = Notify(problem.NotificationTitle, isDismissable: false, gradientColors: (new(Palette.BrownRust, 0f), Palette.BrownRust), isPulsing: true);
+		problemNotifications[problem] = notif;
+	}
+
+	public void ProblemStopped(Problem problem) {
+		var notif = problemNotifications[problem];
+		problemNotifications.Remove(problem);
+		notif.Dismiss();
 	}
 
 }

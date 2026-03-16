@@ -59,6 +59,9 @@ namespace scenes.region {
 			ui.GetBriefcaseEvent += GetBriefcase;
 			faction.ContractFailedEvent += OnRegionMandateFailed;
 			faction.Population.ApprovalDroppedToZero += OnApprovalZeroed;
+			faction.ProblemAddedEvent += ui.Notifications.Notify;
+			faction.ProblemSolvedEvent += ui.Notifications.ProblemStopped;
+			faction.ProblemUnsolvedEvent += ui.Notifications.ProblemStopped;
 
 			region.MapObjectUpdatedAtEvent += OnRegionMapObjectUpdated;
 			camera.Region = region;
@@ -151,6 +154,9 @@ namespace scenes.region {
 				region.MapObjectUpdatedAtEvent -= OnRegionMapObjectUpdated;
 				faction.ContractFailedEvent -= OnRegionMandateFailed;
 				faction.Population.ApprovalDroppedToZero -= OnApprovalZeroed;
+				faction.ProblemAddedEvent -= ui.Notifications.Notify;
+				faction.ProblemSolvedEvent -= ui.Notifications.ProblemStopped;
+				faction.ProblemUnsolvedEvent -= ui.Notifications.ProblemStopped;
 
 				GameMan.Singleton.Game.Time.HourPassedEvent -= HourlyUpdate;
 				GameMan.Singleton.Game.Time.TimePassedEvent -= PassTime;

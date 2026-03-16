@@ -5,6 +5,7 @@ public abstract class Problem {
 
 	public abstract string Title { get; }
 	public abstract string SolveJobTitle { get; }
+	public abstract string NotificationTitle { get; }
 
 	public readonly TimeT MaxTime;
 	public float ProblemTime { get; private set; }
@@ -100,6 +101,7 @@ public class FishingBoatProblem : Problem {
 
 	public override string Title => "Tipped Boat";
 	public override string SolveJobTitle => "Save boatmen";
+	public override string NotificationTitle => "A boat tipped over! Send people to save them before they drown!";
 
 	readonly GatherResourceJob fishingJob;
 
