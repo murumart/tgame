@@ -337,7 +337,7 @@ public partial class UI : Control {
 		resourceDisplay.DisplayFat();
 		var timeLabel = new Label {
 			HorizontalAlignment = HorizontalAlignment.Right,
-			LabelSettings = GD.Load<LabelSettings>("res://resources/visual/theme/label_styles/8px.tres"),
+			LabelSettings = ResourceDisplay.DefaultLabelSettings,
 		};
 		resourceDisplay.Display(c => (c as Label).Text = GetTimeString(), timeLabel);
 	}

@@ -22,11 +22,14 @@ public partial class MapObjectView : Node2D {
 	[Export] protected Node2D inProgressDisplay;
 	[Export] protected Sprite2D selectedHighlight;
 
+	[Export] protected Node2D mapObjectDisplay;
+
 	protected MapObject mapObjectRef;
 
 
 	public override void _Ready() {
 		Debug.Assert(mapObjectRef != null, "MapObjectView needs a map object ref");
+		Debug.Assert(mapObjectDisplay != null, "MapObjectView needs a reference to the display object");
 		IconSetHide();
 	}
 
@@ -62,6 +65,7 @@ public partial class MapObjectView : Node2D {
 		jobProgressBar.Visible = show;
 		jobProgressBar.Value = progress;
 		inProgressDisplay.Visible = showBuilding;
+		mapObjectDisplay.Modulate = showBuilding ? new(mapObjectDisplay.Modulate, 0.5f) : new(mapObjectDisplay.Modulate, 1f);
 	}
 
 	public static MapObjectView Make(string scenePath, MapObject mapObject) {

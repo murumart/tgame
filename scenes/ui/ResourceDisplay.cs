@@ -4,7 +4,7 @@ using Godot;
 
 public partial class ResourceDisplay : PanelContainer {
 
-	static readonly LabelSettings labelSettings = GD.Load<LabelSettings>("res://resources/visual/theme/label_styles/8px.tres");
+	public static readonly LabelSettings DefaultLabelSettings = GD.Load<LabelSettings>("res://resources/visual/theme/label_styles/8px.tres");
 	static readonly PackedScene panelScene = GD.Load<PackedScene>("res://scenes/ui/resource_display_hover_info.tscn");
 
 	[Export] Container labelsParent;
@@ -34,7 +34,7 @@ public partial class ResourceDisplay : PanelContainer {
 	public void Display(Action<Control> what, Func<string> extraInfo = null) {
 		Display(what, new Label() {
 			MouseFilter = MouseFilterEnum.Stop,
-			LabelSettings = labelSettings,
+			LabelSettings = DefaultLabelSettings,
 		}, extraInfo: extraInfo);
 	}
 
