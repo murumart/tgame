@@ -14,6 +14,7 @@ public partial class RegionDisplay : Node2D {
 	[Export] ColorRect visibilityDebug;
 
 	readonly Dictionary<Vector2I, MapObjectView> mapObjectViews = new();
+	readonly Dictionary<Vector2I, MapObjectView> problemViews = new();
 	Region region;
 	Camera camera;
 
@@ -21,6 +22,8 @@ public partial class RegionDisplay : Node2D {
 
 	readonly Queue<Job> jobsToDisplay = new();
 	readonly Queue<Job> jobsToUndisplay = new();
+	readonly Queue<Problem> problemsToDisplay = new();
+	readonly Queue<Problem> problemsToUndisplay = new();
 
 	public int Lod { get; private set; }
 
@@ -52,6 +55,14 @@ public partial class RegionDisplay : Node2D {
 		if (jobsToUndisplay.Count > 0) {
 			var j = jobsToUndisplay.Dequeue();
 			UndisplayRegionJob(j);
+		}
+		if (problemsToDisplay.Count > 0) {
+			var p = problemsToDisplay.Dequeue();
+			DisplayRegionProblem(p);
+		}
+		if (problemsToUndisplay.Count > 0) {
+			var p = problemsToUndisplay.Dequeue();
+			UndisplayRegionProblem(p);
 		}
 		if (GameMan.Singleton.IsPaused) {
 			DisplayJobProgress();
@@ -111,6 +122,10 @@ public partial class RegionDisplay : Node2D {
 			region.LocalFaction.JobAddedEvent += OnRegionJobAdded;
 			region.LocalFaction.JobRemovedEvent += OnRegionJobRemoved;
 			region.LocalFaction.JobChangedEvent += OnJobChanged;
+
+			region.LocalFaction.ProblemAddedEvent += OnRegionProblemAdded;
+			region.LocalFaction.ProblemUnsolvedEvent += OnRegionProblemEnded;
+			region.LocalFaction.ProblemSolvedEvent += OnRegionProblemEnded;
 			camera.ZoomChanged += OnZoomChanged;
 		}
 		region.TileChangedAtEvent += OnTileChanged;
@@ -122,6 +137,10 @@ public partial class RegionDisplay : Node2D {
 			region.LocalFaction.JobAddedEvent -= OnRegionJobAdded;
 			region.LocalFaction.JobRemovedEvent -= OnRegionJobRemoved;
 			region.LocalFaction.JobChangedEvent -= OnJobChanged;
+
+			region.LocalFaction.ProblemAddedEvent -= OnRegionProblemAdded;
+			region.LocalFaction.ProblemUnsolvedEvent -= OnRegionProblemEnded;
+			region.LocalFaction.ProblemSolvedEvent -= OnRegionProblemEnded;
 			camera.ZoomChanged -= OnZoomChanged;
 		}
 		region.TileChangedAtEvent -= OnTileChanged;
@@ -129,6 +148,9 @@ public partial class RegionDisplay : Node2D {
 
 	void OnZoomChanged() {
 		foreach (var mopv in mapObjectViews.Values) {
+			mopv.ViewTransformUpdated();
+		}
+		foreach (var mopv in problemViews.Values) {
 			mopv.ViewTransformUpdated();
 		}
 	}
@@ -162,9 +184,13 @@ public partial class RegionDisplay : Node2D {
 
 	void DisplayJobProgress() {
 		foreach (var (tpos, mopview) in mapObjectViews) {
-			if (region.LocalFaction.GetJob(tpos + region.WorldPosition, out var job)) {
+			if (region.LocalFaction.HasProblem(tpos)) {
+				var problem = region.LocalFaction.GetProblem(tpos);
+				float progress = 1f - problem.GetProgress();
+				mopview.DisplayJobProgress(progress, show: true);
+			} else if (region.LocalFaction.GetJob(tpos + region.WorldPosition, out var job)) {
 				float progress = job.GetProgressEstimate();
-				mopview.DisplayJobProgress(progress, show: job.Workers != 0 || progress > 0f, showBuilding: job is ConstructBuildingJob);
+				mopview.DisplayJobProgress(progress, show: job.Workers != 0 || progress > 0f, showBuildingTape: job is ConstructBuildingJob);
 			} else {
 				mopview.DisplayJobProgress(0f, false);
 			}
@@ -187,21 +213,26 @@ public partial class RegionDisplay : Node2D {
 	}
 
 	void OnJobChanged(Job job, int __) {
-		//GD.Print($"RegionDisplay::OnJobChanged : {job} changed");
 		jobsToDisplay.Enqueue(job);
 	}
 
 	void DisplayRegionJob(Job job) {
-		if (job is MapObjectJob mopjob) {
-			var pos = mopjob.GlobalPosition - region.WorldPosition;
-			if (!mapObjectViews.TryGetValue(pos, out MapObjectView view)) return; // assume this was deleted sometime
-			MapObjectView.IconSetIcons icon = MapObjectView.IconSetIcons.Building;
-			if (job is GatherResourceJob) icon = MapObjectView.IconSetIcons.Gathering;
-			view.IconSetShow(icon);
-			if (job.Workers != 0) view.IconSetShow(MapObjectView.IconSetIcons.Workers);
-			else view.IconSetHide(MapObjectView.IconSetIcons.Workers);
-		}
-		//GD.Print("RegionDisplay::DisplayRegionJob : job displayed ", job);
+		if (job is not MapObjectJob mopjob) return;
+		var pos = mopjob.GlobalPosition - region.WorldPosition;
+		if (!mapObjectViews.TryGetValue(pos, out MapObjectView view)) return; // assume this was deleted sometime
+		MapObjectView.IconSetIcons icon = MapObjectView.IconSetIcons.Building;
+		if (job is GatherResourceJob) icon = MapObjectView.IconSetIcons.Gathering;
+		view.IconSetShow(icon);
+		if (job.Workers != 0) view.IconSetShow(MapObjectView.IconSetIcons.Workers);
+		else view.IconSetHide(MapObjectView.IconSetIcons.Workers);
+	}
+
+	void UpdateJobDisplayAt(Vector2I viewpos) {
+		bool has = mapObjectViews.TryGetValue(viewpos, out MapObjectView view);
+		Debug.Assert(has, "Don't have job display to update wher eat =");
+		has = region.LocalFaction.GetJob(region.WorldPosition + viewpos, out var job);
+		if (!has) return;
+		DisplayRegionJob(job);
 	}
 
 	void OnRegionJobRemoved(Job job) {
@@ -209,15 +240,44 @@ public partial class RegionDisplay : Node2D {
 	}
 
 	void UndisplayRegionJob(Job job) {
-		if (job is MapObjectJob mopjob) {
-			if (!mopjob.IsValid) return;
+		if (job is not MapObjectJob mopjob) return;
+		if (!mopjob.IsValid) return;
 
-			if (!mapObjectViews.TryGetValue(mopjob.GlobalPosition - region.WorldPosition, out MapObjectView view)) return; // the building view has already been removed
-			if (!region.LocalFaction.GetJob(mopjob.GlobalPosition - region.WorldPosition, out var _)) {
-				view.IconSetHide();
-			}
-			if (region.LocalFaction.HasBuilding(mopjob.GlobalPosition - region.WorldPosition)) {
-			}
+		if (!mapObjectViews.TryGetValue(mopjob.GlobalPosition - region.WorldPosition, out MapObjectView view)) return; // the building view has already been removed
+		if (!region.LocalFaction.GetJob(mopjob.GlobalPosition - region.WorldPosition, out var _)) {
+			view.IconSetHide();
+		}
+	}
+
+	void OnRegionProblemAdded(Problem proble) {
+		problemsToDisplay.Enqueue(proble);
+	}
+
+	void OnRegionProblemEnded(Problem proble) {
+		problemsToUndisplay.Enqueue(proble);
+	}
+
+	void DisplayRegionProblem(Problem proble) {
+		var view = MapObjectView.MakeProblem();
+		buildingsParent.AddChild(view);
+		problemViews[proble.LocalPosition] = view;
+		var viewpos = Tilemaps.TilePosToWorldPos(proble.LocalPosition);
+		viewpos.Y -= Tilemaps.TileElevationVerticalOffset(proble.LocalPosition + region.WorldPosition, GameMan.Singleton.Game.Map.World);
+		view.Position = viewpos;
+		bool hasBview = mapObjectViews.TryGetValue(proble.LocalPosition, out var moview);
+		if (hasBview) {
+			moview.IconSetHide();
+		}
+	}
+
+	void UndisplayRegionProblem(Problem proble) {
+		var yes = problemViews.TryGetValue(proble.LocalPosition, out var view);
+		Debug.Assert(yes, "Didn't have the probolem");
+		problemViews.Remove(proble.LocalPosition);
+		view.QueueFree();
+		bool hasBview = mapObjectViews.TryGetValue(proble.LocalPosition, out var moview);
+		if (hasBview) {
+			UpdateJobDisplayAt(proble.LocalPosition);
 		}
 	}
 

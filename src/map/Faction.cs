@@ -24,6 +24,9 @@ public class Faction : IEntity {
 	public event Action<Job> JobAddedEvent;
 	public event Action<Job, int> JobChangedEvent;
 	public event Action<Job> JobRemovedEvent;
+	public event Action<Problem> ProblemAddedEvent;
+	public event Action<Problem> ProblemUnsolvedEvent;
+	public event Action<Problem> ProblemSolvedEvent;
 
 	public Region Region { get; init; }
 
@@ -95,10 +98,23 @@ public class Faction : IEntity {
 		JobAddedEvent?.Invoke(job);
 	}
 
+	public void AddProblemJob(SolveProblemJob job, Problem problem) {
+		Debug.Assert(HasProblem(problem.LocalPosition), "DOn't have this problem that we're adding job for");
+		Debug.Assert(job.Problem == problem, "Problem must have been added to job already");
+		RegisterJob(job);
+		job.Initialise(this);
+		JobAddedEvent?.Invoke(job);
+	}
+
+	void RegisterJob(Job job) {
+		Debug.Assert(!jobs.Contains(job), "This exact job already registred");
+		jobs.Add(job);
+	}
+
 	void RegisterJob(Vector2I position, Job job) {
 		Debug.Assert(!jobsByPosition.ContainsKey(position), $"There's already a job registred at {position} ({this} {Region})");
 		jobsByPosition[position] = job;
-		jobs.Add(job);
+		RegisterJob(job);
 	}
 
 	public void RemoveJob(Job job) {
@@ -353,10 +369,29 @@ public class Faction : IEntity {
 
 	// *** PROBLEMS ***
 
+	public void AddProblem(Problem proble, Vector2I where) {
+		Debug.Assert(proble.LocalPosition == where, $"This problem's position is wrong compartedf to where it's supposed to be added {proble.LocalPosition} vs {where}");
+		Debug.Assert(!HasProblem(where), $"Problem already exists at {where}");
+		problems.Add(where, proble);
+		ProblemAddedEvent?.Invoke(proble);
+	}
+
+	public bool HasProblem(Vector2I where) {
+		return problems.ContainsKey(where);
+	}
+
+	public Problem GetProblem(Vector2I tile) {
+		var has = problems.TryGetValue(tile, out var proble);
+		Debug.Assert(has, $"Don't have problem at {tile}");
+		return proble;
+	}
+
 	public void RemoveProblem(Vector2I where) {
 		bool has = problems.TryGetValue(where, out var problem);
 		Debug.Assert(has, $"Don't have problem at {where}");
 		problems.Remove(where);
+		if (problem.Applied) ProblemUnsolvedEvent?.Invoke(problem);
+		else ProblemSolvedEvent?.Invoke(problem);
 	}
 
 	// *** TRADING ***

@@ -35,6 +35,7 @@ namespace scenes.region {
 			ui.GetJobsEvent += faction.GetJobs;
 			ui.GetMapObjectJobEvent += actions.GetMapObjectsJob;
 			ui.AddJobRequestedEvent += actions.AddJob;
+			ui.AddProblemJobRequestedEvent += actions.AddJob;
 			ui.GetMaxFreeWorkersEvent += GetJobMaxWorkers;
 			ui.ChangeJobWorkerCountEvent += actions.ChangeJobWorkerCount;
 			ui.RemoveJobEvent += actions.RemoveJob;
@@ -141,6 +142,7 @@ namespace scenes.region {
 				ui.GetMapObjectJobEvent -= actions.GetMapObjectsJob;
 				ui.GetJobsEvent -= faction.GetJobs;
 				ui.AddJobRequestedEvent -= actions.AddJob;
+				ui.AddProblemJobRequestedEvent -= actions.AddJob;
 				ui.GetMaxFreeWorkersEvent -= GetJobMaxWorkers;
 				ui.ChangeJobWorkerCountEvent -= actions.ChangeJobWorkerCount;
 				ui.GetBriefcaseEvent -= GetBriefcase;
@@ -161,7 +163,10 @@ namespace scenes.region {
 		// map clicks
 
 		void MapClick(Vector2I tile) {
-			if (faction.HasBuilding(tile)) {
+			if (faction.HasProblem(tile)) {
+				ui.OnProblemClicked(faction.GetProblem(tile));
+				ui.TileSelected(tile);
+			} else if (faction.HasBuilding(tile)) {
 				ui.OnBuildingClicked(faction.GetBuilding(tile));
 				ui.TileSelected(tile);
 			} else if (region.HasMapObject(tile, out MapObject mop) && mop is ResourceSite resourceSite) {
@@ -204,6 +209,17 @@ namespace scenes.region {
 
 		void HourlyUpdate(TimeT timeInMinutes) {
 			ui.HourlyUpdate(timeInMinutes);
+
+			foreach (var job in faction.GetJobs()) {
+				if (job is GatherResourceJob gjob && gjob.Site.Type == Registry.ResourceSitesS.FishingSpot) {
+					var localpos = gjob.GlobalPosition - region.WorldPosition;
+					if (!faction.HasProblem(localpos)) {
+						var problem = new FishingBoatProblem(localpos, gjob);
+						faction.AddProblem(problem, localpos);
+						break;
+					}
+				}
+			}
 
 			if (faction.Population.ArePeopleStarving && foodWarningNotification == null) {
 				foodWarningNotification = ui.Notifications.Notify(

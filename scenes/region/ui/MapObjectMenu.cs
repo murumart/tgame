@@ -26,9 +26,9 @@ public partial class MapObjectMenu : Control {
 	[Export] RichTextLabel detailsText;
 	[Export] Button closeButton;
 
-	bool attachedToMapObject = false;
 	State state;
 	MapObject myMapObject;
+	Problem myProblem;
 	bool IsMarketplaceBuilding => (myMapObject is Building b && b.IsConstructed && b.Type.GetSpecial() == Building.IBuildingType.Special.Marketplace);
 	bool IsMarketplaceActive => IsMarketplaceBuilding && ExtantJob != null && ExtantJob is ProcessMarketJob;
 
@@ -37,14 +37,19 @@ public partial class MapObjectMenu : Control {
 
 	Job ExtantJob {
 		get {
-			Debug.Assert(attachedToMapObject, "Map object menu isn't attached to map object");
-			return ui.GetMapObjectJob(myMapObject);
+			if (myProblem is null) {
+				Debug.Assert(myMapObject is not null, "Map object menu isn't attached to map object");
+				return ui.GetMapObjectJob(myMapObject);
+			} else {
+				return myProblem.Job;
+			}
 		}
 	}
 
 	List<Job> AvailableJobs {
 		get {
-			if (attachedToMapObject) return myMapObject.GetAvailableJobs().ToList();
+			if (myMapObject is not null) return myMapObject.GetAvailableJobs().ToList();
+			if (myProblem is not null && ExtantJob is null) return [new SolveProblemJob(myProblem)];
 			return new();
 		}
 	}
@@ -68,8 +73,15 @@ public partial class MapObjectMenu : Control {
 	}
 
 	public void Open() {
+		bool problematic = myProblem is not null;
+		detailsText.Text = "";
+		addJobDescription.Text = "";
+		SizeFlagsStretchRatio = IsMarketplaceActive ? 4.0f : 1.0f;
+		tradeInfoPanel.Visible = IsMarketplaceActive;
 		if (ExtantJob == null && AvailableJobs.Count != 0) {
-			if (myMapObject is Building building && building.IsConstructed) {
+			if (problematic) {
+				OpenAddJobScreen();
+			} else if (myMapObject is Building building && building.IsConstructed) {
 				OpenAddJobScreen();
 			} else if (myMapObject.Removed) {
 				Close();
@@ -80,22 +92,26 @@ public partial class MapObjectMenu : Control {
 		} else {
 			OpenViewJobScreen();
 		}
-		detailsText.Text = "";
-		addJobDescription.Text = "";
-		SizeFlagsStretchRatio = IsMarketplaceActive ? 4.0f : 1.0f;
-		tradeInfoPanel.Visible = IsMarketplaceActive;
 		if (IsMarketplaceActive) {
 			var job = ExtantJob as ProcessMarketJob;
 			tradeInfoPanel.Display(job.Faction, job.TradeOffers);
 		}
 
-		OpenMapObjectInfo();
+		if (!problematic) DisplayMapObjectInfo();
+		else DisplayProblemInfo();
 		Callable.From(Show).CallDeferred();
 	}
 
 	public void Open(MapObject mapObject) {
-		attachedToMapObject = true;
 		this.myMapObject = mapObject;
+		this.myProblem = null;
+
+		Open();
+	}
+
+	public void Open(Problem problem) {
+		this.myProblem = problem;
+		this.myMapObject = null;
 
 		Open();
 	}
@@ -137,8 +153,8 @@ public partial class MapObjectMenu : Control {
 		jobInfoPanel.Display(ui, ExtantJob, 0, sliderMax, JobWorkerCountChanged);
 	}
 
-	void OpenMapObjectInfo() {
-		Debug.Assert(attachedToMapObject && myMapObject != null, "Needs a map object to display its info");
+	void DisplayMapObjectInfo() {
+		Debug.Assert(myMapObject != null, "Needs a map object to display its info");
 
 		System.Text.StringBuilder sb = new();
 		var reg = ui.GetFaction().Region;
@@ -185,6 +201,14 @@ public partial class MapObjectMenu : Control {
 		detailsText.Text = sb.ToString();
 	}
 
+	void DisplayProblemInfo() {
+		Debug.Assert(myProblem != null, "Need a problem to display it BTW!!!!!!");
+		titleLabel.Text = $"{myProblem.Title.Capitalize()} {(myProblem.LocalPosition)}";
+		System.Text.StringBuilder sb = new();
+		sb.Append("You're in big trouble now").Append('\n');
+		detailsText.Text = sb.ToString();
+	}
+
 	void JobWorkerCountChanged(int ix, int by) {
 		GD.Print("MapObjectMenu::JobWorkerCountChanged : worker count changed by ", by);
 		ui.ChangeJobWorkerCount(ExtantJob, by);
@@ -198,8 +222,10 @@ public partial class MapObjectMenu : Control {
 	}
 
 	void AddJobConfirmed(long ix) {
-		if (attachedToMapObject) {
+		if (myMapObject is not null) {
 			ui.AddJobRequested(myMapObject, (MapObjectJob)AvailableJobs[(int)ix]);
+		} else if (myProblem is not null) {
+			ui.AddJobRequested(myProblem, (SolveProblemJob)AvailableJobs[(int)ix]);
 		} else {
 			ui.AddJobRequested(AvailableJobs[(int)ix]);
 		}

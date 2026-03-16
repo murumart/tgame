@@ -28,6 +28,7 @@ public partial class UI : Control {
 	public event Func<MapObject, Job> GetMapObjectJobEvent;
 	public event Func<IEnumerable<Job>> GetJobsEvent;
 	public event Action<MapObject, MapObjectJob> AddJobRequestedEvent;
+	public event Action<Problem, SolveProblemJob> AddProblemJobRequestedEvent;
 	public event Func<uint> GetMaxFreeWorkersEvent;
 	public event Action<Job, int> ChangeJobWorkerCountEvent;
 	public event Action<Job> RemoveJobEvent;
@@ -436,6 +437,12 @@ public partial class UI : Control {
 		mopjectMenu.Open(resourceSite);
 	}
 
+	public void OnProblemClicked(Problem problem) {
+		Debug.Assert(state == State.Idle, "Can't click on problem outside of idle state");
+		state = State.MapObjectMenu;
+		mopjectMenu.Open(problem);
+	}
+
 	bool wasPausedBefore = false;
 	void OnStateChanged(State old, State current) {
 		if (old != current) {
@@ -510,6 +517,7 @@ public partial class UI : Control {
 	public Job GetMapObjectJob(MapObject mapObject) => GetMapObjectJobEvent?.Invoke(mapObject);
 	public IEnumerable<Job> GetJobs() => GetJobsEvent?.Invoke();
 	public void AddJobRequested(MapObject mapObject, MapObjectJob job) => AddJobRequestedEvent?.Invoke(mapObject, job);
+	public void AddJobRequested(Problem problem, SolveProblemJob job) => AddProblemJobRequestedEvent?.Invoke(problem, job);
 	public void AddJobRequested(Job job) => throw new NotImplementedException("Cant add jobs without building yet");
 	public uint GetMaxFreeWorkers() {
 		var val = GetMaxFreeWorkersEvent?.Invoke();

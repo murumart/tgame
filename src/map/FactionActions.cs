@@ -75,6 +75,10 @@ public class FactionActions {
 		faction.AddMapObjectJob(job, place);
 	}
 
+	public void AddJob(Problem problem, SolveProblemJob job) {
+		faction.AddProblemJob(job, problem);
+	}
+
 	public void RemoveJob(Job job) {
 		faction.RemoveJob(job);
 	}

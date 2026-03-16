@@ -1,19 +1,23 @@
+using System;
 using Godot;
 
 public abstract class Problem {
 
 	public abstract string Title { get; }
+	public abstract string SolveJobTitle { get; }
 
 	public readonly TimeT MaxTime;
 	public float ProblemTime { get; private set; }
 
 	public Vector2I LocalPosition { get; private set; }
 
-	bool applied = false;
+	public bool Applied { get; private set; }
+	public SolveProblemJob Job { get; private set; }
 
 
-	protected Problem(Vector2I pos) {
+	protected Problem(Vector2I pos, TimeT maxTime) {
 		LocalPosition = pos;
+		MaxTime = maxTime;
 	}
 
 	public void IncreaseProblem(TimeT minutes) {
@@ -25,10 +29,20 @@ public abstract class Problem {
 	}
 
 	public void CheckDone(Faction fac) {
-		if (!applied && ProblemTime >= MaxTime) {
+		if (!Applied && ProblemTime >= MaxTime) {
 			OnFailedToAddress(fac);
-			applied = true;
+			Applied = true;
+			fac.RemoveProblem(LocalPosition);
 		}
+	}
+
+	public void SetJob(SolveProblemJob solveProblemJob) {
+		Debug.Assert(Job is null, "Already have a job solving this problem");
+		Job = solveProblemJob;
+	}
+
+	public float GetProgress() {
+		return ProblemTime / MaxTime;
 	}
 
 	public abstract void OnFailedToAddress(Faction fac);
@@ -37,30 +51,33 @@ public abstract class Problem {
 
 public class SolveProblemJob : Job {
 
-	public override string Title => $"Solve {problem.Title}";
+	public override string Title => Problem is not null ? Problem.SolveJobTitle : "Solve Problem";
 	public override bool NeedsWorkers => true;
 
-	readonly Problem problem;
+	public Problem Problem { get; private set; }
 
 
 	public SolveProblemJob(Problem problem, uint maxWorkers = 10) {
-		this.problem = problem;
+		this.Problem = problem;
 		MaxWorkers = maxWorkers;
 	}
 
-	public override void Initialise(Faction ctxFaction) { }
+	public override void Initialise(Faction ctxFaction) {
+		Debug.Assert(Problem is not null);
+		Problem.SetJob(this);
+	}
 	public override void Deinitialise(Faction ctxFaction) {
-		if (problem.ProblemTime <= 0) {
-			ctxFaction.RemoveProblem(problem.LocalPosition);
+		if (Problem.ProblemTime <= 0) {
+			ctxFaction.RemoveProblem(Problem.LocalPosition);
 		}
 	}
 
 	public override float GetWorkTime(TimeT minutes) {
-		return minutes * 2;
+		return minutes * 1.2f * Mathf.Pow(Workers, 0.5f);
 	}
 
 	public override void PassTime(TimeT minutes) {
-		problem.DecreaseProblem(GetWorkTime(minutes));
+		Problem.DecreaseProblem(GetWorkTime(minutes));
 	}
 
 	public override bool CanInitialise(Faction ctxFaction) {
@@ -68,11 +85,11 @@ public class SolveProblemJob : Job {
 	}
 
 	public override float GetProgressEstimate() {
-		return (problem.MaxTime - problem.ProblemTime) / problem.MaxTime;
+		return 1f - Problem.GetProgress();
 	}
 
 	public override void CheckDone(Faction regionFaction) {
-		if (problem.ProblemTime <= 0) {
+		if (Problem.ProblemTime <= 0) {
 			regionFaction.RemoveJob(this);
 		}
 	}
@@ -82,16 +99,18 @@ public class SolveProblemJob : Job {
 public class FishingBoatProblem : Problem {
 
 	public override string Title => "Tipped Boat";
+	public override string SolveJobTitle => "Save boatmen";
 
 	readonly GatherResourceJob fishingJob;
 
 
-	public FishingBoatProblem(Vector2I pos, GatherResourceJob fishingJob) : base(pos) {
+	public FishingBoatProblem(Vector2I pos, GatherResourceJob fishingJob) : base(pos, GameTime.Hours(3)) {
 		this.fishingJob = fishingJob;
 	}
 
 	public override void OnFailedToAddress(Faction fac) {
-		throw new System.NotImplementedException();
+		fac.Population.WorkplaceAccident(fishingJob);
+		fac.RemoveJob(fishingJob);
 	}
 
 }

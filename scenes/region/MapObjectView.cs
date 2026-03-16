@@ -23,13 +23,16 @@ public partial class MapObjectView : Node2D {
 	[Export] protected Sprite2D selectedHighlight;
 
 	[Export] protected Node2D mapObjectDisplay;
+	[Export] public bool IsProblem;
 
 	protected MapObject mapObjectRef;
 
 
 	public override void _Ready() {
-		Debug.Assert(mapObjectRef != null, "MapObjectView needs a map object ref");
-		Debug.Assert(mapObjectDisplay != null, "MapObjectView needs a reference to the display object");
+		if (!IsProblem) {
+			Debug.Assert(mapObjectRef != null, "MapObjectView needs a map object ref");
+			Debug.Assert(mapObjectDisplay != null, "MapObjectView needs a reference to the display object");
+		}
 		IconSetHide();
 	}
 
@@ -60,12 +63,12 @@ public partial class MapObjectView : Node2D {
 		foreach (var c in iconContainer.GetChildren().Cast<TextureRect>()) c.Hide();
 	}
 
-	public void DisplayJobProgress(float progress, bool show = true, bool showBuilding = false) {
+	public void DisplayJobProgress(float progress, bool show = true, bool showBuildingTape = false) {
 		Debug.Assert(progress >= 0f && progress <= 1f, "Progress bar value aout of range");
 		jobProgressBar.Visible = show;
 		jobProgressBar.Value = progress;
-		inProgressDisplay.Visible = showBuilding;
-		mapObjectDisplay.Modulate = showBuilding ? new(mapObjectDisplay.Modulate, 0.5f) : new(mapObjectDisplay.Modulate, 1f);
+		inProgressDisplay.Visible = showBuildingTape;
+		mapObjectDisplay.Modulate = showBuildingTape ? new(mapObjectDisplay.Modulate, 0.5f) : new(mapObjectDisplay.Modulate, 1f);
 	}
 
 	public static MapObjectView Make(string scenePath, MapObject mapObject) {
@@ -81,6 +84,12 @@ public partial class MapObjectView : Node2D {
 		Debug.Assert(scn is MapObjectView, "Scene must be a MapObjectView");
 		(scn as MapObjectView).mapObjectRef = mapObject.CreateMapObject(Vector2I.Zero);
 		return (scn as MapObjectView);
+	}
+
+	public static MapObjectView MakeProblem() {
+		var view = GD.Load<PackedScene>("res://scenes/region/problem_view.tscn").Instantiate<MapObjectView>();
+		Debug.Assert(view is not null, "Scene must not be null");
+		return view;
 	}
 
 	public void OnSelected() {

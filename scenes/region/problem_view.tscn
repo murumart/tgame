@@ -1,0 +1,107 @@
+[gd_scene format=3 uid="uid://bsbyg3608i276"]
+
+[ext_resource type="PackedScene" uid="uid://dl17gbjn423tk" path="res://scenes/region/_map_object_view_base.tscn" id="1_bpuof"]
+[ext_resource type="FontVariation" uid="uid://dliky8sbpgnxp" path="res://resources/visual/font/title_font.tres" id="3_ov10g"]
+[ext_resource type="Material" uid="uid://cet7ep6cvqk3p" path="res://resources/visual/add_material.tres" id="6_qp2ve"]
+[ext_resource type="Texture2D" uid="uid://ethlsfg8xmhk" path="res://scenes/region/iso_mask.png" id="7_gw2x0"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_x5lpm"]
+font = ExtResource("3_ov10g")
+font_size = 35
+font_color = Color(0.8352941, 0.8392157, 0.85882354, 1)
+
+[sub_resource type="Animation" id="Animation_k3cwo"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:self_modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(0.70980394, 0.34901962, 0.27058825, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("../IconTransform/AttentionLabel:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_n51wg"]
+resource_name = "pulse"
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:self_modulate")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.36666667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(0.70980394, 0.34901962, 0.27058825, 1), Color(0.70980394, 0.34901962, 0.27058825, 0.40392157)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("../IconTransform/AttentionLabel:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(0.70980394, 0.34901962, 0.27058825, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_ov10g"]
+_data = {
+&"RESET": SubResource("Animation_k3cwo"),
+&"pulse": SubResource("Animation_n51wg")
+}
+
+[node name="ProblemView" unique_id=1991676390 node_paths=PackedStringArray("mapObjectDisplay") instance=ExtResource("1_bpuof")]
+mapObjectDisplay = NodePath("Dam")
+IsProblem = true
+
+[node name="Dam" type="Sprite2D" parent="." index="0" unique_id=1082710809]
+
+[node name="IconTransform" parent="." index="2" unique_id=1589336146]
+InverseLimit = 10
+
+[node name="IconContainer" parent="IconTransform" index="0" unique_id=1378133112]
+visible = false
+
+[node name="Building" parent="IconTransform/IconContainer" index="0" unique_id=1898010729]
+visible = false
+
+[node name="AttentionLabel" type="Label" parent="IconTransform" index="2" unique_id=1216087756]
+material = ExtResource("6_qp2ve")
+offset_left = -20.0
+offset_top = -21.0
+offset_right = 20.0
+offset_bottom = 20.0
+theme_override_font_sizes/font_size = 254
+text = "!"
+label_settings = SubResource("LabelSettings_x5lpm")
+horizontal_alignment = 1
+
+[node name="Highlight" type="Sprite2D" parent="." index="5" unique_id=763788786]
+self_modulate = Color(0.70980394, 0.34901962, 0.27058825, 1)
+material = ExtResource("6_qp2ve")
+texture = ExtResource("7_gw2x0")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Highlight" index="0" unique_id=1995037372]
+libraries/ = SubResource("AnimationLibrary_ov10g")
+autoplay = &"pulse"
