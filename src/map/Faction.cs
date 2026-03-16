@@ -108,6 +108,7 @@ public class Faction : IEntity {
 
 	void RegisterJob(Job job) {
 		Debug.Assert(!jobs.Contains(job), "This exact job already registred");
+		Debug.Assert(!job.Locked, "Job unexpectedly locked while adding it");
 		jobs.Add(job);
 	}
 
@@ -118,6 +119,7 @@ public class Faction : IEntity {
 	}
 
 	public void RemoveJob(Job job) {
+		Debug.Assert(!job.Locked, "Cannot remove locked job");
 		if (job is MapObjectJob mopjob) {
 			Debug.Assert(jobsByPosition.ContainsKey(mopjob.GlobalPosition), $"Can't remove job ({job}) that doesn't exist here ({mopjob.GlobalPosition})?? Hello?");
 			jobsByPosition.Remove(mopjob.GlobalPosition);

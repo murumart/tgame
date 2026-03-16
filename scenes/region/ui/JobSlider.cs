@@ -74,7 +74,9 @@ namespace scenes.region.ui {
 
 		void ValueChangedCallback(int ix, int to) => valueChangedCallback(ix, to);
 
-
+		public void Disable() {
+			Slider.Editable = false;
+		}
 	}
 
 }

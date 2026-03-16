@@ -47,6 +47,7 @@ public abstract class Problem {
 	}
 
 	public abstract void OnFailedToAddress(Faction fac);
+	public abstract void OnAddressed(Faction fac);
 
 }
 
@@ -108,11 +109,16 @@ public class FishingBoatProblem : Problem {
 
 	public FishingBoatProblem(Vector2I pos, GatherResourceJob fishingJob) : base(pos, GameTime.Hours(3)) {
 		this.fishingJob = fishingJob;
+		fishingJob.Lock();
 	}
 
 	public override void OnFailedToAddress(Faction fac) {
 		fac.Population.WorkplaceAccident(fishingJob);
+		fishingJob.Lock(false);
 		fac.RemoveJob(fishingJob);
 	}
 
+	public override void OnAddressed(Faction fac) {
+		fishingJob.Lock(false);
+	}
 }

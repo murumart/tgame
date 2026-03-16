@@ -213,6 +213,7 @@ public class GatherResourceJob : MapObjectJob {
 	public override float GetWorkTime(TimeT minutes) => minutes * MathF.Pow(Workers, 0.7f);
 
 	public override void PassTime(TimeT minutes) {
+		if (Locked) return; // locked by a problem
 		float ts = GetWorkTime(minutes);
 		timeSpent += ts;
 

@@ -78,7 +78,7 @@ IsProblem = true
 [node name="Dam" type="Sprite2D" parent="." index="0" unique_id=1082710809]
 
 [node name="IconTransform" parent="." index="2" unique_id=1589336146]
-InverseLimit = 10
+InverseLimit = 30
 
 [node name="IconContainer" parent="IconTransform" index="0" unique_id=1378133112]
 visible = false

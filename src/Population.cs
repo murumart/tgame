@@ -122,6 +122,7 @@ public class Population {
 	public void WorkplaceAccident(Job job, uint howMany = 0) {
 		// oops
 		if (howMany == 0) howMany = (uint)job.Workers;
+		if (howMany == 0) return; // no change
 		Debug.Assert(employedOnJobs.Contains(job), "Don't know about this job");
 		Debug.Assert(howMany <= job.Workers, $"Wanted to remove more workeers than job has {howMany} vs {job.Workers}");
 		Unemploy(job, howMany);

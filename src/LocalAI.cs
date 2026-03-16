@@ -225,6 +225,7 @@ public partial class LocalAI {
 				foreach (var job in ac.GetMapObjectJobs()) {
 					if (job is CraftJob j && j.Outputs.Any(o => Registry.ResourcesS.FoodValues.TryGetValue(o.Type, out var _))) continue;
 					if (job is GatherResourceJob g && Registry.ResourcesS.FoodValues.TryGetValue(g.GetProduction().ResourceType, out var _)) continue;
+					if (job.Locked) continue;
 					ac.RemoveJob(job);
 				}
 			}, "FoodPANIC!!!CancelEverything");
@@ -519,6 +520,10 @@ public partial class LocalAI {
 				return 1f - Mathf.Clamp(sent / (float)limit, 0f, 1f);
 			}, $"TradeOfferLimit({limit})");
 		}
+
+		public static DecisionFactor IsJobUnlocked(Job job) {
+			return new(() => job.Locked ? 0f : 1f, "IsJobUnlocked");
+		}
 	}
 
 }
@@ -570,10 +575,10 @@ public partial class LocalAI {
 			var keys = timess.Keys.ToList();
 			keys.Sort((k1, k2) => timess[k2].Last().Item2.CompareTo(timess[k1].Last().Item2));
 			int longestKey = keys.Count > 0 ? keys?.MaxBy(k => k.Length).Length ?? 0 : 0;
-			sb.Append("key".PadRight(longestKey)).Append($"{("score"), -20}{("time"), -10}\n");
+			sb.Append("key".PadRight(longestKey)).Append($"{("score"),-20}{("time"),-10}\n");
 			foreach (var k in keys) {
 				var (ltime, lscore) = timess[k].Last();
-				sb.Append(k.PadRight(longestKey)).Append($"{lscore:0.000000, -20}").Append($"{ltime, -10}\n");
+				sb.Append(k.PadRight(longestKey)).Append($"{lscore:0.000000, -20}").Append($"{ltime,-10}\n");
 			}
 			return sb.ToString();
 		}
@@ -751,9 +756,11 @@ public class GamerAI : LocalAI {
 			factors.Add(Factors.Pow(Factors.JobHasEmploymentSpots(factionActions, job), 9f));
 			factors.Add(Factors.HasFreeWorkers(factionActions));
 			factors.Add(Factors.OneMinus(Factors.JobEmploymentRate(job)));
+			factors.Add(Factors.IsJobUnlocked(job));
 			if (factors != null) {
 				ephemeralActions.Add(Actions.AssignWorkersToJob(factors.ToArray(), factionActions, job));
 				ephemeralActions.Add(Actions.RemoveWorkersFromJob([
+					Factors.IsJobUnlocked(job),
 					Factors.Mult(Factors.OneMinus(Factors.Group(factors.ToArray())), 0.0000001f),
 					Factors.OneMinus(Factors.JobCompletion(job)),
 					Factors.JobEmploymentRate(job),
@@ -761,6 +768,7 @@ public class GamerAI : LocalAI {
 				], factionActions, job));
 			}
 			if (negativeFactors.Count != 0) {
+				negativeFactors.Add(Factors.IsJobUnlocked(job));
 				ephemeralActions.Add(Actions.RemoveJob(negativeFactors.ToArray(), factionActions, job));
 			}
 		}

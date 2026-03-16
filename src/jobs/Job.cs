@@ -11,6 +11,9 @@ public abstract class Job {
 	public virtual bool NeedsWorkers => true;
 	public virtual bool IsInternal => false;
 
+	// locked jobs cannot be removed or edited
+	public bool Locked { get; private set; }
+
 	public int Workers { get; private set; }
 	public uint MaxWorkers { get; protected set; }
 	public abstract float GetWorkTime(TimeT minutes);
@@ -78,6 +81,10 @@ public abstract class Job {
 			}
 			if (!added) break;
 		}
+	}
+
+	public void Lock(bool to = true) {
+		Locked = to;
 	}
 
 	public virtual string GetResourceRequirementDescription() {

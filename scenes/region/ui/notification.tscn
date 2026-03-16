@@ -61,9 +61,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_05adb")
-label = NodePath("HBoxContainer/VBoxContainer/Label")
-dismissButton = NodePath("HBoxContainer/Button")
-timeProgress = NodePath("HBoxContainer/VBoxContainer/ProgressBar")
+label = NodePath("VBoxContainer/HBoxContainer/Label")
+dismissButton = NodePath("VBoxContainer/HBoxContainer/Button")
+timeProgress = NodePath("VBoxContainer/ProgressBar")
 gradientDisplay = NodePath("TextureRect")
 pulser = NodePath("Pulser")
 
@@ -72,34 +72,33 @@ material = ExtResource("2_plsdc")
 layout_mode = 2
 texture = SubResource("GradientTexture2D_plsdc")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=218878387]
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=947721689]
 layout_mode = 2
-
-[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer" unique_id=1047983256]
-layout_mode = 2
-size_flags_horizontal = 3
 theme_override_constants/separation = 0
 alignment = 1
 
-[node name="Label" type="Label" parent="HBoxContainer/VBoxContainer" unique_id=1278688608]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer" unique_id=218878387]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer" unique_id=1278688608]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "text..."
 label_settings = ExtResource("1_qjs0n")
 autowrap_mode = 2
 
-[node name="ProgressBar" type="ProgressBar" parent="HBoxContainer/VBoxContainer" unique_id=1048303902]
+[node name="Button" type="Button" parent="VBoxContainer/HBoxContainer" unique_id=1159839133]
+layout_mode = 2
+theme_override_font_sizes/font_size = 6
+text = "x"
+flat = true
+
+[node name="ProgressBar" type="ProgressBar" parent="VBoxContainer" unique_id=1048303902]
 layout_mode = 2
 theme_override_styles/background = SubResource("StyleBoxEmpty_05adb")
 theme_override_styles/fill = SubResource("StyleBoxFlat_plsdc")
 fill_mode = 1
 show_percentage = false
-
-[node name="Button" type="Button" parent="HBoxContainer" unique_id=1159839133]
-layout_mode = 2
-theme_override_font_sizes/font_size = 6
-text = "x"
-flat = true
 
 [node name="Pulser" type="AnimationPlayer" parent="." unique_id=1067947980]
 libraries/ = SubResource("AnimationLibrary_pnbtc")

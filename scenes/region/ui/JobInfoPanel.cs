@@ -42,6 +42,12 @@ public partial class JobInfoPanel : Control {
 		if (desc.Length != 0) desc += '\n';
 		desc += job.GetProductionDescription();
 		infoLabel.Text = desc;
+
+		if (job.Locked) {
+			DeleteJobButton.Disabled = true;
+			workerCountSlider.Disable();
+			titleLabel.Text += " (INACCESSIBLE)";
+		}
 	}
 
 	void RemoveJob() {
