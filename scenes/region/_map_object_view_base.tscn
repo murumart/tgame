@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://dl17gbjn423tk"]
 
 [ext_resource type="Script" uid="uid://1ii2ptr21cmq" path="res://scenes/region/MapObjectView.cs" id="1_cca3c"]
+[ext_resource type="Script" uid="uid://c333puc5fy8ex" path="res://scenes/region/ui/IconTransform.cs" id="2_4vc1s"]
 [ext_resource type="Texture2D" uid="uid://cvr7bw57oxjkx" path="res://resources/visual/theme/icons/hammer.svg" id="2_d5rlf"]
 [ext_resource type="Texture2D" uid="uid://bnwpslv8kyxej" path="res://resources/visual/theme/icons/person.svg" id="3_aj5un"]
 [ext_resource type="Texture2D" uid="uid://dqu7j0ceq2oka" path="res://resources/visual/theme/icons/pickaxe.svg" id="4_y1nj2"]
@@ -30,6 +31,7 @@ polygon = PackedVector2Array(-32, 0, 0, -16, 32, 0, 0, 16)
 [node name="IconTransform" type="Node2D" parent="." unique_id=1589336146]
 z_index = 1
 position = Vector2(0, -32)
+script = ExtResource("2_4vc1s")
 
 [node name="IconContainer" type="HBoxContainer" parent="IconTransform" unique_id=1378133112]
 offset_left = -43.0

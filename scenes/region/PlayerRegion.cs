@@ -29,7 +29,8 @@ namespace scenes.region {
 			ui.RequestBuildEvent += OnUIBuildingPlaceRequested;
 			ui.GetBuildingTypesEvent += GetBuildingTypes;
 			ui.GetResourcesEvent += actions.GetResourceStorage;
-			ui.GetCanBuildEvent += actions.CanBuild;
+			ui.GetHasBuildingMaterialsEvent += faction.HasBuildingMaterials;
+			ui.GetCanBuildEvent += actions.CanPlaceBuilding;
 			ui.GetTimeStringEvent += GetDateTimeString;
 			ui.GetJobsEvent += faction.GetJobs;
 			ui.GetMapObjectJobEvent += actions.GetMapObjectsJob;
@@ -134,7 +135,8 @@ namespace scenes.region {
 				ui.GetBuildingTypesEvent -= GetBuildingTypes;
 				ui.RequestBuildEvent -= OnUIBuildingPlaceRequested;
 				ui.GetResourcesEvent -= actions.GetResourceStorage;
-				ui.GetCanBuildEvent -= actions.CanBuild;
+				ui.GetHasBuildingMaterialsEvent -= faction.HasBuildingMaterials;
+				ui.GetCanBuildEvent -= actions.CanPlaceBuilding;
 				ui.GetTimeStringEvent -= GetDateTimeString;
 				ui.GetMapObjectJobEvent -= actions.GetMapObjectsJob;
 				ui.GetJobsEvent -= faction.GetJobs;

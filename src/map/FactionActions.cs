@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using Godot;
 using static Building;
 
@@ -35,10 +33,6 @@ public class FactionActions {
 	}
 
 	// building
-
-	public bool CanBuild(IBuildingType type) {
-		return faction.HasBuildingMaterials(type);
-	}
 
 	public bool CanPlaceBuilding(IBuildingType type, Vector2I tilepos) {
 		Debug.Assert(type != null, "Cant place NULL building type!!");

@@ -168,6 +168,7 @@ public class Region {
 						if (GD.Randf() < 0.01f) rs.Add(new Vector2I(i, j), Registry.ResourceSitesS.Rock);
 						else if (GD.Randf() < 0.07f) rs.Add(new Vector2I(i, j), Registry.ResourceSitesS.BroadleafWoods);
 						else if (GD.Randf() < 0.01f) rs.Add(new Vector2I(i, j), Registry.ResourceSitesS.ClayPit);
+						else if (GD.Randf() < 0.01f) rs.Add(new Vector2I(i, j), Registry.ResourceSitesS.FishingSpot);
 					}
 				}
 			}

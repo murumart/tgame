@@ -17,7 +17,8 @@ public partial class UI : Control {
 	public event Action<Vector2I> MapClickEvent;
 
 	public event Func<IBuildingType, Vector2I, bool> RequestBuildEvent;
-	public event Func<IBuildingType, bool> GetCanBuildEvent;
+	public event Func<IBuildingType, bool> GetHasBuildingMaterialsEvent;
+	public event Func<IBuildingType, Vector2I, bool> GetCanBuildEvent;
 	public event Func<ResourceStorage> GetResourcesEvent;
 	public event Func<Faction> GetFactionEvent;
 	public event Func<(float, float)> GetFoodAndUsageEvent;
@@ -348,6 +349,9 @@ public partial class UI : Control {
 		bool gamePaused = GameMan.Singleton.IsPaused || GameMan.Singleton.GameSpeed == 0f;
 		pauseDisplayPanel.Visible = gamePaused;
 		zoomLabel.Text = $"zoom: {(Camera.Zoom.X >= 1 ? Camera.Zoom.X : Mathf.Remap(Camera.Zoom.X, 1f, 0.1f, 1f, -8f)):0}";
+		if (state ==  State.PlacingBuild) {
+			buildingList.UpdateCursorWhilePlacing(Camera.GetHoveredTilePos());
+		}
 	}
 
 	void DisplayResources() {
@@ -495,7 +499,8 @@ public partial class UI : Control {
 	public void MapClick(Vector2I tile) => MapClickEvent?.Invoke(tile);
 
 	public bool RequestBuild(IBuildingType a, Vector2I b) => RequestBuildEvent?.Invoke(a, b) ?? false;
-	public bool GetCanBuild(IBuildingType btype) => GetCanBuildEvent?.Invoke(btype) ?? false;
+	public bool GetHasBuildingMaterials(IBuildingType btype) => GetHasBuildingMaterialsEvent?.Invoke(btype) ?? false;
+	public bool GetCanBuild(IBuildingType btype, Vector2I pos) => GetCanBuildEvent?.Invoke(btype, pos) ?? false;
 	public List<BuildingType> GetBuildingTypes() => GetBuildingTypesEvent?.Invoke();
 	public ResourceStorage GetResources() => GetResourcesEvent?.Invoke();
 	public Faction GetFaction() => GetFactionEvent?.Invoke();

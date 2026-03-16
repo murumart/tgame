@@ -66,7 +66,7 @@ public partial class BuildingList : Control {
 
 	void OnBuildThingConfirmed(long which) {
 		var btype = (BuildingType)itemList.GetItemMetadata((int)which).Obj;
-		if (!ui.GetCanBuild(btype)) return;
+		if (!ui.GetHasBuildingMaterials(btype)) return;
 		SetBuildCursor(btype);
 		selectedBuildThingId = -1;
 		ui.SelectTab(UI.Tab.None);
@@ -83,8 +83,8 @@ public partial class BuildingList : Control {
 			return;
 		}
 		Debug.Assert(buildingType != null, "Buuldint type canät be null here....w aht...");
-		Debug.Assert(ui.GetCanBuild(buildingType), "can't build this...");
-		var scene = MapObjectView.Make(DataStorage.GetScenePath(buildingType), buildingType);
+		Debug.Assert(ui.GetHasBuildingMaterials(buildingType), "can't build this...");
+		var scene = MapObjectView.MakeDisplay(DataStorage.GetScenePath(buildingType), buildingType);
 		Debug.Assert(scene != null, "building display scene canät be null here....w aht...");
 		ui.Camera.Cursor.AddChild(scene);
 		selectedBuildingScene = scene;
@@ -93,17 +93,27 @@ public partial class BuildingList : Control {
 		selectedBuildingScene.Modulate = new Color(selectedBuildingScene.Modulate, 0.67f);
 	}
 
+	public void UpdateCursorWhilePlacing(Vector2I regpos) {
+		bool buildable = ui.GetHasBuildingMaterials(SelectedBuildingType);
+		buildable = buildable && ui.GetCanBuild(SelectedBuildingType, regpos);
+		Color modColor;
+		if (!buildable) modColor = Palette.BrownRust;
+		else modColor = Palette.WhiteSmoke;
+
+		selectedBuildingScene.Modulate = new(modColor, 0.67f);
+	}
+
 	public void Update() {
 		itemList.Clear();
 		var items = ui.GetBuildingTypes().AsEnumerable().ToList();
-		items.Sort((i, j) => ui.GetCanBuild(j).CompareTo(ui.GetCanBuild(i)));
+		items.Sort((i, j) => ui.GetHasBuildingMaterials(j).CompareTo(ui.GetHasBuildingMaterials(i)));
 		foreach (var buildingType in items) {
 			int ix = itemList.AddItem(buildingType.AssetName);
 			// storing buildingtype references locally so if we happen to update the buildingtypes list
 			// in between calls here, we should still get the correct buildings that the visual
 			// ItemList was set up with
 			itemList.SetItemMetadata(ix, Variant.CreateFrom(buildingType));
-			itemList.SetItemCustomBgColor(ix, ui.GetCanBuild(buildingType) ? Palette.LunarGreen : Palette.Dune);
+			itemList.SetItemCustomBgColor(ix, ui.GetHasBuildingMaterials(buildingType) ? Palette.LunarGreen : Palette.Dune);
 		}
 	}
 

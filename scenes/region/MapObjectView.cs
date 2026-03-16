@@ -2,95 +2,90 @@ using System.Linq;
 using Godot;
 using static MapObject;
 
-namespace scenes.region {
+namespace scenes.region;
 
-	[GlobalClass]
-	public partial class MapObjectView : Node2D {
+[GlobalClass]
+public partial class MapObjectView : Node2D {
 
-		public enum IconSetIcons : int {
-			Building,
-			Gathering,
-			Workers,
-			Max
+	public enum IconSetIcons : int {
+		Building,
+		Gathering,
+		Workers,
+		Max
+	}
+
+	[Export] protected IconTransform iconTransformParent;
+	[Export] protected Container iconContainer;
+	protected TextureRect Icon(int i) => (TextureRect)iconContainer.GetChild(i);
+
+	[Export] protected ProgressBar jobProgressBar;
+	[Export] protected Node2D inProgressDisplay;
+	[Export] protected Sprite2D selectedHighlight;
+
+	protected MapObject mapObjectRef;
+
+
+	public override void _Ready() {
+		Debug.Assert(mapObjectRef != null, "MapObjectView needs a map object ref");
+		IconSetHide();
+	}
+
+	public void ViewTransformUpdated() {
+		iconTransformParent.UpdateViewTransform();
+	}
+
+	public override void _Notification(int what) {
+		if (what == NotificationPredelete) {
+			iconTransformParent.QueueFree();
 		}
+	}
 
-		[Export] protected Node2D iconTransformParent;
-		[Export] protected Container iconContainer;
-		protected TextureRect Icon(int i) => (TextureRect)iconContainer.GetChild(i);
+	public void IconSetShow(IconSetIcons icons) {
+		Icon((int)icons).Show();
+		iconContainer.Show();
+	}
 
-		[Export] protected ProgressBar jobProgressBar;
-		[Export] protected Node2D inProgressDisplay;
-		[Export] protected Sprite2D selectedHighlight;
-
-		protected MapObject mapObjectRef;
-
-
-		public override void _Ready() {
-			//RemoveChild(iconTransformParent);
-			//UILayer.AddUiChild(iconTransformParent);
-			Debug.Assert(mapObjectRef != null, "MapObjectView needs a map object ref");
-			IconSetHide();
-		}
-
-		public void ViewTransformUpdated() {
-			var tf = GetGlobalTransformWithCanvas();
-			var inverse = tf.Scale.Inverse();
-			if (inverse.X < 1) iconTransformParent.Scale = inverse;
-		}
-
-		public override void _Notification(int what) {
-			if (what == NotificationPredelete) {
-				iconTransformParent.QueueFree();
-			}
-		}
-
-		public void IconSetShow(IconSetIcons icons) {
-			Icon((int)icons).Show();
-			iconContainer.Show();
-		}
-
-		public void IconSetHide(IconSetIcons icons) {
-			Icon((int)icons).Hide();
-			if (iconContainer.GetChildren().Cast<TextureRect>().All((t) => !t.Visible)) {
-				iconContainer.Hide();
-			}
-		}
-
-		public void IconSetHide() {
+	public void IconSetHide(IconSetIcons icons) {
+		Icon((int)icons).Hide();
+		if (iconContainer.GetChildren().Cast<TextureRect>().All((t) => !t.Visible)) {
 			iconContainer.Hide();
-			foreach (var c in iconContainer.GetChildren().Cast<TextureRect>()) c.Hide();
 		}
+	}
 
-		public void DisplayJobProgress(float progress, bool show = true, bool showBuilding = false) {
-			Debug.Assert(progress >= 0f && progress <= 1f, "Progress bar value aout of range");
-			jobProgressBar.Visible = show;
-			jobProgressBar.Value = progress;
-			inProgressDisplay.Visible = showBuilding;
-		}
+	public void IconSetHide() {
+		iconContainer.Hide();
+		foreach (var c in iconContainer.GetChildren().Cast<TextureRect>()) c.Hide();
+	}
 
-		public static MapObjectView Make(string scenePath, MapObject mapObject) {
-			Debug.Assert(ResourceLoader.Exists(scenePath, "PackedScene"), $"PackedScene {scenePath} doesn't exist");
-			var scn = GD.Load<PackedScene>(scenePath).Instantiate<MapObjectView>();
-			scn.mapObjectRef = mapObject;
-			return scn;
-		}
+	public void DisplayJobProgress(float progress, bool show = true, bool showBuilding = false) {
+		Debug.Assert(progress >= 0f && progress <= 1f, "Progress bar value aout of range");
+		jobProgressBar.Visible = show;
+		jobProgressBar.Value = progress;
+		inProgressDisplay.Visible = showBuilding;
+	}
 
-		public static MapObjectView Make(string scenePath, IMapObjectType mapObject) {
-			Debug.Assert(ResourceLoader.Exists(scenePath, "PackedScene"), $"PackedScene {scenePath} doesn't exist");
-			var scn = GD.Load<PackedScene>(scenePath).Instantiate();
-			Debug.Assert(scn is MapObjectView, "Scene must be a MapObjectView");
-			(scn as MapObjectView).mapObjectRef = mapObject.CreateMapObject(Vector2I.Zero);
-			return (scn as MapObjectView);
-		}
+	public static MapObjectView Make(string scenePath, MapObject mapObject) {
+		Debug.Assert(ResourceLoader.Exists(scenePath, "PackedScene"), $"PackedScene {scenePath} doesn't exist");
+		var scn = GD.Load<PackedScene>(scenePath).Instantiate<MapObjectView>();
+		scn.mapObjectRef = mapObject;
+		return scn;
+	}
 
-		public void OnSelected() {
-			selectedHighlight.Show();
-		}
+	public static MapObjectView MakeDisplay(string scenePath, IMapObjectType mapObject) {
+		Debug.Assert(ResourceLoader.Exists(scenePath, "PackedScene"), $"PackedScene {scenePath} doesn't exist");
+		var scn = GD.Load<PackedScene>(scenePath).Instantiate();
+		Debug.Assert(scn is MapObjectView, "Scene must be a MapObjectView");
+		(scn as MapObjectView).mapObjectRef = mapObject.CreateMapObject(Vector2I.Zero);
+		return (scn as MapObjectView);
+	}
 
-		public void OnDeselected() {
-			selectedHighlight.Hide();
-		}
+	public void OnSelected() {
+		selectedHighlight.Show();
+	}
 
+	public void OnDeselected() {
+		selectedHighlight.Hide();
 	}
 
 }
+

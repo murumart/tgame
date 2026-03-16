@@ -63,8 +63,8 @@ public class Map {
 			}
 		}
 		var world = new World(1000, 1000, 1);
-		for (int x = 0; x < 1000; x++) for (int y = 0; y < 1000; y++) {
-				world.SetElevation(x, y, 0.2f);
+		for (int x = 0; x < world.Width; x++) for (int y = 0; y < world.Height; y++) {
+				world.SetElevation(x, y, Mathf.Clamp(Mathf.Sin(x * 0.04f) * Mathf.Cos(y * 0.04f), -1f, 1f));
 				world.SetTile(x, y, GroundTileType.HasLand | GroundTileType.HasVeg);
 			}
 		return new Map(regions, world);

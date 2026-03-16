@@ -49,6 +49,8 @@ namespace scenes.region {
 			}
 		}
 
+		public Vector2I GetHoveredTilePos() => regionDisplay.GetMouseHoveredTilePos();
+
 	}
 
 }
