@@ -114,6 +114,18 @@ public class Population {
 			}
 			Debug.Assert(Count >= EmployedCount, $"Somehow more people are employed than are actually alive here ({EmployedCount} vs {Count})");
 		}
+		if (Count == 0) {
+			PopulationDroppedToZero?.Invoke();
+		}
+	}
+
+	public void WorkplaceAccident(Job job, uint howMany = 0) {
+		// oops
+		if (howMany == 0) howMany = (uint)job.Workers;
+		Debug.Assert(employedOnJobs.Contains(job), "Don't know about this job");
+		Debug.Assert(howMany <= job.Workers, $"Wanted to remove more workeers than job has {howMany} vs {job.Workers}");
+		Unemploy(job, howMany);
+		Reduce(howMany);
 	}
 
 	public void ChangeHousingCapacity(int by) {

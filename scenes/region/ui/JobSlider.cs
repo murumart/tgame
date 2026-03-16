@@ -32,7 +32,6 @@ namespace scenes.region.ui {
 				_ready = false;
 				Slider.ValueChanged -= ValueChanged;
 				Slider.DragEnded -= DragEnded;
-				GD.Print("JobSlider::_Notification : deleting");
 			}
 		}
 
