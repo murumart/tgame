@@ -20,15 +20,17 @@ namespace scenes.autoload {
 
 		public override void _Process(double delta) {
 			foreach (Label child in debugLabelParent.GetChildren().Cast<Label>()) {
+				string name = child.GetMeta("callback_name", "callback").AsString();
 				var cb = child.GetMeta("callback").AsCallable();
-
-				if (!IsInstanceValid(cb.Target)) {
-					GD.Print($"UILayer::_Process : debug label callback cb.Target is invalid");
+				try {
+					var str = cb.Call().AsString();
+					child.Text = str;
+				} catch (ObjectDisposedException) {
+					GD.Print($"UILayer::_Process : debug label {name} cb.Target is invalid");
 					child.QueueFree();
 					continue;
 				}
-				var str = cb.Call().AsString();
-				child.Text = str;
+
 			}
 		}
 
@@ -50,13 +52,14 @@ namespace scenes.autoload {
 			singleton.infoPanel.Hide();
 		}
 
-		public static void DebugDisplay(Func<string> output) {
+		public static void DebugDisplay(Func<string> output, string name = null) {
 			var label = new Label {
 				LabelSettings = GD.Load<LabelSettings>("res://resources/visual/theme/label_styles/debug.tres"),
 				TabStops = [32f],
 			};
 			singleton.debugLabelParent.AddChild(label);
 			label.SetMeta("callback", Callable.From(output));
+			if (name != null) label.SetMeta("callback_name", name);
 		}
 
 		public static void Screenshot() {

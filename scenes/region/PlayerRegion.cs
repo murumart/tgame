@@ -216,17 +216,6 @@ namespace scenes.region {
 		void HourlyUpdate(TimeT timeInMinutes) {
 			ui.HourlyUpdate(timeInMinutes);
 
-			foreach (var job in faction.GetJobs()) {
-				if (job is GatherResourceJob gjob && gjob.Site.Type == Registry.ResourceSitesS.FishingSpot) {
-					var localpos = gjob.GlobalPosition - region.WorldPosition;
-					if (!faction.HasProblem(localpos)) {
-						var problem = new FishingBoatProblem(localpos, gjob);
-						faction.AddProblem(problem, localpos);
-						break;
-					}
-				}
-			}
-
 			if (faction.Population.ArePeopleStarving && foodWarningNotification == null) {
 				foodWarningNotification = ui.Notifications.Notify(
 					"STARVATION BESETS YOU. Scramble to find something to feed your people!",
