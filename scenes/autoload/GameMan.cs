@@ -36,7 +36,7 @@ namespace scenes.autoload {
 
 			DebugMap = Map.GetDebugMap();
 			NewGame(DebugMap);
-			Game.PlayRegion = DebugMap.GetRegion(0);
+			Game.SetPlayRegion(DebugMap.GetRegion(0));
 			GD.Print("GameMan::_Ready : debug map generated");
 		}
 
@@ -69,6 +69,9 @@ namespace scenes.autoload {
 		}
 
 		public void NewGame(Map map) {
+			game?.Deinit();
+			game = null;
+			GC.Collect(); // please die
 			game = new Game(map);
 			if (Game.Time.Minutes == 0) Game.PassTime(60 * 7); // start game at 7:00
 		}

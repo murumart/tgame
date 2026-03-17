@@ -250,10 +250,12 @@ public partial class RegionDisplay : Node2D {
 	}
 
 	void OnRegionProblemAdded(Problem proble) {
+		Debug.Assert(!problemsToDisplay.Contains(proble), $"This problem {proble} is already queueed for displayu in regiondisplay");
 		problemsToDisplay.Enqueue(proble);
 	}
 
 	void OnRegionProblemEnded(Problem proble) {
+		Debug.Assert(!problemsToUndisplay.Contains(proble), $"This problem {proble} is already queueed for displayu in regiondisplay");
 		problemsToUndisplay.Enqueue(proble);
 	}
 
@@ -272,7 +274,7 @@ public partial class RegionDisplay : Node2D {
 
 	void UndisplayRegionProblem(Problem proble) {
 		var yes = problemViews.TryGetValue(proble.LocalPosition, out var view);
-		Debug.Assert(yes, "Didn't have the probolem");
+		Debug.Assert(yes, "No problemview exists to undisplay");
 		problemViews.Remove(proble.LocalPosition);
 		view.QueueFree();
 		bool hasBview = mapObjectViews.TryGetValue(proble.LocalPosition, out var moview);

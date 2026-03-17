@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Godot;
 using scenes.region.ui;
@@ -12,6 +13,9 @@ namespace scenes.autoload {
 
 		static UILayer singleton;
 
+		struct DebugLabel(Label label, Func<string> callback) { public Label Label = label; public Func<string> Callback = callback; }
+		readonly List<DebugLabel> labels = new();
+
 
 		public override void _Ready() {
 			Debug.Assert(singleton == null);
@@ -19,18 +23,17 @@ namespace scenes.autoload {
 		}
 
 		public override void _Process(double delta) {
-			foreach (Label child in debugLabelParent.GetChildren().Cast<Label>()) {
-				string name = child.GetMeta("callback_name", "callback").AsString();
-				var cb = child.GetMeta("callback").AsCallable();
+			for (int i = labels.Count - 1; i > -1; i--) {
+				var label = labels[i];
 				try {
-					var str = cb.Call().AsString();
-					child.Text = str;
-				} catch (ObjectDisposedException) {
-					GD.Print($"UILayer::_Process : debug label {name} cb.Target is invalid");
-					child.QueueFree();
+					var str = label.Callback();
+					label.Label.Text = str;
+				} catch (Exception e) {
+					GD.Print($"UILayer::_Process : debug label threw {e}");
+					label.Label.QueueFree();
+					labels.RemoveAt(i);
 					continue;
 				}
-
 			}
 		}
 
@@ -58,8 +61,7 @@ namespace scenes.autoload {
 				TabStops = [32f],
 			};
 			singleton.debugLabelParent.AddChild(label);
-			label.SetMeta("callback", Callable.From(output));
-			if (name != null) label.SetMeta("callback_name", name);
+			singleton.labels.Add(new(label, output));
 		}
 
 		public static void Screenshot() {

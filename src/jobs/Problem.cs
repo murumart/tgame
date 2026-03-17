@@ -98,27 +98,34 @@ public class SolveProblemJob : Job {
 
 }
 
-public class FishingBoatProblem : Problem {
+public class WorkplaceAccidentProblem : Problem {
 
-	public override string Title => "Tipped Boat";
-	public override string SolveJobTitle => "Save boatmen";
-	public override string NotificationTitle => "A boat tipped over! Send people to save them before they drown!";
+	readonly string title;
+	readonly string solveJobTitle;
+	readonly string notificationTitle;
 
-	readonly GatherResourceJob fishingJob;
+	public override string Title => title;
+	public override string SolveJobTitle => solveJobTitle;
+	public override string NotificationTitle => notificationTitle;
+
+	readonly Job localJob;
 
 
-	public FishingBoatProblem(Vector2I pos, GatherResourceJob fishingJob) : base(pos, GameTime.Hours(3)) {
-		this.fishingJob = fishingJob;
-		fishingJob.Lock();
+	public WorkplaceAccidentProblem(Vector2I pos, Job accidentJob, string title, string solveJobTitle, string notificationTitle, uint hoursToSolve) : base(pos, GameTime.Hours(hoursToSolve)) {
+		this.title = title;
+		this.solveJobTitle = solveJobTitle;
+		this.notificationTitle = notificationTitle;
+		this.localJob = accidentJob;
+		accidentJob.Lock();
 	}
 
 	public override void OnFailedToAddress(Faction fac) {
-		fac.Population.WorkplaceAccident(fishingJob);
-		fishingJob.Lock(false);
-		fac.RemoveJob(fishingJob);
+		fac.Population.WorkplaceAccident(localJob);
+		localJob.Lock(false);
+		fac.RemoveJob(localJob);
 	}
 
 	public override void OnAddressed(Faction fac) {
-		fishingJob.Lock(false);
+		localJob.Lock(false);
 	}
 }

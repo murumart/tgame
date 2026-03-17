@@ -116,7 +116,6 @@ namespace scenes.map {
 			}
 			await Task.Delay(1);
 			// creating initial seawind
-			GD.Print("WorldGenerator::GenerateContinents : seawind direction ", world.SeaWindDirection);
 			for (int xinc = 0; xinc < world.Width; xinc++) {
 				for (int yinc = 0; yinc < world.Height; yinc++) {
 					int x = xinc;
@@ -221,7 +220,6 @@ namespace scenes.map {
 				freeEdgeTiles[reg] = new() { (Vector2I.Zero, 0b1111) };
 			}
 
-			GD.Print("WorldGenerator::GenerateRegions : Growing regions");
 			await GrowRegions(world, regionsLand, landOccupied, freeEdgeTiles);
 
 			freeEdgeTiles.Clear();

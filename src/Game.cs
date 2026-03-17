@@ -1,15 +1,13 @@
-using System.Linq;
-
 public class Game {
 
 	public readonly Map Map;
 	public readonly GameTime Time;
-	public Region PlayRegion;
+	public Region PlayRegion {get; private set;}
 
 	public bool AIPlaysInPlayerRegion = false;
 
 	readonly LocalAI[] regionAIs;
-	readonly TroubleMaker troubleMaker;
+	TroubleMaker troubleMaker;
 
 
 	public Game(Map map) {
@@ -21,7 +19,12 @@ public class Game {
 			if (regions[i].LocalFaction.IsWild) regionAIs[i] = new NatureAI(new(regions[i], regions[i].LocalFaction));
 			else regionAIs[i] = new GamerAI(new(regions[i], regions[i].LocalFaction));
 		}
-		troubleMaker = new(this, map);
+		troubleMaker = new(map);
+	}
+
+	public void SetPlayRegion(Region region) {
+		PlayRegion = region;
+		troubleMaker.SetPlayRegion(region);
 	}
 
 	TimeT _lastAIUpdate = 0;
@@ -47,4 +50,8 @@ public class Game {
 		return regionAIs[region.WorldIndex];
 	}
 
+	public void Deinit() {
+		troubleMaker.Deinit();
+		troubleMaker = null;
+	}
 }

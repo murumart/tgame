@@ -82,6 +82,7 @@ public static class Registry {
 		public static readonly IResourceSiteType Rock = ResourceSites.GetAsset("rock");
 		public static readonly IResourceSiteType Rubble = ResourceSites.GetAsset("rubble");
 		public static readonly IResourceSiteType ClayPit = ResourceSites.GetAsset("clay_pit");
+		public static readonly IResourceSiteType Hoodoo = ResourceSites.GetAsset("hoodoo");
 
 	}
 

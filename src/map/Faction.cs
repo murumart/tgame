@@ -393,7 +393,10 @@ public class Faction : IEntity {
 		Debug.Assert(has, $"Don't have problem at {where}");
 		problems.Remove(where);
 		if (problem.Applied) ProblemUnsolvedEvent?.Invoke(problem);
-		else ProblemSolvedEvent?.Invoke(problem);
+		else {
+			problem.OnAddressed(this);
+			ProblemSolvedEvent?.Invoke(problem);
+		}
 	}
 
 	// *** TRADING ***

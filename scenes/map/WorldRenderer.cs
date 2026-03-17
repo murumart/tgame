@@ -34,7 +34,6 @@ public partial class WorldRenderer : Node {
 
 
 	public void ResetImages() {
-		GD.Print("WorldRenderer::ResetImages : reset images");
 		ResetWorldImage();
 		Image regionImage = Image.CreateEmpty(World.Width, World.Height, false, Image.Format.Rgba4444);
 		regionImage.Fill(Colors.White);

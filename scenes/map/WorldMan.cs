@@ -70,7 +70,7 @@ namespace scenes.map {
 		}
 
 		void EnterGame() {
-			GameMan.Singleton.Game.PlayRegion = worldUI.SelectedRegion;
+			GameMan.Singleton.Game.SetPlayRegion(worldUI.SelectedRegion);
 			GetTree().ChangeSceneToPacked(regionScene);
 		}
 

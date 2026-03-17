@@ -12,6 +12,7 @@
 # tracing
 *.nettrace
 *.speedscope.*
+*.gcdump
 
 # syllables
 tools/silbitus/litsents.html*
