@@ -23,6 +23,10 @@ boot_splash/use_filter=false
 boot_splash/image="uid://b8g2fakdu1wl2"
 config/icon="uid://b8g2fakdu1wl2"
 
+[audio]
+
+buses/default_bus_layout="uid://cn7btgo2wftfk"
+
 [autoload]
 
 UiLayer="*res://scenes/autoload/ui_layer.tscn"

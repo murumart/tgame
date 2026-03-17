@@ -2,7 +2,27 @@
 
 [ext_resource type="Script" uid="uid://tg0ox5vibsay" path="res://scenes/region/PlayerRegion.cs" id="1_qi5r4"]
 [ext_resource type="PackedScene" uid="uid://cpeaxmkgldt5g" path="res://scenes/region/region_display.tscn" id="3_pmx41"]
+[ext_resource type="AudioStream" uid="uid://d0yb1ly7dtldd" path="res://sound/region/sources/windstream.ogg" id="4_8jf5x"]
 [ext_resource type="PackedScene" uid="uid://b1t88emteoav4" path="res://scenes/region/camera.tscn" id="4_du6xo"]
+[ext_resource type="AudioStream" uid="uid://d2vt74w3te5be" path="res://sound/region/sources/plain_birdsong.ogg" id="5_a0jiq"]
+[ext_resource type="Script" uid="uid://b8b0pxe0x6l41" path="res://sound/region/EnvironSounds.cs" id="6_3pxuv"]
+[ext_resource type="Script" uid="uid://ulg55ys8wdx4" path="res://sound/region/EnvironSoundChoiceStream.cs" id="7_v7d1t"]
+
+[sub_resource type="AudioStreamSynchronized" id="AudioStreamSynchronized_3pxuv"]
+stream_count = 1
+stream_0/stream = ExtResource("5_a0jiq")
+stream_0/volume = -20.0
+
+[sub_resource type="AudioStreamSynchronized" id="AudioStreamSynchronized_a0jiq"]
+stream_count = 2
+stream_0/stream = ExtResource("4_8jf5x")
+stream_0/volume = -20.0
+stream_1/stream = SubResource("AudioStreamSynchronized_3pxuv")
+stream_1/volume = 0.0
+
+[sub_resource type="Resource" id="Resource_t0cbr"]
+script = ExtResource("7_v7d1t")
+metadata/_custom_type_script = "uid://ulg55ys8wdx4"
 
 [node name="PlayerRegion" type="Node" unique_id=531255262 node_paths=PackedStringArray("ui", "camera", "regionDisplay", "otherDisplaysParent")]
 script = ExtResource("1_qi5r4")
@@ -21,3 +41,12 @@ y_sort_enabled = true
 
 [node name="OtherDisplays" type="Node2D" parent="Ysort" unique_id=135584923]
 y_sort_enabled = true
+
+[node name="EnvironSounds" type="AudioStreamPlayer" parent="." unique_id=1473703279 node_paths=PackedStringArray("camera")]
+stream = SubResource("AudioStreamSynchronized_a0jiq")
+autoplay = true
+script = ExtResource("6_3pxuv")
+camera = NodePath("../RegionCamera")
+soundChoices = SubResource("Resource_t0cbr")
+windEase = 15.893419
+environmentSoundVolume = 0.065
