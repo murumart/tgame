@@ -351,7 +351,7 @@ public partial class UI : Control {
 		pauseDisplayPanel.Visible = gamePaused;
 		zoomLabel.Text = $"zoom: {(Camera.Zoom.X >= 1 ? Camera.Zoom.X : Mathf.Remap(Camera.Zoom.X, 1f, 0.1f, 1f, -8f)):0}";
 		if (state ==  State.PlacingBuild) {
-			buildingList.UpdateCursorWhilePlacing(Camera.GetHoveredTilePos());
+			buildingList.UpdateCursorWhilePlacing(Camera.GetMouseHoveredTilePos());
 		}
 	}
 

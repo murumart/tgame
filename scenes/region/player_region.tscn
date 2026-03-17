@@ -6,23 +6,26 @@
 [ext_resource type="PackedScene" uid="uid://b1t88emteoav4" path="res://scenes/region/camera.tscn" id="4_du6xo"]
 [ext_resource type="AudioStream" uid="uid://d2vt74w3te5be" path="res://sound/region/sources/plain_birdsong.ogg" id="5_a0jiq"]
 [ext_resource type="Script" uid="uid://b8b0pxe0x6l41" path="res://sound/region/EnvironSounds.cs" id="6_3pxuv"]
-[ext_resource type="Script" uid="uid://ulg55ys8wdx4" path="res://sound/region/EnvironSoundChoiceStream.cs" id="7_v7d1t"]
-
-[sub_resource type="AudioStreamSynchronized" id="AudioStreamSynchronized_3pxuv"]
-stream_count = 1
-stream_0/stream = ExtResource("5_a0jiq")
-stream_0/volume = -20.0
+[ext_resource type="AudioStream" uid="uid://dbo0tvyrx8ayp" path="res://sound/region/sources/ocean.ogg" id="6_4hooy"]
+[ext_resource type="AudioStream" uid="uid://bfymwy3qhrsk6" path="res://sound/region/sources/tramontane.ogg" id="7_u0pgc"]
+[ext_resource type="AudioStream" uid="uid://dsoyben8fbmtb" path="res://sound/region/sources/sandy.ogg" id="8_u0pgc"]
+[ext_resource type="Resource" uid="uid://mpq04puqpdl4" path="res://sound/region/region_sound_choice_tree.tres" id="9_4hooy"]
+[ext_resource type="AudioStream" uid="uid://dcsgg0m5r4y6w" path="res://sound/region/sources/snowy.ogg" id="9_pdjqt"]
 
 [sub_resource type="AudioStreamSynchronized" id="AudioStreamSynchronized_a0jiq"]
-stream_count = 2
-stream_0/stream = ExtResource("4_8jf5x")
-stream_0/volume = -20.0
-stream_1/stream = SubResource("AudioStreamSynchronized_3pxuv")
-stream_1/volume = 0.0
-
-[sub_resource type="Resource" id="Resource_t0cbr"]
-script = ExtResource("7_v7d1t")
-metadata/_custom_type_script = "uid://ulg55ys8wdx4"
+stream_count = 6
+stream_0/stream = ExtResource("5_a0jiq")
+stream_0/volume = -60.0
+stream_1/stream = ExtResource("4_8jf5x")
+stream_1/volume = -60.0
+stream_2/stream = ExtResource("6_4hooy")
+stream_2/volume = -60.0
+stream_3/stream = ExtResource("7_u0pgc")
+stream_3/volume = -60.0
+stream_4/stream = ExtResource("8_u0pgc")
+stream_4/volume = -60.0
+stream_5/stream = ExtResource("9_pdjqt")
+stream_5/volume = -60.0
 
 [node name="PlayerRegion" type="Node" unique_id=531255262 node_paths=PackedStringArray("ui", "camera", "regionDisplay", "otherDisplaysParent")]
 script = ExtResource("1_qi5r4")
@@ -42,11 +45,9 @@ y_sort_enabled = true
 [node name="OtherDisplays" type="Node2D" parent="Ysort" unique_id=135584923]
 y_sort_enabled = true
 
-[node name="EnvironSounds" type="AudioStreamPlayer" parent="." unique_id=1473703279 node_paths=PackedStringArray("camera")]
+[node name="EnvironSounds" type="AudioStreamPlayer" parent="." unique_id=1473703279 node_paths=PackedStringArray("Camera")]
 stream = SubResource("AudioStreamSynchronized_a0jiq")
 autoplay = true
 script = ExtResource("6_3pxuv")
-camera = NodePath("../RegionCamera")
-soundChoices = SubResource("Resource_t0cbr")
-windEase = 15.893419
-environmentSoundVolume = 0.065
+Camera = NodePath("../RegionCamera")
+soundChoices = ExtResource("9_4hooy")

@@ -7,38 +7,25 @@ namespace sound.region;
 
 public partial class EnvironSounds : AudioStreamPlayer {
 
-	[Export] RegionCamera camera;
-	[Export] EnvironSoundChoice soundChoices;
-	[Export(PropertyHint.ExpEasing)] float windEase;
-	[Export] float environmentSoundVolume;
+	[Export] public RegionCamera Camera;
+	[Export] EnvironSoundChoiceBinary soundChoices;
 
-	AudioStreamSynchronized SyncStream => (AudioStreamSynchronized)Stream;
-
-	float targetWindVolume = 0.1f;
-	float WindVolume {
-		get => Mathf.DbToLinear(SyncStream.GetSyncStreamVolume(0));
-		set => SyncStream.SetSyncStreamVolume(0, Mathf.LinearToDb(value));
-	}
-
-	float targetEnvironVolume = 0.1f;
-	float EnvironVolume {
-		get => Mathf.DbToLinear(SyncStream.GetSyncStreamVolume(1));
-		set => SyncStream.SetSyncStreamVolume(1, Mathf.LinearToDb(value));
-	}
+	public AudioStreamSynchronized SyncStream => (AudioStreamSynchronized)Stream;
 
 	public override void _Ready() {
-		UILayer.DebugDisplay(() => $"wind: tgt {targetWindVolume} v {WindVolume}; environ: tgt {targetEnvironVolume} v {EnvironVolume}");
+		void SetMama(EnvironSoundChoice c) {
+			c.Mama = this;
+			if (c is EnvironSoundChoiceBinary b) {
+				SetMama(b.Above);
+				SetMama(b.Below);
+			}
+		}
+		SetMama(soundChoices);
+		UILayer.DebugDisplay(() => $"snds: {soundChoices}");
 	}
 
 	public override void _Process(double delta) {
-		float wv = Mathf.Ease(1f - camera.Zoom.X, windEase);
-		float ev = environmentSoundVolume;
-		Balance(ref wv, ref ev);
-		targetWindVolume = wv;
-		targetEnvironVolume = ev;
-
-		WindVolume = Mathf.MoveToward(FixNan(WindVolume), targetWindVolume, (float)delta);
-		EnvironVolume = Mathf.MoveToward(FixNan(EnvironVolume), targetEnvironVolume, (float)delta);
+		soundChoices.Process((float)delta);
 	}
 
 	void Balance(ref float a, ref float b) {
@@ -51,6 +38,31 @@ public partial class EnvironSounds : AudioStreamPlayer {
 	float FixNan(float a) {
 		if (Mathf.IsNaN(a)) return 1f;
 		return a;
+	}
+
+	public Vector2I GetCameraPosition() {
+		var world = GameMan.Singleton?.Game?.Map?.World ?? null;
+		Debug.Assert(world is not null);
+		var camPosOnTile = Camera.GetHoveredTilePos();
+		return camPosOnTile + GameMan.Singleton.Game.PlayRegion.WorldPosition;
+	}
+
+	public float GetElevation() {
+		var world = GameMan.Singleton.Game.Map.World;
+		var campos = GetCameraPosition();
+		return world.GetElevation(campos.X, campos.Y);
+	}
+
+	public float GetHumidity() {
+		var world = GameMan.Singleton.Game.Map.World;
+		var campos = GetCameraPosition();
+		return world.GetHumidity(campos.X, campos.Y);
+	}
+
+	public float GetTemperature() {
+		var world = GameMan.Singleton.Game.Map.World;
+		var campos = GetCameraPosition();
+		return world.GetTemperature(campos.X, campos.Y);
 	}
 
 }

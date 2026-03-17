@@ -1,0 +1,89 @@
+[gd_resource type="Resource" script_class="EnvironSoundChoiceBinary" format=3 uid="uid://mpq04puqpdl4"]
+
+[ext_resource type="Script" uid="uid://ulg55ys8wdx4" path="res://sound/region/EnvironSoundChoiceStream.cs" id="1_cw2im"]
+[ext_resource type="Script" uid="uid://bfoif2fp3ga5a" path="res://sound/region/EnvironSoundChoiceBinary.cs" id="2_d0jef"]
+
+[sub_resource type="Resource" id="Resource_pdjqt"]
+script = ExtResource("1_cw2im")
+Name = &"Tramontane"
+Stream = 3
+metadata/_custom_type_script = "uid://ulg55ys8wdx4"
+
+[sub_resource type="Resource" id="Resource_4s6ry"]
+script = ExtResource("1_cw2im")
+metadata/_custom_type_script = "uid://ulg55ys8wdx4"
+
+[sub_resource type="Resource" id="Resource_cqhb6"]
+script = ExtResource("1_cw2im")
+Name = &"Snowy"
+Stream = 5
+metadata/_custom_type_script = "uid://ulg55ys8wdx4"
+
+[sub_resource type="Resource" id="Resource_we25r"]
+script = ExtResource("2_d0jef")
+Name = &"snowy or not"
+SampleType = 3
+InputStart = -0.185
+InputEnd = 0.07
+Above = SubResource("Resource_4s6ry")
+Below = SubResource("Resource_cqhb6")
+Easing = 5.0982437
+metadata/_custom_type_script = "uid://bfoif2fp3ga5a"
+
+[sub_resource type="Resource" id="Resource_d0jef"]
+script = ExtResource("1_cw2im")
+Name = &"Sandy"
+Stream = 4
+metadata/_custom_type_script = "uid://ulg55ys8wdx4"
+
+[sub_resource type="Resource" id="Resource_cw2im"]
+script = ExtResource("2_d0jef")
+Name = &"Sandy or not"
+SampleType = 2
+InputEnd = 0.085
+Above = SubResource("Resource_we25r")
+Below = SubResource("Resource_d0jef")
+Easing = 3.1383357
+metadata/_custom_type_script = "uid://bfoif2fp3ga5a"
+
+[sub_resource type="Resource" id="Resource_806wv"]
+script = ExtResource("2_d0jef")
+Name = &"High up elevation"
+SampleType = 1
+InputStart = 0.45
+Above = SubResource("Resource_pdjqt")
+Below = SubResource("Resource_cw2im")
+Easing = 0.6155714
+metadata/_custom_type_script = "uid://bfoif2fp3ga5a"
+
+[sub_resource type="Resource" id="Resource_v0ccf"]
+script = ExtResource("1_cw2im")
+Name = &"Sea"
+Stream = 2
+metadata/_custom_type_script = "uid://ulg55ys8wdx4"
+
+[sub_resource type="Resource" id="Resource_4hooy"]
+script = ExtResource("2_d0jef")
+Name = &"At sea or on continent"
+SampleType = 1
+InputEnd = 0.035
+Above = SubResource("Resource_806wv")
+Below = SubResource("Resource_v0ccf")
+Easing = 0.1015316
+metadata/_custom_type_script = "uid://bfoif2fp3ga5a"
+
+[sub_resource type="Resource" id="Resource_u0pgc"]
+script = ExtResource("1_cw2im")
+Name = &"Stream Wind"
+Stream = 1
+metadata/_custom_type_script = "uid://ulg55ys8wdx4"
+
+[resource]
+script = ExtResource("2_d0jef")
+Name = &"Stream wind"
+InputStart = 0.1
+InputEnd = 8.0
+Above = SubResource("Resource_4hooy")
+Below = SubResource("Resource_u0pgc")
+Easing = 0.010308697
+metadata/_custom_type_script = "uid://bfoif2fp3ga5a"

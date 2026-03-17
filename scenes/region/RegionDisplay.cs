@@ -324,13 +324,13 @@ public partial class RegionDisplay : Node2D {
 	}
 
 	public Vector2I GetMouseHoveredTilePos() {
-		return GetMouseHoveredTilePos(tilemaps.Ground.GetLocalMousePosition());
+		return GetTilePosFromLocalPos(tilemaps.Ground.GetLocalMousePosition());
 	}
 
-	public Vector2I GetMouseHoveredTilePos(Vector2 localMousePos) {
-		var tilepos = LocalToTile(localMousePos);
-		localMousePos.Y += Tilemaps.TileElevationVerticalOffset(region.WorldPosition + tilepos, GameMan.Singleton.Game.Map.World);
-		tilepos = LocalToTile(localMousePos);
+	public Vector2I GetTilePosFromLocalPos(Vector2 localPos) {
+		var tilepos = LocalToTile(localPos);
+		localPos.Y += Tilemaps.TileElevationVerticalOffset(region.WorldPosition + tilepos, GameMan.Singleton.Game.Map.World);
+		tilepos = LocalToTile(localPos);
 		return tilepos;
 	}
 

@@ -524,7 +524,7 @@ text = "okay"
 
 [node name="UISoundCreator" type="AudioStreamPlayer" parent="." unique_id=172344761]
 stream = ExtResource("13_lkpo6")
-volume_db = -36.236
+volume_db = -20.0
 max_polyphony = 4
 script = ExtResource("14_igkl3")
 hoverSound = ExtResource("13_lkpo6")

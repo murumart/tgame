@@ -71,7 +71,7 @@ public class World {
 		where[x + y * Width] = (byte)((value * 0.5f + 0.5f) * byte.MaxValue);
 	}
 
-	public float SetArrFloat(int x, int y, byte[] where, float defauld = -1f) {
+	public float GetArrFloat(int x, int y, byte[] where, float defauld = -1f) {
 		if (x < 0 || x >= Width) return defauld;
 		if (y < 0 || y >= Height) return defauld;
 		return ((float)where[x + y * Width] / byte.MaxValue) * 2.0f - 1.0f;
@@ -83,7 +83,7 @@ public class World {
 	}
 
 	public float GetElevation(int x, int y) {
-		return SetArrFloat(x, y, Elevation);
+		return GetArrFloat(x, y, Elevation);
 	}
 
 	public void SetTemperature(int x, int y, float temperature) {
@@ -91,7 +91,7 @@ public class World {
 	}
 
 	public float GetTemperature(int x, int y) {
-		return SetArrFloat(x, y, Temperature);
+		return GetArrFloat(x, y, Temperature);
 	}
 
 	public void SetSeaWind(int x, int y, float wind) {
@@ -99,7 +99,7 @@ public class World {
 	}
 
 	public float GetSeaWind(int x, int y) {
-		return SetArrFloat(x, y, SeaWind, 1.0f);
+		return GetArrFloat(x, y, SeaWind, 1.0f);
 	}
 
 	public void SetHumidity(int x, int y, float humid) {
@@ -107,7 +107,7 @@ public class World {
 	}
 
 	public float GetHumidity(int x, int y) {
-		return SetArrFloat(x, y, Humidity, 1.0f);
+		return GetArrFloat(x, y, Humidity, 1.0f);
 	}
 
 }

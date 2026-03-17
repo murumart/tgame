@@ -18,7 +18,7 @@ namespace scenes.region {
 			base._Ready();
 			RemoveChild(ui);
 			UILayer.AddUIChild(ui);
-			ClickedMouseEvent += (ac) => ui.OnLeftMouseClick(ac, regionDisplay.GetMouseHoveredTilePos(ac));
+			ClickedMouseEvent += (ac) => ui.OnLeftMouseClick(ac, regionDisplay.GetTilePosFromLocalPos(ac));
 		}
 
 		public override void _Process(double delta) {
@@ -49,7 +49,8 @@ namespace scenes.region {
 			}
 		}
 
-		public Vector2I GetHoveredTilePos() => regionDisplay.GetMouseHoveredTilePos();
+		public Vector2I GetMouseHoveredTilePos() => regionDisplay.GetMouseHoveredTilePos();
+		public Vector2I GetHoveredTilePos() => regionDisplay.GetTilePosFromLocalPos(Position);
 
 	}
 

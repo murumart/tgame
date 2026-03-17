@@ -274,7 +274,7 @@ layout_mode = 1
 
 [node name="UISoundCreator" type="AudioStreamPlayer" parent="." unique_id=978309576]
 stream = ExtResource("8_8g5eo")
-volume_db = -36.236
+volume_db = -20.0
 max_polyphony = 4
 script = ExtResource("9_7suek")
 hoverSound = ExtResource("8_8g5eo")
