@@ -12,6 +12,9 @@
 [ext_resource type="PackedScene" uid="uid://1mqtysebfbnc" path="res://scenes/region/ui/notification.tscn" id="5_mgrsp"]
 [ext_resource type="LabelSettings" uid="uid://ddruam7fh1y7l" path="res://resources/visual/theme/label_styles/title.tres" id="5_u27i7"]
 [ext_resource type="PackedScene" uid="uid://d1tbr5mkayrjf" path="res://scenes/region/ui/jobs_list.tscn" id="10_v1o57"]
+[ext_resource type="AudioStream" uid="uid://clyck37eh7i6m" path="res://sound/ui/menusounds-01.ogg" id="13_lkpo6"]
+[ext_resource type="Script" uid="uid://budv3jk6vkbdc" path="res://sound/ui/UISoundCreator.cs" id="14_igkl3"]
+[ext_resource type="AudioStream" uid="uid://0bwmlws6b8v2" path="res://sound/ui/menusounds-02.ogg" id="15_nqtah"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_suhma"]
 bg_color = Color(0.6, 0.6, 0.6, 0)
@@ -518,3 +521,12 @@ layout_mode = 2
 focus_mode = 0
 mouse_default_cursor_shape = 2
 text = "okay"
+
+[node name="UISoundCreator" type="AudioStreamPlayer" parent="." unique_id=172344761]
+stream = ExtResource("13_lkpo6")
+volume_db = -36.236
+max_polyphony = 4
+script = ExtResource("14_igkl3")
+hoverSound = ExtResource("13_lkpo6")
+clickSound = ExtResource("15_nqtah")
+metadata/_custom_type_script = "uid://budv3jk6vkbdc"

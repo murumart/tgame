@@ -7,6 +7,9 @@
 [ext_resource type="Material" uid="uid://cet7ep6cvqk3p" path="res://resources/visual/add_material.tres" id="3_m1kxf"]
 [ext_resource type="LabelSettings" uid="uid://btwbnjxri1gdg" path="res://resources/visual/theme/label_styles/8px.tres" id="6_uhagc"]
 [ext_resource type="PackedScene" uid="uid://cq3tmeo4vasbf" path="res://scenes/map/ui/world_gen_ui.tscn" id="7_btxxm"]
+[ext_resource type="AudioStream" uid="uid://clyck37eh7i6m" path="res://sound/ui/menusounds-01.ogg" id="8_8g5eo"]
+[ext_resource type="Script" uid="uid://budv3jk6vkbdc" path="res://sound/ui/UISoundCreator.cs" id="9_7suek"]
+[ext_resource type="AudioStream" uid="uid://0bwmlws6b8v2" path="res://sound/ui/menusounds-02.ogg" id="10_otr3d"]
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_1g8jr"]
 blend_mode = 3
@@ -268,3 +271,12 @@ autoplay = &"menu"
 [node name="WorldGenUI" parent="." unique_id=1511327676 instance=ExtResource("7_btxxm")]
 visible = false
 layout_mode = 1
+
+[node name="UISoundCreator" type="AudioStreamPlayer" parent="." unique_id=978309576]
+stream = ExtResource("8_8g5eo")
+volume_db = -36.236
+max_polyphony = 4
+script = ExtResource("9_7suek")
+hoverSound = ExtResource("8_8g5eo")
+clickSound = ExtResource("10_otr3d")
+metadata/_custom_type_script = "uid://budv3jk6vkbdc"
