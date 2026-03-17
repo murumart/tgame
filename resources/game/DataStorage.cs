@@ -65,7 +65,7 @@ namespace resources.game {
 			foreach (var ass in scenics) {
 				var key = ass.GetIdString();
 				Debug.Assert(!scenePaths.ContainsKey(key), $"{key} already has scenePath {scenePaths.GetValueOrDefault(key)}");
-				if (ass.GetScenePath() == null) {
+				if (ass.GetScenePath() == null || ass.GetScenePath().Length == 0) {
 					// basePath should end with /
 					var scenepath = basePath + ass.AssetName.ToSnakeCase() + ".tscn";
 					if (ResourceLoader.Exists(scenepath, "PackedScene")) {
@@ -80,12 +80,12 @@ namespace resources.game {
 		}
 
 		public static string GetScenePath(IAssetType assetType) {
-			Debug.Assert(scenePaths.ContainsKey(assetType.GetIdString()), $"Scene path for asset {assetType} missing");
+			Debug.Assert(scenePaths.ContainsKey(assetType.GetIdString()), $"Scene path for asset (object: {assetType}, assettypename: {assetType.AssetTypeName}) missing. Did you ever register it?");
 			return GetScenePath(assetType.GetIdString());
 		}
 
 		public static string GetScenePath(string key) {
-			Debug.Assert(scenePaths.ContainsKey(key), $"Scene path for key {key} missing");
+			Debug.Assert(scenePaths.ContainsKey(key), $"Scene path for key {key} missing. Did you ever register it?");
 			return scenePaths[key];
 		}
 

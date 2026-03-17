@@ -1,0 +1,44 @@
+[gd_resource type="Resource" script_class="ResourceSiteType" format=3 uid="uid://o7f1lxtfp3n"]
+
+[ext_resource type="Script" uid="uid://cbiuqlrd8yyxx" path="res://resources/visual/Verb.cs" id="1_cui83"]
+[ext_resource type="Resource" uid="uid://pmrcwo4t316p" path="res://resources/game/resource_types/logs.tres" id="2_1oqvg"]
+[ext_resource type="Script" uid="uid://bnfatrmjew0vy" path="res://resources/game/resource_site_types/ResourceWell.cs" id="3_g5xht"]
+[ext_resource type="Resource" uid="uid://xkt4u6pl6p3" path="res://resources/game/resource_types/fruit.tres" id="4_1oqvg"]
+[ext_resource type="Script" uid="uid://ct2a6sqe1m7mx" path="res://resources/game/resource_site_types/ResourceSiteType.cs" id="4_uapoh"]
+
+[sub_resource type="Resource" id="Resource_cui83"]
+script = ExtResource("1_cui83")
+Infinitive = "chop"
+Progressive = "chopping"
+metadata/_custom_type_script = "uid://cbiuqlrd8yyxx"
+
+[sub_resource type="Resource" id="Resource_1oqvg"]
+script = ExtResource("3_g5xht")
+resourceType = ExtResource("2_1oqvg")
+minutesPerBunch = 60
+minutesPerBunchRegen = 120960
+initialBunches = 45
+Production = SubResource("Resource_cui83")
+metadata/_custom_type_script = "uid://bnfatrmjew0vy"
+
+[sub_resource type="Resource" id="Resource_uapoh"]
+script = ExtResource("1_cui83")
+Infinitive = "gather"
+Progressive = "gathering"
+metadata/_custom_type_script = "uid://cbiuqlrd8yyxx"
+
+[sub_resource type="Resource" id="Resource_g5xht"]
+script = ExtResource("3_g5xht")
+resourceType = ExtResource("4_1oqvg")
+minutesPerBunch = 60
+minutesPerBunchRegen = 483840
+initialBunches = 30
+Production = SubResource("Resource_uapoh")
+metadata/_custom_type_script = "uid://bnfatrmjew0vy"
+
+[resource]
+script = ExtResource("4_uapoh")
+name = "cacti"
+mineResources = Array[Object]([SubResource("Resource_1oqvg"), SubResource("Resource_g5xht")])
+ScenePath = "uid://86f5k8lmus4o"
+metadata/_custom_type_script = "uid://ct2a6sqe1m7mx"

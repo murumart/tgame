@@ -218,7 +218,7 @@ namespace scenes.region {
 
 			if (faction.Population.ArePeopleStarving && foodWarningNotification == null) {
 				foodWarningNotification = ui.Notifications.Notify(
-					"STARVATION BESETS YOU. Scramble to find something to feed your people!",
+					"Starvation! Scramble to find something to feed your people!",
 					gradientColors: (new Color(Palette.BrownRust, 0.0f), Palette.BrownRust),
 					isDismissable: false,
 					isPulsing: true

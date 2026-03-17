@@ -56,7 +56,8 @@ namespace scenes.map {
 		[Export] Curve elevationTemperatureReductionCurve;
 		[Export] float temperatureNoiseCoef;
 		[Export] Curve populationLandTileCurve;
-		[Export] Godot.Collections.Array<ResourceSiteGenerationParameters> resourceSiteGenerationParameters;
+		[Export] ResourceSiteGenerationParametersCollection resourceSiteGenerationParameters;
+		
 
 		public Region[] Regions;
 
@@ -233,9 +234,9 @@ namespace scenes.map {
 					var ele = world.GetElevation(wpos.X, wpos.Y);
 					var humi = world.GetHumidity(wpos.X, wpos.Y);
 					var temp = world.GetTemperature(wpos.X, wpos.Y);
-					ResourceSiteGenerationParameters siteType = null;
-					siteType = resourceSiteGenerationParameters[rng.RandiRange(0, resourceSiteGenerationParameters.Count - 1)];
+					ResourceSiteGenerationParameters siteType = resourceSiteGenerationParameters[rng.RandiRange(0, resourceSiteGenerationParameters.Count - 1)];
 					if (siteType == null) continue;
+					Debug.Assert(Registry.ResourceSites.GetAsset((siteType.Target as IAssetType).GetIdString()) is not null, "Resource site type not registred");
 					if (ele < siteType.MinElevation || ele > siteType.MaxElevation) continue;
 					if (humi < siteType.MinHumidity || humi > siteType.MaxHumidity) continue;
 					if (temp < siteType.MinTemperature || temp > siteType.MaxTemperature) continue;

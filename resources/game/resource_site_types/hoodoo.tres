@@ -1,0 +1,42 @@
+[gd_resource type="Resource" script_class="ResourceSiteType" format=3 uid="uid://bnnlh8qs78mjv"]
+
+[ext_resource type="Script" uid="uid://cbiuqlrd8yyxx" path="res://resources/visual/Verb.cs" id="1_am7tj"]
+[ext_resource type="Resource" uid="uid://lda3p80x02sh" path="res://resources/game/resource_types/clay.tres" id="2_uo4xf"]
+[ext_resource type="Script" uid="uid://bnfatrmjew0vy" path="res://resources/game/resource_site_types/ResourceWell.cs" id="3_c1qpx"]
+[ext_resource type="Script" uid="uid://ct2a6sqe1m7mx" path="res://resources/game/resource_site_types/ResourceSiteType.cs" id="4_dkcsa"]
+[ext_resource type="Resource" uid="uid://nw83fam2omvi" path="res://resources/game/resource_types/rock.tres" id="4_uo4xf"]
+
+[sub_resource type="Resource" id="Resource_am7tj"]
+script = ExtResource("1_am7tj")
+Infinitive = "mine"
+Progressive = "mining"
+metadata/_custom_type_script = "uid://cbiuqlrd8yyxx"
+
+[sub_resource type="Resource" id="Resource_uo4xf"]
+script = ExtResource("3_c1qpx")
+resourceType = ExtResource("2_uo4xf")
+minutesPerBunch = 80
+initialBunches = 211
+Production = SubResource("Resource_am7tj")
+metadata/_custom_type_script = "uid://bnfatrmjew0vy"
+
+[sub_resource type="Resource" id="Resource_dkcsa"]
+script = ExtResource("1_am7tj")
+Infinitive = "mine"
+Progressive = "mining"
+metadata/_custom_type_script = "uid://cbiuqlrd8yyxx"
+
+[sub_resource type="Resource" id="Resource_c1qpx"]
+script = ExtResource("3_c1qpx")
+resourceType = ExtResource("4_uo4xf")
+minutesPerBunch = 80
+initialBunches = 160
+Production = SubResource("Resource_dkcsa")
+metadata/_custom_type_script = "uid://bnfatrmjew0vy"
+
+[resource]
+script = ExtResource("4_dkcsa")
+name = "hoodoo"
+mineResources = Array[Object]([SubResource("Resource_uo4xf"), SubResource("Resource_c1qpx")])
+ScenePath = "uid://86f5k8lmus4o"
+metadata/_custom_type_script = "uid://ct2a6sqe1m7mx"

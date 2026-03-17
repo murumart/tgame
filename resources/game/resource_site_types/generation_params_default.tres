@@ -1,0 +1,129 @@
+[gd_resource type="Resource" script_class="ResourceSiteGenerationParametersCollection" format=3 uid="uid://c5xeq2sv362k3"]
+
+[ext_resource type="Resource" uid="uid://c2hf677ph58lg" path="res://resources/game/resource_site_types/clay_pit.tres" id="1_2etkj"]
+[ext_resource type="Script" uid="uid://dpr7b2iecx6gm" path="res://resources/game/resource_site_types/ResourceSiteGenerationParameters.cs" id="2_omvkl"]
+[ext_resource type="Resource" uid="uid://bh5svfg5ua7eb" path="res://resources/game/resource_site_types/rock.tres" id="3_72mdt"]
+[ext_resource type="Resource" uid="uid://dwcrohuk4oajt" path="res://resources/game/resource_site_types/rubble.tres" id="4_gkmfb"]
+[ext_resource type="Resource" uid="uid://bws8feec8sqin" path="res://resources/game/resource_site_types/broadleaf_woods.tres" id="5_0lakn"]
+[ext_resource type="Resource" uid="uid://d08tlsfel81yf" path="res://resources/game/resource_site_types/conifer_woods.tres" id="6_uw6o8"]
+[ext_resource type="Resource" uid="uid://bmiejrddiwehn" path="res://resources/game/resource_site_types/savanna_trees.tres" id="7_tkiqb"]
+[ext_resource type="Resource" uid="uid://b1uvd7viwkyac" path="res://resources/game/resource_site_types/rainforest_trees.tres" id="8_v67m8"]
+[ext_resource type="Resource" uid="uid://cjd64xn7r7mh8" path="res://resources/game/resource_site_types/fishing_spot.tres" id="9_0cse7"]
+[ext_resource type="Resource" uid="uid://bfubh3m6mcfi8" path="res://resources/game/resource_site_types/desert_island.tres" id="10_7ysih"]
+[ext_resource type="Script" uid="uid://c71cftqfligu8" path="res://resources/game/resource_site_types/ResourceSiteGenerationParametersCollection.cs" id="11_gkfg7"]
+[ext_resource type="Resource" uid="uid://o7f1lxtfp3n" path="res://resources/game/resource_site_types/cacti.tres" id="11_omvkl"]
+[ext_resource type="Resource" uid="uid://bnnlh8qs78mjv" path="res://resources/game/resource_site_types/hoodoo.tres" id="12_72mdt"]
+
+[sub_resource type="Resource" id="Resource_getmw"]
+script = ExtResource("2_omvkl")
+Target = ExtResource("1_2etkj")
+MinElevation = 0.01
+MinHumidity = 0.38
+Rarity = 0.1
+metadata/_custom_type_script = "uid://dpr7b2iecx6gm"
+
+[sub_resource type="Resource" id="Resource_dtgda"]
+script = ExtResource("2_omvkl")
+Target = ExtResource("3_72mdt")
+MinElevation = 0.4
+MinHumidity = -0.5
+MaxHumidity = 0.795
+Rarity = 0.65
+metadata/_custom_type_script = "uid://dpr7b2iecx6gm"
+
+[sub_resource type="Resource" id="Resource_pnmcl"]
+script = ExtResource("2_omvkl")
+Target = ExtResource("4_gkmfb")
+MinElevation = 0.15
+MinHumidity = -0.5
+Rarity = 0.255
+metadata/_custom_type_script = "uid://dpr7b2iecx6gm"
+
+[sub_resource type="Resource" id="Resource_iffmc"]
+script = ExtResource("2_omvkl")
+Target = ExtResource("5_0lakn")
+MinElevation = 0.02
+MaxElevation = 0.42
+MinTemperature = 0.035
+MaxTemperature = 0.4
+MinHumidity = 0.235
+MaxHumidity = 0.505
+Rarity = 1.295
+metadata/_custom_type_script = "uid://dpr7b2iecx6gm"
+
+[sub_resource type="Resource" id="Resource_nugjq"]
+script = ExtResource("2_omvkl")
+Target = ExtResource("6_uw6o8")
+MinElevation = 0.025
+MaxElevation = 0.74
+MinTemperature = -0.29
+MaxTemperature = 0.155
+MinHumidity = 0.195
+MaxHumidity = 0.505
+Rarity = 1.595
+metadata/_custom_type_script = "uid://dpr7b2iecx6gm"
+
+[sub_resource type="Resource" id="Resource_a1kp6"]
+script = ExtResource("2_omvkl")
+Target = ExtResource("7_tkiqb")
+MinElevation = 0.02
+MaxElevation = 0.485
+MinTemperature = 0.45
+MinHumidity = 0.145
+MaxHumidity = 0.395
+Rarity = 2.0
+metadata/_custom_type_script = "uid://dpr7b2iecx6gm"
+
+[sub_resource type="Resource" id="Resource_aa3pw"]
+script = ExtResource("2_omvkl")
+Target = ExtResource("8_v67m8")
+MinElevation = 0.02
+MaxElevation = 0.8
+MinTemperature = 0.45
+MinHumidity = 0.45
+Rarity = 2.9
+metadata/_custom_type_script = "uid://dpr7b2iecx6gm"
+
+[sub_resource type="Resource" id="Resource_f71yy"]
+script = ExtResource("2_omvkl")
+Target = ExtResource("9_0cse7")
+MinElevation = -0.3
+MaxElevation = -0.01
+MinTemperature = -0.5
+MaxTemperature = 0.5
+metadata/_custom_type_script = "uid://dpr7b2iecx6gm"
+
+[sub_resource type="Resource" id="Resource_6ybvo"]
+script = ExtResource("2_omvkl")
+Target = ExtResource("10_7ysih")
+MinElevation = -1.0
+MaxElevation = 0.0
+MinTemperature = 0.2
+MinHumidity = 0.42
+Rarity = 0.66
+metadata/_custom_type_script = "uid://dpr7b2iecx6gm"
+
+[sub_resource type="Resource" id="Resource_72mdt"]
+script = ExtResource("2_omvkl")
+Target = ExtResource("11_omvkl")
+MinElevation = 0.01
+MaxElevation = 0.9
+MinTemperature = 0.2
+MinHumidity = -1.0
+MaxHumidity = 0.05
+Rarity = 0.66
+metadata/_custom_type_script = "uid://dpr7b2iecx6gm"
+
+[sub_resource type="Resource" id="Resource_gkmfb"]
+script = ExtResource("2_omvkl")
+Target = ExtResource("12_72mdt")
+MinElevation = 0.12
+MinTemperature = 0.5
+MinHumidity = -1.0
+MaxHumidity = 0.05
+metadata/_custom_type_script = "uid://dpr7b2iecx6gm"
+
+[resource]
+script = ExtResource("11_gkfg7")
+parameters = Array[Object]([SubResource("Resource_getmw"), SubResource("Resource_dtgda"), SubResource("Resource_pnmcl"), SubResource("Resource_iffmc"), SubResource("Resource_nugjq"), SubResource("Resource_a1kp6"), SubResource("Resource_aa3pw"), SubResource("Resource_f71yy"), SubResource("Resource_6ybvo"), SubResource("Resource_72mdt"), SubResource("Resource_gkmfb")])
+metadata/_custom_type_script = "uid://c71cftqfligu8"
