@@ -64,23 +64,20 @@ public partial class Camera : Camera2D {
 	public void ZoomOut(float amt = 0.1f) => zoomSize = Mathf.Max(zoomSize - amt * zoomSize, 0.1f);
 	public void ZoomReset() => zoomSize = 1f;
 
-	public void StartDragging(bool warpBack = false) {
+	public void StartDragging() {
 		dragging = true;
-		draggingStartPos = DisplayServer.MouseGetPosition();
+		draggingStartPos = GetViewport().GetMousePosition();
 		draggingStartCamPos = Position;
-		if (warpBack) DisplayServer.MouseSetMode(DisplayServer.MouseMode.Captured);
-		this.warpBack = warpBack;
+		DisplayServer.MouseSetMode(DisplayServer.MouseMode.Captured);
 	}
 
 	public void StopDragging() {
 		dragging = false;
 		DisplayServer.MouseSetMode(DisplayServer.MouseMode.Visible);
-		if (warpBack) DisplayServer.WarpMouse((Vector2I)draggingStartPos);
-		warpBack = false;
+		GetViewport().WarpMouse((Vector2I)draggingStartPos);
 	}
 
 	protected bool dragging = false;
-	bool warpBack = false;
 	Vector2 draggingStartPos;
 	Vector2 draggingStartCamPos;
 	protected virtual bool MouseButtonInput(InputEventMouseButton evt) {
