@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://twrusuvwm4pu" path="res://scenes/autoload/UILayer.cs" id="1_4ql2r"]
 [ext_resource type="PackedScene" uid="uid://3kvcwdnxdp36" path="res://scenes/region/ui/hover_info_panel.tscn" id="2_nuntr"]
+[ext_resource type="Script" uid="uid://jtbctyn7uno" path="res://scenes/ui/DebugConsoleThing.cs" id="3_u2cqh"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_nuntr"]
 
@@ -40,3 +41,40 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 mouse_filter = 2
+
+[node name="DebugConsoleThing" type="ColorRect" parent="Control" unique_id=654030581 node_paths=PackedStringArray("lineEdit", "richTextLabel")]
+visible = false
+z_index = 4
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.4862745)
+script = ExtResource("3_u2cqh")
+lineEdit = NodePath("LineEdit")
+richTextLabel = NodePath("RichTextLabel")
+
+[node name="LineEdit" type="LineEdit" parent="Control/DebugConsoleThing" unique_id=1035981566]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.00625
+anchor_top = 0.59444445
+anchor_right = 0.74747396
+anchor_bottom = 0.65844446
+offset_right = 0.21250153
+offset_bottom = -0.040000916
+metadata/_edit_use_anchors_ = true
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Control/DebugConsoleThing" unique_id=32094575]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.016666668
+anchor_top = 0.019444445
+anchor_right = 0.7413333
+anchor_bottom = 0.586
+offset_right = 0.15999603
+offset_bottom = 0.0399971
+context_menu_enabled = true
+metadata/_edit_use_anchors_ = true

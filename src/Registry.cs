@@ -138,6 +138,11 @@ public class AssetTypeRegistry<T> where T : IAssetType {
 		return assetDictionary.AsEnumerable<KeyValuePair<string, T>>();
 	}
 
+	public bool AssetExists(string id) {
+		InitCheck();
+		return assetDictionary.ContainsKey(id);
+	}
+
 	private void InitCheck() => Debug.Assert(initted, "Please init the assets before trying to access them!");
 
 }
