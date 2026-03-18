@@ -80,7 +80,9 @@ public class Faction : IEntity {
 		} else {
 			Name = Naming.GenRandomName();
 			Color = Color.FromHsv(GD.Randf(), (float)GD.RandRange(0.75, 1.0), 1.0f);
-			Resources.AddResource(new(Registry.ResourcesS.Bread, 10)); // initial buffer (DEBUG probably)
+			int foodValue = Registry.ResourcesS.FoodValues[Registry.ResourcesS.Bread];
+			int breadAmount = (int)Population.Count / foodValue; // so people don't starve for a day
+			Resources.AddResource(new(Registry.ResourcesS.Bread, breadAmount)); // initial buffer
 			Silver = (int)initialSilver;
 			PlacePrebuiltBuilding(Registry.BuildingsS.LogCabin, new(0, 0));
 		}

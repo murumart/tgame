@@ -72,6 +72,7 @@ offsets = PackedFloat32Array(0.5, 1)
 colors = PackedColorArray(0.32941177, 0.40392157, 0.3372549, 1, 0.94509804, 0.9647059, 0.9411765, 1)
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_pdks8"]
+blend_mode = 3
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_e51lx"]
 blend_mode = 1
@@ -444,7 +445,7 @@ humidityGradient = ExtResource("6_pnj5n")
 centered = false
 
 [node name="Regions" type="Sprite2D" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/SubViewportContainer/WorldDisplay/WorldRenderer" unique_id=1844162579]
-modulate = Color(1.288, 1.288, 1.288, 0.204)
+modulate = Color(1.4758431, 1.4758431, 1.4758431, 1)
 material = SubResource("CanvasItemMaterial_pdks8")
 centered = false
 

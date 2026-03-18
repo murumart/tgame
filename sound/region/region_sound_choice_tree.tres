@@ -80,7 +80,7 @@ metadata/_custom_type_script = "uid://ulg55ys8wdx4"
 
 [resource]
 script = ExtResource("2_d0jef")
-Name = &"Stream wind"
+Name = &"High up or ground"
 InputStart = 0.1
 InputEnd = 8.0
 Above = SubResource("Resource_4hooy")

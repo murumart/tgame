@@ -81,5 +81,6 @@ texture = ExtResource("5_y1nj2")
 [node name="SelectedHighlight" type="Sprite2D" parent="." unique_id=1089660412]
 visible = false
 modulate = Color(0.5568628, 1, 1, 0.10980392)
+z_index = 1
 material = ExtResource("6_wpbha")
 texture = ExtResource("7_4vc1s")

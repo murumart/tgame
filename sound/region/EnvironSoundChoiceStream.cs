@@ -5,8 +5,8 @@ namespace sound.region;
 [GlobalClass]
 public partial class EnvironSoundChoiceStream : EnvironSoundChoice {
 
-	[Export] StringName Name = "";
-	[Export] int Stream;
+	[Export] public StringName Name = "";
+	[Export] public int Stream;
 	float targetVolume;
 
 	public override void Process(float delta) {
@@ -25,7 +25,7 @@ public partial class EnvironSoundChoiceStream : EnvironSoundChoice {
 	public override string ToString() {
 		Debug.Assert(Mama is not null, "Need mama");
 		Debug.Assert(Stream >= 0 && Stream < Mama.SyncStream.StreamCount, $"Stream index {Stream} out of range [0..{Mama.SyncStream.StreamCount}");
-		return $"Stream(id: {Stream}, tgt: {targetVolume}, v: {Mathf.DbToLinear(Mama.SyncStream.GetSyncStreamVolume(Stream))})";
+		return $"{Name}(id: {Stream}, tgt: {targetVolume}, v: {Mathf.DbToLinear(Mama.SyncStream.GetSyncStreamVolume(Stream))})";
 	}
 
 }

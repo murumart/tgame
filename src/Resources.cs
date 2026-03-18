@@ -203,6 +203,10 @@ public interface IAssetGroup<Res, Val> : IEnumerable<KeyValuePair<Res, Val>>, IE
 		return GroupValues.GetEnumerator();
 	}
 
+	public Val this[Res ass] {
+		get => GetValue(ass);
+	}
+
 }
 
 

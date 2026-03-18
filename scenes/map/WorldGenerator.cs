@@ -57,7 +57,7 @@ namespace scenes.map {
 		[Export] float temperatureNoiseCoef;
 		[Export] Curve populationLandTileCurve;
 		[Export] ResourceSiteGenerationParametersCollection resourceSiteGenerationParameters;
-		
+
 
 		public Region[] Regions;
 
@@ -425,15 +425,18 @@ namespace scenes.map {
 			foreach (Region region in regions) {
 				int initPop = (int)populationLandTileCurve.SampleBaked(region.LandTileCount);
 				int sustainsForOneMonth = (int)(region.GetPotentialFoodFirstMonth() / (GameTime.WEEKS_PER_MONTH * GameTime.DAYS_PER_WEEK));
-				initPop = Math.Min(initPop, sustainsForOneMonth);
+				initPop = Math.Min(initPop, sustainsForOneMonth) * 3;
+				// taper it out ... 300 people is much for the game when starting out
+				initPop = (int)(Mathf.Ease(initPop / 300f, 0.3f) * 75f);
 
 				var faction = new Faction(
 					region,
-					initialPopulation: (uint)initPop * 3,
+					initialPopulation: (uint)initPop,
 					initialSilver:(uint)(region.LandTileCount * 0.1 + 1)
 				);
 			}
 
+#if false // won't have time to make this useful for the game or make sense
 			var aggressors = regions.Where(r => r.LocalFaction.GetPopulationCount() > 20).OrderByDescending(r => r.LocalFaction.GetPopulationCount()).Take(aggressiveRegionCount);
 			var subs = new Dictionary<Region, HashSet<Region>>();
 			var taken = new HashSet<Region>();
@@ -453,6 +456,7 @@ namespace scenes.map {
 				}
 				await ToSignal(GetTree(), "process_frame");
 			}
+#endif // false
 		}
 
 		void WarlikeExpand(HashSet<Region> subs, HashSet<Region> taken, Region attacker, uint attackingPop, Region owner) {

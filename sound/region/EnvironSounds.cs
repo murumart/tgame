@@ -21,7 +21,16 @@ public partial class EnvironSounds : AudioStreamPlayer {
 			}
 		}
 		SetMama(soundChoices);
-		UILayer.DebugDisplay(() => $"snds: {soundChoices}");
+		UILayer.DebugDisplay(() => {
+			string D(EnvironSoundChoice c, int d) { if (c is EnvironSoundChoiceStream s) return Ds(s); else if (c is EnvironSoundChoiceBinary b) return Db(b, d + 1); return "?"; }
+			string Ds(EnvironSoundChoiceStream s) => s.ToString();
+			string Db(EnvironSoundChoiceBinary b, int d) {
+				string tabs = new ('\t', d);
+				string o = $"{b.Name}(\n{tabs}a: {D(b.Above, d)}\n{tabs}b: {D(b.Below, d)}";
+				return o;
+			}
+			return $"snds: " + Db(soundChoices, 1);
+		});
 	}
 
 	public override void _Process(double delta) {

@@ -27,11 +27,13 @@ public partial class UISoundCreator : AudioStreamPlayer
     }
 
     void ElementHovered() {
+        if (!IsInsideTree()) return;
         Stream = hoverSound;
         Play();
     }
 
     void ElementClicked() {
+        if (!IsInsideTree()) return;
         Stream = clickSound;
         Play();
     }

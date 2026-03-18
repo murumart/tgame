@@ -12,7 +12,7 @@ public partial class EnvironSoundChoiceBinary : EnvironSoundChoice {
 		Humidity,
 		Temperature,
 	}
-	[Export] StringName Name;
+	[Export] public StringName Name;
 	[Export] public SampleTypes SampleType;
 	[Export] float InputStart = 0f;
 	[Export] float InputEnd = 1f;
@@ -49,7 +49,7 @@ public partial class EnvironSoundChoiceBinary : EnvironSoundChoice {
 
 	public override string ToString() {
 		Debug.Assert(Mama is not null, "Need mama");
-		return $"Binary(\n\ta: {Above},\n\tb: {Below},\n\tv: {volume})";
+		return $"{Name}(a: {Above}, b: {Below}, v: {volume})";
 	}
 
 }
