@@ -60,6 +60,7 @@ public class Map {
 			foreach (var otherregion in regions) {
 				if (region == otherregion) continue;
 				region.AddNeighbor(otherregion);
+				region.LocalFaction.AddTradePartner(otherregion.LocalFaction);
 			}
 		}
 		var world = new World(1000, 1000, 1);

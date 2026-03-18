@@ -74,7 +74,7 @@ public partial class Camera : Camera2D {
 	public void StopDragging() {
 		dragging = false;
 		DisplayServer.MouseSetMode(DisplayServer.MouseMode.Visible);
-		GetViewport().WarpMouse((Vector2I)draggingStartPos);
+		if (draggingStartPos != Vector2.Zero) GetViewport().WarpMouse((Vector2I)draggingStartPos);
 	}
 
 	protected bool dragging = false;

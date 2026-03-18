@@ -164,7 +164,7 @@ public partial class LocalAI {
 					var resources = Registry.Resources.GetAssets();
 					IResourceType wantResource = resources[(int)(GD.Randi() % resources.Length)];
 					toffer = new(from, (int)(GD.Randi() % (from.Silver - 10)) + 1, to, new(wantResource, (int)(GD.Randi() % 6) + 1), 1);
-					from.SendTradeOffer(to, toffer);
+					from.SendTradeOfferTo(to, toffer);
 				} else {
 					KeyValuePair<IResourceType, ResourceStorage.InStorage> excessiveResource = new(null, 0);
 					foreach (var res in from.Resources) {
@@ -173,7 +173,7 @@ public partial class LocalAI {
 					if (excessiveResource.Value == 0) return; // nothing to give
 					var give = new ResourceBundle(excessiveResource.Key, Math.Max(1, excessiveResource.Value / 14));
 					toffer = new(from, give, to, give.Amount / (int)(GD.Randf() * 2 + 1) + 1, 1);
-					from.SendTradeOffer(to, toffer);
+					from.SendTradeOfferTo(to, toffer);
 				}
 			}, $"CrappySendTradeOffer()");
 		}
@@ -183,7 +183,7 @@ public partial class LocalAI {
 				AIAssert(ac.Faction.Silver >= giveSilver, "Don't have enough silver to make trade offer", ac);
 				var from = ac.Faction;
 				var to = from.Region.Neighbors.ToArray()[GD.Randi() % from.Region.Neighbors.Count].LocalFaction;
-				from.SendTradeOffer(to, new(from, giveSilver, to, wantResources, 1));
+				from.SendTradeOfferTo(to, new(from, giveSilver, to, wantResources, 1));
 			}, $"SendTradeOffer({giveSilver}, {wantResources})");
 		}
 
@@ -195,9 +195,9 @@ public partial class LocalAI {
 				int singleprice = giveResources.Amount / wantSilver;
 				int units = giveResources.Amount / singleprice;
 				if (units == 0) {
-					from.SendTradeOffer(to, new(from, giveResources, to, wantSilver, 1));
+					from.SendTradeOfferTo(to, new(from, giveResources, to, wantSilver, 1));
 				} else {
-					from.SendTradeOffer(to, new(from, new(giveResources.Type, singleprice), to, 1, units));
+					from.SendTradeOfferTo(to, new(from, new(giveResources.Type, singleprice), to, 1, units));
 				}
 			}, $"SendTradeOffer({giveResources}, {wantSilver})");
 		}
@@ -671,7 +671,7 @@ public class GamerAI : LocalAI {
 					Factors.HomelessnessRate(factionActions),
 					Factors.OneMinus(Factors.HousingSlotsPerPerson(factionActions)),
 					Factors.HousingCapacity(b),
-				]) : isFarm ? Factors.ReasonableBuildingCountByPopulation(factionActions, b, 18f) : Factors.ReasonableBuildingCount(factionActions, b, GD.RandRange(1, 6)),
+				]) : isFarm ? Factors.ReasonableBuildingCountByPopulation(factionActions, b, 18f) : Factors.ReasonableBuildingCount(factionActions, b, b.GetBuiltLimit() == 0 ? GD.RandRange(1, 6) : b.GetBuiltLimit()),
 				isCrafting ? Factors.Group([
 					Factors.Group(b.GetCraftJobs().Select(j => Factors.Group(j.Outputs.Select(o => Factors.ResourceWant(factionActions, this, o.Type)).ToArray())).ToArray())
 				]) : Factors.One,

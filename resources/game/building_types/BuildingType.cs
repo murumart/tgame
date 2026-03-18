@@ -18,11 +18,12 @@ namespace resources.game.building_types {
 
 		string IAssetType.AssetTypeName => "building";
 
-		[Export] int PopulationCapacity;
+		[Export(PropertyHint.Range, "0,99,or_greater")] int PopulationCapacity;
 		//[Export] Godot.Collections.Dictionary<ResourceType, int> ResourceCapacities;
 		[Export] Godot.Collections.Dictionary<ResourceType, int> ResourceCosts;
 		[Export] Godot.Collections.Array<CraftingJobDef> CraftingJobs;
-		[Export] float HoursToConstruct = 1f;
+		[Export(PropertyHint.Range, "0.5,100,or_greater")] float HoursToConstruct = 1f;
+		[Export(PropertyHint.Range, "0,100")] int MaxBuilt;
 		[Export] Special special;
 		[Export] string[] AvailableJobClassNames = Array.Empty<string>();
 		[Export(PropertyHint.Flags)] GroundTileType AllowedGroundTiles = GroundTileType.HasLand;
@@ -49,7 +50,13 @@ namespace resources.game.building_types {
 		}
 
 		public float GetHoursToConstruct() {
+			Debug.Assert(HoursToConstruct >= 0f);
 			return HoursToConstruct;
+		}
+
+		public int GetBuiltLimit() {
+			Debug.Assert(MaxBuilt >= 0);
+			return MaxBuilt;
 		}
 
 		public IEnumerable<Job> GetPossibleJobs() {

@@ -242,7 +242,8 @@ public class Faction : IEntity {
 	}
 
 	public bool CanPlaceBuilding(IBuildingType type, Vector2I tilepos) {
-		return HasBuildingMaterials(type) && Region.HasBuildingSpace(tilepos) && type.IsPlacementAllowed(Region.GroundTiles[tilepos]);
+		bool toomuch = type.GetBuiltLimit() != 0 && GetBuildingCount(type) >= type.GetBuiltLimit();
+		return !toomuch && HasBuildingMaterials(type) && Region.HasBuildingSpace(tilepos) && type.IsPlacementAllowed(Region.GroundTiles[tilepos]);
 	}
 
 	public bool HasBuildingMaterials(IBuildingType type) {
@@ -278,6 +279,15 @@ public class Faction : IEntity {
 	public Building GetBuilding(Vector2I at) {
 		Debug.Assert(HasBuilding(at), $"Don't have a building at {at}");
 		return Region.GetMapObject(at) as Building;
+	}
+
+	public int GetBuildingCount(IBuildingType type) {
+		int i = 0;
+		foreach (var mo in Region.GetMapObjects()) {
+			if (mo is not Building b) continue;
+			if (b.Type == type) i++;
+		}
+		return i;
 	}
 
 	public float GetFurnitureRate() {
@@ -416,6 +426,11 @@ public class Faction : IEntity {
 	public IDictionary<Faction, List<TradeOffer>> GetSentTradeOffers() => sentTradeOffers;
 
 
+	public void AddTradePartner(Faction who) {
+		Debug.Assert(!gottenTradeOffers.ContainsKey(who), "Trying to add partner that alreayd exist");
+		gottenTradeOffers.Add(who, []);
+	}
+
 	public bool GetSentTradeOffers(Faction with, out List<TradeOffer> tradeOffers) {
 		var has = sentTradeOffers.TryGetValue(with, out var list);
 		tradeOffers = list;
@@ -442,7 +457,7 @@ public class Faction : IEntity {
 		Silver += amount;
 	}
 
-	public void SendTradeOffer(Faction to, TradeOffer offer) {
+	public void SendTradeOfferTo(Faction to, TradeOffer offer) {
 		Debug.Assert(offer.IsValid, "Trade offer isn't valid" + offer.History);
 		Debug.Assert(to != null);
 

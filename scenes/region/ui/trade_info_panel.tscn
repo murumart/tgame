@@ -92,9 +92,6 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="TradePartnerDisplay" parent="DetailsContainer/MarginContainer2/VBoxContainer/TradeList/TradePartnerDisplay/PartnersDisplayParent/ScrollContainer/PartnerList" unique_id=864180490 instance=ExtResource("2_5nogp")]
-layout_mode = 2
-
 [node name="NoPartnersLabel" type="Label" parent="DetailsContainer/MarginContainer2/VBoxContainer/TradeList" unique_id=290936907]
 visible = false
 layout_mode = 2

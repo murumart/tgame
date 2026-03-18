@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://cjdjyaccqxmmy"]
 
 [ext_resource type="Script" uid="uid://c0b6legh32iar" path="res://scenes/region/ui/TradeSlider.cs" id="1_7yg73"]
-[ext_resource type="LabelSettings" uid="uid://btwbnjxri1gdg" path="res://resources/visual/theme/label_styles/8px.tres" id="1_y66re"]
+[ext_resource type="LabelSettings" uid="uid://teuhafm0mc0i" path="res://resources/visual/theme/label_styles/10px.tres" id="2_7yg73"]
 
 [node name="TradeSlider" type="VBoxContainer" unique_id=73745849 node_paths=PackedStringArray("GiveLabel", "GetLabel", "UnitsSlider", "ConfirmButton", "RejectButton")]
 offset_right = 217.0
@@ -24,7 +24,7 @@ theme_override_constants/separation = 1
 custom_minimum_size = Vector2(34, 0)
 layout_mode = 2
 text = "Resource"
-label_settings = ExtResource("1_y66re")
+label_settings = ExtResource("2_7yg73")
 
 [node name="MarginContainer" type="MarginContainer" parent="HBoxContainer" unique_id=1725751039]
 layout_mode = 2
@@ -45,7 +45,7 @@ ticks_position = 3
 custom_minimum_size = Vector2(34, 0)
 layout_mode = 2
 text = "Resource"
-label_settings = ExtResource("1_y66re")
+label_settings = ExtResource("2_7yg73")
 horizontal_alignment = 2
 
 [node name="Button" type="Button" parent="HBoxContainer" unique_id=1764679316]
@@ -59,6 +59,6 @@ alignment = 0
 [node name="RejectOfferButton" type="Button" parent="HBoxContainer" unique_id=1269524990]
 layout_mode = 2
 focus_mode = 0
-theme_override_font_sizes/font_size = 4
-text = "Reject"
+theme_override_font_sizes/font_size = 8
+text = "X"
 alignment = 0

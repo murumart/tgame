@@ -14,6 +14,7 @@ ExtResource("2_u6rkk"): 4
 })
 CraftingJobs = null
 HoursToConstruct = 60.0
+MaxBuilt = 1
 special = 1
 AvailableJobClassNames = PackedStringArray("ProcessMarketJob")
 metadata/_custom_type_script = "uid://b5xb3tdf3yoon"

@@ -3,22 +3,25 @@
 [ext_resource type="Script" uid="uid://bp4lg6hcl6tox" path="res://scenes/region/ui/TradePartnerDisplay.cs" id="1_oi2vn"]
 [ext_resource type="PackedScene" uid="uid://cjdjyaccqxmmy" path="res://scenes/region/ui/trade_slider.tscn" id="2_42gqs"]
 [ext_resource type="LabelSettings" uid="uid://btwbnjxri1gdg" path="res://resources/visual/theme/label_styles/8px.tres" id="2_oi2vn"]
+[ext_resource type="LabelSettings" uid="uid://ddruam7fh1y7l" path="res://resources/visual/theme/label_styles/title.tres" id="4_kpdug"]
 [ext_resource type="StyleBox" uid="uid://bvafrlmq6sivc" path="res://resources/visual/theme/sb_lighter.tres" id="4_pbem2"]
+[ext_resource type="LabelSettings" uid="uid://teuhafm0mc0i" path="res://resources/visual/theme/label_styles/10px.tres" id="5_p1jyf"]
 
-[node name="TradePartnerDisplay" type="VBoxContainer" unique_id=864180490 node_paths=PackedStringArray("PartnerNameLabel", "TradeParnerOfferList", "MyOfferList", "GiveResourceList", "TakeResourceList", "GottenOffersParent", "SentOffersParent", "GiveAmountSlider", "TakeAmountLine", "NoOffersLabel")]
+[node name="TradePartnerDisplay" type="VBoxContainer" unique_id=864180490 node_paths=PackedStringArray("PartnerNameLabel", "TradeParnerOfferList", "GottenOffersParent", "MyOfferList", "SentOffersParent", "GiveResourceList", "TakeResourceList", "GiveAmountSlider", "TakeAmountBox", "MakeOfferButton", "NoOffersLabel")]
 offset_right = 298.0
 offset_bottom = 103.0
 theme_override_constants/separation = 0
 script = ExtResource("1_oi2vn")
 PartnerNameLabel = NodePath("HBoxContainer/PanelContainer/MarginContainer/Label")
 TradeParnerOfferList = NodePath("BuildingList/MarginContainer/VBoxContainer/Got/GottenOffersList")
-MyOfferList = NodePath("BuildingList/MarginContainer/VBoxContainer/Sent/SentOffersList")
-GiveResourceList = NodePath("BuildingList/MarginContainer/VBoxContainer/Sent/SendingInterface/HBoxContainer/MyResource")
-TakeResourceList = NodePath("BuildingList/MarginContainer/VBoxContainer/Sent/SendingInterface/HBoxContainer/WantResource")
 GottenOffersParent = NodePath("BuildingList/MarginContainer/VBoxContainer/Got")
+MyOfferList = NodePath("BuildingList/MarginContainer/VBoxContainer/Sent/SentOffersList")
 SentOffersParent = NodePath("BuildingList/MarginContainer/VBoxContainer/Sent")
-GiveAmountSlider = NodePath("BuildingList/MarginContainer/VBoxContainer/Sent/SendingInterface/HBoxContainer/MarginContainer/GiveSlider")
-TakeAmountLine = NodePath("BuildingList/MarginContainer/VBoxContainer/Sent/SendingInterface/HBoxContainer/WantAmount")
+GiveResourceList = NodePath("BuildingList/MarginContainer/VBoxContainer/SendingInterface/HBoxContainer/MyResource")
+TakeResourceList = NodePath("BuildingList/MarginContainer/VBoxContainer/SendingInterface/HBoxContainer/WantResource")
+GiveAmountSlider = NodePath("BuildingList/MarginContainer/VBoxContainer/SendingInterface/HBoxContainer/MarginContainer/GiveSlider")
+TakeAmountBox = NodePath("BuildingList/MarginContainer/VBoxContainer/SendingInterface/HBoxContainer/WantAmount")
+MakeOfferButton = NodePath("BuildingList/MarginContainer/VBoxContainer/SendingInterface/HBoxContainer/MakeOfferButton")
 NoOffersLabel = NodePath("BuildingList/MarginContainer/VBoxContainer/NoOffersLabel")
 TradePartnerSliderScene = ExtResource("2_42gqs")
 
@@ -38,7 +41,7 @@ theme_override_constants/margin_right = 2
 [node name="Label" type="Label" parent="HBoxContainer/PanelContainer/MarginContainer" unique_id=32117032]
 layout_mode = 2
 text = "PartnerName"
-label_settings = ExtResource("2_oi2vn")
+label_settings = ExtResource("4_kpdug")
 
 [node name="BuildingList" type="PanelContainer" parent="." unique_id=61790595]
 layout_mode = 2
@@ -72,7 +75,7 @@ theme_override_constants/margin_bottom = 2
 [node name="Label" type="Label" parent="BuildingList/MarginContainer/VBoxContainer/Got/PanelContainer2/MarginContainer" unique_id=1752416988]
 layout_mode = 2
 text = "Offers sent to you:"
-label_settings = ExtResource("2_oi2vn")
+label_settings = ExtResource("5_p1jyf")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="BuildingList/MarginContainer/VBoxContainer/Got" unique_id=576513228]
 layout_mode = 2
@@ -83,7 +86,7 @@ theme_override_constants/separation = 1
 custom_minimum_size = Vector2(34, 0)
 layout_mode = 2
 text = "You give"
-label_settings = ExtResource("2_oi2vn")
+label_settings = ExtResource("5_p1jyf")
 
 [node name="Fat" type="Control" parent="BuildingList/MarginContainer/VBoxContainer/Got/HBoxContainer" unique_id=337748478]
 layout_mode = 2
@@ -93,7 +96,7 @@ size_flags_horizontal = 3
 custom_minimum_size = Vector2(34, 0)
 layout_mode = 2
 text = "You take"
-label_settings = ExtResource("2_oi2vn")
+label_settings = ExtResource("5_p1jyf")
 horizontal_alignment = 2
 
 [node name="Fat2" type="Control" parent="BuildingList/MarginContainer/VBoxContainer/Got/HBoxContainer" unique_id=1329613383]
@@ -130,7 +133,7 @@ theme_override_constants/margin_bottom = 2
 [node name="Label" type="Label" parent="BuildingList/MarginContainer/VBoxContainer/Sent/PanelContainer/MarginContainer" unique_id=87421834]
 layout_mode = 2
 text = "Offers sent by you:"
-label_settings = ExtResource("2_oi2vn")
+label_settings = ExtResource("5_p1jyf")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="BuildingList/MarginContainer/VBoxContainer/Sent" unique_id=164269335]
 layout_mode = 2
@@ -141,7 +144,7 @@ theme_override_constants/separation = 1
 custom_minimum_size = Vector2(34, 0)
 layout_mode = 2
 text = "You take"
-label_settings = ExtResource("2_oi2vn")
+label_settings = ExtResource("5_p1jyf")
 
 [node name="Fat" type="Control" parent="BuildingList/MarginContainer/VBoxContainer/Sent/HBoxContainer" unique_id=1311095111]
 layout_mode = 2
@@ -151,7 +154,7 @@ size_flags_horizontal = 3
 custom_minimum_size = Vector2(34, 0)
 layout_mode = 2
 text = "You give"
-label_settings = ExtResource("2_oi2vn")
+label_settings = ExtResource("5_p1jyf")
 horizontal_alignment = 2
 
 [node name="Fat2" type="Control" parent="BuildingList/MarginContainer/VBoxContainer/Sent/HBoxContainer" unique_id=1187619635]
@@ -171,26 +174,40 @@ layout_mode = 2
 [node name="TradeSlider3" parent="BuildingList/MarginContainer/VBoxContainer/Sent/SentOffersList" unique_id=850279744 instance=ExtResource("2_42gqs")]
 layout_mode = 2
 
-[node name="SendingInterface" type="VBoxContainer" parent="BuildingList/MarginContainer/VBoxContainer/Sent" unique_id=1864168092]
-visible = false
+[node name="SendingInterface" type="VBoxContainer" parent="BuildingList/MarginContainer/VBoxContainer" unique_id=1864168092]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 0
 
-[node name="HBoxContainer" type="HBoxContainer" parent="BuildingList/MarginContainer/VBoxContainer/Sent/SendingInterface" unique_id=1408189099]
+[node name="PanelContainer" type="PanelContainer" parent="BuildingList/MarginContainer/VBoxContainer/SendingInterface" unique_id=1959120257]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="BuildingList/MarginContainer/VBoxContainer/SendingInterface/PanelContainer" unique_id=1985749025]
+layout_mode = 2
+theme_override_constants/margin_left = 2
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 2
+theme_override_constants/margin_bottom = 2
+
+[node name="NewOfferLabel" type="Label" parent="BuildingList/MarginContainer/VBoxContainer/SendingInterface/PanelContainer/MarginContainer" unique_id=245890303]
+layout_mode = 2
+text = "Create new offer:"
+label_settings = ExtResource("5_p1jyf")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="BuildingList/MarginContainer/VBoxContainer/SendingInterface" unique_id=1408189099]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="MyResource" type="OptionButton" parent="BuildingList/MarginContainer/VBoxContainer/Sent/SendingInterface/HBoxContainer" unique_id=1566787069]
+[node name="MyResource" type="OptionButton" parent="BuildingList/MarginContainer/VBoxContainer/SendingInterface/HBoxContainer" unique_id=1566787069]
 layout_mode = 2
 theme_override_font_sizes/font_size = 8
 
-[node name="MarginContainer" type="MarginContainer" parent="BuildingList/MarginContainer/VBoxContainer/Sent/SendingInterface/HBoxContainer" unique_id=1725751039]
+[node name="MarginContainer" type="MarginContainer" parent="BuildingList/MarginContainer/VBoxContainer/SendingInterface/HBoxContainer" unique_id=1725751039]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/margin_top = 4
 
-[node name="GiveSlider" type="HSlider" parent="BuildingList/MarginContainer/VBoxContainer/Sent/SendingInterface/HBoxContainer/MarginContainer" unique_id=875684016]
+[node name="GiveSlider" type="HSlider" parent="BuildingList/MarginContainer/VBoxContainer/SendingInterface/HBoxContainer/MarginContainer" unique_id=875684016]
 layout_mode = 2
 size_flags_horizontal = 3
 focus_mode = 0
@@ -198,18 +215,17 @@ rounded = true
 scrollable = false
 ticks_position = 3
 
-[node name="WantResource" type="OptionButton" parent="BuildingList/MarginContainer/VBoxContainer/Sent/SendingInterface/HBoxContainer" unique_id=1237826409]
+[node name="WantResource" type="OptionButton" parent="BuildingList/MarginContainer/VBoxContainer/SendingInterface/HBoxContainer" unique_id=1237826409]
 custom_minimum_size = Vector2(16, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 8
 
-[node name="WantAmount" type="LineEdit" parent="BuildingList/MarginContainer/VBoxContainer/Sent/SendingInterface/HBoxContainer" unique_id=1578335814]
+[node name="WantAmount" type="SpinBox" parent="BuildingList/MarginContainer/VBoxContainer/SendingInterface/HBoxContainer" unique_id=972915951]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 8
-placeholder_text = "0..."
+rounded = true
 
-[node name="Button" type="Button" parent="BuildingList/MarginContainer/VBoxContainer/Sent/SendingInterface/HBoxContainer" unique_id=1343614952]
+[node name="MakeOfferButton" type="Button" parent="BuildingList/MarginContainer/VBoxContainer/SendingInterface/HBoxContainer" unique_id=1343614952]
 layout_mode = 2
 focus_mode = 0
 theme_override_font_sizes/font_size = 8

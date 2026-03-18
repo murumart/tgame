@@ -436,6 +436,12 @@ namespace scenes.map {
 				);
 			}
 
+			foreach (Region region in regions) {
+				foreach (var neighbor in region.Neighbors) {
+					region.LocalFaction.AddTradePartner(neighbor.LocalFaction);
+				}
+			}
+
 #if false // won't have time to make this useful for the game or make sense
 			var aggressors = regions.Where(r => r.LocalFaction.GetPopulationCount() > 20).OrderByDescending(r => r.LocalFaction.GetPopulationCount()).Take(aggressiveRegionCount);
 			var subs = new Dictionary<Region, HashSet<Region>>();

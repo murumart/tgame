@@ -95,6 +95,7 @@ public partial class Building {
 		ResourceBundle[] GetResourceRequirements();
 		float GetHoursToConstruct();
 		string GetDescription();
+		int GetBuiltLimit();
 
 		MapObject IMapObjectType.CreateMapObject(Vector2I position) {
 			return new Building(this, position);
