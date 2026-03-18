@@ -16,7 +16,6 @@ public partial class MapObjectMenu : Control {
 
 	[Export] Label titleLabel;
 	[Export] JobInfoPanel jobInfoPanel;
-	[Export] TradeInfoPanel tradeInfoPanel;
 
 	[Export] Control addJobMenu;
 	[Export] ItemList addJobItemList;
@@ -29,8 +28,6 @@ public partial class MapObjectMenu : Control {
 	State state;
 	MapObject myMapObject;
 	Problem myProblem;
-	bool IsMarketplaceBuilding => (myMapObject is Building b && b.IsConstructed && b.Type.GetSpecial() == Building.IBuildingType.Special.Marketplace);
-	bool IsMarketplaceActive => IsMarketplaceBuilding && ExtantJob != null && ExtantJob is ProcessMarketJob;
 
 	// we're regenerating these lists every time the menu is opened or updated, hopefully not a performance issue!
 	// an alternative is to not do that and set the _* lists to null to regenerate them on next menu open.
@@ -76,8 +73,6 @@ public partial class MapObjectMenu : Control {
 		bool problematic = myProblem is not null;
 		detailsText.Text = "";
 		addJobDescription.Text = "";
-		SizeFlagsStretchRatio = IsMarketplaceActive ? 4.0f : 1.0f;
-		tradeInfoPanel.Visible = IsMarketplaceActive;
 		if (ExtantJob == null && AvailableJobs.Count != 0) {
 			if (problematic) {
 				OpenAddJobScreen();
@@ -91,10 +86,6 @@ public partial class MapObjectMenu : Control {
 			}
 		} else {
 			OpenViewJobScreen();
-		}
-		if (IsMarketplaceActive) {
-			var job = ExtantJob as ProcessMarketJob;
-			tradeInfoPanel.Display(job.Faction, job.TradeOffers);
 		}
 
 		if (!problematic) DisplayMapObjectInfo();
@@ -157,14 +148,13 @@ public partial class MapObjectMenu : Control {
 		Debug.Assert(myMapObject != null, "Needs a map object to display its info");
 
 		System.Text.StringBuilder sb = new();
-		var reg = ui.GetFaction().Region;
+		var reg = ui.GetFactionActions().Region;
 		if (myMapObject is Building b) {
 			titleLabel.Text = $"{b.Type.AssetName.Capitalize()} {(b.GlobalPosition - reg.WorldPosition)}";
 			if (!b.IsConstructed) {
 				sb.Append($"Construction in progress... ({(int)(b.GetBuildProgress() * 100)}%)\n");
 			}
 			sb.Append(b.Type.GetDescription()).Append('\n');
-			if (IsMarketplaceBuilding && !IsMarketplaceActive) sb.Append("Add a job to process trade activities.").Append('\n');
 			// this looks kind of ugly and duplicates the job item list selection menu where yu can click on the jovs and see what they do.
 			//var crafting = b.Type.GetCraftJobs();
 			//if (crafting.Length > 0) {

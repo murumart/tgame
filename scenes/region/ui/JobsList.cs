@@ -31,7 +31,7 @@ public partial class JobsList : VBoxContainer {
 			ix++;
 		}
 
-        var fac = ui.GetFaction();
+        var fac = ui.GetFactionActions().Faction;
         if (fac.GetPopulationCount() == 0) return;
         infoLabel.Text = $"You have {fac.Population.EmployedCount} out of {fac.GetPopulationCount()} workers employed.";
 	}

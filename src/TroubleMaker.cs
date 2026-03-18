@@ -15,8 +15,8 @@ public class TroubleMaker {
 		}
 	}
 
-	float delayUntilPlayerAction = 0.33f;
-	const float changeCoef = 0.005f;
+	public float DelayUntilPlayerAction { get; private set; }
+	const float changeCoef = 0.0005f;
 
 	readonly (Func<Faction, bool>, float)[] problemCreators;
 	public float ProblemWeightsSum { get; private set; }
@@ -25,7 +25,7 @@ public class TroubleMaker {
 	public TroubleMaker(Map map) {
 		this.map = map;
 
-		UILayer.DebugDisplay(() => map is not null && PlayerRegion is not null ? "troublemaker: " + delayUntilPlayerAction : throw new Exception("invalid object"), "trouble");
+		DelayUntilPlayerAction = 0.33f;
 
 		problemCreators = [
 			(CreateHoodooMiningAccident, 0.7f),
@@ -47,13 +47,13 @@ public class TroubleMaker {
 	}
 
 	public void Update() {
-		delayUntilPlayerAction -= changeCoef;
+		DelayUntilPlayerAction -= changeCoef;
 
-		if (PlayerFaction.Population.ArePeopleStarving) delayUntilPlayerAction = Mathf.Max(delayUntilPlayerAction, 0.45f);
-		if (PlayerFaction.Population.GetApprovalMonthlyChange() < 0f) delayUntilPlayerAction += 0.1f * changeCoef;
-		delayUntilPlayerAction -= PlayerFaction.Population.Approval * 0.1f * changeCoef;
+		if (PlayerFaction.Population.ArePeopleStarving) DelayUntilPlayerAction = Mathf.Max(DelayUntilPlayerAction, 0.45f);
+		if (PlayerFaction.Population.GetApprovalMonthlyChange() < 0f) DelayUntilPlayerAction += 0.1f * changeCoef;
+		DelayUntilPlayerAction -= PlayerFaction.Population.Approval * 0.1f * changeCoef;
 
-		if (delayUntilPlayerAction <= 0) {
+		if (DelayUntilPlayerAction <= 0) {
 			float rand = GD.Randf() * ProblemWeightsSum;
 			foreach (var (p, w) in problemCreators) {
 				rand -= w;
@@ -85,7 +85,7 @@ public class TroubleMaker {
 		Debug.Assert(hasJob, "Doesn't have job");
 		var problem = new WorkplaceAccidentProblem(chosenpos, job, title, jobtitle, notiftitle, hourstosolve);
 		faction.AddProblem(problem, chosenpos);
-		if (faction == PlayerFaction) delayUntilPlayerAction += tensionAdd;
+		if (faction == PlayerFaction) DelayUntilPlayerAction += tensionAdd;
 		return true;
 	}
 
@@ -106,7 +106,7 @@ public class TroubleMaker {
 	}
 
 	bool HaveMercy(Faction faction) {
-		if (faction == PlayerFaction) delayUntilPlayerAction += 0.33f;
+		if (faction == PlayerFaction) DelayUntilPlayerAction += 0.33f;
 		return true;
 	}
 }

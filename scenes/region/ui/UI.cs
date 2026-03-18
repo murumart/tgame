@@ -20,7 +20,7 @@ public partial class UI : Control {
 	public event Func<IBuildingType, bool> GetHasBuildingMaterialsEvent;
 	public event Func<IBuildingType, Vector2I, bool> GetCanBuildEvent;
 	public event Func<ResourceStorage> GetResourcesEvent;
-	public event Func<Faction> GetFactionEvent;
+	public event Func<FactionActions> GetFactionActionsEvent;
 	public event Func<(float, float)> GetFoodAndUsageEvent;
 	public event Action<Vector2I> TileSelectedEvent;
 	public event Action TileDeselectedEvent;
@@ -45,6 +45,7 @@ public partial class UI : Control {
 		MapObjectMenu,
 		AgreementsMenu,
 		JobsMenu,
+		TradeMenu,
 	}
 
 	public enum Tab : int {
@@ -52,6 +53,7 @@ public partial class UI : Control {
 		Build,
 		Documents,
 		Jobs,
+		Trade,
 	}
 
 	public bool GameIsOver { get; private set; }
@@ -63,12 +65,14 @@ public partial class UI : Control {
 	[Export] public Button buildButton;
 	[Export] public Button agreementsButton;
 	[Export] public Button jobsButton;
+	[Export] public Button tradeButton;
 
 	// bottom bar menus menus
-	[Export] public TabContainer menuTabs;
-	[Export] public BuildingList buildingList;
-	[Export] public DocumentsDisplay documentsDisplay;
-	[Export] public JobsList jobsList;
+	[Export] TabContainer menuTabs;
+	[Export] BuildingList buildingList;
+	[Export] DocumentsDisplay documentsDisplay;
+	[Export] JobsList jobsList;
+	[Export] TradeInfoPanel tradeInfoPanel;
 
 	// right
 	[Export] public MapObjectMenu mopjectMenu;
@@ -126,6 +130,7 @@ public partial class UI : Control {
 		buildButton.Pressed += () => OnTabButtonPressed(Tab.Build, State.ChoosingBuild);
 		agreementsButton.Pressed += () => OnTabButtonPressed(Tab.Documents, State.AgreementsMenu);
 		jobsButton.Pressed += () => OnTabButtonPressed(Tab.Jobs, State.JobsMenu);
+		tradeButton.Pressed += () => OnTabButtonPressed(Tab.Trade, State.TradeMenu);
 
 		pauseButton.Pressed += OnPauseButtonPressed;
 		normalSpeedButton.Pressed += OnNormalSpeedButtonPressed;
@@ -233,6 +238,12 @@ public partial class UI : Control {
 			documentsDisplay.Display(GetBriefcase());
 		} else if (which == Tab.Jobs) {
 			jobsList.Display();
+		} else if (which == Tab.Trade) {
+			var fac = GetFactionActions();
+			var pm = fac.GetProcessMarketJob();
+			if (pm is null) {
+				tradeInfoPanel.DisplayNoMarket();
+			} else tradeInfoPanel.Display(fac.Faction, pm.TradeOffers);
 		}
 		menuTabs.CurrentTab = (int)which;
 	}
@@ -284,7 +295,7 @@ public partial class UI : Control {
 	// display
 
 	public void SetupResourceDisplay() {
-		var fac = GetFaction();
+		var fac = GetFactionActions().Faction;
 		resourceDisplay.Display(c => {
 			if (fac.GetPopulationCount() == 0) (c as Label).Text = "no one lives here.";
 			(c as Label).Text = $"population: {fac.GetPopulationCount()} "
@@ -350,7 +361,7 @@ public partial class UI : Control {
 		bool gamePaused = GameMan.Singleton.IsPaused || GameMan.Singleton.GameSpeed == 0f;
 		pauseDisplayPanel.Visible = gamePaused;
 		zoomLabel.Text = $"zoom: {(Camera.Zoom.X >= 1 ? Camera.Zoom.X : Mathf.Remap(Camera.Zoom.X, 1f, 0.1f, 1f, -8f)):0}";
-		if (state ==  State.PlacingBuild) {
+		if (state == State.PlacingBuild) {
 			buildingList.UpdateCursorWhilePlacing(Camera.GetMouseHoveredTilePos());
 		}
 	}
@@ -390,6 +401,9 @@ public partial class UI : Control {
 		if (state == State.JobsMenu) {
 			state = State.Idle;
 		}
+		if (state == State.TradeMenu) {
+			state = State.Idle;
+		}
 	}
 
 	public void HourlyUpdate(TimeT timeInMinutes) {
@@ -408,11 +422,13 @@ public partial class UI : Control {
 			case State.Idle:
 				MapClick(tilePosition);
 				break;
-			case State.MapObjectMenu:
+			// case State.MapObjectMenu:
+			// 	state = State.Idle;
+			// 	MapClick(tilePosition);
+			// 	break;
+			default:
 				state = State.Idle;
 				MapClick(tilePosition);
-				break;
-			default:
 				break;
 		}
 	}
@@ -464,7 +480,7 @@ public partial class UI : Control {
 				if (GameMan.Singleton.IsPaused && !wasPausedBefore) GameMan.Singleton.TogglePause();
 				TileDeselectedEvent?.Invoke();
 			}
-			if (old == State.AgreementsMenu || old == State.JobsMenu) {
+			if (old == State.AgreementsMenu || old == State.JobsMenu || old == State.TradeMenu) {
 				SelectTab(Tab.None);
 				SetTimeSpeedAlteringAllowed(true);
 				if (GameMan.Singleton.IsPaused && !wasPausedBefore) GameMan.Singleton.TogglePause();
@@ -474,6 +490,7 @@ public partial class UI : Control {
 			|| current == State.MapObjectMenu
 			|| current == State.AgreementsMenu
 			|| current == State.JobsMenu
+			|| current == State.TradeMenu
 		) {
 			SetTimeSpeedAlteringAllowed(false);
 			if (!GameMan.Singleton.IsPaused) {
@@ -510,7 +527,7 @@ public partial class UI : Control {
 	public bool GetCanBuild(IBuildingType btype, Vector2I pos) => GetCanBuildEvent?.Invoke(btype, pos) ?? false;
 	public List<BuildingType> GetBuildingTypes() => GetBuildingTypesEvent?.Invoke();
 	public ResourceStorage GetResources() => GetResourcesEvent?.Invoke();
-	public Faction GetFaction() => GetFactionEvent?.Invoke();
+	public FactionActions GetFactionActions() => GetFactionActionsEvent?.Invoke();
 	public (float, float) GetFoodAndUsage() => GetFoodAndUsageEvent?.Invoke() ?? (1337, 1337);
 	public void TileSelected(Vector2I place) => TileSelectedEvent?.Invoke(place);
 

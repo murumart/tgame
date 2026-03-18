@@ -47,6 +47,7 @@ namespace scenes.region {
 				if (j is GatherResourceJob gj && !gj.Well.HasBunches) ui.Notifications.Notify($"The {gj.Site.Type.AssetName} has been depleted of {gj.Well.ResourceType.AssetName}.", timeLimit: 15f);
 			};
 			foreach (var neighbor in region.Neighbors) {
+				if (neighbor.LocalFaction.IsWild) continue;
 				neighbor.LocalFaction.Population.PopulationDroppedToZero += () => {
 					ui.Notifications.Notify($"Communication ceases from our neighbor {neighbor.LocalFaction.Name}.");
 				};
@@ -55,7 +56,7 @@ namespace scenes.region {
 			GameMan.Singleton.Game.Time.TimePassedEvent += PassTime;
 			GameMan.Singleton.Game.Time.HourPassedEvent += HourlyUpdate;
 
-			ui.GetFactionEvent += GetFaction;
+			ui.GetFactionActionsEvent += GetFactionActions;
 			ui.GetBriefcaseEvent += GetBriefcase;
 			faction.ContractFailedEvent += OnRegionMandateFailed;
 			faction.Population.ApprovalDroppedToZero += OnApprovalZeroed;
@@ -118,6 +119,7 @@ namespace scenes.region {
 				return $"hunger: {faction.Population.Hunger}, growing: {faction.Population.OngrowingPopulation}";
 			});
 			UILayer.DebugDisplay(() => $"mousepos: {regionDisplay.GetLocalMousePosition()}");
+			UILayer.DebugDisplay(() => $"trouble: {GameMan.Singleton.Game.TroubleMaker.DelayUntilPlayerAction:F2}");
 		}
 
 		public override void _UnhandledKeyInput(InputEvent @event) {
@@ -135,7 +137,7 @@ namespace scenes.region {
 		public override void _Notification(int what) { // teardown
 			if (what == NotificationPredelete) {
 				ui.MapClickEvent -= MapClick;
-				ui.GetFactionEvent -= GetFaction;
+				ui.GetFactionActionsEvent -= GetFactionActions;
 				ui.GetBuildingTypesEvent -= GetBuildingTypes;
 				ui.RequestBuildEvent -= OnUIBuildingPlaceRequested;
 				ui.GetResourcesEvent -= actions.GetResourceStorage;
@@ -308,7 +310,7 @@ namespace scenes.region {
 
 		// UI action invokes
 
-		Faction GetFaction() => faction;
+		FactionActions GetFactionActions() => actions;
 
 		Briefcase GetBriefcase() => faction.Briefcase;
 

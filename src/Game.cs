@@ -2,12 +2,12 @@ public class Game {
 
 	public readonly Map Map;
 	public readonly GameTime Time;
-	public Region PlayRegion {get; private set;}
+	public Region PlayRegion { get; private set; }
 
 	public bool AIPlaysInPlayerRegion = false;
 
 	readonly LocalAI[] regionAIs;
-	TroubleMaker troubleMaker;
+	public TroubleMaker TroubleMaker { get; private set; }
 
 
 	public Game(Map map) {
@@ -19,12 +19,12 @@ public class Game {
 			if (regions[i].LocalFaction.IsWild) regionAIs[i] = new NatureAI(new(regions[i], regions[i].LocalFaction));
 			else regionAIs[i] = new GamerAI(new(regions[i], regions[i].LocalFaction));
 		}
-		troubleMaker = new(map);
+		TroubleMaker = new(map);
 	}
 
 	public void SetPlayRegion(Region region) {
 		PlayRegion = region;
-		troubleMaker.SetPlayRegion(region);
+		TroubleMaker.SetPlayRegion(region);
 	}
 
 	TimeT _lastAIUpdate = 0;
@@ -34,7 +34,7 @@ public class Game {
 		if (Time.Minutes < GameTime.Hours(8)) return;
 
 		while (Time.Minutes - _lastAIUpdate >= 15) {
-			troubleMaker.Update();
+			TroubleMaker.Update();
 			var regs = Map.GetRegions();
 			for (int i = 0; i < regionAIs.Length; i++) {
 				if (regs[i] == PlayRegion && !AIPlaysInPlayerRegion) continue;
@@ -51,7 +51,7 @@ public class Game {
 	}
 
 	public void Deinit() {
-		troubleMaker.Deinit();
-		troubleMaker = null;
+		TroubleMaker.Deinit();
+		TroubleMaker = null;
 	}
 }

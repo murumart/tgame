@@ -4,7 +4,6 @@
 [ext_resource type="PackedScene" uid="uid://bit7aavyxpq38" path="res://scenes/region/ui/job_info_panel.tscn" id="2_gxr3b"]
 [ext_resource type="StyleBox" uid="uid://bvafrlmq6sivc" path="res://resources/visual/theme/sb_lighter.tres" id="2_uy06o"]
 [ext_resource type="LabelSettings" uid="uid://teuhafm0mc0i" path="res://resources/visual/theme/label_styles/10px.tres" id="3_gxr3b"]
-[ext_resource type="PackedScene" uid="uid://b311cvqibnmx0" path="res://scenes/region/ui/trade_info_panel.tscn" id="4_uy06o"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_jmbgv"]
 content_margin_left = 2.0
@@ -16,7 +15,7 @@ mouse_filter = 2
 script = ExtResource("1_lkdvm")
 titleLabel = NodePath("Vbox/HBoxContainer/Title/MarginContainer/Label")
 jobInfoPanel = NodePath("Vbox/JobScrolll/ParametersList/JobInfopanel")
-tradeInfoPanel = NodePath("Vbox/JobScrolll/ParametersList/TradeInfopanel")
+tradeInfoPanel = NodePath("")
 addJobMenu = NodePath("Vbox/JobScrolll/ParametersList/JobAdditionMenu")
 addJobItemList = NodePath("Vbox/JobScrolll/ParametersList/JobAdditionMenu/VBoxContainer/PanelContainer/MarginContainer/VBoxContainer/MarginContainer/AvailableJobsList")
 addJobDescription = NodePath("Vbox/JobScrolll/ParametersList/JobAdditionMenu/VBoxContainer/PanelContainer/MarginContainer/VBoxContainer/JobInfoText")
@@ -125,10 +124,6 @@ theme_override_font_sizes/normal_font_size = 10
 text = "Details"
 fit_content = true
 tab_stops = PackedFloat32Array(5, 10)
-
-[node name="TradeInfopanel" parent="Vbox/JobScrolll/ParametersList" unique_id=1237886106 instance=ExtResource("4_uy06o")]
-visible = false
-layout_mode = 2
 
 [node name="JobInfopanel" parent="Vbox/JobScrolll/ParametersList" unique_id=170020941 instance=ExtResource("2_gxr3b")]
 visible = false

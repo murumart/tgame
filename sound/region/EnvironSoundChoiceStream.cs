@@ -25,7 +25,7 @@ public partial class EnvironSoundChoiceStream : EnvironSoundChoice {
 	public override string ToString() {
 		Debug.Assert(Mama is not null, "Need mama");
 		Debug.Assert(Stream >= 0 && Stream < Mama.SyncStream.StreamCount, $"Stream index {Stream} out of range [0..{Mama.SyncStream.StreamCount}");
-		return $"{Name}(id: {Stream}, tgt: {targetVolume}, v: {Mathf.DbToLinear(Mama.SyncStream.GetSyncStreamVolume(Stream))})";
+		return $"{Name}(id: {Stream}, tgt: {targetVolume:F2}, v: {Mathf.DbToLinear(Mama.SyncStream.GetSyncStreamVolume(Stream)):F2})";
 	}
 
 }

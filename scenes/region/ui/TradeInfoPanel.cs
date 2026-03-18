@@ -7,7 +7,9 @@ namespace scenes.region.ui {
 	public partial class TradeInfoPanel : Control {
 
 		[Export] Container PartnerList;
+		[Export] RichTextLabel DescriptionLabel;
 		[Export] Label NoPartnersLabel;
+		[Export] Container PartnersDisplayParent;
 		[Export] PackedScene PartnerDisplay;
 
 
@@ -17,6 +19,7 @@ namespace scenes.region.ui {
 
 		public void Display(Faction me, Dictionary<Faction, List<TradeOffer>> tradeInfo) {
 			GD.Print("TradeInfoPanel::Display : displaying trade info");
+			DescriptionLabel.Text = "This is, in fact, trading.";
 			foreach (var c in PartnerList.GetChildren()) c.QueueFree();
 			foreach (var partner in tradeInfo.Keys) {
 				var display = PartnerDisplay.Instantiate<TradePartnerDisplay>();
@@ -24,9 +27,16 @@ namespace scenes.region.ui {
 				display.Display(me, partner);
 				display.TradedOrCanceled += () => Display(me, tradeInfo); // rebuild UI when something is done
 			}
+			PartnersDisplayParent.Visible = tradeInfo.Keys.Count != 0;
 			NoPartnersLabel.Visible = tradeInfo.Keys.Count == 0;
 		}
 
+		internal void DisplayNoMarket() {
+			DescriptionLabel.Text = "Build a Marketplace and assign people to work there to trade!";
+			foreach (var c in PartnerList.GetChildren()) c.QueueFree();
+			NoPartnersLabel.Hide();
+			PartnersDisplayParent.Hide();
+		}
 	}
 
 }
