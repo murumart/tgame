@@ -109,8 +109,8 @@ Marketplace töötab imelikult, vist lisab kõik offerid mingilt factionilt korr
 - [ ] info
   - [ ] logi tab kus eelmised notifid factioni koha
     - [ ] ära lihtsalt pane rtlabelisse, gene tekst nt kuu kaupa kui nuppu vajutatakse
-    - [ ] mingi märguande ikoon uute treidide kohta turul
-    - [ ] riba näitab kui depleted a resource site is
+  - [ ] mingi märguande ikoon uute treidide kohta turul
+  - [ ] riba näitab kui depleted a resource site is
   - [X] tööde menüü
 - [ ] targem AI
   - [X] kurvid utility arvutamiseks

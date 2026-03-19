@@ -257,6 +257,10 @@ public partial class LocalAI {
 			return new(() => val, $"{val}");
 		}
 
+		public static DecisionFactor Ease(DecisionFactor fac, float t) {
+			return new(() => Mathf.Ease(fac.Score(), t), $"Ease({fac})");
+		}
+
 		public static DecisionFactor Curve(DecisionFactor fac, Curve curve) {
 			return new(() => curve.SampleBaked(fac.Score()), $"Curve({fac})");
 		}
