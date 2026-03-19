@@ -104,7 +104,7 @@ Marketplace töötab imelikult, vist lisab kõik offerid mingilt factionilt korr
 - [ ] rohkem rõhuda maailma osa olemise tundele'
 - [ ] maailma genereerimise menüü koos seadetega
   ![alt text](worldmakermockup.png)
-- [ ] ressursiallikate eemaldamine (kui pole ruumi panna midagi kuhugi)
+- [X] ressursiallikate eemaldamine (kui pole ruumi panna midagi kuhugi)
 - [X] ehitiste eemaldamine
 - [ ] info
   - [ ] logi tab kus eelmised notifid factioni koha
@@ -114,17 +114,19 @@ Marketplace töötab imelikult, vist lisab kõik offerid mingilt factionilt korr
   - [X] tööde menüü
 - [ ] targem AI
   - [X] kurvid utility arvutamiseks
-- [ ] eventid
-  - [ ] kaardi peal hüüumärk koos ajalimiidiga
-  - [ ] pane töölisi sisse et olukorda parandada
+  - [ ] otsiks toitu kui seda on vähe
+- eventid
+  - [X] kaardi peal hüüumärk koos ajalimiidiga
+  - [X] pane töölisi sisse et olukorda parandada
   - võib sõltuda kohast, kus juhtub:
 	- [ ] metsatulekajhu
-	- [ ] kalurite paat läks ümber
+	- [X] kalurite paat läks ümber
 	- [ ]
 - [ ] juice+heli
   - [ ] ehitisi maha pannes sügav heli + tolm
   - [ ] mingid inimeste particleid töökohtade juures
   - [ ] kõigile nuppudele hover + click
+  - [X] keskkonnahelid sõltuvalt kaamera asukohale
 - [ ] muusika
 - [ ] seadete menüü
 

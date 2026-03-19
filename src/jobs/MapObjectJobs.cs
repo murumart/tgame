@@ -87,35 +87,45 @@ public class ConstructBuildingJob : MapObjectJob {
 
 }
 
-public class DemolishBuildingJob : MapObjectJob {
+public class DemolishMapObjectJob : MapObjectJob {
 
-	public override string Title => "Demolish Building";
-	public override bool IsValid => Building != null;
+	public override string Title => Object is null
+		? "Demolish"
+		: Object is ResourceSite rs
+			? $"Uproot {rs.Type.AssetName}"
+			: Object is Building b
+				? $"Demolish {b.Type.AssetName}"
+				: $"Guh";
+	public override bool IsValid => Object != null;
 
-	public override Vector2I GlobalPosition => Building.GlobalPosition;
+	public override Vector2I GlobalPosition => Object.GlobalPosition;
 
-	public Building Building { get; private set; }
+	public MapObject Object { get; private set; }
 
 
-	public DemolishBuildingJob() {
+	public DemolishMapObjectJob() {
 		MaxWorkers = 35;
 	}
 
 	float timeSpent = 0f;
 	readonly TimeT timeTaken = GameTime.Hours(24);
 
-	public override bool CanInitialise(Faction ctxFaction, MapObject building) => (building as Building).IsConstructed;
+	public override bool CanInitialise(Faction ctxFaction, MapObject mo) => mo is not Building b || b.IsConstructed;
 
 	public override void Initialise(Faction ctxFaction, MapObject mapObject) {
 		Debug.Assert(CanInitialise(ctxFaction, mapObject), "Job cannot be initialised!!");
-		Building = (Building)mapObject;
+		Object = mapObject;
 	}
 
 	public override void Deinitialise(Faction ctxFaction) {
 		if (timeSpent >= timeTaken) {
-			var returns = Building.Type.GetResourceRequirements().Select(r => r.Divide(2)).ToArray();
-			RefundRequirements(returns, ctxFaction.Resources);
-			ctxFaction.RemoveBuilding(Building.GlobalPosition - ctxFaction.Region.WorldPosition);
+			if (Object is Building b) {
+				var returns = b.Type.GetResourceRequirements().Select(r => r.Divide(2)).ToArray();
+				RefundRequirements(returns, ctxFaction.Resources);
+				ctxFaction.RemoveBuilding(GlobalPosition - ctxFaction.Region.WorldPosition);
+			} else {
+				ctxFaction.Uproot(GlobalPosition - ctxFaction.Region.WorldPosition);
+			}
 		}
 	}
 
@@ -136,25 +146,29 @@ public class DemolishBuildingJob : MapObjectJob {
 	}
 
 	public override string GetStatusDescription() {
-		float hoursLeft = ((1 - GetProgressEstimate()) * Building.Type.GetHoursToConstruct());
+		if (Workers == 0){
+			return $"With workers, removing this map object will take {timeTaken / 60} hours.";
+		}
+		float minutesLeft = ((1 - GetProgressEstimate()) * timeTaken);
 		float speed = GetWorkTime(1);
-		hoursLeft /= speed;
-		float mins = hoursLeft - (int)hoursLeft;
-		hoursLeft -= mins;
-		var str2 = "Demolishing the building will take ";
+		minutesLeft /= speed;
+		float hoursLeft = (TimeT)(minutesLeft / 60);
+		minutesLeft -= hoursLeft * 60;
+		var str2 = "Removing this map object will take ";
 		if (hoursLeft > 0) str2 += $"{hoursLeft:0} more hours.";
-		else str2 += $"{mins * 60:0} more minutes.";
+		else str2 += $"{minutesLeft:0} more minutes.";
 		return str2;
 	}
 
 	public override string GetProductionDescription() {
-		if (Building != null) {
-			return $"The {Building.Type.AssetName} will be demolished.";
+		if (Object != null) {
+			if (Object is Building b) return $"The {b.Type.AssetName} will be demolished.";
+			if (Object is ResourceSite rs) return $"The {rs.Type.AssetName} will be uprooted.";
 		}
-		return "";
+		return "Create a job to remove this map object.";
 	}
 
-	public override string ToString() => $"DemolishBuildingJob({(Building == null ? "null" : Building.Type.AssetName)})";
+	public override string ToString() => $"DemolishBuildingJob({(Object == null ? "null" : Object.Type.AssetName)})";
 
 }
 

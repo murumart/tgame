@@ -43,7 +43,7 @@ namespace scenes.region {
 
 			faction.JobRemovedEvent += j => {
 				if (j is ConstructBuildingJob cj && cj.Building.IsConstructed) ui.Notifications.Notify($"The {cj.Building.Type.AssetName} has been constructed.", timeLimit: 10f);
-				if (j is DemolishBuildingJob dj && dj.GetProgressEstimate() >= 1f) ui.Notifications.Notify($"The {dj.Building.Type.AssetName} has been demolished.", timeLimit: 10f);
+				if (j is DemolishMapObjectJob dj && dj.GetProgressEstimate() >= 1f) ui.Notifications.Notify($"The {dj.Object.Type.AssetName} has been demolished.", timeLimit: 10f);
 				if (j is GatherResourceJob gj && !gj.Well.HasBunches) ui.Notifications.Notify($"The {gj.Site.Type.AssetName} has been depleted of {gj.Well.ResourceType.AssetName}.", timeLimit: 15f);
 			};
 			foreach (var neighbor in region.Neighbors) {
