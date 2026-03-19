@@ -56,6 +56,7 @@ public partial class LocalAI {
 			ulong ustime = Time.GetTicksUsec();
 			float score = 1f;
 			foreach (ref readonly DecisionFactor factor in factors.AsSpan()) {
+				if (factor.Equals(Factors.One)) continue;
 				ulong sustime = Time.GetTicksUsec();
 				float s = factor.Score();
 				profiling.LogDecisionFactor(Time.GetTicksUsec() - sustime, s, factor.ToString());
@@ -659,12 +660,11 @@ public class GamerAI : LocalAI {
 		this.ResourceWants = new();
 		var startActions = new List<Action>();
 
-		// currently only present resource sites are considered, when they change we should reconsider
-		foreach (var mo in actions.Region.GetMapObjects()) if (mo is ResourceSite r) {
-				foreach (var w in r.Type.GetDefaultWells()) {
-					startActions.Add(CreateGatherJob(r.Type, w.ResourceType));
-				}
+		foreach (var rs in Registry.ResourceSites.GetAssets()) {
+			foreach (var w in rs.GetDefaultWells()) {
+				startActions.Add(CreateGatherJob(rs, w.ResourceType));
 			}
+		}
 		foreach (var b in Registry.Buildings.GetAssets()) {
 			bool isFarm = farms.Contains(b);
 			bool isHousing = housing.Contains(b);
@@ -699,17 +699,17 @@ public class GamerAI : LocalAI {
 		], actions));
 
 		foreach (var res in Registry.Resources.GetAssets()) {
-			int srand1 = (int)(GD.Randi() % 3) + 1;
-			int srand2 = (int)(GD.Randi() % 4) + 1;
-			startActions.Add(Actions.SendTradeOffer([
-				Factors.Curve(Factors.Group([
-					Factors.MarketplaceIsBeingWorkedAt(actions),
-					Factors.SentTradeOfferLimit(actions, 10),
-					Factors.ResourceWant(actions, this, res),
-					Factors.SilverNeed(actions, srand1),
-					Factors.OneMinus(Factors.HasResourceSiteThatProduces(actions, res)),
-				]), sendTradeOfferCurve),
-			], actions, srand1, new ResourceBundle(res, srand1 * srand2)));
+			//int srand1 = (int)(GD.Randi() % 3) + 1;
+			//int srand2 = (int)(GD.Randi() % 4) + 1;
+			//startActions.Add(Actions.SendTradeOffer([
+			//	Factors.Curve(Factors.Group([
+			//		Factors.MarketplaceIsBeingWorkedAt(actions),
+			//		Factors.SentTradeOfferLimit(actions, 10),
+			//		Factors.ResourceWant(actions, this, res),
+			//		Factors.SilverNeed(actions, srand1),
+			//		Factors.OneMinus(Factors.HasResourceSiteThatProduces(actions, res)),
+			//	]), sendTradeOfferCurve),
+			//], actions, srand1, new ResourceBundle(res, srand1 * srand2)));
 			// boost the econony hopwefull 📈📈📈📈
 			//startActions.Add(Actions.SendTradeOffer([
 			//	Factors.MarketplaceIsBeingWorkedAt(actions),
