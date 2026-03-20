@@ -428,6 +428,7 @@ public class Faction : IEntity {
 
 	public void AddTradePartner(Faction who) {
 		Debug.Assert(!gottenTradeOffers.ContainsKey(who), "Trying to add partner that alreayd exist");
+		Debug.Assert(who != this, "Don't can trade relations with myself:");
 		gottenTradeOffers.Add(who, []);
 	}
 

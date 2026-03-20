@@ -1,5 +1,8 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Godot;
+using scenes.autoload;
 
 namespace scenes.region.ui {
 
@@ -13,6 +16,7 @@ namespace scenes.region.ui {
 		[Export] Container MyOfferList;
 
 		[Export] Label NewOfferLabel;
+		[Export] Label SendAmountLabel;
 		[Export] Container SentOffersParent;
 		[Export] OptionButton GiveResourceList;
 		[Export] OptionButton TakeResourceList;
@@ -34,6 +38,19 @@ namespace scenes.region.ui {
 			TakeResourceList.ItemSelected += OnTakeResourceSelected;
 			GiveAmountSlider.ValueChanged += OnGiveAmountValueChanged;
 			TakeAmountBox.ValueChanged += OnTakeAmountValueChanged;
+			MakeOfferButton.Pressed += OnMakeOfferPressed;
+
+			if (GetTree().CurrentScene == this) {
+				var reg1 = new Region(0, Vector2I.Zero, new(){{Vector2I.Zero, GroundTileType.HasLand}});
+				var fac1 = new Faction(reg1);
+				fac1.Resources.AddResources(Registry.Resources.GetAssets().Select(a => new ResourceBundle(a, GD.RandRange(10, 30))));
+				var reg2 = new Region(0, Vector2I.One, new(){{Vector2I.Zero, GroundTileType.HasLand}});
+				var fac2 = new Faction(reg2);
+				fac1.AddTradePartner(fac2);
+				fac2.AddTradePartner(fac1);
+				Display(fac1, fac2);
+				UILayer.DebugDisplay(() => tofferDesc?.ToString() + $"\ngs:{GiveResourceList.Selected}, ts:{TakeResourceList.Selected}");
+			}
 		}
 
 		public void Display(Faction me, Faction partner) {
@@ -76,21 +93,51 @@ namespace scenes.region.ui {
 			SentOffersParent.Visible = hadSent;
 			NoOffersLabel.Visible = !hadGotten && !hadSent;
 
-			UpdateSendingInterface();
+			InitSendingInterface();
 		}
 
-		void UpdateSendingInterface() {
+		void InitSendingInterface() {
 			GiveResourceList.Clear();
 			GiveResourceList.AddItem("silver");
 			foreach (var rest in me.Resources) {
+				int idx = GiveResourceList.ItemCount;
 				GiveResourceList.AddItem(rest.Key.AssetName);
+				string idstr = rest.Key.GetIdString();
+				GiveResourceList.SetItemMetadata(idx, Variant.CreateFrom(idstr));
 			}
+			GiveResourceList.Select(-1);
 
 			TakeResourceList.Clear();
 			TakeResourceList.AddItem("silver");
 			foreach (var rest in Registry.Resources.GetAssets()) {
+				int idx = TakeResourceList.ItemCount;
 				TakeResourceList.AddItem(rest.AssetName);
+				TakeResourceList.SetItemMetadata(idx, Variant.CreateFrom(rest.GetIdString()));
 			}
+			TakeResourceList.Select(-1);
+			UpdateTofferDesc();
+		}
+
+		void UpdateTofferDesc() {
+			tofferDesc.OfferSilver = GiveResourceList.Selected == 0;
+			tofferDesc.SilverAmount = tofferDesc.OfferSilver ? (int)GiveAmountSlider.Value : (int)TakeAmountBox.Value;
+			if (tofferDesc.OfferSilver) {
+				if (TakeResourceList.Selected == -1) tofferDesc.Resources = new(new resources.game.resource_types.ResourceType(), 0);
+				else tofferDesc.Resources = new(
+					Registry.Resources.GetAsset(TakeResourceList.GetItemMetadata(TakeResourceList.Selected).AsString()),
+					(int)TakeAmountBox.Value
+				);
+				SendAmountLabel.Text = $"{tofferDesc.SilverAmount}/{me.Silver}";
+			} else {
+				if (GiveResourceList.Selected == -1) tofferDesc.Resources = new(new resources.game.resource_types.ResourceType(), 0);
+				else tofferDesc.Resources = new(
+					Registry.Resources.GetAsset(GiveResourceList.GetItemMetadata(GiveResourceList.Selected).AsString()),
+					(int)GiveAmountSlider.Value
+			   );
+				SendAmountLabel.Text = $"{tofferDesc.Resources.Amount}/{me.Resources.GetCount(tofferDesc.Resources.Type)}";
+			}
+			NewOfferLabel.Text = "Create new offer: " + tofferDesc.ToString();
+			MakeOfferButton.Disabled = !tofferDesc.CanSend();
 		}
 
 		void ResetTradeOfferMaking() {
@@ -101,23 +148,52 @@ namespace scenes.region.ui {
 		}
 
 		void OnGiveResourceSelected(long which) {
-
+			if (which == 0) /* want to send silver */ {
+				if (!tofferDesc.OfferSilver) {
+					TakeResourceList.Select(-1);
+				}
+				GiveAmountSlider.MaxValue = me.Silver;
+				GiveAmountSlider.Value = Mathf.Min(GiveAmountSlider.Value, GiveAmountSlider.MaxValue);
+				UpdateTofferDesc();
+				return;
+			}
+			TakeResourceList.Select(0);
+			UpdateTofferDesc();
+			GiveAmountSlider.MaxValue = me.Resources.GetCount(tofferDesc.Resources.Type);
+			GiveAmountSlider.Value = Mathf.Min(GiveAmountSlider.Value, GiveAmountSlider.MaxValue);
 		}
 
 		void OnTakeResourceSelected(long which) {
-
+			if (which == 0) {
+				if (tofferDesc.OfferSilver) {
+					GiveResourceList.Select(-1);
+				}
+				UpdateTofferDesc();
+				return;
+			}
+			GiveResourceList.Select(0);
+			UpdateTofferDesc();
+			GiveAmountSlider.MaxValue = me.Silver;
+			GiveAmountSlider.Value = Mathf.Min(GiveAmountSlider.Value, GiveAmountSlider.MaxValue);
 		}
 
 		void OnGiveAmountValueChanged(double howmuch) {
-
+			int amt = (int)howmuch;
+			if (tofferDesc.OfferSilver) tofferDesc.SilverAmount = amt;
+			else tofferDesc.Resources = new(tofferDesc.Resources.Type, amt);
+			UpdateTofferDesc();
 		}
 
 		void OnTakeAmountValueChanged(double howmuch) {
-
+			int amt = (int)howmuch;
+			if (!tofferDesc.OfferSilver) tofferDesc.SilverAmount = amt;
+			else tofferDesc.Resources = new(tofferDesc.Resources.Type, amt);
+			UpdateTofferDesc();
 		}
 
 		void OnMakeOfferPressed() {
 			me.SendTradeOfferTo(partner, tofferDesc.GetOffer());
+			InitSendingInterface();
 		}
 
 
@@ -126,12 +202,12 @@ namespace scenes.region.ui {
 			public Faction Offerer = offerer;
 			public Faction Recipient = recipient;
 
-			public int StoredUnits;
+			public int StoredUnits = 1;
 
 			public bool OfferSilver;
 
-			public int SilverAmount;
-			public ResourceBundle Resources;
+			public int SilverAmount = 1;
+			public ResourceBundle Resources = new(new resources.game.resource_types.ResourceType(), 0);
 
 
 			public TradeOffer GetOffer() {
@@ -140,6 +216,17 @@ namespace scenes.region.ui {
 				} else {
 					return new(Offerer, Resources, Recipient, SilverAmount, StoredUnits);
 				}
+			}
+
+			public bool CanSend() {
+				return Resources.Amount != 0;
+			}
+
+			public override string ToString() {
+				if (OfferSilver) {
+					return $"{SilverAmount} silver for {(Resources.Amount != 0 ? (Resources) : "...?")}";
+				}
+				return $"{(Resources.Amount != 0 ? (Resources) : "...?")} for {SilverAmount} silver";
 			}
 
 		}
