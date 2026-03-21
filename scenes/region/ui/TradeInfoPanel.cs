@@ -26,6 +26,7 @@ namespace scenes.region.ui {
 				PartnerList.AddChild(display);
 				display.Display(me, partner);
 				display.TradedOrCanceled += () => Display(me, tradeInfo); // rebuild UI when something is done
+				display.TradeOfferSent += () => Display(me, tradeInfo);
 			}
 			PartnersDisplayParent.Visible = tradeInfo.Keys.Count != 0;
 			NoPartnersLabel.Visible = tradeInfo.Keys.Count == 0;

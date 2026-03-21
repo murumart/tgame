@@ -10,7 +10,7 @@
 [ext_resource type="Resource" uid="uid://b1uvd7viwkyac" path="res://resources/game/resource_site_types/rainforest_trees.tres" id="8_v67m8"]
 [ext_resource type="Resource" uid="uid://cjd64xn7r7mh8" path="res://resources/game/resource_site_types/fishing_spot.tres" id="9_0cse7"]
 [ext_resource type="Resource" uid="uid://bfubh3m6mcfi8" path="res://resources/game/resource_site_types/desert_island.tres" id="10_7ysih"]
-[ext_resource type="Script" uid="uid://c71cftqfligu8" path="res://resources/game/resource_site_types/ResourceSiteGenerationParametersCollection.cs" id="11_gkfg7"]
+[ext_resource type="Script" path="res://resources/game/resource_site_types/ResourceSiteGenerationParametersCollection.cs" id="11_gkfg7"]
 [ext_resource type="Resource" uid="uid://o7f1lxtfp3n" path="res://resources/game/resource_site_types/cacti.tres" id="11_omvkl"]
 [ext_resource type="Resource" uid="uid://bnnlh8qs78mjv" path="res://resources/game/resource_site_types/hoodoo.tres" id="12_72mdt"]
 

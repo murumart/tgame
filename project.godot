@@ -40,7 +40,7 @@ window/size/viewport_height=360
 window/size/mode=2
 window/size/window_width_override=960
 window/size/window_height_override=720
-window/stretch/scale=3.0
+window/stretch/scale=2.0
 window/vsync/vsync_mode=0
 
 [dotnet]

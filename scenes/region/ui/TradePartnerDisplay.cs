@@ -9,6 +9,7 @@ namespace scenes.region.ui {
 	public partial class TradePartnerDisplay : Control {
 
 		public event Action TradedOrCanceled;
+		public event Action TradeOfferSent;
 
 		[Export] Label PartnerNameLabel;
 		[Export] Container TradeParnerOfferList;
@@ -194,6 +195,7 @@ namespace scenes.region.ui {
 		void OnMakeOfferPressed() {
 			me.SendTradeOfferTo(partner, tofferDesc.GetOffer());
 			InitSendingInterface();
+			TradeOfferSent?.Invoke();
 		}
 
 

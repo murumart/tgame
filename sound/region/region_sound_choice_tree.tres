@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="EnvironSoundChoiceBinary" format=3 uid="uid://mpq04puqpdl4"]
+[gd_resource type="Resource" format=3 uid="uid://mpq04puqpdl4"]
 
 [ext_resource type="Script" uid="uid://ulg55ys8wdx4" path="res://sound/region/EnvironSoundChoiceStream.cs" id="1_cw2im"]
 [ext_resource type="Script" uid="uid://bfoif2fp3ga5a" path="res://sound/region/EnvironSoundChoiceBinary.cs" id="2_d0jef"]

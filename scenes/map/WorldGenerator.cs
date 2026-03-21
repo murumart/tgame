@@ -438,6 +438,7 @@ namespace scenes.map {
 
 			foreach (Region region in regions) {
 				foreach (var neighbor in region.Neighbors) {
+					if (neighbor.LocalFaction.IsWild) continue;
 					region.LocalFaction.AddTradePartner(neighbor.LocalFaction);
 				}
 			}
