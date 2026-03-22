@@ -13,6 +13,7 @@ public partial class Camera : Camera2D {
 	const float ACCEL = 60.0f;
 	const float DECEL = 20.0f;
 
+	bool returnMousePosition = false;
 	Vector2 lastMousePosition;
 	Vector2 velocity = new();
 	float zoomSize = 1.0f;
@@ -37,7 +38,7 @@ public partial class Camera : Camera2D {
 			if (kEvent.Keycode == Key.Space) {
 				if (kEvent.IsReleased() && dragging) StopDragging();
 				else if (kEvent.IsPressed() && !dragging) {
-					StartDragging();
+					StartDragging(true);
 				}
 			}
 		} else if (evt is InputEventMouseMotion mEvent) {
@@ -64,17 +65,18 @@ public partial class Camera : Camera2D {
 	public void ZoomOut(float amt = 0.1f) => zoomSize = Mathf.Max(zoomSize - amt * zoomSize, 0.1f);
 	public void ZoomReset() => zoomSize = 1f;
 
-	public void StartDragging() {
+	public void StartDragging(bool returnMousePosition = false) {
+		this.returnMousePosition = returnMousePosition;
 		dragging = true;
 		draggingStartPos = GetViewport().GetMousePosition();
 		draggingStartCamPos = Position;
-		DisplayServer.MouseSetMode(DisplayServer.MouseMode.Captured);
+		if (returnMousePosition) DisplayServer.MouseSetMode(DisplayServer.MouseMode.Captured);
 	}
 
 	public void StopDragging() {
 		dragging = false;
 		DisplayServer.MouseSetMode(DisplayServer.MouseMode.Visible);
-		if (draggingStartPos != Vector2.Zero) GetViewport().WarpMouse((Vector2I)draggingStartPos);
+		if (draggingStartPos != Vector2.Zero && returnMousePosition) GetViewport().WarpMouse((Vector2I)draggingStartPos);
 	}
 
 	protected bool dragging = false;
