@@ -31,8 +31,6 @@ public class Population {
 
 	public float Approval { get; private set; }
 
-	TimeT time;
-
 
 	public Population() {
 		Approval = 0.5f;

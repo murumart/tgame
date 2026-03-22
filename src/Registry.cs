@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Godot;
+using resources.game;
 using static Building;
 using static MapObject;
 using static ResourceSite;
@@ -54,6 +55,7 @@ public static class Registry {
 		public static void RegisterFoodValues(IAssetGroup<IResourceType, int> fv) {
 			Debug.Assert(FoodValues == null, "Food values already set");
 			FoodValues = fv;
+			Debug.Assert(ResourceSitesS.FoodProducingSites != null); // inint that
 		}
 
 	}
@@ -70,19 +72,81 @@ public static class Registry {
 		public static readonly IBuildingType Windmill = Buildings.GetAsset("windmill");
 		public static readonly IBuildingType Bakery = Buildings.GetAsset("bakery");
 
+		static IAssetGroup<IBuildingType, int> housingBuildings = null;
+		public static IAssetGroup<IBuildingType, int> HousingBuildings {
+			get {
+				if (housingBuildings == null) {
+					var housingBuildings = new HousingBuildingsClass();
+					foreach (var b in Registry.Buildings.GetAssets()) {
+						housingBuildings.Add(b);
+					}
+					BuildingsS.housingBuildings = housingBuildings;
+				}
+				return housingBuildings;
+			}
+		}
+
+		class HousingBuildingsClass : IAssetGroup<IBuildingType, int> {
+
+			readonly Dictionary<IBuildingType, int> groupValues = new();
+			public IDictionary<IBuildingType, int> GroupValues => throw new NotImplementedException();
+
+
+			public void Add(IBuildingType building) {
+				Debug.Assert(!groupValues.TryGetValue(building, out var _));
+				groupValues.Add(building, building.GetPopulationCapacity());
+			}
+
+		}
+
 	}
 
 	public static class ResourceSitesS {
 
-		public static readonly IResourceSiteType BroadleafWoods = ResourceSites.GetAsset("broadleaf_woods");
-		public static readonly IResourceSiteType ConiferWoods = ResourceSites.GetAsset("conifer_woods");
-		public static readonly IResourceSiteType SavannaTrees = ResourceSites.GetAsset("savanna_trees");
+		public static readonly IResourceSiteType BroadleafWoods  = ResourceSites.GetAsset("broadleaf_woods");
+		public static readonly IResourceSiteType ConiferWoods    = ResourceSites.GetAsset("conifer_woods");
+		public static readonly IResourceSiteType SavannaTrees    = ResourceSites.GetAsset("savanna_trees");
 		public static readonly IResourceSiteType RainforestTrees = ResourceSites.GetAsset("rainforest_trees");
-		public static readonly IResourceSiteType FishingSpot = ResourceSites.GetAsset("fishing_spot");
-		public static readonly IResourceSiteType Rock = ResourceSites.GetAsset("rock");
-		public static readonly IResourceSiteType Rubble = ResourceSites.GetAsset("rubble");
-		public static readonly IResourceSiteType ClayPit = ResourceSites.GetAsset("clay_pit");
-		public static readonly IResourceSiteType Hoodoo = ResourceSites.GetAsset("hoodoo");
+		public static readonly IResourceSiteType FishingSpot     = ResourceSites.GetAsset("fishing_spot");
+		public static readonly IResourceSiteType Rock            = ResourceSites.GetAsset("rock");
+		public static readonly IResourceSiteType Rubble          = ResourceSites.GetAsset("rubble");
+		public static readonly IResourceSiteType ClayPit         = ResourceSites.GetAsset("clay_pit");
+		public static readonly IResourceSiteType Hoodoo          = ResourceSites.GetAsset("hoodoo");
+
+		static IAssetGroup<IResourceSiteType, HashSet<IAssetType>> foodProducingSites = null;
+		public static IAssetGroup<IResourceSiteType, HashSet<IAssetType>> FoodProducingSites {
+			get {
+				if (foodProducingSites == null) {
+					var foodProducingSites = new FoodProducingSitesClass();
+					Debug.Assert(ResourcesS.FoodValues != null, "Need FoodValues set");
+					foreach (var ressite in Registry.ResourceSites.GetAssets()) {
+						foreach (var well in ressite.GetDefaultWells()) {
+							if (ResourcesS.FoodValues.TryGetValue(well.ResourceType, out int _)) {
+								foodProducingSites.Add(ressite, well.ResourceType);
+							}
+						}
+					}
+					ResourceSitesS.foodProducingSites = foodProducingSites;
+				}
+				return foodProducingSites;
+			}
+		}
+
+		class FoodProducingSitesClass : IAssetGroup<IResourceSiteType, HashSet<IAssetType>> {
+
+			readonly Dictionary<IResourceSiteType, HashSet<IAssetType>> groupValues = new();
+			public IDictionary<IResourceSiteType, HashSet<IAssetType>> GroupValues => groupValues;
+
+
+			public void Add(IResourceSiteType rssite, IAssetType value) {
+				if (!groupValues.TryGetValue(rssite, out var val)) {
+					val = new();
+					groupValues[rssite] = val;
+				}
+				val.Add(value);
+			}
+
+		}
 
 	}
 

@@ -15,7 +15,6 @@
 [ext_resource type="PackedScene" uid="uid://b311cvqibnmx0" path="res://scenes/region/ui/trade_info_panel.tscn" id="11_3haic"]
 [ext_resource type="AudioStream" uid="uid://clyck37eh7i6m" path="res://sound/ui/menusounds-01.ogg" id="13_lkpo6"]
 [ext_resource type="Script" uid="uid://budv3jk6vkbdc" path="res://sound/ui/UISoundCreator.cs" id="14_igkl3"]
-[ext_resource type="AudioStream" uid="uid://0bwmlws6b8v2" path="res://sound/ui/menusounds-02.ogg" id="15_nqtah"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_suhma"]
 bg_color = Color(0.6, 0.6, 0.6, 0)
@@ -313,7 +312,9 @@ mouse_filter = 2
 custom_minimum_size = Vector2(60, 0)
 layout_mode = 2
 mouse_filter = 2
-theme_override_font_sizes/normal_font_size = 8
+theme_override_colors/font_outline_color = Color(0.1882353, 0.21960784, 0.2627451, 1)
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/normal_font_size = 10
 bbcode_enabled = true
 text = "aaaaa
 aa
@@ -551,6 +552,4 @@ stream = ExtResource("13_lkpo6")
 volume_db = -20.0
 max_polyphony = 4
 script = ExtResource("14_igkl3")
-hoverSound = ExtResource("13_lkpo6")
-clickSound = ExtResource("15_nqtah")
 metadata/_custom_type_script = "uid://budv3jk6vkbdc"
