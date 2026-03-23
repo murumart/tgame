@@ -48,6 +48,7 @@ y_sort_enabled = true
 [node name="EnvironSounds" type="AudioStreamPlayer" parent="." unique_id=1473703279 node_paths=PackedStringArray("Camera")]
 stream = SubResource("AudioStreamSynchronized_a0jiq")
 autoplay = true
+bus = &"Ambient"
 script = ExtResource("6_3pxuv")
 Camera = NodePath("../RegionCamera")
 soundChoices = ExtResource("9_4hooy")

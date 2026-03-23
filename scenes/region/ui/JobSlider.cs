@@ -13,8 +13,9 @@ namespace scenes.region.ui {
 		[Export] Slider Slider;
 
 		string unitSymbol;
+		bool round;
 		bool _ready;
-		Action<int, int> valueChangedCallback;
+		Action<int, float> valueChangedCallback;
 		int jobIx;
 
 
@@ -35,44 +36,48 @@ namespace scenes.region.ui {
 			}
 		}
 
-		public void Setup(Action<int, int> valueChangedCallback, int jobIx, int jobWorkers, string name, uint sliderMax, string unitSymbol) {
+		public void Setup(Action<int, float> valueChangedCallback, int jobIx, float currentValue, string name, float valueMax, string unitSymbol, bool round = true, float minValue = 0f) {
 			Debug.Assert(_ready, "dont anything before we're ready");
 			this.jobIx = jobIx;
+			this.round = round;
 			this.valueChangedCallback = valueChangedCallback;
 			NameLabel.Text = name;
-			Slider.MaxValue = sliderMax;
-			Slider.Value = jobWorkers;
-			Slider.Editable = sliderMax != 0;
+			Slider.MinValue = minValue;
+			Slider.MaxValue = valueMax;
+			Slider.Value = currentValue;
+			Slider.Editable = valueMax != 0;
 			lastValue = (int)Slider.Value;
 			this.unitSymbol = unitSymbol;
 			MoneyLabel.Text = "" + lastValue + unitSymbol;
 		}
 
-		public int GetValue() {
-			Debug.Assert(_ready, "dont anything before we're ready");
-
-			// Slider.Rounded needs to be set in the editor
-			return (int)Slider.Value;
-		}
+		//public int GetValue() {
+		//	Debug.Assert(_ready, "dont anything before we're ready");
+		//
+		//	// Slider.Rounded needs to be set in the editor
+		//	return (int)Slider.Value;
+		//}
 
 		public void ValueChanged(double to) {
-			int val = Mathf.RoundToInt(Slider.Value);
+			float val = (float)to;
+			if (round) val = (float)Mathf.Round(Slider.Value);
 
-			MoneyLabel.Text = "" + val + unitSymbol;
+			MoneyLabel.Text = "" + (round ? (int)val : val) + unitSymbol;
 			//ValueChangedCallback(jobIx, val);
 		}
 
-		int lastValue = 0;
+		float lastValue = 0;
 		public void DragEnded(bool valueChanged) {
 			if (!valueChanged) return;
-			int val = Mathf.RoundToInt(Slider.Value);
+			float val = (float)Slider.Value;
+			if (round) val = Mathf.RoundToInt(Slider.Value);
 			Slider.SetValueNoSignal(val);
 			GD.Print($"JobSlider::DragEnded : val {val} last {lastValue}");
 			ValueChangedCallback(jobIx, val - lastValue);
 			lastValue = val;
 		}
 
-		void ValueChangedCallback(int ix, int to) => valueChangedCallback(ix, to);
+		void ValueChangedCallback(int ix, float to) => valueChangedCallback(ix, to);
 
 		public void Disable() {
 			Slider.Editable = false;

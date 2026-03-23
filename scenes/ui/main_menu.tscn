@@ -263,6 +263,14 @@ layout_mode = 2
 text = "murumart 2026 | WIP version"
 label_settings = ExtResource("6_uhagc")
 
+[node name="Fat" type="Control" parent="MarginContainer/VBoxContainer/HBoxContainer2" unique_id=191534860]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label2" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer2" unique_id=180218979]
+layout_mode = 2
+text = "Press ESC for options at any time"
+
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1355955623]
 libraries/ = SubResource("AnimationLibrary_btxxm")
 autoplay = &"menu"

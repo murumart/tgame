@@ -36,9 +36,10 @@ public partial class JobsList : VBoxContainer {
         infoLabel.Text = $"You have {fac.Population.EmployedCount} out of {fac.GetPopulationCount()} workers employed.";
 	}
 
-	void JobWorkerCountChanged(int ix, int by) {
+	void JobWorkerCountChanged(int ix, float by) {
+		Debug.Assert(Mathf.Ceil(by) == Mathf.Floor(by), $"Invaliud worker count change value {by}");
 		GD.Print("JobsList::JobWorkerCountChanged : worker count changed by ", by);
-		ui.ChangeJobWorkerCount(displayedJobs[ix], by);
+		ui.ChangeJobWorkerCount(displayedJobs[ix], (int)by);
 		Display(); // rebuild ui entirely in a lazy unoptimised manner
 	}
 

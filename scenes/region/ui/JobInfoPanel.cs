@@ -25,7 +25,7 @@ public partial class JobInfoPanel : Control {
 		FocusOnJobButton.Pressed += JumpToJob;
 	}
 
-	public void Display(UI ui, Job job, int jobIndex, uint sliderMax, Action<int, int> workersSelected) {
+	public void Display(UI ui, Job job, int jobIndex, uint sliderMax, Action<int, float> workersSelected) {
 		this.ui = ui;
 		jobBox = job;
 		if (job.NeedsWorkers) {

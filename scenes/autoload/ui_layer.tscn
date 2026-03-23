@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://twrusuvwm4pu" path="res://scenes/autoload/UILayer.cs" id="1_4ql2r"]
 [ext_resource type="PackedScene" uid="uid://3kvcwdnxdp36" path="res://scenes/region/ui/hover_info_panel.tscn" id="2_nuntr"]
 [ext_resource type="Script" uid="uid://jtbctyn7uno" path="res://scenes/ui/DebugConsoleThing.cs" id="3_u2cqh"]
+[ext_resource type="PackedScene" uid="uid://c8w64iq1txxc8" path="res://scenes/ui/options_menu.tscn" id="4_qveqe"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_nuntr"]
 
@@ -78,3 +79,8 @@ offset_right = 0.15999603
 offset_bottom = 0.0399971
 context_menu_enabled = true
 metadata/_edit_use_anchors_ = true
+
+[node name="OptionsMenu" parent="Control" unique_id=1574865454 instance=ExtResource("4_qveqe")]
+visible = false
+z_index = 15
+layout_mode = 1

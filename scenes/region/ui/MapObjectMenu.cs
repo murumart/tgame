@@ -199,9 +199,10 @@ public partial class MapObjectMenu : Control {
 		detailsText.Text = sb.ToString();
 	}
 
-	void JobWorkerCountChanged(int ix, int by) {
+	void JobWorkerCountChanged(int ix, float by) {
+		Debug.Assert(Mathf.Ceil(by) == Mathf.Floor(by), $"Invaliud worker count change value {by}");
 		GD.Print("MapObjectMenu::JobWorkerCountChanged : worker count changed by ", by);
-		ui.ChangeJobWorkerCount(ExtantJob, by);
+		ui.ChangeJobWorkerCount(ExtantJob, (int)by);
 		OpenViewJobScreen(); // rebuild ui entirely in a lazy unoptimised manner
 	}
 

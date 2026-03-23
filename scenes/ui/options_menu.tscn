@@ -1,0 +1,114 @@
+[gd_scene format=3 uid="uid://c8w64iq1txxc8"]
+
+[ext_resource type="Script" uid="uid://cwqhs670bucqm" path="res://scenes/ui/OptionsMenu.cs" id="1_c4822"]
+[ext_resource type="StyleBox" uid="uid://bvafrlmq6sivc" path="res://resources/visual/theme/sb_lighter.tres" id="1_imaij"]
+[ext_resource type="PackedScene" uid="uid://bbhbv3hm6dqgh" path="res://scenes/region/ui/job_slider.tscn" id="3_c4822"]
+[ext_resource type="Script" uid="uid://budv3jk6vkbdc" path="res://sound/ui/UISoundCreator.cs" id="3_imaij"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_jmbgv"]
+content_margin_left = 2.0
+
+[node name="OptionsMenu" type="MarginContainer" unique_id=1574865454 node_paths=PackedStringArray("OptionsContainer", "OkayButton")]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 2
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 2
+theme_override_constants/margin_bottom = 2
+script = ExtResource("1_c4822")
+OptionsContainer = NodePath("PanelContainer/MarginContainer/Info/DetailsContainer/MarginContainer2/VBoxContainer/TradePartnerDisplay/VBoxContainer/ScrollContainer/OptionList")
+OkayButton = NodePath("PanelContainer/MarginContainer/Info/DetailsContainer/MarginContainer2/VBoxContainer/TradePartnerDisplay/VBoxContainer/Button")
+
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=828705375]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer" unique_id=1194052994]
+layout_mode = 2
+theme_override_constants/margin_left = 2
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 2
+theme_override_constants/margin_bottom = 2
+
+[node name="Info" type="VBoxContainer" parent="PanelContainer/MarginContainer" unique_id=1096857961]
+custom_minimum_size = Vector2(0, 240)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 0
+
+[node name="InfoHeader" type="HBoxContainer" parent="PanelContainer/MarginContainer/Info" unique_id=1402123397]
+layout_mode = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="PanelContainer/MarginContainer/Info/InfoHeader" unique_id=1477946497]
+layout_mode = 2
+theme_override_styles/panel = ExtResource("1_imaij")
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer/MarginContainer/Info/InfoHeader/PanelContainer" unique_id=1718437418]
+layout_mode = 2
+theme_override_constants/margin_left = 2
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 2
+
+[node name="Label" type="Label" parent="PanelContainer/MarginContainer/Info/InfoHeader/PanelContainer/MarginContainer" unique_id=326241166]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/normal = SubResource("StyleBoxEmpty_jmbgv")
+text = "Options"
+horizontal_alignment = 1
+
+[node name="DetailsContainer" type="PanelContainer" parent="PanelContainer/MarginContainer/Info" unique_id=1212307028]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = ExtResource("1_imaij")
+
+[node name="MarginContainer2" type="MarginContainer" parent="PanelContainer/MarginContainer/Info/DetailsContainer" unique_id=912943516]
+layout_mode = 2
+theme_override_constants/margin_left = 2
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 2
+theme_override_constants/margin_bottom = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/Info/DetailsContainer/MarginContainer2" unique_id=1768710873]
+layout_mode = 2
+
+[node name="DescriptionLabel" type="RichTextLabel" parent="PanelContainer/MarginContainer/Info/DetailsContainer/MarginContainer2/VBoxContainer" unique_id=320137564]
+layout_mode = 2
+theme_override_font_sizes/normal_font_size = 8
+fit_content = true
+tab_stops = PackedFloat32Array(5, 10)
+
+[node name="TradePartnerDisplay" type="MarginContainer" parent="PanelContainer/MarginContainer/Info/DetailsContainer/MarginContainer2/VBoxContainer" unique_id=1628751688]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 2
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 2
+theme_override_constants/margin_bottom = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/Info/DetailsContainer/MarginContainer2/VBoxContainer/TradePartnerDisplay" unique_id=1407482203]
+layout_mode = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="PanelContainer/MarginContainer/Info/DetailsContainer/MarginContainer2/VBoxContainer/TradePartnerDisplay/VBoxContainer" unique_id=674144339]
+custom_minimum_size = Vector2(300, 180)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="OptionList" type="VBoxContainer" parent="PanelContainer/MarginContainer/Info/DetailsContainer/MarginContainer2/VBoxContainer/TradePartnerDisplay/VBoxContainer/ScrollContainer" unique_id=293793374]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="JobSlider" parent="PanelContainer/MarginContainer/Info/DetailsContainer/MarginContainer2/VBoxContainer/TradePartnerDisplay/VBoxContainer/ScrollContainer/OptionList" unique_id=1872956985 instance=ExtResource("3_c4822")]
+layout_mode = 2
+
+[node name="Button" type="Button" parent="PanelContainer/MarginContainer/Info/DetailsContainer/MarginContainer2/VBoxContainer/TradePartnerDisplay/VBoxContainer" unique_id=9783798]
+layout_mode = 2
+focus_mode = 0
+text = "Okay"
+
+[node name="UISoundCreator" type="AudioStreamPlayer" parent="." unique_id=1058833097]
+script = ExtResource("3_imaij")
+metadata/_custom_type_script = "uid://budv3jk6vkbdc"

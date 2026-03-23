@@ -69,6 +69,7 @@ size_flags_vertical = 3
 
 [node name="TradePartnerDisplay" type="MarginContainer" parent="DetailsContainer/MarginContainer2/VBoxContainer/TradeList" unique_id=1628751688]
 layout_mode = 2
+size_flags_vertical = 3
 theme_override_constants/margin_left = 2
 theme_override_constants/margin_top = 2
 theme_override_constants/margin_right = 2
@@ -83,7 +84,6 @@ text = "Partners"
 label_settings = ExtResource("2_6mrm4")
 
 [node name="ScrollContainer" type="ScrollContainer" parent="DetailsContainer/MarginContainer2/VBoxContainer/TradeList/TradePartnerDisplay/PartnersDisplayParent" unique_id=674144339]
-custom_minimum_size = Vector2(300, 180)
 layout_mode = 2
 size_flags_vertical = 3
 
