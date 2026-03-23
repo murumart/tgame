@@ -18,6 +18,14 @@ namespace resources.game.building_types {
 
 		string IAssetType.AssetTypeName => "building";
 
+		string assetIDString;
+		public string AssetIDString {
+			get {
+				assetIDString ??= name.ToSnakeCase();
+				return assetIDString;
+			}
+		}
+
 		[Export(PropertyHint.Range, "0,99,or_greater")] int PopulationCapacity;
 		//[Export] Godot.Collections.Dictionary<ResourceType, int> ResourceCapacities;
 		[Export] Godot.Collections.Dictionary<ResourceType, int> ResourceCosts;

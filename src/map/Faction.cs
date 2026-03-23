@@ -27,6 +27,8 @@ public class Faction : IEntity {
 	public event Action<Problem> ProblemAddedEvent;
 	public event Action<Problem> ProblemUnsolvedEvent;
 	public event Action<Problem> ProblemSolvedEvent;
+	public event Action<TradeOffer> MyTradeOfferAcceptedEvent;
+	public event Action<TradeOffer> MyTradeOfferRejectedEvent;
 
 	public Region Region { get; init; }
 
@@ -494,6 +496,7 @@ public class Faction : IEntity {
 		Debug.Assert(sentTradeOffers[by].Contains(offer), "We didn't actually send this trade offer.." + offer.History);
 		if (!offer.IsValid) sentTradeOffers[by].Remove(offer); // depleted
 		if (!offer.IsValid) offer.Log($"depleted so removed from sent");
+		MyTradeOfferAcceptedEvent?.Invoke(offer);
 	}
 
 	public void RejectTradeOffer(Faction from, TradeOffer offer) {
@@ -511,6 +514,7 @@ public class Faction : IEntity {
 		sentTradeOffers[by].Remove(offer);
 		offer.Log($"{this} offer was rejected by {by} im removing from sent");
 		offer.Cancel();
+		MyTradeOfferRejectedEvent?.Invoke(offer);
 	}
 
 	public void CancelTradeOffer(Faction to, TradeOffer offer) {

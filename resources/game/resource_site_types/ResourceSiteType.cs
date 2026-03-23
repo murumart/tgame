@@ -16,6 +16,14 @@ namespace resources.game.resource_site_types {
 		public string AssetName => name;
 		public string Name => name;
 
+		string assetIDString;
+		public string AssetIDString {
+			get {
+				assetIDString ??= name.ToSnakeCase();
+				return assetIDString;
+			}
+		}
+
 		public string AssetTypeName => "resource_site";
 
 

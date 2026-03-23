@@ -46,7 +46,7 @@ namespace scenes.region.ui {
 			Slider.MaxValue = valueMax;
 			Slider.Value = currentValue;
 			Slider.Editable = valueMax != 0;
-			lastValue = (int)Slider.Value;
+			lastValue = round ? (int)Slider.Value : (float)Slider.Value;
 			this.unitSymbol = unitSymbol;
 			MoneyLabel.Text = "" + lastValue + unitSymbol;
 		}

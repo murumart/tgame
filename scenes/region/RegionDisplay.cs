@@ -64,7 +64,7 @@ public partial class RegionDisplay : Node2D {
 			var p = problemsToUndisplay.Dequeue();
 			UndisplayRegionProblem(p);
 		}
-		if (GameMan.Singleton.IsPaused) {
+		if (GameMan.Singleton.IsPaused && Engine.GetFramesDrawn() % 16 == 0) {
 			DisplayJobProgress();
 		}
 	}

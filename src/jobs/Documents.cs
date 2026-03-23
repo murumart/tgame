@@ -221,6 +221,9 @@ public partial class TradeOffer {
 		}
 	}
 
+	public Faction Offerer => starter;
+	public Faction Recipient => acceptor;
+
 	public TimeT CreationMinute { get; init; }
 
 	bool valid = false;

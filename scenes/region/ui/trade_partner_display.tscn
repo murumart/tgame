@@ -7,7 +7,7 @@
 [ext_resource type="StyleBox" uid="uid://bvafrlmq6sivc" path="res://resources/visual/theme/sb_lighter.tres" id="4_pbem2"]
 [ext_resource type="LabelSettings" uid="uid://teuhafm0mc0i" path="res://resources/visual/theme/label_styles/10px.tres" id="5_p1jyf"]
 
-[node name="TradePartnerDisplay" type="VBoxContainer" unique_id=864180490 node_paths=PackedStringArray("PartnerNameLabel", "TradeParnerOfferList", "GottenOffersParent", "MyOfferList", "NewOfferLabel", "SendAmountLabel", "SentOffersParent", "GiveResourceList", "TakeResourceList", "GiveAmountSlider", "TakeAmountBox", "MakeOfferButton", "NoOffersLabel")]
+[node name="TradePartnerDisplay" type="VBoxContainer" unique_id=864180490 node_paths=PackedStringArray("PartnerNameLabel", "TradeParnerOfferList", "GottenOffersParent", "MyOfferList", "NewOfferLabel", "SentOffersParent", "GiveResourceList", "TakeResourceList", "GiveAmountSlider", "TakeAmountBox", "MakeOfferButton", "NoOffersLabel")]
 offset_right = 298.0
 offset_bottom = 103.0
 theme_override_constants/separation = 0
@@ -17,7 +17,6 @@ TradeParnerOfferList = NodePath("BuildingList/MarginContainer/VBoxContainer/Got/
 GottenOffersParent = NodePath("BuildingList/MarginContainer/VBoxContainer/Got")
 MyOfferList = NodePath("BuildingList/MarginContainer/VBoxContainer/Sent/SentOffersList")
 NewOfferLabel = NodePath("BuildingList/MarginContainer/VBoxContainer/SendingInterface/PanelContainer/MarginContainer/NewOfferLabel")
-SendAmountLabel = NodePath("BuildingList/MarginContainer/VBoxContainer/SendingInterface/HBoxContainer/VBoxContainer3/SendAmountLabel")
 SentOffersParent = NodePath("BuildingList/MarginContainer/VBoxContainer/Sent")
 GiveResourceList = NodePath("BuildingList/MarginContainer/VBoxContainer/SendingInterface/HBoxContainer/VBoxContainer/MyResource")
 TakeResourceList = NodePath("BuildingList/MarginContainer/VBoxContainer/SendingInterface/HBoxContainer/VBoxContainer2/WantResource")

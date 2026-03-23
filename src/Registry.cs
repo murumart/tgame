@@ -214,11 +214,12 @@ public class AssetTypeRegistry<T> where T : IAssetType {
 public interface IAssetType {
 
 	string AssetName { get; }
+	string AssetIDString { get; }
 	string AssetTypeName { get; }
 
 	string GetIdString() {
-		Debug.Assert(AssetName != null, $"Asset name is empty! (object: {this}, assettypename: {AssetTypeName})");
-		return (AssetName).ToSnakeCase();
+		Debug.Assert(AssetIDString != null, $"Asset id string is empty! (object: {this}, assettypename: {AssetTypeName}, assetidstring: {AssetIDString})");
+		return AssetIDString;
 	}
 
 }
