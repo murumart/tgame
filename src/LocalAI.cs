@@ -157,55 +157,31 @@ public partial class LocalAI {
 			}, $"PlaceBuildingJob({buildingType.AssetName})");
 		}
 
-		// sucks don't use
-		public static Action CrappySendTradeOffer(DecisionFactor[] factors, Faction from, Faction to) {
-			return new(factors, () => {
-				TradeOffer toffer;
-				if (false && GD.Randf() < 0.5 && from.Silver > 10) {
-					var resources = Registry.Resources.GetAssets();
-					IResourceType wantResource = resources[(int)(GD.Randi() % resources.Length)];
-					toffer = new(from, (int)(GD.Randi() % (from.Silver - 10)) + 1, to, new(wantResource, (int)(GD.Randi() % 6) + 1), 1);
-					from.SendTradeOfferTo(to, toffer);
-				} else {
-					KeyValuePair<IResourceType, ResourceStorage.InStorage> excessiveResource = new(null, 0);
-					foreach (var res in from.Resources) {
-						if (res.Value.Amount > excessiveResource.Value.Amount) excessiveResource = res;
-					}
-					if (excessiveResource.Value == 0) return; // nothing to give
-					var give = new ResourceBundle(excessiveResource.Key, Math.Max(1, excessiveResource.Value / 14));
-					toffer = new(from, give, to, give.Amount / (int)(GD.Randf() * 2 + 1) + 1, 1);
-					from.SendTradeOfferTo(to, toffer);
-				}
-			}, $"CrappySendTradeOffer()");
-		}
-
 		public static Action SendTradeOffer(DecisionFactor[] factors, FactionActions ac, int giveSilver, ResourceBundle wantResources) {
 			return new(factors, () => {
 				AIAssert(ac.Faction.Silver >= giveSilver, "Don't have enough silver to make trade offer", ac);
 				var from = ac.Faction;
-				var to = from.Region.Neighbors.ToArray()[GD.Randi() % from.Region.Neighbors.Count].LocalFaction;
-				from.SendTradeOfferTo(to, new(from, giveSilver, to, wantResources, 1));
-			}, $"SendTradeOffer({giveSilver}, {wantResources})");
+				var partners = ac.GetProcessMarketJob().TradeOffers.Keys.ToArray();
+				AIAssert(partners.Length > 0, "Need more partner than0", ac);
+				var to = partners[GD.Randi() % partners.Length];
+				from.SendTradeOfferTo(to, new(from, giveSilver, to, wantResources, false));
+			}, $"SendTradeOffer(silver -> resources)");
 		}
 
 		public static Action SendTradeOffer(DecisionFactor[] factors, FactionActions ac, ResourceBundle giveResources, int wantSilver) {
 			return new(factors, () => {
 				AIAssert(ac.GetResourceStorage().HasEnough(giveResources), "Don't have enough resoucres to make trde offer", ac);
 				var from = ac.Faction;
-				var to = from.Region.Neighbors.ToArray()[GD.Randi() % from.Region.Neighbors.Count].LocalFaction;
-				int singleprice = giveResources.Amount / wantSilver;
-				int units = giveResources.Amount / singleprice;
-				if (units == 0) {
-					from.SendTradeOfferTo(to, new(from, giveResources, to, wantSilver, 1));
-				} else {
-					from.SendTradeOfferTo(to, new(from, new(giveResources.Type, singleprice), to, 1, units));
-				}
-			}, $"SendTradeOffer({giveResources}, {wantSilver})");
+				var partners = ac.GetProcessMarketJob().TradeOffers.Keys.ToArray();
+				AIAssert(partners.Length > 0, "Need more partner than0", ac);
+				var to = partners[GD.Randi() % partners.Length];
+				from.SendTradeOfferTo(to, new(from, giveResources, to, wantSilver, false));
+			}, $"SendTradeOffer(resources -> silver)");
 		}
 
-		public static Action AcceptTradeOffer(DecisionFactor[] factors, Faction me, Faction from, TradeOffer offer) {
+		public static Action AcceptTradeOffer(DecisionFactor[] factors, Faction me, Faction from, TradeOffer offer, int units = 0) {
 			return new(factors, () => {
-				me.AcceptTradeOffer(from, offer, offer.StoredUnits);
+				me.AcceptTradeOffer(from, offer, units <= 0 ? offer.StoredUnits : units);
 			}, $"AcceptTradeOffer()");
 		}
 
@@ -255,7 +231,7 @@ public partial class LocalAI {
 		public static readonly DecisionFactor One = new(() => 1.0f, "One");
 
 		public static DecisionFactor Const(float val) {
-			return new(() => val, $"{val}");
+			return new(() => val, $"C");
 		}
 
 		public static DecisionFactor Ease(DecisionFactor fac, float t) {
@@ -275,7 +251,7 @@ public partial class LocalAI {
 		}
 
 		public static DecisionFactor Mult(DecisionFactor fac, float with) {
-			return new(() => fac.Score() * with, $"({fac} * {with})");
+			return new(() => Mathf.Clamp(fac.Score() * with, 0f, 1f), $"({fac} * {with})");
 		}
 
 		public static DecisionFactor Pow(DecisionFactor fac, float up) {
@@ -283,6 +259,7 @@ public partial class LocalAI {
 		}
 
 		public static DecisionFactor Group(DecisionFactor[] factors) {
+			if (factors.Length == 0) return One;
 			if (factors.Length == 1) return factors[0];
 			return new(() => {
 				float score = 1.0f;
@@ -416,13 +393,16 @@ public partial class LocalAI {
 			return new(() => Mathf.Clamp(ac.Faction.Population.GetApprovalMonthlyChange(), 0f, 1f), "ApprovalRatingChange");
 		}
 
+		public static float CalculateWant(int want, FactionActions ac, IResourceType resourceType) {
+			var count = ac.GetResourceStorage().GetCount(resourceType);
+			var a = Mathf.Max(0f, (float)(want - count) / want);
+			a -= (100f - want) / 100f;
+			return Mathf.Clamp(a, 0f, 1f);
+		}
+
 		public static DecisionFactor ResourceWant(FactionActions ac, GamerAI ai, IResourceType resourceType) {
 			return new(() => {
-				int want = ai.ResourceWants.GetValueOrDefault(resourceType, 30);
-				var count = ac.GetResourceStorage().GetCount(resourceType);
-				var a = Mathf.Max(0f, (float)(want - count) / want);
-				a -= (100f - want) / 100f;
-				return Mathf.Clamp(a, 0f, 1f);
+				return CalculateWant(ai.ResourceWants.GetValueOrDefault(resourceType, GamerAI.DefaultResourceWant), ac, resourceType);
 			}, $"ResourceWant({resourceType.AssetName})");
 		}
 
@@ -467,8 +447,8 @@ public partial class LocalAI {
 			}, $"SeeNoInterestInTradeOffer");
 		}
 
-		public static DecisionFactor CanAcceptTradeOffer(TradeOffer tradeOffer) {
-			return new(() => tradeOffer.CanTrade(tradeOffer.StoredUnits) ? 1.0f : 0.0f, $"CanAcceptTradeOffer");
+		public static DecisionFactor CanAcceptTradeOffer(TradeOffer tradeOffer, int units = 0) {
+			return new(() => tradeOffer.CanTrade(units <= 0 ? tradeOffer.StoredUnits : units) ? 1.0f : 0.0f, $"CanAcceptTradeOffer");
 		}
 
 		public static DecisionFactor MarketplaceIsBeingWorkedAt(FactionActions ac) {
@@ -641,6 +621,7 @@ public partial class LocalAI {
 
 public class GamerAI : LocalAI {
 
+	public const int DefaultResourceWant = 10;
 	public readonly Dictionary<IResourceType, int> ResourceWants;
 	readonly List<Action> mainActions;
 	readonly List<Action> ephemeralActions;
@@ -658,6 +639,7 @@ public class GamerAI : LocalAI {
 		Debug.Assert(sendTradeOfferCurve != null);
 
 		this.ResourceWants = new();
+		foreach (var it in Registry.Resources.GetAssets()) ResourceWants[it] = DefaultResourceWant;
 		var startActions = new List<Action>();
 
 		foreach (var rs in Registry.ResourceSites.GetAssets()) {
@@ -670,7 +652,7 @@ public class GamerAI : LocalAI {
 			bool isHousing = housing.Contains(b);
 			bool isCrafting  = crafting.Contains(b);
 			startActions.Add(Actions.PlaceBuildingJob([
-				Factors.ResourcesNeed(factionActions, b.GetResourceRequirements()),
+				Factors.ResourcesNeed(factionActions, b.GetConstructionResources()),
 				isHousing ? Factors.Group([
 					Factors.HomelessnessRate(factionActions),
 					Factors.OneMinus(Factors.HousingSlotsPerPerson(factionActions)),
@@ -685,7 +667,7 @@ public class GamerAI : LocalAI {
 		startActions.Add(Actions.PlaceBuildingJob([
 			Factors.OneMinus(Factors.HasMarketplace(actions)),
 			//Factors.HasSpotForBuilding(factionActions, Registry.BuildingsS.Marketplace),
-			Factors.ResourcesNeed(factionActions, Registry.BuildingsS.Marketplace.GetResourceRequirements()),
+			Factors.ResourcesNeed(factionActions, Registry.BuildingsS.Marketplace.GetConstructionResources()),
 		], factionActions, Registry.BuildingsS.Marketplace));
 
 		startActions.Add(Actions.CreateProcessMarketJob([
@@ -727,6 +709,34 @@ public class GamerAI : LocalAI {
 
 	public override void PreUpdate(TimeT minute) {
 
+		// decay wants over time
+		foreach (var res in ResourceWants.Keys) {
+			int want = ResourceWants[res];
+			ResourceWants[res] = Mathf.Max(DefaultResourceWant, want - (int)(want * 0.025 + 1));
+		}
+		uint homeless = factionActions.GetHomelessPopulationCount() ;
+		if (homeless > 0) {
+			// housing materials are good, please
+			foreach (var building in Registry.BuildingsS.HousingBuildings) {
+				foreach (var material in building.Key.GetConstructionResources()) {
+					ResourceWants[material.Type] += (int)(material.Amount * homeless * 0.005);
+				}
+			}
+		}
+		var (food, eaten2day) = factionActions.GetFoodAndUsage();
+		float daystoeat = food / eaten2day;
+		if (daystoeat < 5) {
+			// getting food places please
+			foreach (var foodit in Registry.ResourcesS.FoodValues) {
+				ResourceWants[foodit.Key] += (int)(eaten2day * 0.25 * foodit.Value * ((5f - daystoeat) / 5f));
+			}
+		}
+		// random inspiration to get some crap
+		if (GD.Randf() < 0.0005f) {
+			var random = Registry.Resources.GetAssets()[GD.Randi() % Registry.Resources.GetAssets().Length];
+			ResourceWants[random] += 15000000;
+		}
+
 		ephemeralActions.Clear();
 		foreach (var mopbject in factionActions.GetMapObjects()) {
 			if (mopbject is Building building && factionActions.GetMapObjectsJob(mopbject) == null) {
@@ -749,17 +759,17 @@ public class GamerAI : LocalAI {
 				negativeFactors.Add(Factors.Mult(Factors.Pow(Factors.OneMinus(rwant), 3f), 0.000001f));
 			} else if (job is ConstructBuildingJob bjob) {
 				factors.Add(Factors.Max(Factors.BuildingProgress(bjob.Building), 0.5f));
+				// something about if the building wouyld produce something we have a resourceneed for?
 			} else if (job is ProcessMarketJob pjob) {
 			} else if (job is CraftJob cjob) {
 				factors.Add(Factors.Mult(Factors.Group(cjob.Outputs.Select(o => Factors.ResourceWant(factionActions, this, o.Type)).ToArray()), 0.1f));
-				factors.Add(Factors.HasFreeWorkers(factionActions));
 				var mopject = factionActions.Region.GetMapObject(cjob.GlobalPosition - factionActions.Region.WorldPosition);
 				//IEnumerable<CraftJob> othersPossible = mopject.GetAvailableJobs().Where(j => j is CraftJob cj && cj.Outputs != cjob.Outputs).Cast<CraftJob>();
 				//negativeFactors.Add(Factors.Group(othersPossible.Select(p => Factors.Group(p.Outputs.Select(o => Factors.ResourceWant(factionActions, this, o.Type)).ToArray())).ToArray()));
 			}
-			factors.Add(Factors.Pow(Factors.JobHasEmploymentSpots(factionActions, job), 9f));
+			factors.Add(Factors.JobHasEmploymentSpots(factionActions, job));
 			factors.Add(Factors.HasFreeWorkers(factionActions));
-			factors.Add(Factors.OneMinus(Factors.JobEmploymentRate(job)));
+			factors.Add(Factors.Ease(Factors.OneMinus(Factors.JobEmploymentRate(job)), 7f));
 			factors.Add(Factors.IsJobUnlocked(job));
 			if (factors != null) {
 				ephemeralActions.Add(Actions.AssignWorkersToJob(factors.ToArray(), factionActions, job));
@@ -778,12 +788,15 @@ public class GamerAI : LocalAI {
 		}
 		var marketJob = factionActions.GetProcessMarketJob();
 		if (marketJob == null || marketJob.Workers == 0) return;
-		// creating trade offeers
-		foreach (var res in Registry.Resources.GetAssets()) {
-			int inStorage = factionActions.GetResourceStorage().GetCount(res);
-			if (inStorage < 15) continue;
+		var partners = marketJob.TradeOffers.Keys.ToArray();
+		if (partners.Length == 0) return; // don't know any partners yet
+										  // creating trade offeers
+										  // if we have a bunch of something and don't really want it, try to sel, it
+		foreach (var (res, store) in factionActions.GetResourceStorage()) {
+			int inStorage = store.Amount;
+			if (inStorage < 30) continue;
 			int srand1 = (int)(GD.Randi() % 3) + 1;
-			int tradeAmount = Mathf.Max(inStorage / 2, srand1); // ??????? wjhat am I dooing here
+			int tradeAmount = (int)(inStorage * 0.5 + (GD.Randf() * inStorage * 0.5));
 			int silver = tradeAmount / (srand1 + 2) + srand1;
 			if (silver == 0) continue;
 			ephemeralActions.Add(Actions.SendTradeOffer([
@@ -792,6 +805,19 @@ public class GamerAI : LocalAI {
 				Factors.Const(0.36f),
 			], factionActions, new ResourceBundle(res, tradeAmount), silver));
 		}
+		// if we have a really bad need for something try to send an expensive offer for it
+		foreach (var (res, want) in ResourceWants) {
+			float wantf = Mathf.Ease(Factors.CalculateWant(want, factionActions, res), 4.9f);
+			if (GD.Randf() < wantf && factionActions.Faction.Silver > 0) {
+				int unitprice = Mathf.Max(1, (int)(wantf * GD.Randfn(4, 2)) + 1);
+				int cansend = factionActions.Faction.Silver / unitprice;
+				if (cansend == 0) continue;
+				ephemeralActions.Add(Actions.SendTradeOffer([
+					Factors.One,
+				], factionActions, unitprice * cansend, new(res, cansend)));
+			}
+		}
+		// remoing trade offers that we've sent and not gotten a response on
 		foreach (var (partner, toffs) in factionActions.Faction.GetSentTradeOffers()) {
 			foreach (var toff in toffs) {
 				toff.Log($"ephemeral actions sent to {partner}");
@@ -804,20 +830,42 @@ public class GamerAI : LocalAI {
 				], factionActions.Faction, partner, toff));
 			}
 		}
+		// looking at trade offer's we've gotten and procedssed in marketplace
 		foreach (var (partner, toffs) in marketJob.TradeOffers) {
 			foreach (var toff in toffs) {
 				toff.Log($"ephemeral actions from TradeOffers with {partner}");
 				if (!toff.IsValid) GD.PushWarning(toff.History);
 				AIAssert(toff.IsValid, "This trade offer isn't valid, delete!!!!!");
-				ephemeralActions.Add(Actions.AcceptTradeOffer([
-					//Factors.MarketplaceIsBeingWorkedAt(factionActions), // don't need this, are checking above
-					Factors.CanAcceptTradeOffer(toff),
-					toff.OffererGivesRecipientSilver
-						? Factors.OneMinus(Factors.ResourceWant(factionActions, this, toff.RecepientRequiredResourcesUnit.Type))
-						: Factors.ResourceWant(factionActions, this, toff.OffererSoldResourcesUnit.Type),
-				], factionActions.Faction, partner, toff));
+
+				int maxunits = toff.GetMaxUnitsTradeable();
+				if (maxunits != 0) {
+					DecisionFactor[] extraFactors;
+					if (toff.OffererGivesRecipientSilver) {
+						extraFactors = [
+							Factors.Ease(Factors.OneMinus(Factors.ResourceWant(factionActions, this, toff.RecepientRequiredResourcesUnit.Type)), 0.2f),
+						];
+					} else {
+						// we pay silver
+						float want = ResourceWants[toff.OffererSoldResourcesUnit.Type] / (float)toff.RecipientPaidSilverUnit;
+						extraFactors = [
+							Factors.Const(Mathf.Clamp(want / 100f, 0f, 1f)),
+						];
+					}
+
+					ephemeralActions.Add(Actions.AcceptTradeOffer([
+						//Factors.MarketplaceIsBeingWorkedAt(factionActions), // don't need this, are checking above
+						//Factors.CanAcceptTradeOffer(toff), // know we can since we specify maxunits
+						Factors.Group(extraFactors),
+						//toff.OffererGivesRecipientSilver
+						//	? Factors.OneMinus(Factors.ResourceWant(factionActions, this, toff.RecepientRequiredResourcesUnit.Type))
+						//	: Factors.ResourceWant(factionActions, this, toff.OffererSoldResourcesUnit.Type),
+					], factionActions.Faction, partner, toff, maxunits));
+				}
 				ephemeralActions.Add(Actions.RejectTradeOffer([
-					Factors.Mult(Factors.OneMinus(Factors.CanAcceptTradeOffer(toff)), 0.00015f),
+					Factors.Mult(Factors.OneMinus(Factors.CanAcceptTradeOffer(toff)), 0.0015f),
+					toff.OffererGivesRecipientSilver
+						? Factors.Const(0.5f)
+						: Factors.OneMinus(Factors.ResourceWant(factionActions, this, toff.OffererSoldResourcesUnit.Type)),
 				], factionActions.Faction, partner, toff));
 			}
 		}

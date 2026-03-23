@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Godot;
 
 
 public partial class Document {
@@ -233,40 +234,56 @@ public partial class TradeOffer {
 	public string History => debugHistory.ToString();
 
 
-	public TradeOffer(Faction starter, int gives, Faction acceptor, ResourceBundle wants, int maxUnits) {
+	public TradeOffer(Faction starter, int gives, Faction acceptor, ResourceBundle wants, bool exact) {
+
+		int minv = Math.Min(gives, wants.Amount);
+		int maxv = Math.Max(gives, wants.Amount);
+		bool miniss = minv == gives;
+		int maxUnits;
+		if (exact && maxv % minv != 0) maxUnits = 1;
+		else maxUnits = minv;
+
 		Debug.Assert(maxUnits > 0, "No sense to make offer to trade 0 (or less) of something");
 		StoredUnits = maxUnits;
 		Debug.Assert(starter != null);
 		this.starter = starter;
-		Debug.Assert(starter.Silver >= gives * maxUnits, "Don't have enough silver to create trade offer");
+		Debug.Assert(starter.Silver >= gives, "Don't have enough silver to create trade offer");
 		Debug.Assert(gives > 0, "Need to give MORE THAN 0 silver to make a trade");
 		Debug.Assert(acceptor != null);
 		this.acceptor = acceptor;
 		OffererGivesRecipientSilver = true;
 
-		giveSilverUnit = gives;
-		starter.SubtractAndReturnSilver(gives * maxUnits);
-		takeResourcesUnit = wants;
+		giveSilverUnit = gives / maxUnits;
+		starter.SubtractAndReturnSilver(gives);
+		takeResourcesUnit = wants.Divide(maxUnits);
 
 		CreationMinute = starter.GetTime();
 		valid = true;
 		Log("created with first constructor ");
 	}
 
-	public TradeOffer(Faction starter, ResourceBundle gives, Faction acceptor, int wants, int maxUnits) {
+	public TradeOffer(Faction starter, ResourceBundle gives, Faction acceptor, int wants, bool exact) {
+
+		int minv = Math.Min(gives.Amount, wants);
+		int maxv = Math.Max(gives.Amount, wants);
+		bool minisr = minv == gives.Amount;
+		int maxUnits;
+		if (exact && (maxv % minv != 0)) maxUnits = 1;
+		else maxUnits = minv;
+
 		Debug.Assert(maxUnits > 0, "No sense to make offer to trade 0 (or less) of something");
 		StoredUnits = maxUnits;
 		Debug.Assert(starter != null);
 		this.starter = starter;
-		Debug.Assert(starter.Resources.HasEnough(gives.Multiply(maxUnits)), "Don't have enough resources to create trade offer");
+		Debug.Assert(starter.Resources.HasEnough(gives), "Don't have enough resources to create trade offer");
 		Debug.Assert(acceptor != null);
 		Debug.Assert(wants > 0, "Need to take MORE THAN 0 silver to make a trade");
 		this.acceptor = acceptor;
 		OffererGivesRecipientSilver = false;
 
-		giveResourcesUnit = gives;
-		starter.Resources.GetTransfer(gives.Multiply(StoredUnits));
-		takeSilverUnit = wants;
+		giveResourcesUnit = gives.Divide(maxUnits);
+		starter.Resources.GetTransfer(gives);
+		takeSilverUnit = wants / maxUnits;
 
 		CreationMinute = starter.GetTime();
 		valid = true;
@@ -276,13 +293,23 @@ public partial class TradeOffer {
 	public void Cancel() {
 		Debug.Assert(valid, "Trade offer invalid, can't cancel, please delete");
 		if (OffererGivesRecipientSilver) {
-			starter.ReceiveTransferSilver(OffererPaidSilverUnit);
+			starter.ReceiveTransferSilver(OffererPaidSilverUnit * StoredUnits);
 		} else {
-			starter.Resources.AddResource(OffererSoldResourcesUnit);
+			starter.Resources.AddResource(OffererSoldResourcesUnit.Multiply(StoredUnits));
 		}
 		Log("cancelled, now invalid ");
 
 		valid = false;
+	}
+
+	public int GetMaxUnitsTradeable() {
+		int max;
+		if (OffererGivesRecipientSilver) {
+			max = acceptor.Resources.GetCount(RecepientRequiredResourcesUnit.Type) / (RecepientRequiredResourcesUnit.Amount * StoredUnits);
+		} else {
+			max = acceptor.Silver / (RecipientPaidSilverUnit * StoredUnits);
+		}
+		return Math.Min(StoredUnits, max);
 	}
 
 	public bool CanTrade(int units) {
@@ -302,6 +329,7 @@ public partial class TradeOffer {
 		Debug.Assert(units > 0, "No sense to trade <= 0 units");
 		Debug.Assert(units <= StoredUnits, "Can't trade more units than contained in offer");
 		Debug.Assert(CanTrade(units), "Can't even trade Brooooo");
+		string str = this.ToString();
 		if (OffererGivesRecipientSilver) {
 			MakeTradeOffererGivesSilver(units);
 		} else {
@@ -309,6 +337,7 @@ public partial class TradeOffer {
 		}
 		Debug.Assert(StoredUnits >= 0);
 		Log("made trade");
+		GD.Print($"TradeOffer::MakeTrade : made trade {str} (traded {units} units)");
 		if (StoredUnits == 0) valid = false;
 		if (!valid) Log("drained...");
 	}
@@ -329,6 +358,23 @@ public partial class TradeOffer {
 
 	public void Log(string message) {
 		debugHistory.Append(starter.GetTime()).Append("; ").Append("stored: ").Append(StoredUnits).Append("; valid: ").Append(valid).Append("; ").Append(message).Append('\n');
+	}
+
+	public string GetOutputDescription(Faction side, int units) {
+		Debug.Assert(side == acceptor || side == starter);
+		if (side == acceptor) {
+			if (OffererGivesRecipientSilver) return $"+{OffererPaidSilverUnit * units} silver";
+			else return $"+{OffererSoldResourcesUnit.Multiply(units)}";
+		}
+		if (OffererGivesRecipientSilver) return $"+{RecepientRequiredResourcesUnit.Multiply(units)}";
+		else return $"+{RecipientPaidSilverUnit * units} silver";
+	}
+
+	public override string ToString() {
+		if (OffererGivesRecipientSilver) {
+			return $"TradeOffer: {Offerer} gives {Recipient} {giveSilverUnit} silver for {RecepientRequiredResourcesUnit} ({StoredUnits} units stored)";
+		}
+		return $"TradeOffer: {Offerer} gives {Recipient} {OffererSoldResourcesUnit} for {RecipientPaidSilverUnit} silver ({StoredUnits} units stored)";
 	}
 
 }

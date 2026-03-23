@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Text;
 using Godot;
 using resources.game.building_types;
 using scenes.autoload;
@@ -46,7 +47,7 @@ public partial class PlayerRegion : Node {
 			if (j is DemolishMapObjectJob dj && dj.GetProgressEstimate() >= 1f) ui.Notifications.Notify($"The {dj.Object.Type.AssetName} has been demolished.", timeLimit: 10f);
 			if (j is GatherResourceJob gj && !gj.Well.HasBunches) ui.Notifications.Notify($"The {gj.Site.Type.AssetName} has been depleted of {gj.Well.ResourceType.AssetName}.", timeLimit: 15f);
 		};
-		faction.MyTradeOfferAcceptedEvent += o => ui.Notifications.Notify($"{o.Recipient.Name} accepted a trade offer from us.", timeLimit: 20f);
+		faction.MyTradeOfferAcceptedEvent += (o, u) => ui.Notifications.Notify($"{o.Recipient.Name} accepted a trade offer from us. ({o.GetOutputDescription(faction, u)})", timeLimit: 20f);
 		faction.MyTradeOfferRejectedEvent += o => ui.Notifications.Notify($"{o.Recipient.Name} rejected a trade offer from us...", timeLimit: 10f);
 		foreach (var neighbor in region.Neighbors) {
 			if (neighbor.LocalFaction.IsWild) continue;
@@ -100,13 +101,22 @@ public partial class PlayerRegion : Node {
 			);
 		}).CallDeferred();
 
-		UILayer.DebugDisplay(() => "Last Action Info:\n" + GameMan.Singleton.Game.GetRegionAI(region).profiling.LastActionInfo());
-		UILayer.DebugDisplay(() => "Last Decision Info:\n" + GameMan.Singleton.Game.GetRegionAI(region).profiling.LastDecisionInfo());
 		UILayer.DebugDisplay(() => {
 			return $"hunger: {faction.Population.Hunger}, growing: {faction.Population.OngrowingPopulation}";
 		});
+		UILayer.DebugDisplay(() => {
+			var sb = new StringBuilder();
+			var ai = (GamerAI)GameMan.Singleton.Game.GetRegionAI(region);
+			sb.Append("Resource wants:\n");
+			foreach (var (food, want) in ai.ResourceWants) {
+				sb.Append(food.AssetName).Append('\t').Append(want).Append('\n');
+			}
+			return sb.ToString();
+		});
 		UILayer.DebugDisplay(() => $"mousepos: {regionDisplay.GetLocalMousePosition()}");
 		UILayer.DebugDisplay(() => $"trouble: {GameMan.Singleton.Game.TroubleMaker.DelayUntilPlayerAction:F2}");
+		UILayer.DebugDisplay(() => "Last Action Info:\n" + GameMan.Singleton.Game.GetRegionAI(region).profiling.LastActionInfo());
+		UILayer.DebugDisplay(() => "Last Decision Info:\n" + GameMan.Singleton.Game.GetRegionAI(region).profiling.LastDecisionInfo());
 	}
 
 	public override void _UnhandledKeyInput(InputEvent @event) {

@@ -35,7 +35,7 @@ public static class Registry {
 
 	public static class ResourcesS {
 
-		public static readonly IResourceType Water = Resources.GetAsset("water");
+		//public static readonly IResourceType Water = Resources.GetAsset("water");
 		public static readonly IResourceType Logs = Resources.GetAsset("logs");
 		public static readonly IResourceType Lumber = Resources.GetAsset("lumber");
 		public static readonly IResourceType Rocks = Resources.GetAsset("rock");
@@ -46,7 +46,7 @@ public static class Registry {
 		public static readonly IResourceType Fish = Resources.GetAsset("fish");
 		public static readonly IResourceType Grain = Resources.GetAsset("grain");
 		public static readonly IResourceType Flour = Resources.GetAsset("flour");
-		public static readonly IResourceType Dough = Resources.GetAsset("dough");
+		//public static readonly IResourceType Dough = Resources.GetAsset("dough");
 		public static readonly IResourceType Bread = Resources.GetAsset("bread");
 		public static readonly IResourceType Furniture = Resources.GetAsset("furniture");
 
@@ -89,7 +89,7 @@ public static class Registry {
 		class HousingBuildingsClass : IAssetGroup<IBuildingType, int> {
 
 			readonly Dictionary<IBuildingType, int> groupValues = new();
-			public IDictionary<IBuildingType, int> GroupValues => throw new NotImplementedException();
+			public IDictionary<IBuildingType, int> GroupValues => groupValues;
 
 
 			public void Add(IBuildingType building) {
@@ -322,7 +322,7 @@ public static class ProductionNet {
 				var production = new ProductionNode(consumed, retrieved);
 				productions.Add(production);
 			}
-			var buildingmaterials = building.GetResourceRequirements().Select(r => (Resources[r.Type], r.Amount));
+			var buildingmaterials = building.GetConstructionResources().Select(r => (Resources[r.Type], r.Amount));
 			var node = new BuildingNode(
 				building,
 				productions.ToArray(),

@@ -120,7 +120,7 @@ public class DemolishMapObjectJob : MapObjectJob {
 	public override void Deinitialise(Faction ctxFaction) {
 		if (timeSpent >= timeTaken) {
 			if (Object is Building b) {
-				var returns = b.Type.GetResourceRequirements().Select(r => r.Divide(2)).ToArray();
+				var returns = b.Type.GetConstructionResources().Select(r => r.Divide(2)).ToArray();
 				RefundRequirements(returns, ctxFaction.Resources);
 				ctxFaction.RemoveBuilding(GlobalPosition - ctxFaction.Region.WorldPosition);
 			} else {

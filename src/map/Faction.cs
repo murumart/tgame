@@ -27,7 +27,7 @@ public class Faction : IEntity {
 	public event Action<Problem> ProblemAddedEvent;
 	public event Action<Problem> ProblemUnsolvedEvent;
 	public event Action<Problem> ProblemSolvedEvent;
-	public event Action<TradeOffer> MyTradeOfferAcceptedEvent;
+	public event Action<TradeOffer, int> MyTradeOfferAcceptedEvent;
 	public event Action<TradeOffer> MyTradeOfferRejectedEvent;
 
 	public Region Region { get; init; }
@@ -222,7 +222,7 @@ public class Faction : IEntity {
 		Debug.Assert(CanPlaceBuilding(type, position), "Cannot place the building for whatever reason");
 		var building = CreateBuilding(type, position);
 		if (type.TakesTimeToConstruct() || type.HasResourceRequirements()) {
-			var job = new ConstructBuildingJob(type.GetResourceRequirements().ToList());
+			var job = new ConstructBuildingJob(type.GetConstructionResources().ToList());
 			AddMapObjectJob(job, building);
 		}
 		return building;
@@ -249,7 +249,7 @@ public class Faction : IEntity {
 	}
 
 	public bool HasBuildingMaterials(IBuildingType type) {
-		return resourceStorage.HasEnough(type.GetResourceRequirements());
+		return resourceStorage.HasEnough(type.GetConstructionResources());
 	}
 
 	void OnBuildingConstructed(Building building) {
@@ -486,17 +486,17 @@ public class Faction : IEntity {
 		Debug.Assert(gottenTradeOffers[from].Contains(offer), "We didn't actually get this trade offer.. " + offer.History);
 		offer.Log($"{this} accepting offer from {from}");
 		offer.MakeTrade(units);
-		from.MyTradeOfferWasAccepted(this, offer);
+		from.MyTradeOfferWasAccepted(this, offer, units);
 		if (!offer.IsValid) gottenTradeOffers[from].Remove(offer); // depleted
 		if (!offer.IsValid) offer.Log($"depleted so removed from gotten");
 	}
 
-	void MyTradeOfferWasAccepted(Faction by, TradeOffer offer) {
+	void MyTradeOfferWasAccepted(Faction by, TradeOffer offer, int units) {
 		Debug.Assert(sentTradeOffers.ContainsKey(by), $"We didn't senda get a trade offer to {by}" + offer.History);
 		Debug.Assert(sentTradeOffers[by].Contains(offer), "We didn't actually send this trade offer.." + offer.History);
 		if (!offer.IsValid) sentTradeOffers[by].Remove(offer); // depleted
 		if (!offer.IsValid) offer.Log($"depleted so removed from sent");
-		MyTradeOfferAcceptedEvent?.Invoke(offer);
+		MyTradeOfferAcceptedEvent?.Invoke(offer, units);
 	}
 
 	public void RejectTradeOffer(Faction from, TradeOffer offer) {

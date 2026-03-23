@@ -62,6 +62,8 @@ But if you gather all the food, there'll be no more food left !? What !? We need
 
 Kui süüa vähe ja vähe toidutegemistööde peal inimesi, peaks inimesi jõuga ehk töölt maha võtma nii et ta saaks uuesti assignida. Veidi hack aga vaata, äkki töötab.
 
+Tahaks, et AI otsiks toitu, kui seda on vähe. Toidukasutuse põhjal peaks ta vaatama, et oleks olemas mitme päeva varu. Selleks resourcewant peaks igal toiduesemel suurem olema, kui süüa vähe. 
+
 #### Trades
 
 Decision factorid peaksid olema resource wants ja hõbeda hulk. Iga eseme kohta nii siis trade offer. Saatmine suvalisele factionile (vb mängija omale suurema tõenäosusega, et rohkem mäng oleks?)
@@ -69,6 +71,8 @@ Decision factorid peaksid olema resource wants ja hõbeda hulk. Iga eseme kohta 
 #### Crafting chains
 
 Seda võiks teha automaatselt. Kui resourceewant mingil lõppproduktil on kõrgem, siis alamproduktide resourcewant peaks kasvama kui seda lõppprodukti pole olemas. Gene crafting chain (ilmselt puu läbimine rekursiivselt lihtsalt), salvesta runi ajaks mällu (struktuur vist puu kus igal sõlmel viidad vanemale (lol scene tree)), kasuta seda, et leida alamaid elemente. Seo approval ratinguga need ülemate asjade resourcewantid.
+
+Majade ehitamine peaks olema au sees kui pole eluruumi.. Aga utility on 0 kui pole materjale,. Siis majade ehitamiseks vajalikud materjalid peaks olema kõrgme resourcewantiga.
 
 ### Mida teha enne ekspot
 
@@ -97,6 +101,7 @@ Sõjalises mõttes: barracks ehitis, kus töö treenida. Factionil on max milita
 Vaja viise ,kuidas mõjutada naabrite tootmist, närb on näha kui ta ei tee telliseid kuigi sa tahaks väga ehitada pagarikoda!!!
 
 Marketplace töötab imelikult, vist lisab kõik offerid mingilt factionilt korraga? Võiks ükshaaval. Ja kas üldse on vaja marketplace ehitist, et treide teha? Oleks hea kui ehitamise süsteemil oleks kasutusi, aga mugavuse kohapealt pole vist loogiline, et marketplace töötab nii nagu ta töötab. Äkki lihtsalt mingi treidide tabi unlockimiseks see ehitada? Vaja ka mängijale võimalus offereid saata.
+
 
 ### Mida teha enne testimist
 

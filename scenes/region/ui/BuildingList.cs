@@ -49,7 +49,7 @@ public partial class BuildingList : Control {
 		buildConfirmation.Text = "Build " + btype.AssetName;
 		resourceListText.Text = btype.GetDescription() + '\n';
 		var resources = ui.GetResources();
-		foreach (var r in btype.GetResourceRequirements()) {
+		foreach (var r in btype.GetConstructionResources()) {
 			var str = $"{r.Type.AssetName} x {r.Amount}";
 			if (!resources.HasEnough(r)) {
 				str = "[color=red]" + str + "[/color]";

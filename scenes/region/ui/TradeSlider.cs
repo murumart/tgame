@@ -37,8 +37,13 @@ namespace scenes.region.ui {
 			} else {
 				UnitsSlider.Hide();
 				ConfirmButton.Hide();
-				GiveLabel.Text = tradeOffer.OffererGivesRecipientSilver ? $"{tradeOffer.RecepientRequiredResourcesUnit.Type.AssetName} x {tradeOffer.RecepientRequiredResourcesUnit.Amount}" : tradeOffer.RecipientPaidSilverUnit + " silver";
-				GetLabel.Text = tradeOffer.OffererGivesRecipientSilver ? tradeOffer.OffererPaidSilverUnit + " silver" : $"{tradeOffer.OffererSoldResourcesUnit.Type.AssetName} x {tradeOffer.OffererSoldResourcesUnit.Amount}";
+				GiveLabel.Text = tradeOffer.OffererGivesRecipientSilver
+					? $"{tradeOffer.RecepientRequiredResourcesUnit.Type.AssetName} x {tradeOffer.RecepientRequiredResourcesUnit.Amount}"
+					: tradeOffer.RecipientPaidSilverUnit + " silver";
+				GetLabel.Text = tradeOffer.OffererGivesRecipientSilver
+					? tradeOffer.OffererPaidSilverUnit + " silver"
+					: $"{tradeOffer.OffererSoldResourcesUnit.Type.AssetName} x {tradeOffer.OffererSoldResourcesUnit.Amount}";
+				GetLabel.Text += $" ({tradeOffer.StoredUnits} units stored)";
 			}
 			RejectButton.Pressed += OnRejected;
 			ConfirmButton.Disabled = true;

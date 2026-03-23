@@ -92,7 +92,7 @@ public partial class Building {
 		public Special GetSpecial();
 
 		int GetPopulationCapacity();
-		ResourceBundle[] GetResourceRequirements();
+		ResourceBundle[] GetConstructionResources();
 		float GetHoursToConstruct();
 		string GetDescription();
 		int GetBuiltLimit();
@@ -102,7 +102,7 @@ public partial class Building {
 		}
 
 		bool HasResourceRequirements() {
-			var r = GetResourceRequirements();
+			var r = GetConstructionResources();
 			return r != null && r.Length > 0;
 		}
 

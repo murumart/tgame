@@ -21,7 +21,7 @@ namespace scenes.region.ui {
 		[Export] Container SentOffersParent;
 		[Export] OptionButton GiveResourceList;
 		[Export] OptionButton TakeResourceList;
-		[Export] Slider GiveAmountSlider;
+		[Export] SpinBox GiveAmountBox;
 		[Export] SpinBox TakeAmountBox;
 		[Export] Button MakeOfferButton;
 
@@ -37,7 +37,7 @@ namespace scenes.region.ui {
 		public override void _Ready() {
 			GiveResourceList.ItemSelected += OnGiveResourceSelected;
 			TakeResourceList.ItemSelected += OnTakeResourceSelected;
-			GiveAmountSlider.ValueChanged += OnGiveAmountValueChanged;
+			GiveAmountBox.ValueChanged += OnGiveAmountValueChanged;
 			TakeAmountBox.ValueChanged += OnTakeAmountValueChanged;
 			MakeOfferButton.Pressed += OnMakeOfferPressed;
 
@@ -121,7 +121,7 @@ namespace scenes.region.ui {
 
 		void UpdateTofferDesc() {
 			tofferDesc.OfferSilver = GiveResourceList.Selected == 0;
-			tofferDesc.SilverAmount = tofferDesc.OfferSilver ? (int)GiveAmountSlider.Value : (int)TakeAmountBox.Value;
+			tofferDesc.SilverAmount = tofferDesc.OfferSilver ? (int)GiveAmountBox.Value : (int)TakeAmountBox.Value;
 			if (tofferDesc.OfferSilver) {
 				if (TakeResourceList.Selected == -1) tofferDesc.Resources = new(new resources.game.resource_types.ResourceType(), 0);
 				else tofferDesc.Resources = new(
@@ -133,7 +133,7 @@ namespace scenes.region.ui {
 				if (GiveResourceList.Selected == -1) tofferDesc.Resources = new(new resources.game.resource_types.ResourceType(), 0);
 				else tofferDesc.Resources = new(
 					Registry.Resources.GetAsset(GiveResourceList.GetItemMetadata(GiveResourceList.Selected).AsString()),
-					(int)GiveAmountSlider.Value
+					(int)GiveAmountBox.Value
 			   );
 				SendAmountLabel.Text = $"{tofferDesc.Resources.Amount}/{me.Resources.GetCount(tofferDesc.Resources.Type)}";
 			}
@@ -153,15 +153,15 @@ namespace scenes.region.ui {
 				if (!tofferDesc.OfferSilver) {
 					TakeResourceList.Select(-1);
 				}
-				GiveAmountSlider.MaxValue = me.Silver;
-				GiveAmountSlider.Value = Mathf.Min(GiveAmountSlider.Value, GiveAmountSlider.MaxValue);
+				GiveAmountBox.MaxValue = me.Silver;
+				GiveAmountBox.Value = Mathf.Min(GiveAmountBox.Value, GiveAmountBox.MaxValue);
 				UpdateTofferDesc();
 				return;
 			}
 			TakeResourceList.Select(0);
 			UpdateTofferDesc();
-			GiveAmountSlider.MaxValue = me.Resources.GetCount(tofferDesc.Resources.Type);
-			GiveAmountSlider.Value = Mathf.Min(GiveAmountSlider.Value, GiveAmountSlider.MaxValue);
+			GiveAmountBox.MaxValue = me.Resources.GetCount(tofferDesc.Resources.Type);
+			GiveAmountBox.Value = Mathf.Min(GiveAmountBox.Value, GiveAmountBox.MaxValue);
 		}
 
 		void OnTakeResourceSelected(long which) {
@@ -174,8 +174,8 @@ namespace scenes.region.ui {
 			}
 			GiveResourceList.Select(0);
 			UpdateTofferDesc();
-			GiveAmountSlider.MaxValue = me.Silver;
-			GiveAmountSlider.Value = Mathf.Min(GiveAmountSlider.Value, GiveAmountSlider.MaxValue);
+			GiveAmountBox.MaxValue = me.Silver;
+			GiveAmountBox.Value = Mathf.Min(GiveAmountBox.Value, GiveAmountBox.MaxValue);
 		}
 
 		void OnGiveAmountValueChanged(double howmuch) {
@@ -204,8 +204,6 @@ namespace scenes.region.ui {
 			public Faction Offerer = offerer;
 			public Faction Recipient = recipient;
 
-			public int StoredUnits = 1;
-
 			public bool OfferSilver;
 
 			public int SilverAmount = 1;
@@ -214,9 +212,9 @@ namespace scenes.region.ui {
 
 			public TradeOffer GetOffer() {
 				if (OfferSilver) {
-					return new(Offerer, SilverAmount, Recipient, Resources, StoredUnits);
+					return new(Offerer, SilverAmount, Recipient, Resources, true);
 				} else {
-					return new(Offerer, Resources, Recipient, SilverAmount, StoredUnits);
+					return new(Offerer, Resources, Recipient, SilverAmount, true);
 				}
 			}
 

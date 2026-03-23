@@ -48,7 +48,7 @@ namespace resources.game.building_types {
 			return PopulationCapacity;
 		}
 
-		public ResourceBundle[] GetResourceRequirements() {
+		public ResourceBundle[] GetConstructionResources() {
 			var arr = new ResourceBundle[ResourceCosts.Count];
 			int i = 0;
 			foreach (var pair in ResourceCosts) {
