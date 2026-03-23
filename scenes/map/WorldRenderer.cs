@@ -11,6 +11,7 @@ public partial class WorldRenderer : Node {
 	[Export] Gradient temperatureGradient;
 	[Export] Gradient seaWindGradient;
 	[Export] Gradient humidityGradient;
+	[Export] Gradient drainageGradient;
 
 	[System.Flags]
 	public enum DrawLayers {
@@ -18,8 +19,9 @@ public partial class WorldRenderer : Node {
 		Elevation   = 2,
 		Temperature = 4,
 		Humidity    = 8,
-		SeaWind     = 16,
-		Regions     = 32,
+		Drainage    = 16,
+		SeaWind     = 32,
+		Regions     = 64,
 	}
 
 	public World World;
@@ -89,6 +91,15 @@ public partial class WorldRenderer : Node {
 			for (int x = 0; x < world.Width; x++) {
 				for (int y = 0; y < world.Height; y++) {
 					Color color = humidityGradient.Sample(world.GetHumidity(x, y)) * worldImage.GetPixel(x, y);
+					worldImage.SetPixel(x, y, color);
+				}
+
+			}
+		}
+		if ((DrawMode & DrawLayers.Drainage) != 0) {
+			for (int x = 0; x < world.Width; x++) {
+				for (int y = 0; y < world.Height; y++) {
+					Color color = drainageGradient.Sample(world.GetDrainage(x, y)) * worldImage.GetPixel(x, y);
 					worldImage.SetPixel(x, y, color);
 				}
 

@@ -1,0 +1,9 @@
+[gd_resource type="FastNoiseLite" format=3 uid="uid://cvtfra0pk08c8"]
+
+[resource]
+frequency = 0.007
+offset = Vector3(145.45, 0, 0)
+fractal_octaves = 2
+fractal_lacunarity = 2.45
+fractal_gain = -0.465
+fractal_weighted_strength = 0.68

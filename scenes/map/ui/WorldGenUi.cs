@@ -117,7 +117,8 @@ public partial class WorldGenUi : MarginContainer {
 		if (drawLayerButtons[1].ButtonPressed) a |= WorldRenderer.DrawLayers.Elevation;
 		if (drawLayerButtons[2].ButtonPressed) a |= WorldRenderer.DrawLayers.Temperature;
 		if (drawLayerButtons[3].ButtonPressed) a |= WorldRenderer.DrawLayers.Humidity;
-		if (drawLayerButtons[4].ButtonPressed) a |= WorldRenderer.DrawLayers.SeaWind;
+		if (drawLayerButtons[4].ButtonPressed) a |= WorldRenderer.DrawLayers.Drainage;
+		if (drawLayerButtons[5].ButtonPressed) a |= WorldRenderer.DrawLayers.SeaWind;
 		worldRenderer.DrawMode = a;
 	}
 

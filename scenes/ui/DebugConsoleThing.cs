@@ -101,4 +101,12 @@ public partial class DebugConsoleThing : ColorRect {
 		}
 	}
 
+	void _cmd_seeregions(string[] args) {
+		var world = GameMan.Singleton.Game?.Map?.World;
+		if (world is null) {
+			Output("Need to have a generated game, map and world");
+		}
+		GetTree().ChangeSceneToFile("res://scenes/region/debug_all_regions.tscn");
+	}
+
 }

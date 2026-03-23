@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="ResourceSiteType" format=3 uid="uid://6yhyfqkyjatx"]
+
+[ext_resource type="Script" uid="uid://cbiuqlrd8yyxx" path="res://resources/visual/Verb.cs" id="1_45xy7"]
+[ext_resource type="Resource" uid="uid://diiapemabucoq" path="res://resources/game/resource_types/iron_ore.tres" id="1_tjahw"]
+[ext_resource type="Script" uid="uid://bnfatrmjew0vy" path="res://resources/game/resource_site_types/ResourceWell.cs" id="3_uhbyu"]
+[ext_resource type="Script" uid="uid://ct2a6sqe1m7mx" path="res://resources/game/resource_site_types/ResourceSiteType.cs" id="4_o20b8"]
+
+[sub_resource type="Resource" id="Resource_ewtps"]
+script = ExtResource("1_45xy7")
+Infinitive = "gather"
+Progressive = "gathering"
+metadata/_custom_type_script = "uid://cbiuqlrd8yyxx"
+
+[sub_resource type="Resource" id="Resource_45xy7"]
+script = ExtResource("3_uhbyu")
+resourceType = ExtResource("1_tjahw")
+minutesPerBunch = 240
+initialBunches = 90
+Production = SubResource("Resource_ewtps")
+metadata/_custom_type_script = "uid://bnfatrmjew0vy"
+
+[resource]
+script = ExtResource("4_o20b8")
+name = "swamp iron pit"
+mineResources = Array[Object]([SubResource("Resource_45xy7")])
+ScenePath = "uid://86f5k8lmus4o"
+metadata/_custom_type_script = "uid://ct2a6sqe1m7mx"

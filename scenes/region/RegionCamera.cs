@@ -42,7 +42,7 @@ namespace scenes.region {
 			Cursor.Visible = !dragging;
 			var tilepos = regionDisplay.GetMouseHoveredTilePos();
 			debugCursor.GlobalPosition = Tilemaps.TilePosToWorldPos(tilepos);
-			Cursor.GlobalPosition = Tilemaps.TilePosToWorldPos(tilepos) + Vector2.Up * Tilemaps.TileElevationVerticalOffset(GameMan.Singleton.Game.PlayRegion.WorldPosition + tilepos, GameMan.Singleton.Game.Map.World);
+			Cursor.GlobalPosition = Tilemaps.TilePosToWorldPos(tilepos) + Vector2.Up * Tilemaps.TileElevationVerticalOffset(regionDisplay.Region.WorldPosition + tilepos, GameMan.Singleton.Game.Map.World);
 			if (tilepos != lastTilePos) {
 				lastTilePos = tilepos;
 				ui.OnTileHighlighted(tilepos, Region);

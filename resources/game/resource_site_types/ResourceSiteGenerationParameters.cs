@@ -14,6 +14,8 @@ namespace resources.game {
 		[Export] public float MaxTemperature = 1f;
 		[Export] public float MinHumidity = 0f;
 		[Export] public float MaxHumidity = 1f;
+		[Export] public float MinDrainage = 0f;
+		[Export] public float MaxDrainage = 1f;
 		[Export] public float Rarity = 1f;
 
 

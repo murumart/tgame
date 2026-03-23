@@ -38,6 +38,7 @@ public class World {
 	public readonly Vector2I SeaWindDirection;
 	readonly byte[] Temperature;
 	readonly byte[] Humidity;
+	readonly byte[] Drainage;
 
 
 	public World(int width, int height, uint seed) {
@@ -52,6 +53,7 @@ public class World {
 		SeaWind = new byte[Width * Height];
 		for (int i = 0; i < Width * Height; i++) SeaWind[i] = byte.MaxValue;
 		Humidity = new byte[Width * Height];
+		Drainage = new byte[Width * Height];
 		SeaWindDirection = new((int)(seed / 2 % 2 * 2) - 1, (int)(seed % 2 * 2) - 1); // -1 or 1
 	}
 
@@ -108,6 +110,14 @@ public class World {
 
 	public float GetHumidity(int x, int y) {
 		return GetArrFloat(x, y, Humidity, 1.0f);
+	}
+
+	public void SetDrainage(int x, int y, float drain) {
+		SetArrFloat(x, y, drain, Drainage);
+	}
+
+	public float GetDrainage(int x, int y) {
+		return GetArrFloat(x, y, Drainage, 1.0f);
 	}
 
 }

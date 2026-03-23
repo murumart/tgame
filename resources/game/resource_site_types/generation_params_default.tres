@@ -13,12 +13,15 @@
 [ext_resource type="Script" uid="uid://c71cftqfligu8" path="res://resources/game/resource_site_types/ResourceSiteGenerationParametersCollection.cs" id="11_gkfg7"]
 [ext_resource type="Resource" uid="uid://o7f1lxtfp3n" path="res://resources/game/resource_site_types/cacti.tres" id="11_omvkl"]
 [ext_resource type="Resource" uid="uid://bnnlh8qs78mjv" path="res://resources/game/resource_site_types/hoodoo.tres" id="12_72mdt"]
+[ext_resource type="Resource" uid="uid://ebu4b0hjg32i" path="res://resources/game/resource_site_types/swamp_willows.tres" id="13_gkmfb"]
+[ext_resource type="Resource" uid="uid://6yhyfqkyjatx" path="res://resources/game/resource_site_types/swamp_iron_pit.tres" id="14_0lakn"]
 
 [sub_resource type="Resource" id="Resource_getmw"]
 script = ExtResource("2_omvkl")
 Target = ExtResource("1_2etkj")
 MinElevation = 0.01
 MinHumidity = 0.38
+MaxDrainage = 0.5
 Rarity = 0.1
 metadata/_custom_type_script = "uid://dpr7b2iecx6gm"
 
@@ -43,12 +46,14 @@ metadata/_custom_type_script = "uid://dpr7b2iecx6gm"
 script = ExtResource("2_omvkl")
 Target = ExtResource("5_0lakn")
 MinElevation = 0.02
-MaxElevation = 0.42
+MaxElevation = 0.52
 MinTemperature = 0.035
-MaxTemperature = 0.4
-MinHumidity = 0.235
-MaxHumidity = 0.505
-Rarity = 1.295
+MaxTemperature = 0.57
+MinHumidity = 0.215
+MaxHumidity = 0.88
+MinDrainage = 0.2
+MaxDrainage = 0.7
+Rarity = 1.3
 metadata/_custom_type_script = "uid://dpr7b2iecx6gm"
 
 [sub_resource type="Resource" id="Resource_nugjq"]
@@ -60,17 +65,21 @@ MinTemperature = -0.29
 MaxTemperature = 0.155
 MinHumidity = 0.195
 MaxHumidity = 0.505
-Rarity = 1.595
+MinDrainage = 0.32
+MaxDrainage = 0.845
+Rarity = 2.0
 metadata/_custom_type_script = "uid://dpr7b2iecx6gm"
 
 [sub_resource type="Resource" id="Resource_a1kp6"]
 script = ExtResource("2_omvkl")
 Target = ExtResource("7_tkiqb")
 MinElevation = 0.02
-MaxElevation = 0.485
+MaxElevation = 0.5
 MinTemperature = 0.45
 MinHumidity = 0.145
-MaxHumidity = 0.395
+MaxHumidity = 0.4
+MinDrainage = 0.245
+MaxDrainage = 0.905
 Rarity = 2.0
 metadata/_custom_type_script = "uid://dpr7b2iecx6gm"
 
@@ -81,6 +90,8 @@ MinElevation = 0.02
 MaxElevation = 0.8
 MinTemperature = 0.45
 MinHumidity = 0.45
+MinDrainage = 0.255
+MaxDrainage = 0.545
 Rarity = 2.9
 metadata/_custom_type_script = "uid://dpr7b2iecx6gm"
 
@@ -111,6 +122,7 @@ MaxElevation = 0.9
 MinTemperature = 0.2
 MinHumidity = -1.0
 MaxHumidity = 0.05
+MinDrainage = 0.45
 Rarity = 0.66
 metadata/_custom_type_script = "uid://dpr7b2iecx6gm"
 
@@ -121,9 +133,31 @@ MinElevation = 0.12
 MinTemperature = 0.5
 MinHumidity = -1.0
 MaxHumidity = 0.05
+MinDrainage = 0.5
+metadata/_custom_type_script = "uid://dpr7b2iecx6gm"
+
+[sub_resource type="Resource" id="Resource_0lakn"]
+script = ExtResource("2_omvkl")
+Target = ExtResource("13_gkmfb")
+MinElevation = 0.001
+MaxElevation = 0.385
+MinTemperature = 0.045
+MaxTemperature = 0.7
+MinHumidity = 0.25
+MaxDrainage = 0.3
+Rarity = 1.5
+metadata/_custom_type_script = "uid://dpr7b2iecx6gm"
+
+[sub_resource type="Resource" id="Resource_uw6o8"]
+script = ExtResource("2_omvkl")
+Target = ExtResource("14_0lakn")
+MinElevation = 0.001
+MaxElevation = 0.35
+MinHumidity = 0.25
+MaxDrainage = 0.3
 metadata/_custom_type_script = "uid://dpr7b2iecx6gm"
 
 [resource]
 script = ExtResource("11_gkfg7")
-parameters = Array[Object]([SubResource("Resource_getmw"), SubResource("Resource_dtgda"), SubResource("Resource_pnmcl"), SubResource("Resource_iffmc"), SubResource("Resource_nugjq"), SubResource("Resource_a1kp6"), SubResource("Resource_aa3pw"), SubResource("Resource_f71yy"), SubResource("Resource_6ybvo"), SubResource("Resource_72mdt"), SubResource("Resource_gkmfb")])
+parameters = Array[Object]([SubResource("Resource_getmw"), SubResource("Resource_dtgda"), SubResource("Resource_pnmcl"), SubResource("Resource_iffmc"), SubResource("Resource_nugjq"), SubResource("Resource_a1kp6"), SubResource("Resource_aa3pw"), SubResource("Resource_f71yy"), SubResource("Resource_6ybvo"), SubResource("Resource_72mdt"), SubResource("Resource_gkmfb"), SubResource("Resource_0lakn"), SubResource("Resource_uw6o8")])
 metadata/_custom_type_script = "uid://c71cftqfligu8"

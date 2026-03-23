@@ -20,6 +20,8 @@ namespace scenes.region.resource_mines {
 			{"desert island", GD.Load<Texture2D>("res://scenes/region/resource_mines/desert_island.png")},
 			{"cacti", GD.Load<Texture2D>("res://scenes/region/resource_mines/cacti.png")},
 			{"hoodoo", GD.Load<Texture2D>("res://scenes/region/resource_mines/hoodoo.png")},
+			{"swamp iron pit", GD.Load<Texture2D>("res://scenes/region/resource_mines/swamp_iron_pit.png")},
+			{"swamp willows", GD.Load<Texture2D>("res://scenes/region/resource_mines/swamp_willows.png")},
 		};
 
 

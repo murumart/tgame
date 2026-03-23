@@ -32,6 +32,7 @@ namespace scenes.map {
 		[Export] FastNoiseLite continentNoise;
 		[Export] FastNoiseLite temperatureNoise;
 		[Export] FastNoiseLite humidityNoise;
+		[Export] FastNoiseLite drainageNoise;
 		[Export] FastNoiseLite seawindGainNoise;
 
 		readonly struct NoiseHomeParams(FastNoiseLite noise, float frequency, float frac) {
@@ -52,6 +53,7 @@ namespace scenes.map {
 		[Export] Curve seawindHumidityReductionCurve;
 		[Export] Curve elevationHumidityAdditionCurve;
 		[Export] Curve humidityCurve;
+		[Export] Curve drainageCurve;
 		[Export] Curve temperaturePolarEquatorCurve;
 		[Export] Curve elevationTemperatureReductionCurve;
 		[Export] float temperatureNoiseCoef;
@@ -90,6 +92,7 @@ namespace scenes.map {
 			continentNoise.Seed = (int)rng.Randi();
 			temperatureNoise.Seed = (int)rng.Randi();
 			humidityNoise.Seed = (int)rng.Randi();
+			drainageNoise.Seed = (int)rng.Randi();
 			seawindGainNoise.Seed = (int)rng.Randi();
 
 			var centre = new Vector2(world.Width / 2, world.Height / 2);
@@ -174,6 +177,10 @@ namespace scenes.map {
 					humiditySample -= seawindHumidityReductionCurve.SampleBaked(seawind);
 					humiditySample = Mathf.Clamp(humiditySample, 0.0f, 1.0f);
 					world.SetHumidity(x, y, humiditySample);
+
+					float drainageSample = drainageCurve.SampleBaked(drainageNoise.GetNoise2D(x, y));
+					drainageSample = Mathf.Clamp(drainageSample + continentSample * 0.01f, 0f, 1f);
+					world.SetDrainage(x, y, drainageSample);
 				}
 			}
 			await Task.Delay(1);
@@ -182,16 +189,21 @@ namespace scenes.map {
 				for (int y = 0; y < world.Height; y++) {
 					var ele = world.GetElevation(x, y);
 					var humi = world.GetHumidity(x, y);
+					var drain = world.GetDrainage(x, y);
 					var temp = world.GetTemperature(x, y);
 					var tile = GroundTileType.Sea;
 					if (ele >= 0) {
 						tile = GroundTileType.HasLand;
-						if (ele <= 0.012f || humi < 0.02f || temp > 0.9f) tile |= GroundTileType.HasSand;
+						if (ele <= 0.012f || humi < 0.02f || temp > 0.9f || drain > 0.95f) tile |= GroundTileType.HasSand;
 						else if (humi > 0.15f) {
 							if (temp < 0) tile |= GroundTileType.HasSnow;
 							else {
 								tile |= GroundTileType.HasVeg;
-								if (temp > 0.55 && humi < 0.45) tile |= GroundTileType.HasSand;
+								if (temp > 0.55f && humi < 0.45f || drain > 0.8f) tile |= GroundTileType.HasSand;
+							}
+
+							if (humi > 0.45f && drain < 0.2f) {
+								tile &= (~GroundTileType.HasLand);
 							}
 						}
 					}
@@ -232,16 +244,19 @@ namespace scenes.map {
 					var ele = world.GetElevation(wpos.X, wpos.Y);
 					var humi = world.GetHumidity(wpos.X, wpos.Y);
 					var temp = world.GetTemperature(wpos.X, wpos.Y);
+					var drain = world.GetDrainage(wpos.X, wpos.Y);
 					ResourceSiteGenerationParameters siteType = resourceSiteGenerationParameters[rng.RandiRange(0, resourceSiteGenerationParameters.Count - 1)];
 					if (siteType == null) continue;
 					Debug.Assert(Registry.ResourceSites.GetAsset((siteType.Target as IAssetType).GetIdString()) is not null, "Resource site type not registred");
 					if (ele < siteType.MinElevation || ele > siteType.MaxElevation) continue;
 					if (humi < siteType.MinHumidity || humi > siteType.MaxHumidity) continue;
 					if (temp < siteType.MinTemperature || temp > siteType.MaxTemperature) continue;
+					if (drain < siteType.MinDrainage || drain > siteType.MaxDrainage) continue;
 					var elesfinal = Mathf.Clamp(1f - ResourceSiteGenerationParameters.ParamDistance(siteType.MinElevation, siteType.MaxElevation, ele), 0f, 1f);
 					var humisfinal = Mathf.Clamp(1f - ResourceSiteGenerationParameters.ParamDistance(siteType.MinHumidity, siteType.MaxHumidity, humi), 0f, 1f);
 					var tempsfinal = Mathf.Clamp(1f - ResourceSiteGenerationParameters.ParamDistance(siteType.MinTemperature, siteType.MaxTemperature, temp), 0f, 1f);
-					if (rng.Randf() > elesfinal * humisfinal * tempsfinal * siteType.Rarity) continue;
+					var drainsfinal = Mathf.Clamp(1f - ResourceSiteGenerationParameters.ParamDistance(siteType.MinDrainage, siteType.MaxDrainage, drain), 0f, 1f);
+					if (rng.Randf() > elesfinal * humisfinal * tempsfinal * drainsfinal * siteType.Rarity) continue;
 					region.CreateResourceSiteAndPlace(siteType.Target, pos);
 				}
 			}

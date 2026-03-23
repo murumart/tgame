@@ -26,6 +26,7 @@ public partial class RegionDisplay : Node2D {
 	readonly Queue<Problem> problemsToUndisplay = new();
 
 	public int Lod { get; private set; }
+	public Region Region { get => region; }
 
 
 	// setup
@@ -329,6 +330,8 @@ public partial class RegionDisplay : Node2D {
 
 	public Vector2I GetTilePosFromLocalPos(Vector2 localPos) {
 		var tilepos = LocalToTile(localPos);
+		Debug.Assert(region is not null, "Region shouldnät be null");
+		Debug.Assert(GameMan.Singleton.Game?.Map?.World is not null, "World shouldnät be null");
 		localPos.Y += Tilemaps.TileElevationVerticalOffset(region.WorldPosition + tilepos, GameMan.Singleton.Game.Map.World);
 		tilepos = LocalToTile(localPos);
 		return tilepos;

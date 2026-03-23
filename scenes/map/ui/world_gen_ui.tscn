@@ -13,6 +13,7 @@
 [ext_resource type="FastNoiseLite" uid="uid://dubsuvs1ouru5" path="res://scenes/map/noises/humidity.tres" id="6_6lrtn"]
 [ext_resource type="Gradient" uid="uid://w5sdtmt8u44c" path="res://resources/visual/map/humidity_gradient.tres" id="6_pnj5n"]
 [ext_resource type="FastNoiseLite" uid="uid://bfyvnr33jlpag" path="res://scenes/map/noises/seawind_gain.tres" id="7_muf1k"]
+[ext_resource type="FastNoiseLite" uid="uid://cvtfra0pk08c8" path="res://scenes/map/noises/drainage.tres" id="10_1e153"]
 [ext_resource type="Gradient" uid="uid://dqpagals78i71" path="res://resources/visual/map/elevation_gradient.tres" id="20_wddjc"]
 [ext_resource type="Resource" uid="uid://c5xeq2sv362k3" path="res://resources/game/resource_site_types/generation_params_default.tres" id="21_sif2q"]
 [ext_resource type="Script" uid="uid://dvsrcgoginxgl" path="res://scenes/Camera.cs" id="23_wddjc"]
@@ -52,6 +53,11 @@ _limits = [0.0, 1.0, -1.0, 1.0]
 _data = [Vector2(-1, 0), 0.0, 0.0, 0, 0, Vector2(-0.88397783, 0.19189191), 0.39135125, 0.39135125, 0, 0, Vector2(0.625, 0.4117319), 0.1550684, 0.1550684, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
 point_count = 4
 
+[sub_resource type="Curve" id="Curve_3c1s1"]
+_limits = [0.0, 1.0, -1.0, 1.0]
+_data = [Vector2(-0.7897727, 0), 0.0, 0.0, 0, 0, Vector2(-0.38636363, 0.5642459), 0.0, 0.0, 0, 0, Vector2(-0.028409123, 0.5134079), 0.0, 0.0, 0, 0, Vector2(0.72727275, 0.4553073), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 5
+
 [sub_resource type="Curve" id="Curve_ipoxy"]
 _limits = [-1.0, 1.0, 0.0, 1.0]
 _data = [Vector2(0, 0.8748331), 0.0, -1.3312594, 0, 0, Vector2(1, -0.515913), 0.0, 0.0, 0, 0]
@@ -70,6 +76,9 @@ point_count = 2
 [sub_resource type="Gradient" id="Gradient_htr2q"]
 offsets = PackedFloat32Array(0.5, 1)
 colors = PackedColorArray(0.32941177, 0.40392157, 0.3372549, 1, 0.94509804, 0.9647059, 0.9411765, 1)
+
+[sub_resource type="Gradient" id="Gradient_3c1s1"]
+colors = PackedColorArray(0.2509804, 0.32156864, 0.4509804, 1, 0.7921569, 0.9019608, 0.8509804, 1)
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_pdks8"]
 blend_mode = 3
@@ -99,7 +108,7 @@ worldHeightSpinbox = NodePath("HBoxContainer/PanelContainer/MarginContainer/VBox
 noiseScaleSpinbox = NodePath("HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/NoiseScale")
 depthSpinbox = NodePath("HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/BaseDepth")
 backButton = NodePath("HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/BackButton")
-drawLayerButtons = [NodePath("HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle6/HBoxContainer/Ground"), NodePath("HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle/HBoxContainer/Elevation"), NodePath("HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle2/HBoxContainer/Temperature"), NodePath("HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle3/HBoxContainer/Humidity"), NodePath("HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle4/HBoxContainer/SeaWind")]
+drawLayerButtons = [NodePath("HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle6/HBoxContainer/Ground"), NodePath("HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle/HBoxContainer/Elevation"), NodePath("HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle2/HBoxContainer/Temperature"), NodePath("HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle3/HBoxContainer/Humidity"), NodePath("HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle7/HBoxContainer/Drainage"), NodePath("HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle4/HBoxContainer/SeaWind")]
 regionDisplayCheck = NodePath("HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle5/HBoxContainer/Regions")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1929638013]
@@ -332,6 +341,25 @@ size_flags_horizontal = 0
 focus_mode = 0
 theme_override_font_sizes/font_size = 8
 
+[node name="Toggle7" type="VBoxContainer" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1127030274]
+layout_mode = 2
+theme_override_constants/separation = 1
+
+[node name="Label" type="Label" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle7" unique_id=361642116]
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
+text = "Drainage"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle7" unique_id=24051011]
+layout_mode = 2
+alignment = 1
+
+[node name="Drainage" type="CheckButton" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle7/HBoxContainer" unique_id=100312341]
+layout_mode = 2
+size_flags_horizontal = 0
+focus_mode = 0
+theme_override_font_sizes/font_size = 8
+
 [node name="Toggle4" type="VBoxContainer" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1220046447]
 layout_mode = 2
 theme_override_constants/separation = 1
@@ -397,7 +425,7 @@ transparent_bg = true
 handle_input_locally = false
 snap_2d_transforms_to_pixel = true
 canvas_item_default_texture_filter = 0
-size = Vector2i(300, 288)
+size = Vector2i(307, 288)
 render_target_update_mode = 4
 
 [node name="WorldMan" type="Node" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/SubViewportContainer/WorldDisplay" unique_id=1551707263 node_paths=PackedStringArray("worldGenerator", "worldRenderer", "worldUI", "camera")]
@@ -413,6 +441,7 @@ script = ExtResource("3_77t5k")
 continentNoise = ExtResource("4_psavt")
 temperatureNoise = ExtResource("5_wddjc")
 humidityNoise = ExtResource("6_6lrtn")
+drainageNoise = ExtResource("10_1e153")
 seawindGainNoise = ExtResource("7_muf1k")
 WorldWidth = 640
 WorldHeight = 420
@@ -425,6 +454,7 @@ seawindTemperatureModCurve = SubResource("Curve_fvhq4")
 seawindHumidityReductionCurve = SubResource("Curve_7cu7j")
 elevationHumidityAdditionCurve = SubResource("Curve_mt0vv")
 humidityCurve = SubResource("Curve_bxlgn")
+drainageCurve = SubResource("Curve_3c1s1")
 temperaturePolarEquatorCurve = SubResource("Curve_ipoxy")
 elevationTemperatureReductionCurve = SubResource("Curve_ts8ib")
 temperatureNoiseCoef = 0.03
@@ -440,6 +470,7 @@ elevationGradient = ExtResource("20_wddjc")
 temperatureGradient = ExtResource("5_itdqw")
 seaWindGradient = SubResource("Gradient_htr2q")
 humidityGradient = ExtResource("6_pnj5n")
+drainageGradient = SubResource("Gradient_3c1s1")
 
 [node name="Ground" type="Sprite2D" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/SubViewportContainer/WorldDisplay/WorldRenderer" unique_id=813748711]
 centered = false
