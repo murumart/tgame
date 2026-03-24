@@ -58,11 +58,34 @@ public partial class WorldRenderer : Node {
 		(sprite.Texture as ImageTexture).Update(image);
 	}
 
+	static void BytesToColors(byte[] a, Color[] b) {
+		for (int i = 0; i < (a.Length >> 2); i += 4) {
+			int bix = i << 2;
+			b[i] = Color.Color8(a[bix + 0], a[bix + 1], a[bix + 2], a[bix + 3]);
+		}
+	}
+
+	static void ColorsToBytes(Color[] a, byte[] b) {
+		for (int i = 0; i < a.Length; i += 1) {
+			int bix = i << 2;
+			Color col = a[i];
+			b[bix + 0] = (byte)col.R8;
+			b[bix + 1] = (byte)col.G8;
+			b[bix + 2] = (byte)col.B8;
+			b[bix + 3] = (byte)col.A8;
+		}
+	}
+
 	public void Draw(World world) {
 		this.World = world;
 		ResetWorldImage();
 
 		var worldImage = GetImage(groundSprite);
+		byte[] imgbytes = worldImage.GetData();
+		int width = worldImage.GetWidth();
+		int height = worldImage.GetHeight();
+		Color[] colors = new Color[width * height];
+		BytesToColors(imgbytes, colors); 
 		if ((DrawMode & DrawLayers.Ground) != 0) {
 			var textureImage = GD.Load<Texture2D>("res://scenes/region/tiles1.png").GetImage();
 			for (int x = 0; x < world.Width; x++) {
@@ -71,18 +94,18 @@ public partial class WorldRenderer : Node {
 					var celltype = GroundCellType.MatchTileTypeToCell(tile);
 					var v = new Vector2I(celltype.AtlasCoords.X * 64 + 32, celltype.AtlasCoords.Y * 48 + 16);
 					Color color = textureImage.GetPixelv(v);
-					worldImage.SetPixel(x, y, color);
+					colors[x + y * width] = color;
 				}
 
 			}
 		} else {
-			worldImage.Fill(Palette.WhiteSmoke);
+			System.Array.Fill<Color>(colors, Palette.WhiteSmoke);
 		}
 		if ((DrawMode & DrawLayers.Temperature) != 0) {
 			for (int x = 0; x < world.Width; x++) {
 				for (int y = 0; y < world.Height; y++) {
-					Color color = temperatureGradient.Sample(world.GetTemperature(x, y) * 0.5f + 0.5f) * worldImage.GetPixel(x, y);
-					worldImage.SetPixel(x, y, color);
+					Color color = temperatureGradient.Sample(world.GetTemperature(x, y) * 0.5f + 0.5f) * colors[x + y * width];
+					colors[x + y * width] = color;
 				}
 
 			}
@@ -90,8 +113,8 @@ public partial class WorldRenderer : Node {
 		if ((DrawMode & DrawLayers.Humidity) != 0) {
 			for (int x = 0; x < world.Width; x++) {
 				for (int y = 0; y < world.Height; y++) {
-					Color color = humidityGradient.Sample(world.GetHumidity(x, y)) * worldImage.GetPixel(x, y);
-					worldImage.SetPixel(x, y, color);
+					Color color = humidityGradient.Sample(world.GetHumidity(x, y)) * colors[x + y * width];
+					colors[x + y * width] = color;
 				}
 
 			}
@@ -99,8 +122,8 @@ public partial class WorldRenderer : Node {
 		if ((DrawMode & DrawLayers.Drainage) != 0) {
 			for (int x = 0; x < world.Width; x++) {
 				for (int y = 0; y < world.Height; y++) {
-					Color color = drainageGradient.Sample(world.GetDrainage(x, y)) * worldImage.GetPixel(x, y);
-					worldImage.SetPixel(x, y, color);
+					Color color = drainageGradient.Sample(world.GetDrainage(x, y)) * colors[x + y * width];
+					colors[x + y * width] = color;
 				}
 
 			}
@@ -108,8 +131,8 @@ public partial class WorldRenderer : Node {
 		if ((DrawMode & DrawLayers.SeaWind) != 0) {
 			for (int x = 0; x < world.Width; x++) {
 				for (int y = 0; y < world.Height; y++) {
-					Color color = seaWindGradient.Sample(world.GetSeaWind(x, y)) * worldImage.GetPixel(x, y);
-					worldImage.SetPixel(x, y, color);
+					Color color = seaWindGradient.Sample(world.GetSeaWind(x, y)) * colors[x + y * width];
+					colors[x + y * width] = color;
 				}
 			}
 		}
@@ -120,16 +143,18 @@ public partial class WorldRenderer : Node {
 					const float ldarkAmount = 0.15f;
 					float ele = world.GetElevation(x, y);
 					float eleAbove = world.GetElevation(x - 1, y + 1);
-					Color color = worldImage.GetPixel(x, y) * elevationGradient.Sample(world.GetElevation(x, y) * 0.5f + 0.5f);
+					Color color = colors[x + y * width] * elevationGradient.Sample(world.GetElevation(x, y) * 0.5f + 0.5f);
 					if (x > 0 && x < world.Width - 1 && y > 0 && y < world.Height - 1) {
 						if (eleAbove - ele > eleColorThreshold) color = color.Darkened(ldarkAmount * (eleAbove - ele) / eleColorThreshold * 0.5f);
 						else if (eleAbove - ele < -eleColorThreshold) color = color.Lightened(ldarkAmount * (eleAbove - ele) / -eleColorThreshold * 0.5f);
 					}
-					worldImage.SetPixel(x, y, color);
+					colors[x + y * width] = color;
 				}
 
 			}
 		}
+		ColorsToBytes(colors, imgbytes);
+		worldImage.SetData(width, height, false, Image.Format.Rgba8, imgbytes);
 		UpdateImage(worldImage, groundSprite);
 	}
 
