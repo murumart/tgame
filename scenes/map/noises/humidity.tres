@@ -1,11 +1,11 @@
 [gd_resource type="FastNoiseLite" format=3 uid="uid://dubsuvs1ouru5"]
 
 [resource]
-frequency = 0.0051
+frequency = 0.0092
 fractal_octaves = 2
-fractal_lacunarity = 19.815
-fractal_gain = 0.045
-fractal_weighted_strength = 1.0
+fractal_lacunarity = 7.68
+fractal_gain = 0.24
+fractal_weighted_strength = 0.13
 domain_warp_enabled = true
 domain_warp_type = 1
 domain_warp_amplitude = 72.74

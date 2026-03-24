@@ -106,6 +106,8 @@ Marketplace töötab imelikult, vist lisab kõik offerid mingilt factionilt korr
 ### Mida teha enne testimist
 
 - [ ] rohkem contenti
+  - [ ] building to grow trees
+    - [ ] harvest tree seeds job for this
 - [ ] rohkem rõhuda maailma osa olemise tundele'
 - [ ] maailma genereerimise menüü koos seadetega
   ![alt text](worldmakermockup.png)
@@ -133,7 +135,8 @@ Marketplace töötab imelikult, vist lisab kõik offerid mingilt factionilt korr
   - [ ] kõigile nuppudele hover + click
   - [X] keskkonnahelid sõltuvalt kaamera asukohale
 - [ ] muusika
-- [ ] seadete menüü
+- [X] seadete menüü
+  - [ ]
 
 **Fiksid**:
 

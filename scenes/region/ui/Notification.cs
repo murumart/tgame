@@ -5,7 +5,7 @@ namespace scenes.region.ui;
 
 public partial class Notification : Control {
 
-	[Export] Label label;
+	[Export] RichTextLabel label;
 	[Export] Button dismissButton;
 	[Export] ProgressBar timeProgress;
 	[Export] TextureRect gradientDisplay;

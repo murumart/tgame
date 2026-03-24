@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="ResourceType" format=3 uid="uid://dm7c1artfyhe5"]
+
+[ext_resource type="Script" uid="uid://coqr05mqlancq" path="res://resources/game/resource_types/ResourceType.cs" id="1_ifn1p"]
+
+[resource]
+script = ExtResource("1_ifn1p")
+name = "iron weapons"
+metadata/_custom_type_script = "uid://coqr05mqlancq"

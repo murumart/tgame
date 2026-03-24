@@ -5,6 +5,7 @@
 [ext_resource type="Script" uid="uid://bnfatrmjew0vy" path="res://resources/game/resource_site_types/ResourceWell.cs" id="3_c1qpx"]
 [ext_resource type="Script" uid="uid://ct2a6sqe1m7mx" path="res://resources/game/resource_site_types/ResourceSiteType.cs" id="4_dkcsa"]
 [ext_resource type="Resource" uid="uid://nw83fam2omvi" path="res://resources/game/resource_types/rock.tres" id="4_uo4xf"]
+[ext_resource type="Resource" uid="uid://diiapemabucoq" path="res://resources/game/resource_types/iron_ore.tres" id="5_c1qpx"]
 
 [sub_resource type="Resource" id="Resource_am7tj"]
 script = ExtResource("1_am7tj")
@@ -34,9 +35,23 @@ initialBunches = 160
 Production = SubResource("Resource_dkcsa")
 metadata/_custom_type_script = "uid://bnfatrmjew0vy"
 
+[sub_resource type="Resource" id="Resource_5lfxe"]
+script = ExtResource("1_am7tj")
+Infinitive = "mine"
+Progressive = "mining"
+metadata/_custom_type_script = "uid://cbiuqlrd8yyxx"
+
+[sub_resource type="Resource" id="Resource_xotvd"]
+script = ExtResource("3_c1qpx")
+resourceType = ExtResource("5_c1qpx")
+minutesPerBunch = 290
+initialBunches = 32
+Production = SubResource("Resource_5lfxe")
+metadata/_custom_type_script = "uid://bnfatrmjew0vy"
+
 [resource]
 script = ExtResource("4_dkcsa")
 name = "hoodoo"
-mineResources = Array[Object]([SubResource("Resource_uo4xf"), SubResource("Resource_c1qpx")])
+mineResources = Array[Object]([SubResource("Resource_uo4xf"), SubResource("Resource_c1qpx"), SubResource("Resource_xotvd")])
 ScenePath = "uid://86f5k8lmus4o"
 metadata/_custom_type_script = "uid://ct2a6sqe1m7mx"

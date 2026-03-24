@@ -20,7 +20,7 @@
 script = ExtResource("2_omvkl")
 Target = ExtResource("1_2etkj")
 MinElevation = 0.01
-MinHumidity = 0.38
+MinHumidity = 0.35
 MaxDrainage = 0.5
 Rarity = 0.1
 metadata/_custom_type_script = "uid://dpr7b2iecx6gm"

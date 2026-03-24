@@ -120,7 +120,7 @@ public class DemolishMapObjectJob : MapObjectJob {
 	public override void Deinitialise(Faction ctxFaction) {
 		if (timeSpent >= timeTaken) {
 			if (Object is Building b) {
-				var returns = b.Type.GetConstructionResources().Select(r => r.Divide(2)).ToArray();
+				var returns = b.Type.GetConstructionResources().Select(r => {var nr = r.Divide(2); if (nr.Amount == 0) nr = new(nr.Type, 1); return nr;}).ToArray();
 				RefundRequirements(returns, ctxFaction.Resources);
 				ctxFaction.RemoveBuilding(GlobalPosition - ctxFaction.Region.WorldPosition);
 			} else {
@@ -146,7 +146,7 @@ public class DemolishMapObjectJob : MapObjectJob {
 	}
 
 	public override string GetStatusDescription() {
-		if (Workers == 0){
+		if (Workers == 0) {
 			return $"With workers, removing this map object will take {timeTaken / 60} hours.";
 		}
 		float minutesLeft = ((1 - GetProgressEstimate()) * timeTaken);

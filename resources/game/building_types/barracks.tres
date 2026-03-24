@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="BuildingType" format=3 uid="uid://y0w0xqho2giu"]
+
+[ext_resource type="Resource" uid="uid://b8507qbvqvdy8" path="res://resources/game/resource_types/lumber.tres" id="3_y2x5t"]
+[ext_resource type="Resource" uid="uid://dm7c1artfyhe5" path="res://resources/game/resource_types/iron_weapons.tres" id="4_uunl6"]
+[ext_resource type="Resource" uid="uid://pmrcwo4t316p" path="res://resources/game/resource_types/logs.tres" id="6_oedpi"]
+[ext_resource type="Resource" uid="uid://nw83fam2omvi" path="res://resources/game/resource_types/rock.tres" id="8_c8ugj"]
+[ext_resource type="Script" uid="uid://b5xb3tdf3yoon" path="res://resources/game/building_types/BuildingType.cs" id="9_erlfh"]
+
+[resource]
+script = ExtResource("9_erlfh")
+name = "barracks"
+description = "Soldiers are stationed here to bolster the nation's military might."
+ResourceCosts = Dictionary[Object, int]({
+ExtResource("6_oedpi"): 8,
+ExtResource("8_c8ugj"): 20,
+ExtResource("3_y2x5t"): 20,
+ExtResource("4_uunl6"): 3
+})
+CraftingJobs = Array[Resource]([])
+HoursToConstruct = 56.0
+metadata/_custom_type_script = "uid://b5xb3tdf3yoon"

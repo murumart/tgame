@@ -1,0 +1,46 @@
+[gd_resource type="Resource" script_class="BuildingType" format=3 uid="uid://dtspnmwkoubiy"]
+
+[ext_resource type="Resource" uid="uid://pmrcwo4t316p" path="res://resources/game/resource_types/logs.tres" id="1_ufbqd"]
+[ext_resource type="Script" uid="uid://cbiuqlrd8yyxx" path="res://resources/visual/Verb.cs" id="1_vvw5d"]
+[ext_resource type="Script" uid="uid://clkqk6nbux1c1" path="res://resources/visual/Noun.cs" id="2_0k2qt"]
+[ext_resource type="Resource" uid="uid://ua6pffdnaeya" path="res://resources/game/resource_types/coal.tres" id="2_4dmvp"]
+[ext_resource type="Script" uid="uid://c3n4csk46p0uc" path="res://resources/game/building_types/crafting/CraftingJobDef.cs" id="4_842vf"]
+[ext_resource type="Resource" uid="uid://lda3p80x02sh" path="res://resources/game/resource_types/clay.tres" id="5_4dmvp"]
+[ext_resource type="Script" uid="uid://b5xb3tdf3yoon" path="res://resources/game/building_types/BuildingType.cs" id="7_j2ken"]
+
+[sub_resource type="Resource" id="Resource_0k2qt"]
+script = ExtResource("1_vvw5d")
+Infinitive = "make"
+Progressive = "making"
+metadata/_custom_type_script = "uid://cbiuqlrd8yyxx"
+
+[sub_resource type="Resource" id="Resource_1nbe7"]
+script = ExtResource("2_0k2qt")
+Singular = "charcoal"
+Plural = "charcoal"
+metadata/_custom_type_script = "uid://clkqk6nbux1c1"
+
+[sub_resource type="Resource" id="Resource_vvw5d"]
+script = ExtResource("4_842vf")
+inputs = Dictionary[Object, int]({
+ExtResource("1_ufbqd"): 5
+})
+outputs = Dictionary[Object, int]({
+ExtResource("2_4dmvp"): 1
+})
+timeTakenMinutes = 1440
+maxWorkers = 3
+Product = SubResource("Resource_1nbe7")
+Process = SubResource("Resource_0k2qt")
+metadata/_custom_type_script = "uid://c3n4csk46p0uc"
+
+[resource]
+script = ExtResource("7_j2ken")
+name = "charcoal pit"
+description = "Burn logs into charcoal here."
+ResourceCosts = Dictionary[Object, int]({
+ExtResource("5_4dmvp"): 5
+})
+CraftingJobs = Array[Object]([SubResource("Resource_vvw5d")])
+HoursToConstruct = 12.0
+metadata/_custom_type_script = "uid://b5xb3tdf3yoon"

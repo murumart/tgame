@@ -1,7 +1,6 @@
 [gd_scene format=3 uid="uid://1mqtysebfbnc"]
 
 [ext_resource type="Script" uid="uid://bjmoqjwclj6os" path="res://scenes/region/ui/Notification.cs" id="1_05adb"]
-[ext_resource type="LabelSettings" uid="uid://btwbnjxri1gdg" path="res://resources/visual/theme/label_styles/8px.tres" id="1_qjs0n"]
 [ext_resource type="Material" uid="uid://cet7ep6cvqk3p" path="res://resources/visual/add_material.tres" id="2_plsdc"]
 
 [sub_resource type="Gradient" id="Gradient_05adb"]
@@ -80,11 +79,13 @@ alignment = 1
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer" unique_id=218878387]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer" unique_id=1278688608]
+[node name="Label" type="RichTextLabel" parent="VBoxContainer/HBoxContainer" unique_id=12923646]
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_font_sizes/normal_font_size = 8
+bbcode_enabled = true
 text = "text..."
-label_settings = ExtResource("1_qjs0n")
+fit_content = true
 autowrap_mode = 2
 
 [node name="Button" type="Button" parent="VBoxContainer/HBoxContainer" unique_id=1159839133]
