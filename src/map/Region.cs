@@ -83,7 +83,7 @@ public class Region {
 	}
 
 	public MapObject GetMapObject(Vector2I tile) {
-		Debug.Assert(HasMapObject(tile), $"Region has no map object at {tile}");
+		Debug.Assert(HasMapObject(tile), "Region has no map object at {tile}");
 		return mapObjects[tile];
 	}
 

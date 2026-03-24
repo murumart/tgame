@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Text;
 using Godot;
 
@@ -56,16 +57,14 @@ public abstract class Job {
 		AddToStorage(req, resources);
 	}
 
-	protected static void ProvideProduction(ResourceBundle[] rewards, ResourceStorage resources) {
-		var rew = rewards.Clone() as ResourceBundle[]; // clone because AddToStorage edits the array
-
-		AddToStorage(rew, resources);
+	protected static void ProvideProduction(Span<ResourceBundle> rewards, ResourceStorage resources) {
+		AddToStorage(rewards, resources);
 	}
 
 	// add to the storage one item at a time so we get a bit of every type in storage
 	// even if it ends up filling up before we can grant everything
 	// TODO this but in a smarter way with less brutish loops
-	protected static void AddToStorage(ResourceBundle[] things, ResourceStorage storage) {
+	protected static void AddToStorage(Span<ResourceBundle> things, ResourceStorage storage) {
 		while (true) {
 			bool added = false;
 			for (int i = 0; i < things.Length; i++) {

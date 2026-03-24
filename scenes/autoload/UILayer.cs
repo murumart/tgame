@@ -23,6 +23,7 @@ namespace scenes.autoload {
 		}
 
 		public override void _Process(double delta) {
+			if (!debugLabelParent.Visible) return;
 			for (int i = labels.Count - 1; i > -1; i--) {
 				var label = labels[i];
 				try {

@@ -65,10 +65,17 @@ public partial class MapObjectView : Node2D {
 
 	public void DisplayJobProgress(float progress, bool show = true, bool showBuildingTape = false) {
 		Debug.Assert(progress >= 0f && progress <= 1f, "Progress bar value aout of range");
-		jobProgressBar.Visible = show;
-		jobProgressBar.Value = progress;
-		inProgressDisplay.Visible = showBuildingTape;
-		mapObjectDisplay.Modulate = showBuildingTape ? new(mapObjectDisplay.Modulate, 0.5f) : new(mapObjectDisplay.Modulate, 1f);
+		if (show) {
+			jobProgressBar.SetValueNoSignal(progress);
+			if (!jobProgressBar.Visible) jobProgressBar.Show();
+		} else if (jobProgressBar.Visible) jobProgressBar.Hide();
+		if (showBuildingTape) {
+			inProgressDisplay.Show();
+			mapObjectDisplay.Modulate = new(mapObjectDisplay.Modulate, 0.5f);
+		} else if (mapObjectDisplay.Modulate.A != 1) {
+			mapObjectDisplay.Modulate = new(mapObjectDisplay.Modulate, 1f);
+			inProgressDisplay.Hide();
+		}
 	}
 
 	public static MapObjectView Make(string scenePath, MapObject mapObject) {

@@ -48,13 +48,16 @@ namespace resources.game.building_types {
 			return PopulationCapacity;
 		}
 
+		ResourceBundle[] constructionResources = null;
 		public ResourceBundle[] GetConstructionResources() {
-			var arr = new ResourceBundle[ResourceCosts.Count];
-			int i = 0;
-			foreach (var pair in ResourceCosts) {
-				arr[i++] = new ResourceBundle(pair.Key, pair.Value);
+			if (constructionResources is null) {
+				constructionResources = new ResourceBundle[ResourceCosts.Count];
+				int i = 0;
+				foreach (var pair in ResourceCosts) {
+					constructionResources[i++] = new ResourceBundle(pair.Key, pair.Value);
+				}
 			}
-			return arr;
+			return constructionResources;
 		}
 
 		public float GetHoursToConstruct() {

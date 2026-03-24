@@ -310,6 +310,7 @@ public static class ProductionNet {
 
 
 	public static void Generate() {
+		GD.Print("   ");
 		Debug.Assert(!generated, "Doon't generate stuff when iot's donadalsd");
 		foreach (var res in Registry.Resources.GetAssets()) Resources[res] = new(res);
 
@@ -375,6 +376,13 @@ public static class ProductionNet {
 		foreach (var res in Locations.Values) {
 			GD.Print(res);
 		}
+	}
+
+	public static IResourceType[] GetParentMaterials(IResourceType resourceType) {
+		bool had = Resources.TryGetValue(resourceType, out var node);
+		if (!had) return [];
+		var from = node.RetrievedFrom.SelectMany(lnpns => lnpns.Value.SelectMany(p => p.Consumed).Select(c => c.Item1.Resource));
+		return from.ToArray();
 	}
 
 	public static void PrintSources() {

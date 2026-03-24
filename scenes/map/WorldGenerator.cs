@@ -356,7 +356,7 @@ namespace scenes.map {
 							if (freeEdges.Count == 0) break;
 						}
 						foreach (var k in addKeys) {
-							Debug.Assert(!region.GroundTiles.ContainsKey(k), $"region {region} already owns the local tile {k}");
+							Debug.Assert(!region.GroundTiles.ContainsKey(k), "region {region} already owns the local tile {k}");
 							region.GroundTiles.Add(k, world.GetTile(k.X + region.WorldPosition.X, k.Y + region.WorldPosition.Y));
 						}
 						if (freeEdges.Count == 0) break;

@@ -101,6 +101,8 @@ public partial class RegionDisplay : Node2D {
 			foreach (var m in region.GetMapObjects()) {
 				DisplayMapObject(m);
 			}
+		} else {
+			SetProcess(false);
 		}
 		valid = true;
 		OnScreenExited();
@@ -290,7 +292,7 @@ public partial class RegionDisplay : Node2D {
 
 	void OnScreenEntered() {
 		tilemaps.Show();
-		SetProcess(true);
+		SetProcess(Lod < 2);
 	}
 
 	void OnScreenExited() {

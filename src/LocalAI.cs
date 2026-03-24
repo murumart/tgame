@@ -713,6 +713,10 @@ public class GamerAI : LocalAI {
 		foreach (var res in ResourceWants.Keys) {
 			int want = ResourceWants[res];
 			ResourceWants[res] = Mathf.Max(DefaultResourceWant, want - (int)(want * 0.025 + 1));
+
+			// and increase want for prerequisites
+			var parents = ProductionNet.GetParentMaterials(res);
+			foreach (var r in parents) ResourceWants[r] = Math.Max(want, ResourceWants[r]);
 		}
 		uint homeless = factionActions.GetHomelessPopulationCount() ;
 		if (homeless > 0) {
@@ -750,8 +754,8 @@ public class GamerAI : LocalAI {
 		}
 		// assigning workers to job
 		foreach (var job in factionActions.GetMapObjectJobs()) {
-			List<DecisionFactor> factors = new();
-			List<DecisionFactor> negativeFactors = new();
+			List<DecisionFactor> factors = new(10);
+			List<DecisionFactor> negativeFactors = new(10);
 			if (job is GatherResourceJob gjob) {
 				var prod = gjob.GetProduction();
 				var rwant = Factors.ResourceWant(factionActions, this, prod.ResourceType);

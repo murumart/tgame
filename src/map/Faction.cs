@@ -125,7 +125,7 @@ public class Faction : IEntity {
 	public void RemoveJob(Job job) {
 		Debug.Assert(!job.Locked, "Cannot remove locked job");
 		if (job is MapObjectJob mopjob) {
-			Debug.Assert(jobsByPosition.ContainsKey(mopjob.GlobalPosition), $"Can't remove job ({job}) that doesn't exist here ({mopjob.GlobalPosition})?? Hello?");
+			Debug.Assert(jobsByPosition.ContainsKey(mopjob.GlobalPosition), "Can't remove job ({job}) that doesn't exist here ({mopjob.GlobalPosition})?? Hello?");
 			jobsByPosition.Remove(mopjob.GlobalPosition);
 		}
 		Debug.Assert(jobs.Contains(job), "Dont have this job, can't remove it");
