@@ -79,7 +79,7 @@ public partial class Building : MapObject {
 		var jobs = base.GetAvailableJobs().ToList();
 		if (!HasFurniture && GetHousingCapacity() > 0) jobs.Add(new AddFurnitureJob(this));
 		if (type.GetSpecial() == IBuildingType.Special.Quarry) {
-			GroundTileType ground = region.GroundTiles[GlobalPosition - region.WorldPosition];
+			GroundTileType ground = region.GetGroundTile(GlobalPosition - region.WorldPosition);
 			Debug.Assert((ground & GroundTileType.HasLand) != 0);
 			if ((ground & GroundTileType.HasSand) != 0) {}
 		}

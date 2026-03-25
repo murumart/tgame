@@ -177,7 +177,7 @@ public partial class PlayerRegion : Node {
 		} else if (region.HasMapObject(tile, out MapObject mop) && mop is ResourceSite resourceSite) {
 			ui.OnResourceSiteClicked(resourceSite);
 			ui.TileSelected(tile);
-		} else if (!region.GroundTiles.ContainsKey(tile)) {
+		} else if (!region.GetGroundTile(tile, out _)) {
 			// DEBUG annex
 			//foreach (var ne in region.Neighbors) {
 			//	var thereCoord = tile + region.WorldPosition - ne.WorldPosition;

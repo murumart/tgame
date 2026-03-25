@@ -329,7 +329,7 @@ public partial class UI : Control {
 			});
 			resourceDisplay.Display(c => {
 				string txt = $"{inRegionTilepos}";
-				if (reg.GroundTiles.TryGetValue(inRegionTilepos, out GroundTileType tile)) {
+				if (reg.GetGroundTile(inRegionTilepos, out GroundTileType tile)) {
 					txt += $" {tile.UIString()}";
 					if (reg.HasMapObject(inRegionTilepos, out MapObject mopject)) {
 						txt += $" with {(mopject.Type as IAssetType).AssetName}";

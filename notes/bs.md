@@ -102,6 +102,9 @@ Vaja viise ,kuidas mõjutada naabrite tootmist, närb on näha kui ta ei tee tel
 
 Marketplace töötab imelikult, vist lisab kõik offerid mingilt factionilt korraga? Võiks ükshaaval. Ja kas üldse on vaja marketplace ehitist, et treide teha? Oleks hea kui ehitamise süsteemil oleks kasutusi, aga mugavuse kohapealt pole vist loogiline, et marketplace töötab nii nagu ta töötab. Äkki lihtsalt mingi treidide tabi unlockimiseks see ehitada? Vaja ka mängijale võimalus offereid saata.
 
+Äge oleks mingeid graafikuid konstrueerida või vähemalt andmeid koguda maailma seisu kohta, mis populatsioonid-ressursid regioonidel on
+
+Revolutsioonid: kui AI juhtimisel nulli läheb approval siis +50% approval ning muuda nime või värvi?
 
 ### Mida teha enne testimist
 

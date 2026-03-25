@@ -85,7 +85,7 @@ public partial class RegionDisplay : Node2D {
 		this.camera = camera;
 		ConnectEvents();
 		tilemaps.DisplayGround(region);
-		var wposes = region.GroundTiles.Keys.Select(p => Tilemaps.TilePosToWorldPos(p) + Vector2.Up * Tilemaps.TileElevationVerticalOffset(region.WorldPosition + p, GameMan.Singleton.Game.Map.World));
+		var wposes = region.GroundTilePositions.Select(p => Tilemaps.TilePosToWorldPos(p) + Vector2.Up * Tilemaps.TileElevationVerticalOffset(region.WorldPosition + p, GameMan.Singleton.Game.Map.World));
 		float minx = wposes.MinBy(p => p.X).X - Tilemaps.TILE_SIZE.X * 0.5f;
 		float miny = wposes.MinBy(p => p.Y).Y - Tilemaps.TILE_SIZE.Y * 0.5f;
 		float maxx = wposes.MaxBy(p => p.X).X - Tilemaps.TILE_SIZE.X * 0.5f;

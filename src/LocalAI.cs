@@ -148,7 +148,7 @@ public partial class LocalAI {
 		public static Action PlaceBuildingJob(DecisionFactor[] factors, FactionActions ac, IBuildingType buildingType) {
 			return new(factors, () => {
 				AIAssert(ac.Faction.HasBuildingMaterials(buildingType), "Don't have building materials", ac);
-				foreach (var pos in ac.GetTiles()) {
+				foreach (var (pos, _) in ac.GetTiles()) {
 					if (!ac.CanPlaceBuilding(buildingType, pos)) continue;
 					ac.PlaceBuilding(buildingType, pos);
 					return;
@@ -292,7 +292,7 @@ public partial class LocalAI {
 
 		public static DecisionFactor HasSpotForBuilding(FactionActions ac, IBuildingType buildingType) {
 			return new(() => {
-				foreach (var pos in ac.GetTiles()) {
+				foreach (var (pos, _) in ac.GetTiles()) {
 					if (ac.CanPlaceBuilding(buildingType, pos)) return 1f;
 				}
 				return 0f;

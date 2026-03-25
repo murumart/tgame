@@ -58,7 +58,7 @@ public abstract class Job {
 	}
 
 	protected static void ProvideProduction(Span<ResourceBundle> rewards, ResourceStorage resources) {
-		AddToStorage(rewards, resources);
+		AddToStorage(rewards.ToArray().Clone() as ResourceBundle[], resources);
 	}
 
 	// add to the storage one item at a time so we get a bit of every type in storage

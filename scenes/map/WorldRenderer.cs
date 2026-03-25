@@ -164,7 +164,7 @@ public partial class WorldRenderer : Node {
 		foreach (var region in regions) {
 			var color = region.LocalFaction?.Color.Lightened(0.5f) ?? Color.FromHsv(region.WorldIndex / (float)regions.Length, 1f, 1f);
 			if (region.LocalFaction != null && region.LocalFaction.HasOwningFaction()) color = region.LocalFaction.GetOwningFaction().Region.LocalFaction.Color.Darkened(0.25f);
-			foreach (var px in region.GroundTiles.Keys) {
+			foreach (var px in region.GroundTilePositions) {
 				image.SetPixelv(px + region.WorldPosition, color);
 			}
 		}
@@ -176,12 +176,12 @@ public partial class WorldRenderer : Node {
 		image.Fill(Colors.Transparent);
 		if (hovered != null) {
 			var color = Colors.White;
-			foreach (var px in hovered.GroundTiles.Keys) {
+			foreach (var px in hovered.GroundTilePositions) {
 				image.SetPixelv(px + hovered.WorldPosition, color);
 			}
 			if (hovered.LocalFaction.HasOwningFaction()) {
 				var owner = hovered.LocalFaction.GetOwningFaction().Region;
-				foreach (var px in owner.GroundTiles.Keys) {
+				foreach (var px in owner.GroundTilePositions) {
 					color = (px.X * px.Y) % 2 == 0 ? Colors.Blue : Colors.White;
 					image.SetPixelv(px + owner.WorldPosition, color);
 				}
@@ -189,7 +189,7 @@ public partial class WorldRenderer : Node {
 		}
 		if (highlighted != null && hovered != highlighted) {
 			var color = Colors.Gray;
-			foreach (var px in highlighted.GroundTiles.Keys) {
+			foreach (var px in highlighted.GroundTilePositions) {
 				image.SetPixelv(px + highlighted.WorldPosition, color);
 			}
 		}
