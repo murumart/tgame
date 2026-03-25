@@ -464,6 +464,7 @@ custom_minimum_size = Vector2(400, 300)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 4.0
+mode = 1
 metadata/_edit_group_ = true
 
 [node name="Fat" type="Control" parent="VBoxContainer2/HBoxContainer/VBoxContainer2/MenuTabs/HBoxContainer5" unique_id=2081266303]

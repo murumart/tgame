@@ -7,12 +7,18 @@ namespace scenes.map.ui;
 
 public partial class WorldUI : Control {
 
+	enum Modes {
+		Generation,
+		InGame,
+	}
+
 	public event Func<Vector2I, (float, float, float)> WorldTileInfoRequested;
 	public event Func<Vector2I, Region> RegionRequested;
 	public event Action<Region> RegionSelected;
 
 	bool _ready;
 
+	[Export] Modes mode;
 	[Export] WorldRenderer worldRenderer;
 	[Export] public ResourceDisplay ResourceDisplay;
 	[Export] Camera camera;
@@ -36,7 +42,7 @@ public partial class WorldUI : Control {
 		regionDisplayCheck.Toggled += OnRegionDisplayChanged;
 
 		ResourceDisplay.Display(c => {
-			if (!camera.IsInsideTree()) (c as Label).Text =  "...";
+			if (!camera.IsInsideTree()) (c as Label).Text = "...";
 			var mousePos = (Vector2I)camera.GetMousePos();
 			if (mousePos != oldMousePos) {
 				oldMousePos = mousePos;
