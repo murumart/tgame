@@ -65,7 +65,7 @@ _limits = [0.0, 500.0, 0.0, 1200.0]
 _data = [Vector2(0, 0), 0.0, 0.24459472, 0, 0, Vector2(1200, 195.57611), 0.35408792, 0.0, 0, 0]
 point_count = 2
 
-[node name="WorldGenUI" type="MarginContainer" unique_id=1511327676 node_paths=PackedStringArray("worldGenerator", "worldUI", "genRegionsButton", "worldSeedLabel", "worldSeedRandomButton", "worldWidthSpinbox", "worldHeightSpinbox", "noiseScaleSpinbox", "depthSpinbox", "backButton")]
+[node name="WorldGenUI" type="MarginContainer" unique_id=1511327676 node_paths=PackedStringArray("worldGenerator", "worldUI", "genRegionsButton", "playHereButton", "worldSeedLabel", "worldSeedRandomButton", "worldWidthSpinbox", "worldHeightSpinbox", "noiseScaleSpinbox", "depthSpinbox", "backButton")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -79,6 +79,7 @@ script = ExtResource("1_psavt")
 worldGenerator = NodePath("WorldGenerator")
 worldUI = NodePath("HBoxContainer/WorldUI")
 genRegionsButton = NodePath("HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/GenRegionsButton")
+playHereButton = NodePath("HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/PlayHereButton")
 worldSeedLabel = NodePath("HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/SeedLabel")
 worldSeedRandomButton = NodePath("HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/SeedRandomiserButton")
 worldWidthSpinbox = NodePath("HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer/Width")
@@ -224,6 +225,12 @@ step = 0.05
 layout_mode = 2
 focus_mode = 0
 text = "grow regions"
+
+[node name="PlayHereButton" type="Button" parent="HBoxContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1143778063]
+layout_mode = 2
+focus_mode = 0
+disabled = true
+text = "Play"
 
 [node name="Fat" type="Control" parent="HBoxContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1602607816]
 layout_mode = 2

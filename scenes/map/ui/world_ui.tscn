@@ -26,7 +26,7 @@ blend_mode = 1
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_mu82y"]
 
-[node name="WorldUI" type="BoxContainer" unique_id=832899595 node_paths=PackedStringArray("worldRenderer", "ResourceDisplay", "camera", "factionPanel", "factionTitleLabel", "factionInfoLabel", "factionPlayButton", "drawLayerButtons", "regionDisplayCheck")]
+[node name="WorldUI" type="BoxContainer" unique_id=832899595 node_paths=PackedStringArray("worldRenderer", "ResourceDisplay", "camera", "factionPanel", "factionTitleLabel", "factionInfoLabel", "drawLayerButtons", "regionDisplayCheck")]
 custom_minimum_size = Vector2(0.08, 0)
 anchors_preset = 15
 anchor_right = 1.0
@@ -41,7 +41,6 @@ camera = NodePath("PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/
 factionPanel = NodePath("PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/HBoxContainer/MarginContainer2/HBoxContainer/Factionpanel")
 factionTitleLabel = NodePath("PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/HBoxContainer/MarginContainer2/HBoxContainer/Factionpanel/MarginContainer/VBoxContainer/Title")
 factionInfoLabel = NodePath("PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/HBoxContainer/MarginContainer2/HBoxContainer/Factionpanel/MarginContainer/VBoxContainer/ScrollContainer/FactionInfo")
-factionPlayButton = NodePath("PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/HBoxContainer/MarginContainer2/HBoxContainer/Factionpanel/MarginContainer/VBoxContainer/PlayHereButton")
 drawLayerButtons = [NodePath("PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle6/HBoxContainer/Ground"), NodePath("PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle/HBoxContainer/Elevation"), NodePath("PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle2/HBoxContainer/Temperature"), NodePath("PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle3/HBoxContainer/Humidity"), NodePath("PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle7/HBoxContainer/Drainage"), NodePath("PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle4/HBoxContainer/SeaWind")]
 regionDisplayCheck = NodePath("PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle5/HBoxContainer/Regions")
 
@@ -344,9 +343,3 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 text = "asdasdasdasdadasdasdsadaasdadadsadadsadsadsasaasdassadasdsadsadsadsadsadsadsadsadsadsadsadsadsadsadsadsadasdadadadadasdasdadadadadasdasdadadadadadasdasdadasdasdasdadasdasdasdadasdasdass"
 fit_content = true
-
-[node name="PlayHereButton" type="Button" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/HBoxContainer/MarginContainer2/HBoxContainer/Factionpanel/MarginContainer/VBoxContainer" unique_id=613590085]
-layout_mode = 2
-focus_mode = 0
-disabled = true
-text = "Play"

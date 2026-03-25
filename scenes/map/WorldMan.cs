@@ -8,8 +8,6 @@ namespace scenes.map;
 
 public partial class WorldMan : Node {
 
-	static readonly PackedScene regionScene = GD.Load<PackedScene>("res://scenes/region/player_region.tscn");
-
 	[Export] WorldRenderer worldRenderer;
 	[Export] WorldUI worldUI;
 	[Export] Camera camera;
@@ -20,7 +18,6 @@ public partial class WorldMan : Node {
 
 	public override void _Ready() {
 		worldUI.SelectRegion(null);
-		worldUI.RegionPlayRequested += EnterGame;
 		worldUI.WorldTileInfoRequested += where => {
 			var w = new Vector2I((int)where.X, (int)where.Y);
 			if (Map == null) return (-3f, -3f, -3f);
@@ -58,16 +55,6 @@ public partial class WorldMan : Node {
 
 	void RegionClicked(Region region) {
 		worldUI.SelectRegion(region);
-	}
-
-	void SetupGame() {
-		GameMan.Singleton.NewGame(Map);
-		GD.Print("WorldMan::SetupGame : game set up.");
-	}
-
-	void EnterGame() {
-		GameMan.Singleton.Game.SetPlayRegion(worldUI.SelectedRegion);
-		GetTree().ChangeSceneToPacked(regionScene);
 	}
 
 }

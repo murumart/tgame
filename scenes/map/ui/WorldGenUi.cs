@@ -7,17 +7,22 @@ namespace scenes.map.ui;
 
 public partial class WorldGenUi : MarginContainer {
 
+	static readonly PackedScene regionScene = GD.Load<PackedScene>("res://scenes/region/player_region.tscn");
+
 	public event Action GoBackEvent;
+
 	[Export] WorldGenerator worldGenerator;
 	[Export] WorldUI worldUI;
 
 	[Export] Button genRegionsButton;
+	[Export] Button playHereButton;
 	[Export] LineEdit worldSeedLabel;
 	[Export] Button worldSeedRandomButton;
 	[Export] SpinBox worldWidthSpinbox;
 	[Export] SpinBox worldHeightSpinbox;
 	[Export] SpinBox noiseScaleSpinbox;
 	[Export] SpinBox depthSpinbox;
+	
 
 	[Export] Button backButton;
 
@@ -28,6 +33,7 @@ public partial class WorldGenUi : MarginContainer {
 	public override void _Ready() {
 
 		genRegionsButton.Pressed += OnGenRegionsPressed;
+		playHereButton.Pressed += EnterGame;
 
 		worldWidthSpinbox.ValueChanged += OnWorldWidthChanged;
 		worldHeightSpinbox.ValueChanged += OnWorldHeightChanged;
@@ -38,6 +44,8 @@ public partial class WorldGenUi : MarginContainer {
 		worldSeedRandomButton.Pressed += OnWorldSeedRandomiseRequested;
 
 		backButton.Pressed += () => GoBackEvent?.Invoke();
+
+		worldUI.RegionSelected += OnRegionSelected;
 
 		worldSeedLabel.Text = "" + GD.Randi();
 	}
@@ -138,6 +146,20 @@ public partial class WorldGenUi : MarginContainer {
 
 		GameMan.Singleton.NewGame(map);
 		OnEndGenerating();
+	}
+
+	void OnRegionSelected(Region region) {
+		playHereButton.Disabled = region.LocalFaction.IsWild;
+	}
+
+	void SetupGame() {
+		GameMan.Singleton.NewGame(map);
+		GD.Print("WorldMan::SetupGame : game set up.");
+	}
+
+	void EnterGame() {
+		GameMan.Singleton.Game.SetPlayRegion(worldUI.SelectedRegion);
+		GetTree().ChangeSceneToPacked(regionScene);
 	}
 
 }

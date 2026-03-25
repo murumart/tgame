@@ -9,7 +9,7 @@ public partial class WorldUI : Control {
 
 	public event Func<Vector2I, (float, float, float)> WorldTileInfoRequested;
 	public event Func<Vector2I, Region> RegionRequested;
-	public event Action RegionPlayRequested;
+	public event Action<Region> RegionSelected;
 
 	bool _ready;
 
@@ -19,7 +19,6 @@ public partial class WorldUI : Control {
 	[Export] Control factionPanel;
 	[Export] Label factionTitleLabel;
 	[Export] RichTextLabel factionInfoLabel;
-	[Export] Button factionPlayButton;
 
 	[Export] Godot.Collections.Array<CheckButton> drawLayerButtons;
 	[Export] CheckButton regionDisplayCheck;
@@ -29,7 +28,6 @@ public partial class WorldUI : Control {
 
 
 	public override void _Ready() {
-		factionPlayButton.Pressed += () => RegionPlayRequested?.Invoke();
 		factionPanel.GuiInput += _GuiInput;
 
 		camera.ClickedMouseEvent += MouseClicked;
@@ -70,12 +68,6 @@ public partial class WorldUI : Control {
 		SelectRegion(region);
 	}
 
-	public override void _UnhandledKeyInput(InputEvent evt) {
-		if (evt is InputEventKey k) {
-			if (k.Pressed && k.Keycode == Key.Key7 && selectedRegion != null) RegionPlayRequested?.Invoke();
-		}
-	}
-
 	public override void _GuiInput(InputEvent evt) {
 		if (evt is InputEventMouseButton) {
 			GetViewport().SetInputAsHandled();
@@ -86,7 +78,6 @@ public partial class WorldUI : Control {
 		if (region == null) {
 			factionTitleLabel.Text = ". . .";
 			factionInfoLabel.Text = "Select a Faction";
-			factionPlayButton.Disabled = true;
 			selectedRegion = null;
 			return;
 		}
@@ -107,7 +98,7 @@ public partial class WorldUI : Control {
 			+ $"Map objects: {things}\n"
 			+ $"Region IX: {region.WorldIndex}"
 		;
-		factionPlayButton.Disabled = region.LocalFaction.IsWild;
+		RegionSelected?.Invoke(region);
 	}
 
 	void SetRendererParams() {
