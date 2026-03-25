@@ -8,10 +8,8 @@ namespace scenes.map.ui;
 public partial class WorldGenUi : MarginContainer {
 
 	public event Action GoBackEvent;
-
 	[Export] WorldGenerator worldGenerator;
-	[Export] WorldRenderer worldRenderer;
-	[Export] Camera camera;
+	[Export] WorldUI worldUI;
 
 	[Export] Button genRegionsButton;
 	[Export] LineEdit worldSeedLabel;
@@ -22,9 +20,6 @@ public partial class WorldGenUi : MarginContainer {
 	[Export] SpinBox depthSpinbox;
 
 	[Export] Button backButton;
-
-	[Export] Godot.Collections.Array<CheckButton> drawLayerButtons;
-	[Export] CheckButton regionDisplayCheck;
 
 	Map map;
 	World world;
@@ -44,9 +39,6 @@ public partial class WorldGenUi : MarginContainer {
 
 		backButton.Pressed += () => GoBackEvent?.Invoke();
 
-		foreach (var but in drawLayerButtons) but.Pressed += OnDrawLayersChanged;
-		regionDisplayCheck.Toggled += OnRegionDisplayChanged;
-
 		worldSeedLabel.Text = "" + GD.Randi();
 	}
 
@@ -54,14 +46,12 @@ public partial class WorldGenUi : MarginContainer {
 		NewWorld();
 		Task.Run(() => GenerateContinents()).GetAwaiter().GetResult();
 
-		SetRendererParams();
 		OnWorldGenerated();
 	}
 
 	public void LoadCurrentWorld() {
 		this.map = GameMan.Singleton.Game.Map;
 		this.world = this.map.World;
-		SetRendererParams();
 		OnWorldGenerated();
 	}
 
@@ -72,15 +62,8 @@ public partial class WorldGenUi : MarginContainer {
 
 	async Task GenerateContinents() => await worldGenerator.GenerateContinents(world, (float)noiseScaleSpinbox.Value, (float)depthSpinbox.Value);
 
-	void DisplayWorld(World world) {
-		worldRenderer.Draw(world);
-	}
-
 	void OnWorldGenerated() {
-		worldRenderer.World = world;
-		worldRenderer.ResetImages();
-		DisplayWorld(world);
-		camera.Position = new(world.Width * 0.5f, world.Height * 0.5f);
+		worldUI.DisplayWorld(world);
 	}
 
 	async void OnWorldSeedEntered(string what) {
@@ -120,26 +103,6 @@ public partial class WorldGenUi : MarginContainer {
 		OnEndGenerating();
 	}
 
-	void SetRendererParams() {
-		WorldRenderer.DrawLayers a = 0;
-		if (drawLayerButtons[0].ButtonPressed) a |= WorldRenderer.DrawLayers.Ground;
-		if (drawLayerButtons[1].ButtonPressed) a |= WorldRenderer.DrawLayers.Elevation;
-		if (drawLayerButtons[2].ButtonPressed) a |= WorldRenderer.DrawLayers.Temperature;
-		if (drawLayerButtons[3].ButtonPressed) a |= WorldRenderer.DrawLayers.Humidity;
-		if (drawLayerButtons[4].ButtonPressed) a |= WorldRenderer.DrawLayers.Drainage;
-		if (drawLayerButtons[5].ButtonPressed) a |= WorldRenderer.DrawLayers.SeaWind;
-		worldRenderer.DrawMode = a;
-	}
-
-	void OnDrawLayersChanged() {
-		SetRendererParams();
-		DisplayWorld(world);
-	}
-
-	void OnRegionDisplayChanged(bool to) {
-		worldRenderer.RegionSprite.Visible = to;
-	}
-
 	void OnStartGenerating() {
 		genRegionsButton.Disabled = true;
 		worldWidthSpinbox.Editable = false;
@@ -163,7 +126,7 @@ public partial class WorldGenUi : MarginContainer {
 	async void OnGenRegionsPressed() {
 		Debug.Assert(!worldGenerator.Generating);
 		OnStartGenerating();
-		var drawRegionsCallable = Callable.From(() => worldRenderer.DrawRegions(worldGenerator.Regions));
+		var drawRegionsCallable = Callable.From(() => worldUI.DrawRegions(worldGenerator.Regions));
 		var tw = CreateTween().SetLoops();
 		tw.TweenInterval(0.05f);
 		tw.TweenCallback(drawRegionsCallable);
@@ -171,7 +134,7 @@ public partial class WorldGenUi : MarginContainer {
 		this.map = await worldGenerator.GenerateRegions(world);
 		tw.Stop();
 
-		worldRenderer.DrawRegions(map.GetRegions());
+		worldUI.DrawRegions(map.GetRegions());
 
 		GameMan.Singleton.NewGame(map);
 		OnEndGenerating();

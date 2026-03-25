@@ -45,7 +45,7 @@ metadata/_custom_type_script = "uid://dpr7b2iecx6gm"
 [sub_resource type="Resource" id="Resource_iffmc"]
 script = ExtResource("2_omvkl")
 Target = ExtResource("5_0lakn")
-MinElevation = 0.02
+MinElevation = 0.006
 MaxElevation = 0.52
 MinTemperature = 0.035
 MaxTemperature = 0.57
@@ -73,7 +73,7 @@ metadata/_custom_type_script = "uid://dpr7b2iecx6gm"
 [sub_resource type="Resource" id="Resource_a1kp6"]
 script = ExtResource("2_omvkl")
 Target = ExtResource("7_tkiqb")
-MinElevation = 0.02
+MinElevation = 0.005
 MaxElevation = 0.5
 MinTemperature = 0.45
 MinHumidity = 0.145

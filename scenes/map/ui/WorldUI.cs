@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using Godot;
+using scenes.autoload;
 
 namespace scenes.map.ui;
 
@@ -10,12 +11,18 @@ public partial class WorldUI : Control {
 	public event Func<Vector2I, Region> RegionRequested;
 	public event Action RegionPlayRequested;
 
+	bool _ready;
+
+	[Export] WorldRenderer worldRenderer;
 	[Export] public ResourceDisplay ResourceDisplay;
 	[Export] Camera camera;
 	[Export] Control factionPanel;
 	[Export] Label factionTitleLabel;
 	[Export] RichTextLabel factionInfoLabel;
 	[Export] Button factionPlayButton;
+
+	[Export] Godot.Collections.Array<CheckButton> drawLayerButtons;
+	[Export] CheckButton regionDisplayCheck;
 
 	Region selectedRegion;
 	public Region SelectedRegion => selectedRegion;
@@ -26,6 +33,9 @@ public partial class WorldUI : Control {
 		factionPanel.GuiInput += _GuiInput;
 
 		camera.ClickedMouseEvent += MouseClicked;
+
+		foreach (var but in drawLayerButtons) but.Pressed += OnDrawLayersChanged;
+		regionDisplayCheck.Toggled += OnRegionDisplayChanged;
 
 		ResourceDisplay.Display(c => {
 			if (!camera.IsInsideTree()) (c as Label).Text =  "...";
@@ -38,6 +48,8 @@ public partial class WorldUI : Control {
 			(c as Label).Text = $"ele: {oldTileInfo.Item1} temp: {oldTileInfo.Item2} humi: {oldTileInfo.Item3}";
 		});
 		ResourceDisplay.DisplayFat();
+
+		_ready = true;
 	}
 
 	Vector2 oldMousePos;
@@ -90,6 +102,39 @@ public partial class WorldUI : Control {
 			+ $"Region IX: {region.WorldIndex}"
 		;
 		factionPlayButton.Disabled = region.LocalFaction.IsWild;
+	}
+
+	void SetRendererParams() {
+		WorldRenderer.DrawLayers a = 0;
+		if (drawLayerButtons[0].ButtonPressed) a |= WorldRenderer.DrawLayers.Ground;
+		if (drawLayerButtons[1].ButtonPressed) a |= WorldRenderer.DrawLayers.Elevation;
+		if (drawLayerButtons[2].ButtonPressed) a |= WorldRenderer.DrawLayers.Temperature;
+		if (drawLayerButtons[3].ButtonPressed) a |= WorldRenderer.DrawLayers.Humidity;
+		if (drawLayerButtons[4].ButtonPressed) a |= WorldRenderer.DrawLayers.Drainage;
+		if (drawLayerButtons[5].ButtonPressed) a |= WorldRenderer.DrawLayers.SeaWind;
+		worldRenderer.DrawMode = a;
+	}
+
+	public void DisplayWorld(World world) {
+		Debug.Assert(_ready);
+		worldRenderer.World = world;
+		worldRenderer.ResetImages();
+		SetRendererParams();
+		worldRenderer.DrawWorld();
+		camera.Position = new(world.Width * 0.5f, world.Height * 0.5f);
+	}
+
+	public void DrawRegions(Region[] regions) {
+		Debug.Assert(_ready);
+		worldRenderer.DrawRegions(regions);
+	}
+
+	void OnDrawLayersChanged() {
+		DisplayWorld(GameMan.Singleton.Game.Map.World);
+	}
+
+	void OnRegionDisplayChanged(bool to) {
+		worldRenderer.RegionSprite.Visible = to;
 	}
 
 }
