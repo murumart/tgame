@@ -58,14 +58,14 @@ public partial class WorldGenUi : MarginContainer {
 	}
 
 	public void LoadCurrentWorld() {
-		this.map = GameMan.Singleton.Game.Map;
+		this.map = GameMan.Game.Map;
 		this.world = this.map.World;
 		OnWorldGenerated();
 	}
 
 	void NewWorld() {
 		this.world = new((int)worldWidthSpinbox.Value, (int)worldHeightSpinbox.Value, (uint)Convert.ToUInt32(worldSeedLabel.Text));
-		GameMan.Singleton.NewGame(new([], world));
+		GameMan.NewGame(new([], world));
 	}
 
 	async Task GenerateContinents() => await worldGenerator.GenerateContinents(world, (float)noiseScaleSpinbox.Value, (float)depthSpinbox.Value);
@@ -144,7 +144,7 @@ public partial class WorldGenUi : MarginContainer {
 
 		worldUI.DrawRegions(map.GetRegions());
 
-		GameMan.Singleton.NewGame(map);
+		GameMan.NewGame(map);
 		OnEndGenerating();
 	}
 
@@ -153,12 +153,12 @@ public partial class WorldGenUi : MarginContainer {
 	}
 
 	void SetupGame() {
-		GameMan.Singleton.NewGame(map);
+		GameMan.NewGame(map);
 		GD.Print("WorldMan::SetupGame : game set up.");
 	}
 
 	void EnterGame() {
-		GameMan.Singleton.Game.SetPlayRegion(worldUI.SelectedRegion);
+		GameMan.Game.SetPlayRegion(worldUI.SelectedRegion);
 		GetTree().ChangeSceneToPacked(regionScene);
 	}
 

@@ -127,8 +127,8 @@ public partial class WorldUI : Control {
 	}
 
 	void OnDrawLayersChanged() {
-		DisplayWorld(GameMan.Singleton.Game.Map.World);
-		DrawRegions(GameMan.Singleton.Game.Map.GetRegions());
+		DisplayWorld(GameMan.Game.Map.World);
+		DrawRegions(GameMan.Game.Map.GetRegions());
 	}
 
 	void OnRegionDisplayChanged(bool to) {

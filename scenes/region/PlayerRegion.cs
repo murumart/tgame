@@ -22,7 +22,7 @@ public partial class PlayerRegion : Node {
 	FactionActions actions;
 
 	public override void _Ready() {
-		region = GameMan.Singleton.Game.PlayRegion;
+		region = GameMan.Game.PlayRegion;
 		faction = region.LocalFaction;
 		actions = new(region, faction);
 
@@ -56,8 +56,8 @@ public partial class PlayerRegion : Node {
 			};
 		}
 
-		GameMan.Singleton.Game.Time.TimePassedEvent += PassTime;
-		GameMan.Singleton.Game.Time.HourPassedEvent += HourlyUpdate;
+		GameMan.Game.Time.TimePassedEvent += PassTime;
+		GameMan.Game.Time.HourPassedEvent += HourlyUpdate;
 
 		ui.GetFactionActionsEvent += GetFactionActions;
 		ui.GetBriefcaseEvent += GetBriefcase;
@@ -86,7 +86,7 @@ public partial class PlayerRegion : Node {
 				rdisp.Position = Tilemaps.TilePosToWorldPos(neighbor.WorldPosition - region.WorldPosition) - Tilemaps.TILE_SIZE / 2;
 				rdisp.LoadRegion(neighbor, 1, camera);
 			}
-			foreach (var neighbor in GameMan.Singleton.Game.Map.GetRegions()) {
+			foreach (var neighbor in GameMan.Game.Map.GetRegions()) {
 				if (neighbor == region || region.Neighbors.Contains(neighbor)) continue;
 				var rdisp = RegionDisplay.Instantiate();
 				otherDisplaysParent.AddChild(rdisp);
@@ -106,7 +106,7 @@ public partial class PlayerRegion : Node {
 		});
 		UILayer.DebugDisplay(() => {
 			var sb = new StringBuilder();
-			var ai = (GamerAI)GameMan.Singleton.Game.GetRegionAI(region);
+			var ai = (GamerAI)GameMan.Game.GetRegionAI(region);
 			sb.Append("Resource wants:\n");
 			foreach (var (food, want) in ai.ResourceWants) {
 				sb.Append(food.AssetName).Append('\t').Append(want).Append('\n');
@@ -114,9 +114,9 @@ public partial class PlayerRegion : Node {
 			return sb.ToString();
 		});
 		UILayer.DebugDisplay(() => $"mousepos: {regionDisplay.GetLocalMousePosition()}");
-		UILayer.DebugDisplay(() => $"trouble: {GameMan.Singleton.Game.TroubleMaker.DelayUntilPlayerAction:F2}");
-		UILayer.DebugDisplay(() => "Last Action Info:\n" + GameMan.Singleton.Game.GetRegionAI(region).profiling.LastActionInfo());
-		UILayer.DebugDisplay(() => "Last Decision Info:\n" + GameMan.Singleton.Game.GetRegionAI(region).profiling.LastDecisionInfo());
+		UILayer.DebugDisplay(() => $"trouble: {GameMan.Game.TroubleMaker.DelayUntilPlayerAction:F2}");
+		UILayer.DebugDisplay(() => "Last Action Info:\n" + GameMan.Game.GetRegionAI(region).profiling.LastActionInfo());
+		UILayer.DebugDisplay(() => "Last Decision Info:\n" + GameMan.Game.GetRegionAI(region).profiling.LastDecisionInfo());
 	}
 
 	public override void _UnhandledKeyInput(InputEvent @event) {
@@ -126,8 +126,8 @@ public partial class PlayerRegion : Node {
 			GetTree().ChangeSceneToFile("res://scenes/map/world_man.tscn");
 		}
 		if (evt.Pressed && evt.Keycode == Key.Key9) {
-			GameMan.Singleton.Game.AIPlaysInPlayerRegion = !GameMan.Singleton.Game.AIPlaysInPlayerRegion;
-			GD.Print("PlayerRegion::_UnhandledKeyInput : DEBUG: ai plays in player region is " + GameMan.Singleton.Game.AIPlaysInPlayerRegion);
+			GameMan.Game.AIPlaysInPlayerRegion = !GameMan.Game.AIPlaysInPlayerRegion;
+			GD.Print("PlayerRegion::_UnhandledKeyInput : DEBUG: ai plays in player region is " + GameMan.Game.AIPlaysInPlayerRegion);
 		}
 	}
 
@@ -157,8 +157,8 @@ public partial class PlayerRegion : Node {
 			faction.ProblemSolvedEvent -= ui.Notifications.ProblemStopped;
 			faction.ProblemUnsolvedEvent -= ui.Notifications.ProblemStopped;
 
-			GameMan.Singleton.Game.Time.HourPassedEvent -= HourlyUpdate;
-			GameMan.Singleton.Game.Time.TimePassedEvent -= PassTime;
+			GameMan.Game.Time.HourPassedEvent -= HourlyUpdate;
+			GameMan.Game.Time.TimePassedEvent -= PassTime;
 			LocalAI.Profiling.EndProfiling();
 
 			ui.QueueFree();
@@ -294,7 +294,7 @@ public partial class PlayerRegion : Node {
 
 	void GameOver() {
 		ui.MapClickEvent -= MapClick;
-		GameMan.Singleton.Game.AIPlaysInPlayerRegion = true;
+		GameMan.Game.AIPlaysInPlayerRegion = true;
 		ui.GameOver();
 	}
 
@@ -302,8 +302,8 @@ public partial class PlayerRegion : Node {
 
 	public uint GetJobMaxWorkers() => faction.GetFreeWorkers();
 
-	public string GetTimeString() => $"{GameMan.Singleton.Game.Time.GetDayHour():00}:{GameMan.Singleton.Game.Time.GetHourMinute():00}";
-	public string GetDateTimeString() => $"{GetTimeString()} {(int)GameMan.Singleton.Game.Time.GetMonthDay():00}/{(int)(GameMan.Singleton.Game.Time.GetMonth() + 1):00}";
+	public string GetTimeString() => $"{GameMan.Game.Time.GetDayHour():00}:{GameMan.Game.Time.GetHourMinute():00}";
+	public string GetDateTimeString() => $"{GetTimeString()} {(int)GameMan.Game.Time.GetMonthDay():00}/{(int)(GameMan.Game.Time.GetMonth() + 1):00}";
 
 	// UI action invokes
 

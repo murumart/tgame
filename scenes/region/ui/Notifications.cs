@@ -14,7 +14,7 @@ public partial class Notifications : VBoxContainer {
 
 	public override void _Process(double delta) {
 		foreach (Node child in notificationContainer.GetChildren()) {
-			if (child is Notification notif && notif.TimeLimit > 0f && !GameMan.Singleton.IsPaused) {
+			if (child is Notification notif && notif.TimeLimit > 0f && !GameMan.IsPaused) {
 				notif.IncreaseTime((float)delta);
 				if (notif.Time >= notif.TimeLimit && !notif.IsDismissing) {
 					notif.Dismiss();

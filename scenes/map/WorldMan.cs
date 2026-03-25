@@ -12,7 +12,7 @@ public partial class WorldMan : Node {
 	[Export] WorldUI worldUI;
 	[Export] Camera camera;
 	
-	static Map Map => GameMan.Singleton.Game.Map;
+	static Map Map => GameMan.Game.Map;
 	static World World => Map.World;
 
 
