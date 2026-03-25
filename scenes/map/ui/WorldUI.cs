@@ -52,6 +52,12 @@ public partial class WorldUI : Control {
 		_ready = true;
 	}
 
+	public override void _Notification(int what) {
+		if (what == NotificationPredelete) {
+			GD.Print("WorldUI::_Notification : IM BEING DELETEDD!!!");
+		}
+	}
+
 	Vector2 oldMousePos;
 	(float, float, float) oldTileInfo;
 	public override void _Process(double delta) {
@@ -131,6 +137,7 @@ public partial class WorldUI : Control {
 
 	void OnDrawLayersChanged() {
 		DisplayWorld(GameMan.Singleton.Game.Map.World);
+		DrawRegions(GameMan.Singleton.Game.Map.GetRegions());
 	}
 
 	void OnRegionDisplayChanged(bool to) {

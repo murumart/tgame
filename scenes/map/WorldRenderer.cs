@@ -24,7 +24,11 @@ public partial class WorldRenderer : Node {
 		Regions     = 64,
 	}
 
-	public World World;
+	World world;
+	public World World {
+		get => world;
+		set => world = value;
+	}
 	DrawLayers _drawMode;
 	[Export]
 	public DrawLayers DrawMode {
@@ -44,7 +48,8 @@ public partial class WorldRenderer : Node {
 		highlightSprite.Texture = ImageTexture.CreateFromImage(highlightImage);
 	}
 
-	void ResetWorldImage() {
+	public void ResetWorldImage() {
+		Debug.Assert(IsInstanceValid(groundSprite), "GroundSprite ain't vaslid");
 		Image worldImage = Image.CreateEmpty(World.Width, World.Height, false, Image.Format.Rgba8);
 		groundSprite.Texture = ImageTexture.CreateFromImage(worldImage);
 	}
@@ -84,7 +89,7 @@ public partial class WorldRenderer : Node {
 		int width = worldImage.GetWidth();
 		int height = worldImage.GetHeight();
 		Color[] colors = new Color[width * height];
-		BytesToColors(imgbytes, colors); 
+		BytesToColors(imgbytes, colors);
 		if ((DrawMode & DrawLayers.Ground) != 0) {
 			var textureImage = GD.Load<Texture2D>("res://scenes/region/tiles1.png").GetImage();
 			for (int x = 0; x < World.Width; x++) {
@@ -171,6 +176,7 @@ public partial class WorldRenderer : Node {
 	}
 
 	public void DrawRegionHighlight(Region hovered, Region highlighted) {
+		if (World is null) return;
 		var image = GetImage(highlightSprite);
 		image.Fill(Colors.Transparent);
 		if (hovered != null) {

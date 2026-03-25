@@ -8,20 +8,17 @@ namespace scenes.map;
 
 public partial class WorldMan : Node {
 
+	static readonly PackedScene regionScene = GD.Load<PackedScene>("res://scenes/region/player_region.tscn");
+
 	[Export] WorldRenderer worldRenderer;
-	[Export] PackedScene regionScene;
 	[Export] WorldUI worldUI;
 	[Export] Camera camera;
-
+	
 	static Map Map => GameMan.Singleton.Game.Map;
 	static World World => Map.World;
 
 
 	public override void _Ready() {
-		if (worldUI != null && worldUI.GetParent() == this) {
-			RemoveChild(worldUI);
-			UILayer.AddUIChild(worldUI);
-		}
 		worldUI.SelectRegion(null);
 		worldUI.RegionPlayRequested += EnterGame;
 		worldUI.WorldTileInfoRequested += where => {
@@ -49,14 +46,14 @@ public partial class WorldMan : Node {
 
 	public override void _Process(double delta) {
 		var mousePos = (Vector2I?)camera?.GetMousePos() ?? Vector2I.Zero;
-		if (Map is not null) {
+		if (Map is not null && worldRenderer.World is not null) {
 			Map.TileOwners.TryGetValue(mousePos, out Region region);
 			worldRenderer.DrawRegionHighlight(region, worldUI.SelectedRegion);
 		}
 	}
 
 	public override void _ExitTree() {
-		worldUI.QueueFree();
+		//worldUI.QueueFree();
 	}
 
 	void RegionClicked(Region region) {

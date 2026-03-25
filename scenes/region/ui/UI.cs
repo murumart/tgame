@@ -4,6 +4,7 @@ using System.Text;
 using Godot;
 using resources.game.building_types;
 using scenes.autoload;
+using scenes.map.ui;
 using static Document;
 using IBuildingType = Building.IBuildingType;
 
@@ -46,6 +47,7 @@ public partial class UI : Control {
 		AgreementsMenu,
 		JobsMenu,
 		TradeMenu,
+		WorldMenu,
 	}
 
 	public enum Tab : int {
@@ -54,6 +56,7 @@ public partial class UI : Control {
 		Documents,
 		Jobs,
 		Trade,
+		World,
 	}
 
 	public bool GameIsOver { get; private set; }
@@ -66,6 +69,7 @@ public partial class UI : Control {
 	[Export] public Button agreementsButton;
 	[Export] public Button jobsButton;
 	[Export] public Button tradeButton;
+	[Export] public Button worldButton;
 
 	// bottom bar menus menus
 	[Export] TabContainer menuTabs;
@@ -73,6 +77,7 @@ public partial class UI : Control {
 	[Export] DocumentsDisplay documentsDisplay;
 	[Export] JobsList jobsList;
 	[Export] TradeInfoPanel tradeInfoPanel;
+	[Export] WorldUI worldUI;
 
 	// right
 	[Export] public MapObjectMenu mopjectMenu;
@@ -131,6 +136,7 @@ public partial class UI : Control {
 		agreementsButton.Pressed += () => OnTabButtonPressed(Tab.Documents, State.AgreementsMenu);
 		jobsButton.Pressed += () => OnTabButtonPressed(Tab.Jobs, State.JobsMenu);
 		tradeButton.Pressed += () => OnTabButtonPressed(Tab.Trade, State.TradeMenu);
+		worldButton.Pressed += () => OnTabButtonPressed(Tab.World, State.WorldMenu);
 
 		pauseButton.Pressed += OnPauseButtonPressed;
 		normalSpeedButton.Pressed += OnNormalSpeedButtonPressed;
@@ -244,6 +250,9 @@ public partial class UI : Control {
 			if (pm is null) {
 				tradeInfoPanel.DisplayNoMarket();
 			} else tradeInfoPanel.Display(fac.Faction, pm.TradeOffers);
+		} else if (which == Tab.World) {
+			worldUI.DisplayWorld(GameMan.Singleton.Game.Map.World);
+			worldUI.DrawRegions(GameMan.Singleton.Game.Map.GetRegions());
 		}
 		menuTabs.CurrentTab = (int)which;
 	}
@@ -404,6 +413,9 @@ public partial class UI : Control {
 		if (state == State.TradeMenu) {
 			state = State.Idle;
 		}
+		if (state == State.WorldMenu) {
+			state = State.Idle;
+		}
 	}
 
 	public void HourlyUpdate(TimeT timeInMinutes) {
@@ -480,7 +492,7 @@ public partial class UI : Control {
 				if (GameMan.Singleton.IsPaused && !wasPausedBefore) GameMan.Singleton.TogglePause();
 				TileDeselectedEvent?.Invoke();
 			}
-			if (old == State.AgreementsMenu || old == State.JobsMenu || old == State.TradeMenu) {
+			if (old == State.AgreementsMenu || old == State.JobsMenu || old == State.TradeMenu || old == State.WorldMenu) {
 				SelectTab(Tab.None);
 				SetTimeSpeedAlteringAllowed(true);
 				if (GameMan.Singleton.IsPaused && !wasPausedBefore) GameMan.Singleton.TogglePause();
@@ -491,6 +503,7 @@ public partial class UI : Control {
 			|| current == State.AgreementsMenu
 			|| current == State.JobsMenu
 			|| current == State.TradeMenu
+			|| current == State.WorldMenu
 		) {
 			SetTimeSpeedAlteringAllowed(false);
 			if (!GameMan.Singleton.IsPaused) {
