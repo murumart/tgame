@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Godot;
 using scenes.region.ui;
 
@@ -10,6 +11,8 @@ namespace scenes.autoload {
 
 		[Export] HoverInfoPanel infoPanel;
 		[Export] Control debugLabelParent;
+		[Export] Control loadingScreen;
+		[Export] ColorRect loadingScreenDark;
 
 		static UILayer singleton;
 
@@ -76,6 +79,20 @@ namespace scenes.autoload {
 			img.SavePng("user://fevered_world/screenshots/" + name);
 		}
 
+		internal static async Task BeginTransitionAnimation() {
+			singleton.loadingScreen.Show();
+			singleton.loadingScreen.Modulate = new(Colors.White, 1f);
+			var tw = singleton.CreateTween().SetTrans(Tween.TransitionType.Cubic);
+			tw.SetEase(Tween.EaseType.Out).TweenProperty(singleton.loadingScreenDark, "modulate:a", 0f, 0.5f).From(1f);
+			await tw.ToSignal(tw, Tween.SignalName.Finished);
+		}
+
+		internal static async Task EndTransitionAnimation() {
+			var tw = singleton.CreateTween().SetTrans(Tween.TransitionType.Cubic);
+			tw.SetEase(Tween.EaseType.In).TweenProperty(singleton.loadingScreen, "modulate:a", 0f, 0.5f).From(1f);
+			await tw.ToSignal(tw, Tween.SignalName.Finished);
+			singleton.loadingScreen.Hide();
+		}
 	}
 
 }

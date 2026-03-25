@@ -123,7 +123,7 @@ public partial class PlayerRegion : Node {
 		var evt = @event as InputEventKey;
 		if (evt.Pressed && evt.Keycode == Key.Key0) {
 			GD.Print("PlayerRegion::_UnhandledKeyInput : DEBUG: moving back to world scene");
-			GetTree().ChangeSceneToFile("res://scenes/map/world_man.tscn");
+			GameMan.SceneTransition("res://scenes/map/world_man.tscn");
 		}
 		if (evt.Pressed && evt.Keycode == Key.Key9) {
 			GameMan.Game.AIPlaysInPlayerRegion = !GameMan.Game.AIPlaysInPlayerRegion;
@@ -275,7 +275,7 @@ public partial class PlayerRegion : Node {
 
 	void OnRegionMandateFailed(Document doc) {
 		GD.Print("RegionMan::OnRegionMandateFailed : MY MANDATE FAILED:::::: DAMN");
-		GetTree().ChangeSceneToFile("res://scenes/game_over.tscn");
+		GameMan.SceneTransition("res://scenes/game_over.tscn");
 	}
 
 	void OnApprovalZeroed() {

@@ -25,6 +25,9 @@ public partial class GameMan : Node {
 	public static bool IsPaused => singleton.paused;
 	public static float GameSpeed => singleton.gameSpeed;
 
+	static bool _sceneTransitioning = false;
+	public static bool IsSceneTransitioning => _sceneTransitioning;
+
 
 	public override void _Ready() {
 		Debug.Assert(singleton == null, "There GameMan can only GameMan Be One");
@@ -73,6 +76,33 @@ public partial class GameMan : Node {
 		GC.Collect(); // please die
 		singleton.game = new Game(map);
 		if (singleton.game.Time.Minutes == 0) singleton.game.PassTime(60 * 7); // start game at 7:00
+	}
+
+	public static async void SceneTransition(string to) {
+		Debug.Assert(to != "" && to.EndsWith(".tscn"), "Scene name invalid!");
+		Debug.Assert(ResourceLoader.Exists(to), "Scene doesn't exist!");
+		SceneTransition(GD.Load<PackedScene>(to));
+	}
+
+	public static async void SceneTransition(PackedScene to) {
+		Debug.Assert(!_sceneTransitioning, "Don't transition scene while already transitioning!");
+
+		_sceneTransitioning = true;
+		await UILayer.BeginTransitionAnimation();
+		await singleton.ToSignal(singleton.GetTree(), SceneTree.SignalName.ProcessFrame);
+		Node root = singleton.GetTree().Root;
+		Node currentScene = root.GetChild(-1);
+		root.RemoveChild(currentScene);
+		await singleton.ToSignal(singleton.GetTree(), SceneTree.SignalName.ProcessFrame);
+		currentScene.QueueFree();
+
+		await singleton.ToSignal(singleton.GetTree(), SceneTree.SignalName.ProcessFrame);
+		Node newScene = to.Instantiate();
+		root.AddChild(newScene);
+		await singleton.ToSignal(singleton.GetTree(), SceneTree.SignalName.ProcessFrame);
+
+		await UILayer.EndTransitionAnimation();
+		_sceneTransitioning = false;
 	}
 
 }

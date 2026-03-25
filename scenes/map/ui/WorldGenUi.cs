@@ -159,7 +159,7 @@ public partial class WorldGenUi : MarginContainer {
 
 	void EnterGame() {
 		GameMan.Game.SetPlayRegion(worldUI.SelectedRegion);
-		GetTree().ChangeSceneToPacked(regionScene);
+		GameMan.SceneTransition(regionScene);
 	}
 
 }

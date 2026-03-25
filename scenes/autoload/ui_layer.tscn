@@ -4,13 +4,32 @@
 [ext_resource type="PackedScene" uid="uid://3kvcwdnxdp36" path="res://scenes/region/ui/hover_info_panel.tscn" id="2_nuntr"]
 [ext_resource type="Script" uid="uid://jtbctyn7uno" path="res://scenes/ui/DebugConsoleThing.cs" id="3_u2cqh"]
 [ext_resource type="PackedScene" uid="uid://c8w64iq1txxc8" path="res://scenes/ui/options_menu.tscn" id="4_qveqe"]
+[ext_resource type="Texture2D" uid="uid://cpirspwwfo4f7" path="res://scenes/ui/screenshot.png" id="5_pqb0u"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_nuntr"]
 
-[node name="UiLayer" type="CanvasLayer" unique_id=1064052168 node_paths=PackedStringArray("infoPanel", "debugLabelParent")]
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_pqb0u"]
+blend_mode = 3
+
+[sub_resource type="Gradient" id="Gradient_pqb0u"]
+interpolation_mode = 2
+offsets = PackedFloat32Array(0, 0.4025157, 1)
+colors = PackedColorArray(0.73333335, 0.7647059, 0.8156863, 1, 0.5882353, 0.6627451, 0.75686276, 1, 0.1882353, 0.21960784, 0.2627451, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_t073r"]
+gradient = SubResource("Gradient_pqb0u")
+width = 512
+height = 512
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(0.8119658, 0.8418803)
+
+[node name="UiLayer" type="CanvasLayer" unique_id=1064052168 node_paths=PackedStringArray("infoPanel", "debugLabelParent", "loadingScreen", "loadingScreenDark")]
 script = ExtResource("1_4ql2r")
 infoPanel = NodePath("Infopanel")
 debugLabelParent = NodePath("Control/DebugLabels/VBoxContainer")
+loadingScreen = NodePath("LoadingScreen")
+loadingScreenDark = NodePath("LoadingScreen/Dark")
 
 [node name="Infopanel" parent="." unique_id=1644599086 instance=ExtResource("2_nuntr")]
 
@@ -84,3 +103,60 @@ metadata/_edit_use_anchors_ = true
 visible = false
 z_index = 15
 layout_mode = 1
+
+[node name="LoadingScreen" type="Control" parent="." unique_id=162142060]
+visible = false
+texture_filter = 1
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Image" type="TextureRect" parent="LoadingScreen" unique_id=640297032]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+texture = ExtResource("5_pqb0u")
+expand_mode = 3
+
+[node name="Vignette" type="TextureRect" parent="LoadingScreen" unique_id=1045649729]
+texture_filter = 1
+texture_repeat = 1
+material = SubResource("CanvasItemMaterial_pqb0u")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("GradientTexture2D_t073r")
+expand_mode = 2
+
+[node name="Label" type="Label" parent="LoadingScreen" unique_id=1369406952]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.84583336
+anchor_top = 0.90833336
+anchor_right = 0.94000006
+anchor_bottom = 0.95000005
+offset_right = -5.200012
+offset_bottom = -3.0517578e-05
+text = "Loading..."
+metadata/_edit_use_anchors_ = true
+
+[node name="Dark" type="ColorRect" parent="LoadingScreen" unique_id=1930056519]
+texture_filter = 1
+texture_repeat = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)

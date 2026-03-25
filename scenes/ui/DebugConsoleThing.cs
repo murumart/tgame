@@ -106,7 +106,7 @@ public partial class DebugConsoleThing : ColorRect {
 		if (world is null) {
 			Output("Need to have a generated game, map and world");
 		}
-		GetTree().ChangeSceneToFile("res://scenes/region/debug_all_regions.tscn");
+		GameMan.SceneTransition("res://scenes/region/debug_all_regions.tscn");
 	}
 
 }
