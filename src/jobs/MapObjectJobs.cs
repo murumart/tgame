@@ -293,6 +293,123 @@ public class GatherResourceJob : MapObjectJob {
 
 }
 
+public class QuarryJob : MapObjectJob {
+
+	public override string Title {
+		get {
+			Debug.Assert(Quarry != null, "Can't get QuarryJob Title without site");
+			return $"Quarry ";
+		}
+	}
+
+	public override Vector2I GlobalPosition {
+		get {
+			Debug.Assert(Quarry != null, $"Site of QuarryJob ({this}) is null!");
+			return Quarry.GlobalPosition;
+		}
+	}
+	public override bool IsValid => Quarry != null;
+
+	ResourceStorage storage;
+	public readonly Building Quarry;
+	readonly int wellIx;
+	//public Well Well => Site.Wells[wellIx];
+
+	float timeSpent; // storing as float due to workers
+	readonly TimeT timeTaken;
+	readonly List<ResourceBundle> grant = new();
+
+
+	public QuarryJob() {
+		Debug.Assert(false, "Don't use no parameter QuarryJob constructor");
+	}
+
+	public QuarryJob(int wellix, Building quarry) {
+		Debug.Assert(wellix >= 0);
+		Debug.Assert(quarry.Type.GetSpecial() == Building.IBuildingType.Special.Quarry);
+		MaxWorkers = 10;
+		timeTaken = GameTime.Hours(24);
+		wellIx = wellix;
+		this.Quarry = quarry;
+	}
+
+	public override void Initialise(Faction ctxFaction, MapObject mapObject) {
+		storage = ctxFaction.Resources;
+		Debug.Assert(Quarry == mapObject, $"Constructor and initialisation sites don't match ({Quarry} vs {mapObject})");
+		timeSpent = 0f;
+	}
+
+	public override void Deinitialise(Faction ctxFaction) { }
+
+	public override float GetWorkTime(TimeT minutes) => minutes * MathF.Pow(Workers, 0.7f);
+
+	public override void PassTime(TimeT minutes) {
+		if (Locked) return; // locked by a problem
+		float ts = GetWorkTime(minutes);
+		timeSpent += ts;
+
+		// while (timeSpent >= Well.MinutesPerBunch && storage.CanAdd(1) && Well.HasBunches) {
+		// 	timeSpent -= Well.MinutesPerBunch;
+		// 	Well.Deplete();
+		// 	grant.Add(new(Well.ResourceType, 1));
+		// }
+		while (timeSpent >= timeTaken && storage.CanAdd(1)) {
+			timeSpent -= timeTaken;
+			grant.Add(new(Registry.ResourcesS.Rocks, 1));
+		}
+
+		if (grant.Count != 0) {
+			ProvideProduction(CollectionsMarshal.AsSpan(grant), storage);
+			grant.Clear();
+		}
+	}
+
+	public override void CheckDone(Faction regionFaction) {
+		if (true) return;
+
+		regionFaction.RemoveJob(this);
+		// remove a completely depleted resource site
+		// let's try not doing this, actually
+		//foreach (var well in site.Wells) if (well.HasBunches) return;
+		//regionFaction.Uproot(site.GlobalPosition - regionFaction.Region.WorldPosition);
+	}
+
+	// display
+
+	public override float GetProgressEstimate() {
+		float estimate = 0f;
+		estimate = Math.Max(estimate, timeSpent / timeTaken);
+		return estimate;
+	}
+
+	public override string GetProductionDescription() {
+		if (Quarry == null) {
+			return Title;
+		}
+		Debug.Assert(Workers >= 0, $"Worker count can't be negative (is {Workers})");
+		var str = "Gathering";
+		// if (storage == null) str += $"Create a job to {well.Production.Infinitive} {well.ResourceType.AssetName}.";
+		// else if (Workers == 0) str += $"Employ workers to {well.Production.Infinitive} {well.ResourceType.AssetName}.";
+		// else {
+		// 	str = $"{well.Production.Progressive.Capitalize()} ";
+		// 	float time = well.MinutesPerBunch / MathF.Max(GetWorkTime(1), 1);
+		// 	str += $"{1} {well.ResourceType.AssetName} every {GameTime.GetFancyTimeString((TimeT)time)}.\n";
+		// }
+
+		return str;
+	}
+
+	public override string GetStatusDescription() {
+		if (Workers == 0) return "";
+		float timeLeft = timeTaken - timeSpent;
+		timeLeft /= GetWorkTime(1);
+		return GameTime.GetFancyTimeString((TimeT)timeLeft) + " until more " + "RESOURCES" + ".";
+	}
+
+	public override string ToString() => $"QuarryJob({(Quarry != null ? "rock porobalby" : "?")})";
+
+}
+
 public class CraftJob : MapObjectJob {
 
 	public override string Title => $"{Process.Infinitive.Capitalize()} {Product.Plural}";

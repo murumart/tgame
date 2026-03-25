@@ -48,10 +48,19 @@ public partial class WorldGenUi : MarginContainer {
 		regionDisplayCheck.Toggled += OnRegionDisplayChanged;
 
 		worldSeedLabel.Text = "" + GD.Randi();
+	}
 
+	public void InitialiseNewWorld() {
 		NewWorld();
 		Task.Run(() => GenerateContinents()).GetAwaiter().GetResult();
 
+		SetRendererParams();
+		OnWorldGenerated();
+	}
+
+	public void LoadCurrentWorld() {
+		this.map = GameMan.Singleton.Game.Map;
+		this.world = this.map.World;
 		SetRendererParams();
 		OnWorldGenerated();
 	}

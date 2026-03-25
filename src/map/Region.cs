@@ -99,7 +99,7 @@ public class Region {
 	MapObject CreateMapObjectSpotAndPlace(MapObject.IMapObjectType type, Vector2I position) {
 		Debug.Assert(!HasMapObject(position, out var m), $"there's already a mapobject {m} at position {position}");
 		Debug.Assert(type.IsPlacementAllowed(GroundTiles[position]), $"Can't place map object {type.AssetName} here ({position} on {GroundTiles[position]})");
-		var ob = type.CreateMapObject(WorldPosition + position);
+		var ob = type.CreateMapObject(WorldPosition + position, this);
 		mapObjects[position] = ob;
 		NaturalResources.Touch();
 		NotifyMapObjectUpdateAt(position);

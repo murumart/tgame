@@ -89,7 +89,7 @@ public partial class MapObjectView : Node2D {
 		Debug.Assert(ResourceLoader.Exists(scenePath, "PackedScene"), $"PackedScene {scenePath} doesn't exist");
 		var scn = GD.Load<PackedScene>(scenePath).Instantiate();
 		Debug.Assert(scn is MapObjectView, "Scene must be a MapObjectView");
-		(scn as MapObjectView).mapObjectRef = mapObject.CreateMapObject(Vector2I.Zero);
+		(scn as MapObjectView).mapObjectRef = mapObject.CreateDummyMapObject();
 		return (scn as MapObjectView);
 	}
 

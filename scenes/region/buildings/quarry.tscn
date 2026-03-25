@@ -1,0 +1,12 @@
+[gd_scene format=3 uid="uid://cf3ojjt5m2mcr"]
+
+[ext_resource type="PackedScene" uid="uid://pfy55aydpy4t" path="res://scenes/region/buildings/_building_base.tscn" id="1_je5un"]
+[ext_resource type="Texture2D" uid="uid://dr8xbcvhmea6p" path="res://scenes/region/buildings/quarry.png" id="2_je5un"]
+
+[node name="BuildingBase" unique_id=1775108404 node_paths=PackedStringArray("mapObjectDisplay") instance=ExtResource("1_je5un")]
+mapObjectDisplay = NodePath("Sprite2D")
+
+[node name="Sprite2D" type="Sprite2D" parent="." index="0" unique_id=1759979388]
+position = Vector2(-32, -30)
+texture = ExtResource("2_je5un")
+centered = false
