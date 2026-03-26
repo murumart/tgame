@@ -54,7 +54,7 @@ public partial class DebugConsoleThing : ColorRect {
 	}
 
 	void _cmd_give(string[] args) {
-		if (GameMan.Singleton.Game?.Map?.World is null) {
+		if (GameMan.Game?.Map?.World is null) {
 			Output("Need to be in-game");
 		}
 		if (args.Length == 0) {
@@ -96,17 +96,17 @@ public partial class DebugConsoleThing : ColorRect {
 			toGive.Add(new(Registry.Resources.GetAsset(currestype), 1));
 		}
 		foreach (var bundle in toGive) {
-			GameMan.Singleton.Game.PlayRegion.LocalFaction.Resources.AddResource(bundle);
+			GameMan.Game.PlayRegion.LocalFaction.Resources.AddResource(bundle);
 			Output($"Gave {bundle}");
 		}
 	}
 
 	void _cmd_seeregions(string[] args) {
-		var world = GameMan.Singleton.Game?.Map?.World;
+		var world = GameMan.Game?.Map?.World;
 		if (world is null) {
 			Output("Need to have a generated game, map and world");
 		}
-		GetTree().ChangeSceneToFile("res://scenes/region/debug_all_regions.tscn");
+		GameMan.SceneTransition("res://scenes/region/debug_all_regions.tscn");
 	}
 
 }

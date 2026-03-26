@@ -27,6 +27,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 
 [node name="WorldGenUI" parent="RegionCamera/CanvasLayer/Control" unique_id=1511327676 instance=ExtResource("4_27n5n")]
 layout_mode = 1

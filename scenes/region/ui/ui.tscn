@@ -13,6 +13,7 @@
 [ext_resource type="LabelSettings" uid="uid://ddruam7fh1y7l" path="res://resources/visual/theme/label_styles/title.tres" id="5_u27i7"]
 [ext_resource type="PackedScene" uid="uid://d1tbr5mkayrjf" path="res://scenes/region/ui/jobs_list.tscn" id="10_v1o57"]
 [ext_resource type="PackedScene" uid="uid://b311cvqibnmx0" path="res://scenes/region/ui/trade_info_panel.tscn" id="11_3haic"]
+[ext_resource type="PackedScene" uid="uid://oq1d8aheub65" path="res://scenes/map/ui/world_ui.tscn" id="12_igkl3"]
 [ext_resource type="AudioStream" uid="uid://clyck37eh7i6m" path="res://sound/ui/menusounds-01.ogg" id="13_lkpo6"]
 [ext_resource type="Script" uid="uid://budv3jk6vkbdc" path="res://sound/ui/UISoundCreator.cs" id="14_igkl3"]
 
@@ -73,7 +74,7 @@ events = [SubResource("InputEventKey_4ggmx")]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_bjdfm"]
 
-[node name="Ui" type="MarginContainer" unique_id=948088031 node_paths=PackedStringArray("buildButton", "agreementsButton", "jobsButton", "tradeButton", "menuTabs", "buildingList", "documentsDisplay", "jobsList", "tradeInfoPanel", "mopjectMenu", "resourceDisplay", "pauseDisplayPanel", "panButton", "zoomLabel", "zoomInButton", "zoomResetButton", "zoomOutButton", "gameSpeedLabel", "pauseButton", "normalSpeedButton", "fastSpeedButton", "fasterSpeedButton", "resourceLabel", "announcementOkayButton", "announcementText", "announcementTitle", "announcementParent", "Notifications")]
+[node name="Ui" type="MarginContainer" unique_id=948088031 node_paths=PackedStringArray("buildButton", "agreementsButton", "jobsButton", "tradeButton", "worldButton", "menuTabs", "buildingList", "documentsDisplay", "jobsList", "tradeInfoPanel", "worldUI", "mopjectMenu", "resourceDisplay", "pauseDisplayPanel", "panButton", "zoomLabel", "zoomInButton", "zoomResetButton", "zoomOutButton", "gameSpeedLabel", "pauseButton", "normalSpeedButton", "fastSpeedButton", "fasterSpeedButton", "resourceLabel", "announcementOkayButton", "announcementText", "announcementTitle", "announcementParent", "Notifications")]
 z_index = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -90,11 +91,13 @@ buildButton = NodePath("VBoxContainer2/HBoxContainer/VBoxContainer2/ControlButto
 agreementsButton = NodePath("VBoxContainer2/HBoxContainer/VBoxContainer2/ControlButtons/AgreementsButton")
 jobsButton = NodePath("VBoxContainer2/HBoxContainer/VBoxContainer2/ControlButtons/JobsButton")
 tradeButton = NodePath("VBoxContainer2/HBoxContainer/VBoxContainer2/ControlButtons/TradeButton")
+worldButton = NodePath("VBoxContainer2/HBoxContainer/VBoxContainer2/ControlButtons/WorldButton")
 menuTabs = NodePath("VBoxContainer2/HBoxContainer/VBoxContainer2/MenuTabs")
 buildingList = NodePath("VBoxContainer2/HBoxContainer/VBoxContainer2/MenuTabs/HBoxContainer/BuildMenu")
 documentsDisplay = NodePath("VBoxContainer2/HBoxContainer/VBoxContainer2/MenuTabs/HBoxContainer2/Agreements")
 jobsList = NodePath("VBoxContainer2/HBoxContainer/VBoxContainer2/MenuTabs/HBoxContainer3/Jobs")
 tradeInfoPanel = NodePath("VBoxContainer2/HBoxContainer/VBoxContainer2/MenuTabs/HBoxContainer4/TradeInfopanel")
+worldUI = NodePath("VBoxContainer2/HBoxContainer/VBoxContainer2/MenuTabs/HBoxContainer5/WorldUI")
 mopjectMenu = NodePath("VBoxContainer2/HBoxContainer/MapObjectMenu")
 resourceDisplay = NodePath("VBoxContainer/VBoxContainer/ResourceDisplay")
 pauseDisplayPanel = NodePath("PausePanel")
@@ -451,6 +454,25 @@ size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.88
 mouse_filter = 2
 
+[node name="HBoxContainer5" type="HBoxContainer" parent="VBoxContainer2/HBoxContainer/VBoxContainer2/MenuTabs" unique_id=708575497]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 4
+
+[node name="WorldUI" parent="VBoxContainer2/HBoxContainer/VBoxContainer2/MenuTabs/HBoxContainer5" unique_id=832899595 instance=ExtResource("12_igkl3")]
+custom_minimum_size = Vector2(400, 300)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 4.0
+mode = 1
+metadata/_edit_group_ = true
+
+[node name="Fat" type="Control" parent="VBoxContainer2/HBoxContainer/VBoxContainer2/MenuTabs/HBoxContainer5" unique_id=2081266303]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.88
+mouse_filter = 2
+
 [node name="ControlButtons" type="HBoxContainer" parent="VBoxContainer2/HBoxContainer/VBoxContainer2" unique_id=1935346688]
 layout_mode = 2
 mouse_filter = 2
@@ -484,7 +506,6 @@ text = "Trade"
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
-disabled = true
 text = "World"
 
 [node name="MapObjectMenu" parent="VBoxContainer2/HBoxContainer" unique_id=899012506 node_paths=PackedStringArray("ui") instance=ExtResource("3_y7o2c")]

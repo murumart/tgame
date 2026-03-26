@@ -38,12 +38,12 @@ public partial class RegionDisplay : Node2D {
 			case (int)NotificationPredelete:
 				DisconnectEvents();
 				valid = false;
-				GameMan.Singleton.Game.Time.TimePassedEvent -= TimeUpdate;
+				GameMan.Game.Time.TimePassedEvent -= TimeUpdate;
 				break;
 			case (int)NotificationReady:
 				visibilityArea.ScreenEntered += OnScreenEntered;
 				visibilityArea.ScreenExited += OnScreenExited;
-				GameMan.Singleton.Game.Time.TimePassedEvent += TimeUpdate;
+				GameMan.Game.Time.TimePassedEvent += TimeUpdate;
 				break;
 		}
 	}
@@ -65,7 +65,7 @@ public partial class RegionDisplay : Node2D {
 			var p = problemsToUndisplay.Dequeue();
 			UndisplayRegionProblem(p);
 		}
-		if (GameMan.Singleton.IsPaused && Engine.GetFramesDrawn() % 16 == 0) {
+		if (GameMan.IsPaused && Engine.GetFramesDrawn() % 16 == 0) {
 			DisplayJobProgress();
 		}
 	}
@@ -85,7 +85,7 @@ public partial class RegionDisplay : Node2D {
 		this.camera = camera;
 		ConnectEvents();
 		tilemaps.DisplayGround(region);
-		var wposes = region.GroundTiles.Keys.Select(p => Tilemaps.TilePosToWorldPos(p) + Vector2.Up * Tilemaps.TileElevationVerticalOffset(region.WorldPosition + p, GameMan.Singleton.Game.Map.World));
+		var wposes = region.GroundTilePositions.Select(p => Tilemaps.TilePosToWorldPos(p) + Vector2.Up * Tilemaps.TileElevationVerticalOffset(region.WorldPosition + p, GameMan.Game.Map.World));
 		float minx = wposes.MinBy(p => p.X).X - Tilemaps.TILE_SIZE.X * 0.5f;
 		float miny = wposes.MinBy(p => p.Y).Y - Tilemaps.TILE_SIZE.Y * 0.5f;
 		float maxx = wposes.MaxBy(p => p.X).X - Tilemaps.TILE_SIZE.X * 0.5f;
@@ -95,7 +95,7 @@ public partial class RegionDisplay : Node2D {
 		visibilityArea.Rect = visiblerect;
 		//visibilityDebug.Position = visiblerect.Position;
 		//visibilityDebug.Size = visiblerect.Size;
-		//visibilityDebug.Visible = region == GameMan.Singleton.Game.PlayRegion;
+		//visibilityDebug.Visible = region == GameMan.Game.PlayRegion;
 
 		if (Lod < 2) {
 			foreach (var m in region.GetMapObjects()) {
@@ -108,7 +108,7 @@ public partial class RegionDisplay : Node2D {
 		OnScreenExited();
 
 		// debug
-		//if (region == GameMan.Singleton.Game.PlayRegion) {
+		//if (region == GameMan.Game.PlayRegion) {
 		//	UILayer.DebugDisplay(() => {
 		//		return ""
 		//			+ $"mouse: {tilemaps.Ground.GetLocalMousePosition()}\n"
@@ -173,7 +173,7 @@ public partial class RegionDisplay : Node2D {
 		buildingsParent.AddChild(view);
 		mapObjectViews[mopbject.GlobalPosition - region.WorldPosition] = view;
 		var viewpos = Tilemaps.TilePosToWorldPos(mopbject.GlobalPosition - region.WorldPosition);
-		viewpos.Y -= Tilemaps.TileElevationVerticalOffset(mopbject.GlobalPosition, GameMan.Singleton.Game.Map.World);
+		viewpos.Y -= Tilemaps.TileElevationVerticalOffset(mopbject.GlobalPosition, GameMan.Game.Map.World);
 		view.Position = viewpos;
 		if (region.LocalFaction.GetJob(mopbject.GlobalPosition, out var job)) {
 			OnJobChanged(job, 0);
@@ -267,7 +267,7 @@ public partial class RegionDisplay : Node2D {
 		buildingsParent.AddChild(view);
 		problemViews[proble.LocalPosition] = view;
 		var viewpos = Tilemaps.TilePosToWorldPos(proble.LocalPosition);
-		viewpos.Y -= Tilemaps.TileElevationVerticalOffset(proble.LocalPosition + region.WorldPosition, GameMan.Singleton.Game.Map.World);
+		viewpos.Y -= Tilemaps.TileElevationVerticalOffset(proble.LocalPosition + region.WorldPosition, GameMan.Game.Map.World);
 		view.Position = viewpos;
 		bool hasBview = mapObjectViews.TryGetValue(proble.LocalPosition, out var moview);
 		if (hasBview) {
@@ -333,8 +333,8 @@ public partial class RegionDisplay : Node2D {
 	public Vector2I GetTilePosFromLocalPos(Vector2 localPos) {
 		var tilepos = LocalToTile(localPos);
 		Debug.Assert(region is not null, "Region shouldnät be null");
-		Debug.Assert(GameMan.Singleton.Game?.Map?.World is not null, "World shouldnät be null");
-		localPos.Y += Tilemaps.TileElevationVerticalOffset(region.WorldPosition + tilepos, GameMan.Singleton.Game.Map.World);
+		Debug.Assert(GameMan.Game?.Map?.World is not null, "World shouldnät be null");
+		localPos.Y += Tilemaps.TileElevationVerticalOffset(region.WorldPosition + tilepos, GameMan.Game.Map.World);
 		tilepos = LocalToTile(localPos);
 		return tilepos;
 	}

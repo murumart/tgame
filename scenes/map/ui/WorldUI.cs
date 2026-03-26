@@ -1,34 +1,48 @@
 using System;
 using System.Linq;
 using Godot;
+using scenes.autoload;
 
 namespace scenes.map.ui;
 
 public partial class WorldUI : Control {
 
+	enum Modes {
+		Generation,
+		InGame,
+	}
+
 	public event Func<Vector2I, (float, float, float)> WorldTileInfoRequested;
 	public event Func<Vector2I, Region> RegionRequested;
-	public event Action RegionPlayRequested;
+	public event Action<Region> RegionSelected;
 
+	bool _ready;
+
+	[Export] Modes mode;
+	[Export] WorldRenderer worldRenderer;
 	[Export] public ResourceDisplay ResourceDisplay;
 	[Export] Camera camera;
 	[Export] Control factionPanel;
 	[Export] Label factionTitleLabel;
 	[Export] RichTextLabel factionInfoLabel;
-	[Export] Button factionPlayButton;
+
+	[Export] Godot.Collections.Array<CheckButton> drawLayerButtons;
+	[Export] CheckButton regionDisplayCheck;
 
 	Region selectedRegion;
 	public Region SelectedRegion => selectedRegion;
 
 
 	public override void _Ready() {
-		factionPlayButton.Pressed += () => RegionPlayRequested?.Invoke();
 		factionPanel.GuiInput += _GuiInput;
 
 		camera.ClickedMouseEvent += MouseClicked;
 
+		foreach (var but in drawLayerButtons) but.Pressed += OnDrawLayersChanged;
+		regionDisplayCheck.Toggled += OnRegionDisplayChanged;
+
 		ResourceDisplay.Display(c => {
-			if (!camera.IsInsideTree()) (c as Label).Text =  "...";
+			if (!camera.IsInsideTree()) (c as Label).Text = "...";
 			var mousePos = (Vector2I)camera.GetMousePos();
 			if (mousePos != oldMousePos) {
 				oldMousePos = mousePos;
@@ -38,6 +52,14 @@ public partial class WorldUI : Control {
 			(c as Label).Text = $"ele: {oldTileInfo.Item1} temp: {oldTileInfo.Item2} humi: {oldTileInfo.Item3}";
 		});
 		ResourceDisplay.DisplayFat();
+
+		_ready = true;
+	}
+
+	public override void _Notification(int what) {
+		if (what == NotificationPredelete) {
+			GD.Print("WorldUI::_Notification : IM BEING DELETEDD!!!");
+		}
 	}
 
 	Vector2 oldMousePos;
@@ -52,12 +74,6 @@ public partial class WorldUI : Control {
 		SelectRegion(region);
 	}
 
-	public override void _UnhandledKeyInput(InputEvent evt) {
-		if (evt is InputEventKey k) {
-			if (k.Pressed && k.Keycode == Key.Key7 && selectedRegion != null) RegionPlayRequested?.Invoke();
-		}
-	}
-
 	public override void _GuiInput(InputEvent evt) {
 		if (evt is InputEventMouseButton) {
 			GetViewport().SetInputAsHandled();
@@ -68,7 +84,6 @@ public partial class WorldUI : Control {
 		if (region == null) {
 			factionTitleLabel.Text = ". . .";
 			factionInfoLabel.Text = "Select a Faction";
-			factionPlayButton.Disabled = true;
 			selectedRegion = null;
 			return;
 		}
@@ -89,7 +104,41 @@ public partial class WorldUI : Control {
 			+ $"Map objects: {things}\n"
 			+ $"Region IX: {region.WorldIndex}"
 		;
-		factionPlayButton.Disabled = region.LocalFaction.IsWild;
+		RegionSelected?.Invoke(region);
+	}
+
+	void SetRendererParams() {
+		WorldRenderer.DrawLayers a = 0;
+		if (drawLayerButtons[0].ButtonPressed) a |= WorldRenderer.DrawLayers.Ground;
+		if (drawLayerButtons[1].ButtonPressed) a |= WorldRenderer.DrawLayers.Elevation;
+		if (drawLayerButtons[2].ButtonPressed) a |= WorldRenderer.DrawLayers.Temperature;
+		if (drawLayerButtons[3].ButtonPressed) a |= WorldRenderer.DrawLayers.Humidity;
+		if (drawLayerButtons[4].ButtonPressed) a |= WorldRenderer.DrawLayers.Drainage;
+		if (drawLayerButtons[5].ButtonPressed) a |= WorldRenderer.DrawLayers.SeaWind;
+		worldRenderer.DrawMode = a;
+	}
+
+	public void DisplayWorld(World world) {
+		Debug.Assert(_ready);
+		worldRenderer.World = world;
+		worldRenderer.ResetImages();
+		SetRendererParams();
+		worldRenderer.DrawWorld();
+		camera.Position = new(world.Width * 0.5f, world.Height * 0.5f);
+	}
+
+	public void DrawRegions(Region[] regions) {
+		Debug.Assert(_ready);
+		worldRenderer.DrawRegions(regions);
+	}
+
+	void OnDrawLayersChanged() {
+		DisplayWorld(GameMan.Game.Map.World);
+		DrawRegions(GameMan.Game.Map.GetRegions());
+	}
+
+	void OnRegionDisplayChanged(bool to) {
+		worldRenderer.RegionSprite.Visible = to;
 	}
 
 }

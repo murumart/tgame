@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Godot;
 using static Building;
@@ -21,8 +22,8 @@ public class FactionActions {
 		return faction.Resources;
 	}
 
-	public IEnumerable<Vector2I> GetTiles() {
-		return region.GroundTiles.Keys;
+	public Span<KeyValuePair<Vector2I, GroundTileType>> GetTiles() {
+		return region.GetGroundTiles();
 	}
 
 	public (float, float) GetFoodAndUsage() {

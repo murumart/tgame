@@ -4,6 +4,7 @@ using System.Text;
 using Godot;
 using resources.game.building_types;
 using scenes.autoload;
+using scenes.map.ui;
 using static Document;
 using IBuildingType = Building.IBuildingType;
 
@@ -46,6 +47,7 @@ public partial class UI : Control {
 		AgreementsMenu,
 		JobsMenu,
 		TradeMenu,
+		WorldMenu,
 	}
 
 	public enum Tab : int {
@@ -54,6 +56,7 @@ public partial class UI : Control {
 		Documents,
 		Jobs,
 		Trade,
+		World,
 	}
 
 	public bool GameIsOver { get; private set; }
@@ -66,6 +69,7 @@ public partial class UI : Control {
 	[Export] public Button agreementsButton;
 	[Export] public Button jobsButton;
 	[Export] public Button tradeButton;
+	[Export] public Button worldButton;
 
 	// bottom bar menus menus
 	[Export] TabContainer menuTabs;
@@ -73,6 +77,7 @@ public partial class UI : Control {
 	[Export] DocumentsDisplay documentsDisplay;
 	[Export] JobsList jobsList;
 	[Export] TradeInfoPanel tradeInfoPanel;
+	[Export] WorldUI worldUI;
 
 	// right
 	[Export] public MapObjectMenu mopjectMenu;
@@ -131,6 +136,7 @@ public partial class UI : Control {
 		agreementsButton.Pressed += () => OnTabButtonPressed(Tab.Documents, State.AgreementsMenu);
 		jobsButton.Pressed += () => OnTabButtonPressed(Tab.Jobs, State.JobsMenu);
 		tradeButton.Pressed += () => OnTabButtonPressed(Tab.Trade, State.TradeMenu);
+		worldButton.Pressed += () => OnTabButtonPressed(Tab.World, State.WorldMenu);
 
 		pauseButton.Pressed += OnPauseButtonPressed;
 		normalSpeedButton.Pressed += OnNormalSpeedButtonPressed;
@@ -172,7 +178,7 @@ public partial class UI : Control {
 		if (@event is InputEventKey k && k.Pressed) {
 			if (k.Keycode == Key.Key6) {
 				if (timeSpeedAlteringDisabled) return;
-				GameMan.Singleton.MultiplyGameSpeed(GameMan.GameSpeedChanger.UI, 1200);
+				GameMan.MultiplyGameSpeed(GameMan.GameSpeedChanger.UI, 1200);
 				SetGameSpeedLabelText();
 			}
 		}
@@ -190,7 +196,7 @@ public partial class UI : Control {
 
 	void TogglePause() {
 		if (timeSpeedAlteringDisabled) return;
-		GameMan.Singleton.TogglePause();
+		GameMan.TogglePause();
 		SetGameSpeedLabelText();
 	}
 
@@ -204,26 +210,26 @@ public partial class UI : Control {
 
 	void OnNormalSpeedButtonPressed() {
 		if (timeSpeedAlteringDisabled) return;
-		if (GameMan.Singleton.IsPaused) TogglePause();
-		GameMan.Singleton.MultiplyGameSpeed(GameMan.GameSpeedChanger.UI, NORMAL_SPEED);
+		if (GameMan.IsPaused) TogglePause();
+		GameMan.MultiplyGameSpeed(GameMan.GameSpeedChanger.UI, NORMAL_SPEED);
 		SetGameSpeedLabelText();
 	}
 
 	void OnFastSpeedButtonPressed() {
 		if (timeSpeedAlteringDisabled) return;
-		if (GameMan.Singleton.IsPaused) TogglePause();
-		GameMan.Singleton.MultiplyGameSpeed(GameMan.GameSpeedChanger.UI, FAST_SPEED);
+		if (GameMan.IsPaused) TogglePause();
+		GameMan.MultiplyGameSpeed(GameMan.GameSpeedChanger.UI, FAST_SPEED);
 		SetGameSpeedLabelText();
 	}
 
 	void OnFasterSpeedButtonPressed() {
 		if (timeSpeedAlteringDisabled) return;
-		if (GameMan.Singleton.IsPaused) TogglePause();
-		GameMan.Singleton.MultiplyGameSpeed(GameMan.GameSpeedChanger.UI, FASTER_SPEED);
+		if (GameMan.IsPaused) TogglePause();
+		GameMan.MultiplyGameSpeed(GameMan.GameSpeedChanger.UI, FASTER_SPEED);
 		SetGameSpeedLabelText();
 	}
 
-	void SetGameSpeedLabelText() => gameSpeedLabel.Text = GameMan.Singleton.IsPaused ? "paused" : $"{GameMan.Singleton.GameSpeed}x game speed";
+	void SetGameSpeedLabelText() => gameSpeedLabel.Text = GameMan.IsPaused ? "paused" : $"{GameMan.GameSpeed}x game speed";
 
 	// menu activites
 
@@ -244,6 +250,9 @@ public partial class UI : Control {
 			if (pm is null) {
 				tradeInfoPanel.DisplayNoMarket();
 			} else tradeInfoPanel.Display(fac.Faction, pm.TradeOffers);
+		} else if (which == Tab.World) {
+			worldUI.DisplayWorld(GameMan.Game.Map.World);
+			worldUI.DrawRegions(GameMan.Game.Map.GetRegions());
 		}
 		menuTabs.CurrentTab = (int)which;
 	}
@@ -273,8 +282,8 @@ public partial class UI : Control {
 		if (announceData.Callback != null) {
 			announcementOkayButton.Connect(Button.SignalName.Pressed, Callable.From(announceData.Callback), (uint)ConnectFlags.OneShot);
 		}
-		if (!GameMan.Singleton.IsPaused) {
-			GameMan.Singleton.TogglePause();
+		if (!GameMan.IsPaused) {
+			GameMan.TogglePause();
 			_announcePaused = true;
 		}
 	}
@@ -282,7 +291,7 @@ public partial class UI : Control {
 	void HideAnnounce() {
 		announcementParent.Hide();
 		if (_announcePaused) {
-			GameMan.Singleton.TogglePause();
+			GameMan.TogglePause();
 			_announcePaused = false;
 		}
 	}
@@ -329,7 +338,7 @@ public partial class UI : Control {
 			});
 			resourceDisplay.Display(c => {
 				string txt = $"{inRegionTilepos}";
-				if (reg.GroundTiles.TryGetValue(inRegionTilepos, out GroundTileType tile)) {
+				if (reg.GetGroundTile(inRegionTilepos, out GroundTileType tile)) {
 					txt += $" {tile.UIString()}";
 					if (reg.HasMapObject(inRegionTilepos, out MapObject mopject)) {
 						txt += $" with {(mopject.Type as IAssetType).AssetName}";
@@ -338,7 +347,7 @@ public partial class UI : Control {
 				(c as Label).Text = txt;
 			});
 			resourceDisplay.Display(c => {
-				var map = GameMan.Singleton.Game.Map;
+				var map = GameMan.Game.Map;
 				if (map == null) (c as Label).Text = "map...?";
 				else if (!map.TileOwners.TryGetValue(inRegionTilepos + reg.WorldPosition, out var reg2)) (c as Label).Text = "faction: ...?";
 				else (c as Label).Text = $"faction: {reg2.LocalFaction.Name}";
@@ -358,7 +367,7 @@ public partial class UI : Control {
 		resourceDisplay.Display();
 		DisplayResources();
 		SetGameSpeedLabelText();
-		bool gamePaused = GameMan.Singleton.IsPaused || GameMan.Singleton.GameSpeed == 0f;
+		bool gamePaused = GameMan.IsPaused || GameMan.GameSpeed == 0f;
 		pauseDisplayPanel.Visible = gamePaused;
 		zoomLabel.Text = $"zoom: {(Camera.Zoom.X >= 1 ? Camera.Zoom.X : Mathf.Remap(Camera.Zoom.X, 1f, 0.1f, 1f, -8f)):0}";
 		if (state == State.PlacingBuild) {
@@ -402,6 +411,9 @@ public partial class UI : Control {
 			state = State.Idle;
 		}
 		if (state == State.TradeMenu) {
+			state = State.Idle;
+		}
+		if (state == State.WorldMenu) {
 			state = State.Idle;
 		}
 	}
@@ -466,24 +478,24 @@ public partial class UI : Control {
 				buildingList.Reset();
 				SelectTab(Tab.None);
 				SetTimeSpeedAlteringAllowed(true);
-				if (GameMan.Singleton.IsPaused && !wasPausedBefore) GameMan.Singleton.TogglePause();
+				if (GameMan.IsPaused && !wasPausedBefore) GameMan.TogglePause();
 			}
 			if (old == State.PlacingBuild) {
 				buildingList.Reset();
 				buildingList.SetBuildCursor(null);
 				SetTimeSpeedAlteringAllowed(true);
-				if (GameMan.Singleton.IsPaused && !wasPausedBefore) GameMan.Singleton.TogglePause();
+				if (GameMan.IsPaused && !wasPausedBefore) GameMan.TogglePause();
 			}
 			if (old == State.MapObjectMenu) {
 				mopjectMenu.Close();
 				SetTimeSpeedAlteringAllowed(true);
-				if (GameMan.Singleton.IsPaused && !wasPausedBefore) GameMan.Singleton.TogglePause();
+				if (GameMan.IsPaused && !wasPausedBefore) GameMan.TogglePause();
 				TileDeselectedEvent?.Invoke();
 			}
-			if (old == State.AgreementsMenu || old == State.JobsMenu || old == State.TradeMenu) {
+			if (old == State.AgreementsMenu || old == State.JobsMenu || old == State.TradeMenu || old == State.WorldMenu) {
 				SelectTab(Tab.None);
 				SetTimeSpeedAlteringAllowed(true);
-				if (GameMan.Singleton.IsPaused && !wasPausedBefore) GameMan.Singleton.TogglePause();
+				if (GameMan.IsPaused && !wasPausedBefore) GameMan.TogglePause();
 			}
 		}
 		if (current == State.ChoosingBuild
@@ -491,10 +503,11 @@ public partial class UI : Control {
 			|| current == State.AgreementsMenu
 			|| current == State.JobsMenu
 			|| current == State.TradeMenu
+			|| current == State.WorldMenu
 		) {
 			SetTimeSpeedAlteringAllowed(false);
-			if (!GameMan.Singleton.IsPaused) {
-				GameMan.Singleton.TogglePause();
+			if (!GameMan.IsPaused) {
+				GameMan.TogglePause();
 				wasPausedBefore = false;
 			} else wasPausedBefore = true;
 		}

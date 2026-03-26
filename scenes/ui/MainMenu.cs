@@ -23,6 +23,8 @@ public partial class MainMenu : Control {
 			GetTree().Quit();
 		};
 
+		worldgen.InitialiseNewWorld();
+
 	}
 
 	void OnPlayPressed() {

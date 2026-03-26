@@ -17,7 +17,7 @@ public class Map {
 
 		TileOwners = new();
 		foreach (Region region in regions) {
-			foreach (Vector2I pos in region.GroundTiles.Keys) {
+			foreach (Vector2I pos in region.GroundTilePositions) {
 				var wpos = pos + region.WorldPosition;
 				Debug.Assert(!TileOwners.ContainsKey(wpos), $"The tile {wpos} is contested and wrong please behave");
 				TileOwners[wpos] = region;

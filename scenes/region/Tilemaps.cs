@@ -20,11 +20,11 @@ public partial class Tilemaps : Node2D {
 		var watch = System.Diagnostics.Stopwatch.StartNew();
 		ground.Clear();
 		// see OffsettableTilemap.cs
-		foreach (var pair in from.GroundTiles) {
+		foreach (var pair in from.GetGroundTiles()) {
 			var type = GroundCellType.MatchTileTypeToCell(pair.Value);
 			ground.SetCell(pair.Key, type.SourceId, type.AtlasCoords);
 		}
-		ground.world = GameMan.Singleton.Game.Map.World;
+		ground.world = GameMan.Game.Map.World;
 		ground.region = from;
 		ground.heightColorGradient = heightColorGradient;
 		ground.UpdateInternals();

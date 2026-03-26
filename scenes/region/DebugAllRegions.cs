@@ -15,6 +15,8 @@ public partial class DebugAllRegions : Node {
 	public override void _Ready() {
 		camera.SetProcess(false);
 		worldGenUi.GoBackEvent += GenMap;
+		worldGenUi.LoadCurrentWorld();
+		GenMap();
 	}
 
 	public override void _UnhandledKeyInput(InputEvent e) {
@@ -28,9 +30,9 @@ public partial class DebugAllRegions : Node {
 		worldGenUi.Hide();
 		camera.SetProcess(true);
 		foreach (var r in regionParent.GetChildren()) r.QueueFree();
-		dummyStupid.LoadRegion(GameMan.Singleton.Game.Map.GetRegion(0), 2, camera);
+		dummyStupid.LoadRegion(GameMan.Game.Map.GetRegion(0), 2, camera);
 		Callable.From(() => {
-			foreach (var region in GameMan.Singleton.Game.Map.GetRegions()) {
+			foreach (var region in GameMan.Game.Map.GetRegions()) {
 				var rdisp = RegionDisplay.Instantiate();
 				regionParent.AddChild(rdisp);
 				rdisp.Modulate = region.LocalFaction.Color.Lightened(0.99f);

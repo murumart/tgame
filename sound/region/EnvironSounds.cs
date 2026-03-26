@@ -50,26 +50,26 @@ public partial class EnvironSounds : AudioStreamPlayer {
 	}
 
 	public Vector2I GetCameraPosition() {
-		var world = GameMan.Singleton?.Game?.Map?.World ?? null;
+		var world = GameMan.Game?.Map?.World ?? null;
 		Debug.Assert(world is not null);
 		var camPosOnTile = Camera.GetHoveredTilePos();
-		return camPosOnTile + GameMan.Singleton.Game.PlayRegion.WorldPosition;
+		return camPosOnTile + GameMan.Game.PlayRegion.WorldPosition;
 	}
 
 	public float GetElevation() {
-		var world = GameMan.Singleton.Game.Map.World;
+		var world = GameMan.Game.Map.World;
 		var campos = GetCameraPosition();
 		return world.GetElevation(campos.X, campos.Y);
 	}
 
 	public float GetHumidity() {
-		var world = GameMan.Singleton.Game.Map.World;
+		var world = GameMan.Game.Map.World;
 		var campos = GetCameraPosition();
 		return world.GetHumidity(campos.X, campos.Y);
 	}
 
 	public float GetTemperature() {
-		var world = GameMan.Singleton.Game.Map.World;
+		var world = GameMan.Game.Map.World;
 		var campos = GetCameraPosition();
 		return world.GetTemperature(campos.X, campos.Y);
 	}

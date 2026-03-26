@@ -10,7 +10,7 @@ namespace scenes.map {
 
 	public partial class WorldGenerator : Node {
 
-		readonly (Vector2I, byte)[] GrowDirs = { (Vector2I.Right, 0b1), (Vector2I.Left, 0b10), (Vector2I.Down, 0b100), (Vector2I.Up, 0b1000) };
+		
 
 		readonly struct KernelVal(int x, int y, float coef) {
 			public readonly int X => x;
@@ -237,7 +237,7 @@ namespace scenes.map {
 			freeEdgeTiles.Clear();
 
 			foreach (Region region in regionsLand) {
-				foreach (Vector2I pos in region.GroundTiles.Keys) {
+				foreach (Vector2I pos in region.GroundTilePositions) {
 					var wpos = pos + region.WorldPosition;
 					// starter house position..
 					if (pos == Vector2I.Zero) continue;
@@ -282,10 +282,11 @@ namespace scenes.map {
 					tile = new Vector2I(rng.RandiRange(0, world.Width - 1), rng.RandiRange(0, world.Height - 1));
 				}
 				Debug.Assert(!startPoses.ContainsKey(tile), "Two regions can't start on the same tile!");
-				var region = new Region(regionsMade, tile, new());
+				var gtiles = new Dictionary<Vector2I, GroundTileType>();
+				var region = new Region(regionsMade, tile, gtiles);
 				startPoses.Add(tile, region);
 
-				region.GroundTiles[Vector2I.Zero] = world.GetTile(tile.X, tile.Y);
+				gtiles[Vector2I.Zero] = world.GetTile(tile.X, tile.Y);
 
 				regionsMade++;
 			}
@@ -303,7 +304,7 @@ namespace scenes.map {
 
 			var tw = CreateTween().SetLoops(0);
 			var growCallback = Callable.From(() => {
-				var grew = GrowAllRegionsOneStep(regions, occupied, freeEdgeTiles, world, sea: sea, iterations: 1);
+				var grew = Region.GenerationAccessor.GrowAllRegionsOneStep(regions, occupied, freeEdgeTiles, world, rng, sea: sea, iterations: 1);
 				Regions = regions;
 				if (!grew) {
 					tw.EmitSignal(Tween.SignalName.Finished);
@@ -332,101 +333,6 @@ namespace scenes.map {
 			//	if (x % 36 == 0) await ToSignal(GetTree(), "process_frame");
 			//}
 
-		}
-
-		private bool GrowAllRegionsOneStep(
-			Region[] regions, Dictionary<Vector2I, Region> occupied,
-			Dictionary<Region, List<(Vector2I, byte)>> freeEdgeTiles,
-			World world,
-			int iterations = 10,
-			bool sea = false
-		) {
-			var growthOccurred = false;
-
-			for (int xxx = 0; xxx < iterations; xxx++) for (int i = 0; i < regions.Length; i++) {
-					var region = regions[i];
-					var freeEdges = freeEdgeTiles[region];
-					var c = freeEdges.Count;
-					for (int x = 0; x < c; x++) {
-						var addKeys = new HashSet<Vector2I>(); // coordinates in region local space
-						addKeys.Clear();
-						for (int dirIx = 0; dirIx < 4; dirIx++) {
-							var ix = rng.RandiRange(0, freeEdges.Count - 1);
-							growthOccurred = GrowRegionInDirection(occupied, addKeys, freeEdges, ix, region, dirIx, world, GroundTileType.All) || growthOccurred;
-							if (freeEdges.Count == 0) break;
-						}
-						foreach (var k in addKeys) {
-							Debug.Assert(!region.GroundTiles.ContainsKey(k), "region {region} already owns the local tile {k}");
-							region.GroundTiles.Add(k, world.GetTile(k.X + region.WorldPosition.X, k.Y + region.WorldPosition.Y));
-						}
-						if (freeEdges.Count == 0) break;
-					}
-				}
-			if (!growthOccurred) {
-				GD.Print("WorldGenerator::GrowAllRegionsOneStep : region growth filled up all space attainable");
-			}
-			return growthOccurred;
-		}
-
-		private bool GrowRegionInDirection(
-			Dictionary<Vector2I, Region> occupied, // global spcae
-			HashSet<Vector2I> addKeys, // region space
-			List<(Vector2I, byte)> freeEdgeTiles, // local space
-			int tileIndex,
-			Region region,
-			int dirIx,
-			World world,
-			GroundTileType allowedTile
-		) {
-			var (vectorDirectionTryingToGrowIn, directionTryingToGrowIn) = GrowDirs[dirIx];
-
-			int i = tileIndex;
-			{
-				var (localPos, directionsThatAreFree) = freeEdgeTiles[i];
-				if ((directionTryingToGrowIn & directionsThatAreFree) == 0) return false;
-
-				var moveLocal = localPos + vectorDirectionTryingToGrowIn;
-				var moveGlobal = region.WorldPosition + moveLocal;
-				var (neighbor, grew) = TryGrowRegionTo(region, moveGlobal, occupied, addKeys, world, allowedTile);
-				if (neighbor != null && neighbor != region) {
-					region.AddNeighbor(neighbor);
-					neighbor.AddNeighbor(region);
-				}
-
-				directionsThatAreFree &= (byte)~directionTryingToGrowIn;
-				if (grew) {
-					byte opposite = directionTryingToGrowIn switch { 0b10 => 0b1, 0b01 => 0b10, 0b100 => 0b1000, 0b1000 => 0b100, _ => throw new NotImplementedException() };
-					freeEdgeTiles.Add((moveLocal, (byte)(0b1111 & (byte)~opposite)));
-				}
-
-				if (directionsThatAreFree == 0) freeEdgeTiles.RemoveAt(i);
-				else {
-					freeEdgeTiles[i] = (localPos, directionsThatAreFree);
-				}
-
-				return grew;
-			}
-		}
-
-		private (Region, bool) TryGrowRegionTo(
-			Region region,
-			Vector2I where, // world space
-			Dictionary<Vector2I, Region> occupied, // world space
-			HashSet<Vector2I> addKeys, // region space
-			World world,
-			GroundTileType allowedTile
-		) {
-			occupied.TryGetValue(where, out Region there);
-			var local = where - region.WorldPosition;
-			//var tileAt = world.GetTile(where.X, where.Y);
-			if (there == null && /*tileAt == allowedTile && */ !addKeys.Contains(local) && where.X >= 0 && where.X < world.Width && where.Y >= 0 && where.Y < world.Height) {
-				Debug.Assert(!occupied.ContainsKey(where), "Tile I thought was good to grow onto is already planned to be used!!");
-				addKeys.Add(local);
-				Debug.Assert(!occupied.ContainsKey(where), "Tile I thought was good to grow onto is already occupied!!");
-				occupied.Add(where, region);
-				return (null, true);
-			}
-			return (there, false);
 		}
 
 		enum Behavior {

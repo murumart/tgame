@@ -9,13 +9,15 @@ public abstract partial class MapObject {
 
 	protected Vector2I position; public Vector2I GlobalPosition { get => position; }
 	public abstract IMapObjectType Type { get; }
+	protected Region region;
 
 	public bool Removed { get; private set; }
 
 	public virtual IEnumerable<Job> GetAvailableJobs() => Type.GetPossibleJobs();
 
-	protected MapObject(Vector2I globalPosition) {
+	protected MapObject(Vector2I globalPosition, Region region) {
 		this.position = globalPosition;
+		this.region = region;
 	}
 
 	public abstract void PassTime(TimeT minutes);
@@ -28,10 +30,12 @@ public partial class MapObject {
 
 	public interface IMapObjectType : IAssetType {
 
-		MapObject CreateMapObject(Vector2I globalPosition);
+		MapObject CreateMapObject(Vector2I globalPosition, Region region);
 		IEnumerable<Job> GetPossibleJobs();
 		bool IsPlacementAllowed(GroundTileType on);
 
+		MapObject CreateDummyMapObject() => this.CreateMapObject(Vector2I.Zero, null);
+	
 	}
 
 }
@@ -51,7 +55,7 @@ public partial class Building : MapObject {
 	public bool HasFurniture;
 
 
-	protected Building(IBuildingType type, Vector2I globalPosition) : base(globalPosition) {
+	protected Building(IBuildingType type, Vector2I globalPosition, Region region) : base(globalPosition, region) {
 		this.type = type;
 	}
 
@@ -74,6 +78,11 @@ public partial class Building : MapObject {
 	public override IEnumerable<Job> GetAvailableJobs() {
 		var jobs = base.GetAvailableJobs().ToList();
 		if (!HasFurniture && GetHousingCapacity() > 0) jobs.Add(new AddFurnitureJob(this));
+		if (type.GetSpecial() == IBuildingType.Special.Quarry) {
+			GroundTileType ground = region.GetGroundTile(GlobalPosition - region.WorldPosition);
+			Debug.Assert((ground & GroundTileType.HasLand) != 0);
+			if ((ground & GroundTileType.HasSand) != 0) {}
+		}
 		jobs.Add(new DemolishMapObjectJob());
 		return jobs;
 	}
@@ -87,6 +96,7 @@ public partial class Building {
 		public enum Special {
 			None,
 			Marketplace,
+			Quarry,
 		}
 
 		public Special GetSpecial();
@@ -97,8 +107,8 @@ public partial class Building {
 		string GetDescription();
 		int GetBuiltLimit();
 
-		MapObject IMapObjectType.CreateMapObject(Vector2I position) {
-			return new Building(this, position);
+		MapObject IMapObjectType.CreateMapObject(Vector2I position, Region region) {
+			return new Building(this, position, region);
 		}
 
 		bool HasResourceRequirements() {
@@ -130,7 +140,7 @@ public partial class ResourceSite : MapObject {
 	}
 
 
-	protected ResourceSite(IResourceSiteType type, Vector2I position) : base(position) {
+	protected ResourceSite(IResourceSiteType type, Vector2I position, Region region) : base(position, region) {
 		mineWells = type.GetDefaultWells();
 		this.type = type;
 	}
@@ -174,8 +184,8 @@ public partial class ResourceSite {
 
 		List<Well> GetDefaultWells();
 
-		MapObject IMapObjectType.CreateMapObject(Vector2I position) {
-			return new ResourceSite(this, position);
+		MapObject IMapObjectType.CreateMapObject(Vector2I position, Region region) {
+			return new ResourceSite(this, position, region);
 		}
 
 	}

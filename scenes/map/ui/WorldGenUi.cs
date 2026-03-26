@@ -7,24 +7,24 @@ namespace scenes.map.ui;
 
 public partial class WorldGenUi : MarginContainer {
 
+	static readonly PackedScene regionScene = GD.Load<PackedScene>("res://scenes/region/player_region.tscn");
+
 	public event Action GoBackEvent;
 
 	[Export] WorldGenerator worldGenerator;
-	[Export] WorldRenderer worldRenderer;
-	[Export] Camera camera;
+	[Export] WorldUI worldUI;
 
 	[Export] Button genRegionsButton;
+	[Export] Button playHereButton;
 	[Export] LineEdit worldSeedLabel;
 	[Export] Button worldSeedRandomButton;
 	[Export] SpinBox worldWidthSpinbox;
 	[Export] SpinBox worldHeightSpinbox;
 	[Export] SpinBox noiseScaleSpinbox;
 	[Export] SpinBox depthSpinbox;
+	
 
 	[Export] Button backButton;
-
-	[Export] Godot.Collections.Array<CheckButton> drawLayerButtons;
-	[Export] CheckButton regionDisplayCheck;
 
 	Map map;
 	World world;
@@ -33,6 +33,7 @@ public partial class WorldGenUi : MarginContainer {
 	public override void _Ready() {
 
 		genRegionsButton.Pressed += OnGenRegionsPressed;
+		playHereButton.Pressed += EnterGame;
 
 		worldWidthSpinbox.ValueChanged += OnWorldWidthChanged;
 		worldHeightSpinbox.ValueChanged += OnWorldHeightChanged;
@@ -44,34 +45,33 @@ public partial class WorldGenUi : MarginContainer {
 
 		backButton.Pressed += () => GoBackEvent?.Invoke();
 
-		foreach (var but in drawLayerButtons) but.Pressed += OnDrawLayersChanged;
-		regionDisplayCheck.Toggled += OnRegionDisplayChanged;
+		worldUI.RegionSelected += OnRegionSelected;
 
 		worldSeedLabel.Text = "" + GD.Randi();
+	}
 
+	public void InitialiseNewWorld() {
 		NewWorld();
 		Task.Run(() => GenerateContinents()).GetAwaiter().GetResult();
 
-		SetRendererParams();
+		OnWorldGenerated();
+	}
+
+	public void LoadCurrentWorld() {
+		this.map = GameMan.Game.Map;
+		this.world = this.map.World;
 		OnWorldGenerated();
 	}
 
 	void NewWorld() {
 		this.world = new((int)worldWidthSpinbox.Value, (int)worldHeightSpinbox.Value, (uint)Convert.ToUInt32(worldSeedLabel.Text));
-		GameMan.Singleton.NewGame(new([], world));
+		GameMan.NewGame(new([], world));
 	}
 
 	async Task GenerateContinents() => await worldGenerator.GenerateContinents(world, (float)noiseScaleSpinbox.Value, (float)depthSpinbox.Value);
 
-	void DisplayWorld(World world) {
-		worldRenderer.Draw(world);
-	}
-
 	void OnWorldGenerated() {
-		worldRenderer.World = world;
-		worldRenderer.ResetImages();
-		DisplayWorld(world);
-		camera.Position = new(world.Width * 0.5f, world.Height * 0.5f);
+		worldUI.DisplayWorld(world);
 	}
 
 	async void OnWorldSeedEntered(string what) {
@@ -111,26 +111,6 @@ public partial class WorldGenUi : MarginContainer {
 		OnEndGenerating();
 	}
 
-	void SetRendererParams() {
-		WorldRenderer.DrawLayers a = 0;
-		if (drawLayerButtons[0].ButtonPressed) a |= WorldRenderer.DrawLayers.Ground;
-		if (drawLayerButtons[1].ButtonPressed) a |= WorldRenderer.DrawLayers.Elevation;
-		if (drawLayerButtons[2].ButtonPressed) a |= WorldRenderer.DrawLayers.Temperature;
-		if (drawLayerButtons[3].ButtonPressed) a |= WorldRenderer.DrawLayers.Humidity;
-		if (drawLayerButtons[4].ButtonPressed) a |= WorldRenderer.DrawLayers.Drainage;
-		if (drawLayerButtons[5].ButtonPressed) a |= WorldRenderer.DrawLayers.SeaWind;
-		worldRenderer.DrawMode = a;
-	}
-
-	void OnDrawLayersChanged() {
-		SetRendererParams();
-		DisplayWorld(world);
-	}
-
-	void OnRegionDisplayChanged(bool to) {
-		worldRenderer.RegionSprite.Visible = to;
-	}
-
 	void OnStartGenerating() {
 		genRegionsButton.Disabled = true;
 		worldWidthSpinbox.Editable = false;
@@ -154,7 +134,7 @@ public partial class WorldGenUi : MarginContainer {
 	async void OnGenRegionsPressed() {
 		Debug.Assert(!worldGenerator.Generating);
 		OnStartGenerating();
-		var drawRegionsCallable = Callable.From(() => worldRenderer.DrawRegions(worldGenerator.Regions));
+		var drawRegionsCallable = Callable.From(() => worldUI.DrawRegions(worldGenerator.Regions));
 		var tw = CreateTween().SetLoops();
 		tw.TweenInterval(0.05f);
 		tw.TweenCallback(drawRegionsCallable);
@@ -162,10 +142,24 @@ public partial class WorldGenUi : MarginContainer {
 		this.map = await worldGenerator.GenerateRegions(world);
 		tw.Stop();
 
-		worldRenderer.DrawRegions(map.GetRegions());
+		worldUI.DrawRegions(map.GetRegions());
 
-		GameMan.Singleton.NewGame(map);
+		GameMan.NewGame(map);
 		OnEndGenerating();
+	}
+
+	void OnRegionSelected(Region region) {
+		playHereButton.Disabled = region.LocalFaction.IsWild;
+	}
+
+	void SetupGame() {
+		GameMan.NewGame(map);
+		GD.Print("WorldMan::SetupGame : game set up.");
+	}
+
+	void EnterGame() {
+		GameMan.Game.SetPlayRegion(worldUI.SelectedRegion);
+		GameMan.SceneTransition(regionScene);
 	}
 
 }

@@ -31,7 +31,7 @@ public abstract partial class LocalAI {
 			float delta = currentTime - lastUsed.GetValueOrDefault(action.ToString(), 0);
 			float debounce = Mathf.Pow(Mathf.Clamp(delta / (4 * GameTime.MINUTES_PER_HOUR), 0f, 1f), 4);
 			float s = action.Score(profiling) * debounce;
-			//if (GameMan.Singleton.Game.PlayRegion == factionActions.Region) Console.WriteLine($"LocalAI::ChooseAction : {action} scored {s}");
+			//if (GameMan.Game.PlayRegion == factionActions.Region) Console.WriteLine($"LocalAI::ChooseAction : {action} scored {s}");
 			if (s > chosenScore) {
 				chosenScore = s;
 				chosenAction = action;
@@ -148,7 +148,7 @@ public partial class LocalAI {
 		public static Action PlaceBuildingJob(DecisionFactor[] factors, FactionActions ac, IBuildingType buildingType) {
 			return new(factors, () => {
 				AIAssert(ac.Faction.HasBuildingMaterials(buildingType), "Don't have building materials", ac);
-				foreach (var pos in ac.GetTiles()) {
+				foreach (var (pos, _) in ac.GetTiles()) {
 					if (!ac.CanPlaceBuilding(buildingType, pos)) continue;
 					ac.PlaceBuilding(buildingType, pos);
 					return;
@@ -292,7 +292,7 @@ public partial class LocalAI {
 
 		public static DecisionFactor HasSpotForBuilding(FactionActions ac, IBuildingType buildingType) {
 			return new(() => {
-				foreach (var pos in ac.GetTiles()) {
+				foreach (var (pos, _) in ac.GetTiles()) {
 					if (ac.CanPlaceBuilding(buildingType, pos)) return 1f;
 				}
 				return 0f;
@@ -876,14 +876,14 @@ public class GamerAI : LocalAI {
 	}
 
 	public override void Update(TimeT minute) {
-		//if (factionActions.Region == GameMan.Singleton.Game.PlayRegion) Console.WriteLine($"LocalAI::Update : (of {factionActions}) doing update");
+		//if (factionActions.Region == GameMan.Game.PlayRegion) Console.WriteLine($"LocalAI::Update : (of {factionActions}) doing update");
 		var ustime = Time.GetTicksUsec();
 		// shuffle and evaluate only 30 actions
 		var span = mainActions.Concat(ephemeralActions).OrderBy(_ => GD.Randi()).Take(30).ToArray().AsSpan();
 		ChooseAction(out Action chosenAction, out float chosenScore, span, minute, GD.Randf() * 0.000005f);
 		ustime = Time.GetTicksUsec() - ustime;
-		if (factionActions.Region == GameMan.Singleton.Game.PlayRegion) Console.WriteLine($"LocalAI::Update : (of {factionActions}) chose action {chosenAction} (score {chosenScore})!");
-		if (factionActions.Region == GameMan.Singleton.Game.PlayRegion) Console.WriteLine($"LocalAI::Update : choosing took {ustime} us!\n");
+		if (factionActions.Region == GameMan.Game.PlayRegion) Console.WriteLine($"LocalAI::Update : (of {factionActions}) chose action {chosenAction} (score {chosenScore})!");
+		if (factionActions.Region == GameMan.Game.PlayRegion) Console.WriteLine($"LocalAI::Update : choosing took {ustime} us!\n");
 		chosenAction.Do();
 
 		time = minute;
