@@ -145,6 +145,7 @@ Control/fonts/font = ExtResource("1_rjbnf")
 Control/fonts/normal_font = ExtResource("1_rjbnf")
 Control/styles/focus = SubResource("StyleBoxFlat_xbfgx")
 Control/styles/panel = ExtResource("3_3wo1x")
+PopupMenu/font_sizes/font_size = 10
 PopupMenu/fonts/font = ExtResource("1_rjbnf")
 PopupMenu/styles/hover = ExtResource("2_36fd6")
 ProgressBar/styles/background = SubResource("StyleBoxFlat_nm6iw")
