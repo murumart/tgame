@@ -16,7 +16,7 @@ public class TroubleMaker {
 	}
 
 	public float DelayUntilPlayerAction { get; private set; }
-	const float changeCoef = 0.0005f;
+	const float changeCoef = 0.00003f;
 
 	readonly (Func<Faction, bool>, float)[] problemCreators;
 	public float ProblemWeightsSum { get; private set; }
