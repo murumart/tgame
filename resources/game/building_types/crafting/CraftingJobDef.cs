@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using Godot;
 using Godot.Collections;
@@ -9,22 +10,27 @@ namespace resources.game.building_types.crafting;
 [GlobalClass]
 public partial class CraftingJobDef : Resource, CraftJob.ICraftingJobDef {
 
-	[Export] Dictionary<ResourceType, int> inputs;
-	[Export] Dictionary<ResourceType, int> outputs;
+	[Export] Godot.Collections.Dictionary<ResourceType, int> inputs;
+	[Export] Godot.Collections.Dictionary<ResourceType, int> outputs;
 	[Export] int timeTakenMinutes;
 	[Export] int maxWorkers = 5;
 	[Export] Noun Product;
 	[Export] Verb Process;
 
-	public ResourceBundle[] Inputs {
+	ResourceConsumer[] _inputs;
+	public ResourceConsumer[] Inputs {
 		get {
-			ResourceBundle[] inp = new ResourceBundle[inputs.Count];
-			var keys = inputs.Keys.ToArray<ResourceType>();
-			for (int i = 0; i < inp.Length; i++) {
-				Debug.Assert(keys[i] != null, $"Thing at {i} in inputs keys of {Product}, {Process} is null!");
-				inp[i] = new(keys[i], inputs[keys[i]]);
+			if (_inputs is null) {
+
+				var inp = new List<ResourceConsumer>(inputs.Count);
+				foreach (var (res, amount) in inputs) {
+					Debug.Assert(res != null, $"Thing in inputs keys of {Product}, {Process} is null!");
+					if (res is ResourceOrType ot) foreach (var ft in ot.Flatten()) inp.Add(new(ft, amount));
+					else inp.Add(new(res, amount));
+				}
+				_inputs = inp.ToArray();
 			}
-			return inp;
+			return _inputs;
 		}
 	}
 
@@ -34,6 +40,7 @@ public partial class CraftingJobDef : Resource, CraftJob.ICraftingJobDef {
 			var keys = outputs.Keys.ToArray<ResourceType>();
 			for (int i = 0; i < outp.Length; i++) {
 				Debug.Assert(keys[i] != null, $"Thing at {i} in outputs keys of {Product}, {Process} is null!");
+				Debug.Assert(keys[i] is not ResourceOrType);
 				outp[i] = new(keys[i], outputs[keys[i]]);
 			}
 			return outp;

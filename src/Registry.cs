@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Godot;
-using resources.game;
 using static Building;
 using static MapObject;
 using static ResourceSite;
@@ -35,11 +34,12 @@ public static class Registry {
 
 	public static class ResourcesS {
 
-		//public static readonly IResourceType Water = Resources.GetAsset("water");
+		public static readonly IResourceType Water = Resources.GetAsset("water");
 		public static readonly IResourceType Logs = Resources.GetAsset("logs");
 		public static readonly IResourceType Lumber = Resources.GetAsset("lumber");
 		public static readonly IResourceType Rocks = Resources.GetAsset("rock");
 		public static readonly IResourceType Clay = Resources.GetAsset("clay");
+		public static readonly IResourceType Mud = Resources.GetAsset("mud");
 		public static readonly IResourceType Bricks = Resources.GetAsset("bricks");
 
 		public static readonly IResourceType Fruit = Resources.GetAsset("fruit");
@@ -319,12 +319,12 @@ public static class ProductionNet {
 			if (building.GetCraftJobs().Length == 0) continue;
 			var productions = new List<ProductionNode>();
 			foreach (var job in building.GetCraftJobs()) {
-				var consumed = job.Inputs?.Select(i => (Resources[i.Type], i.Amount)).ToArray() ?? [];
+				var consumed = job.Inputs?.SelectMany(i => i.Types.Select(it => (Resources[it], i.Amount))).ToArray() ?? [];
 				var retrieved = job.Outputs?.Select(i => (Resources[i.Type], i.Amount)).ToArray() ?? [];
 				var production = new ProductionNode(consumed, retrieved);
 				productions.Add(production);
 			}
-			var buildingmaterials = building.GetConstructionResources().Select(r => (Resources[r.Type], r.Amount));
+			var buildingmaterials = building.GetConstructionResources().SelectMany(r => r.Types.Select(rr => (Resources[rr], r.Amount)));
 			var node = new BuildingNode(
 				building,
 				productions.ToArray(),

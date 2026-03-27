@@ -52,6 +52,7 @@ public partial class Building : MapObject {
 	float constructionProgress; // in minutes
 	public bool IsConstructed => IsConstructedProgress(constructionProgress);
 	public bool IsConstructedProgress(float progress) => progress >= type.GetHoursToConstruct() * 60;
+	public ResourceBundle[] StoredMaterials { get; private set; }
 
 	public bool HasFurniture;
 
@@ -95,6 +96,10 @@ public partial class Building : MapObject {
 		return jobs;
 	}
 
+	public void StoreMaterials(ResourceBundle[] materials) {
+		StoredMaterials = materials;
+	}
+
 }
 
 public partial class Building {
@@ -111,7 +116,7 @@ public partial class Building {
 		public Special GetSpecial();
 
 		int GetPopulationCapacity();
-		ResourceBundle[] GetConstructionResources();
+		ResourceConsumer[] GetConstructionResources();
 		float GetHoursToConstruct();
 		string GetDescription();
 		int GetBuiltLimit();

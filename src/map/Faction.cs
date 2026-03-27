@@ -226,7 +226,7 @@ public class Faction : IEntity {
 		Debug.Assert(CanPlaceBuilding(type, position), "Cannot place the building for whatever reason");
 		var building = CreateBuilding(type, position);
 		if (type.TakesTimeToConstruct() || type.HasResourceRequirements()) {
-			var job = new ConstructBuildingJob(type.GetConstructionResources().ToList());
+			var job = new ConstructBuildingJob(type.GetConstructionResources());
 			AddMapObjectJob(job, building);
 		}
 		return building;
@@ -388,7 +388,7 @@ public class Faction : IEntity {
 		var (requirements, rewards) = ((IEnumerable<ResourceBundle>, IEnumerable<ResourceBundle>))doc.Meta;
 		if ((doc.Type & DocType.AMandatesExportFromB) != 0 && this == doc.SideA) {
 			var newdoc = Briefcase.CreateExportMandate(
-				requirements.Select((j) => new ResourceBundle(j.Type, (int)Math.Round(j.Amount * MULTIPLY_RESOURCE_COSTS_EVERY_SUCCESS_BY))),
+				requirements.Select((j) => new ResourceConsumer(j.Type, (int)Math.Round(j.Amount * MULTIPLY_RESOURCE_COSTS_EVERY_SUCCESS_BY))),
 				rewards,
 				this,
 				other,

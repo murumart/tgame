@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="ResourceType" format=3 uid="uid://ry6ft31wbb01"]
+
+[ext_resource type="Script" uid="uid://coqr05mqlancq" path="res://resources/game/resource_types/ResourceType.cs" id="1_vhkyt"]
+
+[resource]
+script = ExtResource("1_vhkyt")
+name = "mud"
+metadata/_custom_type_script = "uid://coqr05mqlancq"

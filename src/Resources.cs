@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Godot;
 using static ResourceStorage;
 
@@ -12,7 +13,7 @@ public interface IResourceType : IAssetType {
 
 public struct ResourceBundle {
 
-	public IResourceType Type;
+	readonly public IResourceType Type;
 	public int Amount;
 
 
@@ -31,6 +32,31 @@ public struct ResourceBundle {
 
 }
 
+public struct ResourceConsumer {
+
+	readonly public IResourceType[] Types;
+	public int Amount;
+
+
+	public ResourceConsumer(IResourceType type, int amount) {
+		Debug.Assert(type != null, "Resource bundle type cannot be null");
+		Debug.Assert(amount >= 0, $"Resource amount cannot be negative (got {amount})");
+		this.Types = [type];
+		this.Amount = amount;
+	}
+
+	public ResourceConsumer(IResourceType[] types, int amount) {
+		Debug.Assert(types != null, "Resource bundle types cannot be null");
+		Debug.Assert(amount >= 0, $"Resource amount cannot be negative (got {amount})");
+		Debug.Assert(types.Length != 0, "Need to have at least one type in ResourceConsumer");
+		this.Types = types;
+		this.Amount = amount;
+	}
+
+	public override readonly string ToString() => $"{string.Join(" or ", Types.Select(t => t.AssetName))} x {Amount}";
+
+}
+
 public partial class ResourceStorage : IEnumerable<KeyValuePair<IResourceType, InStorage>> {
 
 	readonly Dictionary<IResourceType, InStorage> storageAmounts = new();
@@ -44,12 +70,20 @@ public partial class ResourceStorage : IEnumerable<KeyValuePair<IResourceType, I
 		return v.Amount;
 	}
 
-	public bool HasEnough(ResourceBundle resource) {
-		if (!storageAmounts.TryGetValue(resource.Type, out InStorage stored)) return false;
-		return resource.Amount <= stored.Amount;
+	public bool HasEnough(IResourceType type, int amount) {
+		if (!storageAmounts.TryGetValue(type, out InStorage stored)) return false;
+		return amount <= stored.Amount;
 	}
 
-	public bool HasEnough(IEnumerable<ResourceBundle> resources) {
+	public bool HasEnough(ResourceConsumer resource) {
+		foreach (var type in resource.Types) {
+			if (!storageAmounts.TryGetValue(type, out InStorage stored)) continue;
+			if (resource.Amount <= stored.Amount) return true;
+		}
+		return false;
+	}
+
+	public bool HasEnough(IEnumerable<ResourceConsumer> resources) {
 		foreach (var r in resources) {
 			if (!HasEnough(r)) return false;
 		}
@@ -73,7 +107,7 @@ public partial class ResourceStorage : IEnumerable<KeyValuePair<IResourceType, I
 		}
 	}
 
-	public void SubtractResource(IResourceType type, int amount) {
+	public ResourceBundle SubtractResource(IResourceType type, int amount) {
 		Debug.Assert(storageAmounts.ContainsKey(type), "cant subtract resource type that's not in storage!!");
 		Debug.Assert(amount > 0, "Need positive amount to subtract from resources");
 		storageAmounts.TryGetValue(type, out InStorage stored);
@@ -82,6 +116,28 @@ public partial class ResourceStorage : IEnumerable<KeyValuePair<IResourceType, I
 		ItemAmount -= amount;
 		Debug.Assert(ItemAmount >= 0, "Item amount in storage went negative?? What the hell..");
 		if (storageAmounts[type].Amount == 0) storageAmounts.Remove(type);
+		return new(type, amount);
+	}
+
+	public ResourceBundle SubtractResource(ResourceConsumer consumer) {
+		foreach (var type in consumer.Types) {
+			if (HasEnough(type, consumer.Amount)) {
+				var bundle = new ResourceBundle(type, consumer.Amount);
+				SubtractResource(bundle);
+				return bundle;
+			}
+		}
+		Debug.Assert(false, "Subtracting resource failed: dind't find it");
+		throw new Exception("gh");
+	}
+
+	public ResourceBundle[] SubtractResources(IEnumerable<ResourceConsumer> resources) {
+		var ret = new ResourceBundle[resources.Count()];
+		int i = 0;
+		foreach (var reduct in resources) {
+			ret[i++] = SubtractResource(reduct);
+		}
+		return ret;
 	}
 
 	public void SubtractResource(ResourceBundle resource) {
@@ -94,14 +150,25 @@ public partial class ResourceStorage : IEnumerable<KeyValuePair<IResourceType, I
 		}
 	}
 
-	public void TransferResources(ResourceStorage target, ResourceBundle resources) {
-		SubtractResource(resources);
-		target.AddResource(resources);
+	public void TransferResource(ResourceStorage target, ResourceConsumer consumer) {
+		var bundle = SubtractResource(consumer);
+		target.AddResource(bundle);
+	}
+
+	public void TransferResource(ResourceStorage target, ResourceBundle resource) {
+		SubtractResource(resource);
+		target.AddResource(resource);
+	}
+	
+	public void TransferResources(ResourceStorage target, IEnumerable<ResourceConsumer> resources) {
+		foreach (var res in resources) {
+			TransferResource(target, res);
+		}
 	}
 
 	public void TransferResources(ResourceStorage target, IEnumerable<ResourceBundle> resources) {
 		foreach (var res in resources) {
-			TransferResources(target, res);
+			TransferResource(target, res);
 		}
 	}
 

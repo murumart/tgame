@@ -49,10 +49,19 @@ public abstract class Job {
 		OnWorkerCountChanged(old);
 	}
 
-	protected static void ConsumeRequirements(ResourceBundle[] requirements, ResourceStorage resources) {
+	protected static ResourceBundle[] ConsumeRequirements(ResourceConsumer[] requirements, ResourceStorage resources) {
+		ResourceBundle[] ret = new ResourceBundle[requirements.Length];
+		int i = 0;
 		foreach (var r in requirements) {
-			resources.SubtractResource(r);
+			foreach (var rt in r.Types) {
+				if (resources.HasEnough(rt, r.Amount)) {
+					ret[i++] = resources.SubtractResource(rt, r.Amount);
+					break;
+				}
+			}
 		}
+		Debug.Assert(i == requirements.Length, "Didn't consume enough requirements");
+		return ret;
 	}
 
 	protected static void RefundRequirements(ResourceBundle[] requirements, ResourceStorage resources) {

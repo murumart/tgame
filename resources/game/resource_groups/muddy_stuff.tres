@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="ResourceGroup" format=3 uid="uid://couha0ym0ueso"]
+
+[ext_resource type="Script" uid="uid://eb7fhhrceidl" path="res://resources/game/resource_groups/ResourceGroup.cs" id="1_03uat"]
+[ext_resource type="Resource" uid="uid://lda3p80x02sh" path="res://resources/game/resource_types/clay.tres" id="1_rc7yc"]
+[ext_resource type="Script" uid="uid://camepisb1ldku" path="res://resources/game/resource_groups/ResourceGroupValue.cs" id="2_tsm88"]
+[ext_resource type="Resource" uid="uid://ry6ft31wbb01" path="res://resources/game/resource_types/mud.tres" id="3_tsm88"]
+
+[sub_resource type="Resource" id="Resource_x3sfs"]
+script = ExtResource("2_tsm88")
+ResourceType = ExtResource("1_rc7yc")
+metadata/_custom_type_script = "uid://camepisb1ldku"
+
+[sub_resource type="Resource" id="Resource_s7ocq"]
+script = ExtResource("2_tsm88")
+ResourceType = ExtResource("3_tsm88")
+metadata/_custom_type_script = "uid://camepisb1ldku"
+
+[resource]
+script = ExtResource("1_03uat")
+ResourceValues = Array[Object]([SubResource("Resource_x3sfs"), SubResource("Resource_s7ocq")])
+metadata/_custom_type_script = "uid://eb7fhhrceidl"

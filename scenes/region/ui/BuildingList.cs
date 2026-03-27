@@ -54,7 +54,7 @@ public partial class BuildingList : Control {
 		resourceListText.Text = "";
 		var resources = ui.GetResources();
 		foreach (var r in btype.GetConstructionResources()) {
-			var str = $"{r.Type.AssetName} x {r.Amount}";
+			var str = r.ToString();
 			if (!resources.HasEnough(r)) {
 				str = "[color=red]" + str + "[/color]";
 				buildConfirmation.Disabled = true;

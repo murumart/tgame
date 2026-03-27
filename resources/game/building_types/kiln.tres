@@ -7,6 +7,8 @@
 [ext_resource type="Resource" uid="uid://cbynhxq0y3kkl" path="res://resources/game/resource_types/bricks.tres" id="3_e481t"]
 [ext_resource type="Script" uid="uid://b5xb3tdf3yoon" path="res://resources/game/building_types/BuildingType.cs" id="3_wr3si"]
 [ext_resource type="Script" uid="uid://c3n4csk46p0uc" path="res://resources/game/building_types/crafting/CraftingJobDef.cs" id="4_1r4bu"]
+[ext_resource type="Resource" uid="uid://ry6ft31wbb01" path="res://resources/game/resource_types/mud.tres" id="7_qx22m"]
+[ext_resource type="Script" uid="uid://1887h8ejjt6v" path="res://resources/game/resource_types/ResourceOrType.cs" id="8_kj1u5"]
 
 [sub_resource type="Resource" id="Resource_qx22m"]
 script = ExtResource("1_1r4bu")
@@ -35,13 +37,19 @@ Product = SubResource("Resource_1r4bu")
 Process = SubResource("Resource_qx22m")
 metadata/_custom_type_script = "uid://c3n4csk46p0uc"
 
+[sub_resource type="Resource" id="Resource_y2f7q"]
+script = ExtResource("8_kj1u5")
+This = ExtResource("7_qx22m")
+Or = ExtResource("2_drxcw")
+metadata/_custom_type_script = "uid://1887h8ejjt6v"
+
 [resource]
 script = ExtResource("3_wr3si")
 name = "kiln"
-description = "Converts clay to bricks, using logs as fuel."
+description = "Converts clay and mud to bricks, using logs as fuel."
 ResourceCosts = Dictionary[Object, int]({
 ExtResource("1_77qvn"): 8,
-ExtResource("2_drxcw"): 5
+SubResource("Resource_y2f7q"): 5
 })
 CraftingJobs = Array[Resource]([SubResource("Resource_po5cf")])
 HoursToConstruct = 8.0

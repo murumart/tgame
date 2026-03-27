@@ -170,7 +170,7 @@ public partial class LocalAI {
 
 		public static Action SendTradeOffer(DecisionFactor[] factors, FactionActions ac, ResourceBundle giveResources, int wantSilver) {
 			return new(factors, () => {
-				AIAssert(ac.GetResourceStorage().HasEnough(giveResources), "Don't have enough resoucres to make trde offer", ac);
+				AIAssert(ac.GetResourceStorage().HasEnough(giveResources.Type, giveResources.Amount), "Don't have enough resoucres to make trde offer", ac);
 				var from = ac.Faction;
 				var partners = ac.GetProcessMarketJob().TradeOffers.Keys.ToArray();
 				AIAssert(partners.Length > 0, "Need more partner than0", ac);
@@ -408,11 +408,11 @@ public partial class LocalAI {
 
 		public static DecisionFactor ResourceNeed(FactionActions ac, IResourceType resourceType, int need) {
 			return new(() => {
-				return ac.GetResourceStorage().HasEnough(new ResourceBundle(resourceType, need)) ? 1f : 0f;
+				return ac.GetResourceStorage().HasEnough(resourceType, need) ? 1f : 0f;
 			}, $"ResourceNeed({resourceType.AssetName}, {need})");
 		}
 
-		public static DecisionFactor ResourcesNeed(FactionActions ac, ResourceBundle[] resources) {
+		public static DecisionFactor ResourcesNeed(FactionActions ac, ResourceConsumer[] resources) {
 			return new(() => ac.GetResourceStorage().HasEnough(resources) ? 1f : 0f, $"ResourcesNeed({string.Join(", ", resources)})");
 		}
 
@@ -723,7 +723,9 @@ public class GamerAI : LocalAI {
 			// housing materials are good, please
 			foreach (var building in Registry.BuildingsS.HousingBuildings) {
 				foreach (var material in building.Key.GetConstructionResources()) {
-					ResourceWants[material.Type] += (int)(material.Amount * homeless * 0.005);
+					foreach (var type in material.Types) {
+						ResourceWants[type] += (int)(material.Amount * homeless * 0.005);
+					}
 				}
 			}
 		}

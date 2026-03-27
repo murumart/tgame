@@ -48,14 +48,16 @@ namespace resources.game.building_types {
 			return PopulationCapacity;
 		}
 
-		ResourceBundle[] constructionResources = null;
-		public ResourceBundle[] GetConstructionResources() {
+		ResourceConsumer[] constructionResources = null;
+		public ResourceConsumer[] GetConstructionResources() {
 			if (constructionResources is null) {
-				constructionResources = new ResourceBundle[ResourceCosts.Count];
+				constructionResources = new ResourceConsumer[ResourceCosts.Count];
 				int i = 0;
-				foreach (var pair in ResourceCosts) {
-					constructionResources[i++] = new ResourceBundle(pair.Key, pair.Value);
+				foreach (var (resource, amount) in ResourceCosts) {
+					if (resource is ResourceOrType rortype) constructionResources[i++] = new ResourceConsumer(rortype.Flatten(), amount);
+					else constructionResources[i++] = new ResourceConsumer(resource, amount);
 				}
+				GD.Print($"BuildingType::GetConstructionResources() : resources: of {name} ", string.Join(", ", constructionResources));
 			}
 			return constructionResources;
 		}

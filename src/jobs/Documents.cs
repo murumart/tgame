@@ -128,7 +128,7 @@ partial class Document {
 		}
 
 		public Document CreateExportMandate(
-			IEnumerable<ResourceBundle> requirements,
+			IEnumerable<ResourceConsumer> requirements,
 			IEnumerable<ResourceBundle> rewards,
 			Faction parentFaction,
 			Faction regionFaction,
@@ -275,7 +275,7 @@ public partial class TradeOffer {
 		StoredUnits = maxUnits;
 		Debug.Assert(starter != null);
 		this.starter = starter;
-		Debug.Assert(starter.Resources.HasEnough(gives), "Don't have enough resources to create trade offer");
+		Debug.Assert(starter.Resources.HasEnough(gives.Type, gives.Amount), "Don't have enough resources to create trade offer");
 		Debug.Assert(acceptor != null);
 		Debug.Assert(wants > 0, "Need to take MORE THAN 0 silver to make a trade");
 		this.acceptor = acceptor;
@@ -318,7 +318,8 @@ public partial class TradeOffer {
 		Debug.Assert(units <= StoredUnits, "Can't trade more units than contained in offer");
 		Log("checking trade possibolity ");
 		if (OffererGivesRecipientSilver) {
-			return acceptor.Resources.HasEnough(RecepientRequiredResourcesUnit.Multiply(units));
+			var m = RecepientRequiredResourcesUnit.Multiply(units);
+			return acceptor.Resources.HasEnough(m.Type, m.Amount);
 		} else {
 			return acceptor.Silver >= RecipientPaidSilverUnit * units;
 		}
@@ -345,7 +346,7 @@ public partial class TradeOffer {
 	void MakeTradeOffererGivesSilver(int units) {
 		Debug.Assert(OffererPaidSilverUnit * units > 0, "This shouldn't fail 1.");
 		acceptor.ReceiveTransferSilver(OffererPaidSilverUnit * units);
-		acceptor.Resources.TransferResources(starter.Resources, RecepientRequiredResourcesUnit.Multiply(units));
+		acceptor.Resources.TransferResource(starter.Resources, RecepientRequiredResourcesUnit.Multiply(units));
 		StoredUnits -= units;
 	}
 

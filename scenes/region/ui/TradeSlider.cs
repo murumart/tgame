@@ -54,7 +54,8 @@ namespace scenes.region.ui {
 			sliderVal = (int)to;
 			bool shouldDisable = sliderVal == 0;
 			if (offer.OffererGivesRecipientSilver) {
-				shouldDisable = shouldDisable || !me.Resources.HasEnough(offer.RecepientRequiredResourcesUnit.Multiply(sliderVal));
+				var m = offer.RecepientRequiredResourcesUnit.Multiply(sliderVal);
+				shouldDisable = shouldDisable || !me.Resources.HasEnough(m.Type, m.Amount);
 				ConfirmButton.Text = $"Sell resources => ({offer.OffererPaidSilverUnit * sliderVal} silver)";
 			} else {
 				shouldDisable = shouldDisable || me.Silver < offer.RecipientPaidSilverUnit * sliderVal;

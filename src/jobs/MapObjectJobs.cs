@@ -15,12 +15,12 @@ public class ConstructBuildingJob : MapObjectJob {
 
 	public override Vector2I GlobalPosition => Building.GlobalPosition;
 
-	readonly List<ResourceBundle> requirements;
+	readonly ResourceConsumer[] requirements;
 
 	public Building Building { get; private set; }
 
 
-	public ConstructBuildingJob(List<ResourceBundle> requirements) {
+	public ConstructBuildingJob(ResourceConsumer[] requirements) {
 		this.requirements = requirements;
 		MaxWorkers = 35;
 	}
@@ -30,20 +30,18 @@ public class ConstructBuildingJob : MapObjectJob {
 	public override void Initialise(Faction ctxFaction, MapObject mapObject) {
 		Debug.Assert(CanInitialise(ctxFaction, mapObject), "Job cannot be initialised!!");
 		Building = (Building)mapObject;
-		ConsumeRequirements(requirements.ToArray(), ctxFaction.Resources);
+		Building.StoreMaterials(ConsumeRequirements(requirements, ctxFaction.Resources));
 	}
 
 	public override void Deinitialise(Faction ctxFaction) {
-		if (Building.IsConstructed) {
-			requirements.Clear();
-		} else {
-			RefundRequirements(requirements.ToArray(), ctxFaction.Resources);
+		if (!Building.IsConstructed) {
+			RefundRequirements(Building.StoredMaterials, ctxFaction.Resources);
 			ctxFaction.RemoveBuilding(Building.GlobalPosition - ctxFaction.Region.WorldPosition);
 			//building = null;
 		}
 	}
 
-	public List<ResourceBundle> GetRequirements() => requirements;
+	public ResourceConsumer[] GetRequirements() => requirements;
 
 	public override void PassTime(TimeT minutes) {
 		if (Building.IsConstructed) {
@@ -121,7 +119,7 @@ public class DemolishMapObjectJob : MapObjectJob {
 	public override void Deinitialise(Faction ctxFaction) {
 		if (timeSpent >= timeTaken) {
 			if (Object is Building b) {
-				var returns = b.Type.GetConstructionResources().Select(r => {var nr = r.Divide(2); if (nr.Amount == 0) nr = new(nr.Type, 1); return nr;}).ToArray();
+				var returns = b.StoredMaterials.Select(r => {var nr = r.Divide(2); if (nr.Amount == 0) nr = new(nr.Type, 1); return nr;}).ToArray();
 				RefundRequirements(returns, ctxFaction.Resources);
 				ctxFaction.RemoveBuilding(GlobalPosition - ctxFaction.Region.WorldPosition);
 			} else {
@@ -422,7 +420,7 @@ public class CraftJob : MapObjectJob {
 
 	float timeSpent = 0f;
 
-	public readonly ResourceBundle[] Inputs;
+	public readonly ResourceConsumer[] Inputs;
 	public readonly ResourceBundle[] Outputs;
 
 	public readonly Noun Product;
@@ -430,7 +428,7 @@ public class CraftJob : MapObjectJob {
 	public readonly TimeT TimeTaken;
 
 
-	public CraftJob(ResourceBundle[] inputs, ResourceBundle[] outputs, TimeT timeTaken, uint maxWorkers, Noun product, Verb process) {
+	public CraftJob(ResourceConsumer[] inputs, ResourceBundle[] outputs, TimeT timeTaken, uint maxWorkers, Noun product, Verb process) {
 		this.Inputs = inputs;
 		this.Outputs = outputs;
 		this.TimeTaken = timeTaken;
@@ -487,6 +485,13 @@ public class CraftJob : MapObjectJob {
 		}
 	}
 
+	void GetArrayBulletList(StringBuilder sb, ResourceConsumer[] resources) {
+		for (int i = 0; i < resources.Length; ++i) {
+			sb.Append(resources[i]);
+			if (i < resources.Length - 1) sb.Append(" + ");
+		}
+	}
+
 	public void GetProductionBulletList(StringBuilder sb) {
 		GetArrayBulletList(sb, Outputs);
 	}
@@ -507,7 +512,7 @@ public class CraftJob : MapObjectJob {
 
 	public interface ICraftingJobDef {
 
-		public ResourceBundle[] Inputs { get; }
+		public ResourceConsumer[] Inputs { get; }
 		public ResourceBundle[] Outputs { get; }
 		public TimeT TimeTaken { get; }
 
@@ -629,7 +634,7 @@ public class AddFurnitureJob : MapObjectJob {
 	readonly TimeT timeTaken = GameTime.Hours(7);
 	float timeSpent = 0f;
 
-	readonly ResourceBundle requirements = new(Registry.ResourcesS.Furniture, 5);
+	readonly ResourceConsumer requirements = new(Registry.ResourcesS.Furniture, 5);
 
 
 	public AddFurnitureJob(Building building) {
@@ -670,7 +675,7 @@ public class AddFurnitureJob : MapObjectJob {
 	public override float GetProgressEstimate() => timeSpent / timeTaken;
 
 	public override string GetResourceRequirementDescription() {
-		return $"Need {requirements.Amount} {requirements.Type.AssetName}";
+		return $"Need {requirements}";
 	}
 
 	public override string GetStatusDescription() {
