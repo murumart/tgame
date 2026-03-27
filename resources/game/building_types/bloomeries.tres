@@ -10,6 +10,8 @@
 [ext_resource type="Script" uid="uid://c3n4csk46p0uc" path="res://resources/game/building_types/crafting/CraftingJobDef.cs" id="6_mu1on"]
 [ext_resource type="Script" uid="uid://b5xb3tdf3yoon" path="res://resources/game/building_types/BuildingType.cs" id="7_3fb3w"]
 [ext_resource type="Resource" uid="uid://nw83fam2omvi" path="res://resources/game/resource_types/rock.tres" id="7_vpr6n"]
+[ext_resource type="Resource" uid="uid://ry6ft31wbb01" path="res://resources/game/resource_types/mud.tres" id="9_mu1on"]
+[ext_resource type="Script" uid="uid://1887h8ejjt6v" path="res://resources/game/resource_types/ResourceOrType.cs" id="11_3fb3w"]
 
 [sub_resource type="Resource" id="Resource_77whd"]
 script = ExtResource("1_o6tac")
@@ -38,14 +40,20 @@ Product = SubResource("Resource_e67mk")
 Process = SubResource("Resource_77whd")
 metadata/_custom_type_script = "uid://c3n4csk46p0uc"
 
+[sub_resource type="Resource" id="Resource_u3kvr"]
+script = ExtResource("11_3fb3w")
+This = ExtResource("3_77whd")
+Or = ExtResource("9_mu1on")
+metadata/_custom_type_script = "uid://1887h8ejjt6v"
+
 [resource]
 script = ExtResource("7_3fb3w")
 name = "bloomeries"
 description = "Iron ore is slowly smelted back into iron here."
 ResourceCosts = Dictionary[Object, int]({
 ExtResource("4_e67mk"): 8,
-ExtResource("3_77whd"): 12,
-ExtResource("7_vpr6n"): 6
+ExtResource("7_vpr6n"): 6,
+SubResource("Resource_u3kvr"): 12
 })
 CraftingJobs = Array[Resource]([SubResource("Resource_lmehe")])
 HoursToConstruct = 17.0

@@ -72,6 +72,7 @@ public static class Registry {
 		public static readonly IBuildingType GrainField = Buildings.GetAsset("grain_field");
 		public static readonly IBuildingType Windmill = Buildings.GetAsset("windmill");
 		public static readonly IBuildingType Bakery = Buildings.GetAsset("bakery");
+		public static readonly IBuildingType Quarry = Buildings.GetAsset("quarry");
 
 		static IAssetGroup<IBuildingType, int> housingBuildings = null;
 		public static IAssetGroup<IBuildingType, int> HousingBuildings {
@@ -273,13 +274,23 @@ public static class ProductionNet {
 
 	}
 
-	public class BuildingNode(IBuildingType building, ProductionNode[] productions, (ResourceNode, int)[] sourceMaterials) : LocationNode(building) {
+	public enum LocationContext {
+		None,
+		RockQuarry,
+		SandyQuarry,
+	}
+
+	public class BuildingNode(
+		IBuildingType building,
+		ProductionNode[] productions,
+		(ResourceNode, int)[] sourceMaterials
+	) : LocationNode(building) {
 
 		public readonly IBuildingType Building = building;
 		public readonly ProductionNode[] Productions = productions;
 		public readonly (ResourceNode, int)[] SourceMaterials = sourceMaterials;
 
-		public override string ToString() => $"Building(building={Building.AssetName}, productions=[{string.Join(", ", (object[])Productions)}], sourceMaterials=[{string.Join(", ", SourceMaterials)}]";
+		public override string ToString() => $"Building({Building.AssetName}, productions=[{string.Join(", ", (object[])Productions)}], sourceMaterials=[{string.Join(", ", SourceMaterials)}]";
 
 	}
 
@@ -289,7 +300,7 @@ public static class ProductionNet {
 		public readonly (ResourceNode, int)[] Retrieved = retrieved;
 		public LocationNode MadeAt = null;
 
-		public override string ToString() => $"PR(in=[{string.Join(", ", Consumed)}], out=[{string.Join(", ", Retrieved)}])";
+		public override string ToString() => $"PR({(Consumed.Length != 0 ? $"in=[{string.Join(", ", Consumed)}], " : "")}out=[{string.Join(", ", Retrieved)}])";
 
 	}
 
@@ -307,7 +318,7 @@ public static class ProductionNet {
 	static bool generated = false;
 
 	public static readonly Dictionary<IResourceType, ResourceNode> Resources = new();
-	public static readonly Dictionary<IMapObjectType, LocationNode> Locations = new();
+	public static readonly Dictionary<(IMapObjectType, LocationContext), LocationNode> Locations = new();
 
 
 	public static void Generate() {
@@ -315,14 +326,26 @@ public static class ProductionNet {
 		Debug.Assert(!generated, "Doon't generate stuff when iot's donadalsd");
 		foreach (var res in Registry.Resources.GetAssets()) Resources[res] = new(res);
 
-		foreach (var building in Registry.Buildings.GetAssets()) {
-			if (building.GetCraftJobs().Length == 0) continue;
+		var locbuildings = Registry.Buildings.GetAssets().Where(b => b.GetSpecial() != IBuildingType.Special.Quarry).Select(b => (b, LocationContext.None)).ToList();
+		locbuildings.Add((Registry.BuildingsS.Quarry, LocationContext.RockQuarry));
+		locbuildings.Add((Registry.BuildingsS.Quarry, LocationContext.SandyQuarry));
+
+		foreach (var (building, location) in locbuildings) {
+			var special = building.GetSpecial();
+			if (building.GetCraftJobs().Length == 0 && special != IBuildingType.Special.Quarry) continue;
 			var productions = new List<ProductionNode>();
 			foreach (var job in building.GetCraftJobs()) {
 				var consumed = job.Inputs?.SelectMany(i => i.Types.Select(it => (Resources[it], i.Amount))).ToArray() ?? [];
 				var retrieved = job.Outputs?.Select(i => (Resources[i.Type], i.Amount)).ToArray() ?? [];
 				var production = new ProductionNode(consumed, retrieved);
 				productions.Add(production);
+			}
+			if (special == IBuildingType.Special.Quarry) {
+				if (location == LocationContext.RockQuarry) {
+					productions.Add(new ProductionNode([], [(Resources[Registry.ResourcesS.Rocks], 1)]));
+				} else if (location == LocationContext.SandyQuarry) {
+					productions.Add(new ProductionNode([], [(Resources[Registry.ResourcesS.Sand], 1)]));
+				}
 			}
 			var buildingmaterials = building.GetConstructionResources().SelectMany(r => r.Types.Select(rr => (Resources[rr], r.Amount)));
 			var node = new BuildingNode(
@@ -350,7 +373,7 @@ public static class ProductionNet {
 					ci.Add(prod);
 				}
 			}
-			Locations[building] = node;
+			Locations[(building, location)] = node;
 		}
 		foreach (var ressite in Registry.ResourceSites.GetAssets()) {
 			List<ProductionNode> productions = ressite.GetDefaultWells().Select(w => new ProductionNode([], [(Resources[w.ResourceType], 1)])).ToList();
@@ -368,7 +391,7 @@ public static class ProductionNet {
 					rf.Add(prod);
 				}
 			}
-			Locations[ressite] = node;
+			Locations[(ressite, LocationContext.None)] = node;
 		}
 		generated = true;
 	}

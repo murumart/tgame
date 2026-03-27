@@ -9,6 +9,7 @@
 [ext_resource type="Resource" uid="uid://pmrcwo4t316p" path="res://resources/game/resource_types/logs.tres" id="2_u8ysx"]
 [ext_resource type="Script" uid="uid://c3n4csk46p0uc" path="res://resources/game/building_types/crafting/CraftingJobDef.cs" id="3_bqe4q"]
 [ext_resource type="Resource" uid="uid://nw83fam2omvi" path="res://resources/game/resource_types/rock.tres" id="3_vp85r"]
+[ext_resource type="Resource" uid="uid://dbmt5icgtucsx" path="res://resources/game/resource_types/water.tres" id="4_4ddl6"]
 
 [sub_resource type="Resource" id="Resource_oefw0"]
 script = ExtResource("1_bqe4q")
@@ -25,7 +26,8 @@ metadata/_custom_type_script = "uid://clkqk6nbux1c1"
 [sub_resource type="Resource" id="Resource_4ddl6"]
 script = ExtResource("3_bqe4q")
 inputs = Dictionary[Object, int]({
-ExtResource("1_nw2wf"): 2
+ExtResource("1_nw2wf"): 2,
+ExtResource("4_4ddl6"): 2
 })
 outputs = Dictionary[Object, int]({
 ExtResource("2_fc1nk"): 1

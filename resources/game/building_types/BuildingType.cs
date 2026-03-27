@@ -57,7 +57,6 @@ namespace resources.game.building_types {
 					if (resource is ResourceOrType rortype) constructionResources[i++] = new ResourceConsumer(rortype.Flatten(), amount);
 					else constructionResources[i++] = new ResourceConsumer(resource, amount);
 				}
-				GD.Print($"BuildingType::GetConstructionResources() : resources: of {name} ", string.Join(", ", constructionResources));
 			}
 			return constructionResources;
 		}

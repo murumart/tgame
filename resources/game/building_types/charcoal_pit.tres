@@ -6,7 +6,9 @@
 [ext_resource type="Resource" uid="uid://ua6pffdnaeya" path="res://resources/game/resource_types/coal.tres" id="2_4dmvp"]
 [ext_resource type="Script" uid="uid://c3n4csk46p0uc" path="res://resources/game/building_types/crafting/CraftingJobDef.cs" id="4_842vf"]
 [ext_resource type="Resource" uid="uid://lda3p80x02sh" path="res://resources/game/resource_types/clay.tres" id="5_4dmvp"]
+[ext_resource type="Resource" uid="uid://ry6ft31wbb01" path="res://resources/game/resource_types/mud.tres" id="6_1nbe7"]
 [ext_resource type="Script" uid="uid://b5xb3tdf3yoon" path="res://resources/game/building_types/BuildingType.cs" id="7_j2ken"]
+[ext_resource type="Script" uid="uid://1887h8ejjt6v" path="res://resources/game/resource_types/ResourceOrType.cs" id="8_842vf"]
 
 [sub_resource type="Resource" id="Resource_0k2qt"]
 script = ExtResource("1_vvw5d")
@@ -34,12 +36,18 @@ Product = SubResource("Resource_1nbe7")
 Process = SubResource("Resource_0k2qt")
 metadata/_custom_type_script = "uid://c3n4csk46p0uc"
 
+[sub_resource type="Resource" id="Resource_uhl8l"]
+script = ExtResource("8_842vf")
+This = ExtResource("5_4dmvp")
+Or = ExtResource("6_1nbe7")
+metadata/_custom_type_script = "uid://1887h8ejjt6v"
+
 [resource]
 script = ExtResource("7_j2ken")
 name = "charcoal pit"
 description = "Burn logs into charcoal here."
 ResourceCosts = Dictionary[Object, int]({
-ExtResource("5_4dmvp"): 5
+SubResource("Resource_uhl8l"): 5
 })
 CraftingJobs = Array[Object]([SubResource("Resource_vvw5d")])
 HoursToConstruct = 12.0

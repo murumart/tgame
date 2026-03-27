@@ -1,0 +1,12 @@
+[gd_scene format=3 uid="uid://cltoyp4j3v7dh"]
+
+[ext_resource type="PackedScene" uid="uid://pfy55aydpy4t" path="res://scenes/region/buildings/_building_base.tscn" id="1_f8c4a"]
+[ext_resource type="Texture2D" uid="uid://bua4vdtrjfvtb" path="res://scenes/region/buildings/mud_pit.png" id="2_f8c4a"]
+
+[node name="BuildingBase" unique_id=1775108404 node_paths=PackedStringArray("mapObjectDisplay") instance=ExtResource("1_f8c4a")]
+mapObjectDisplay = NodePath("Sprite2D")
+
+[node name="Sprite2D" type="Sprite2D" parent="." index="0" unique_id=1759979388]
+position = Vector2(-32, -30)
+texture = ExtResource("2_f8c4a")
+centered = false

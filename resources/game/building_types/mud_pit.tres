@@ -1,0 +1,71 @@
+[gd_resource type="Resource" script_class="BuildingType" format=3 uid="uid://tywm1ruhf3eg"]
+
+[ext_resource type="Script" uid="uid://cbiuqlrd8yyxx" path="res://resources/visual/Verb.cs" id="1_58suv"]
+[ext_resource type="Script" uid="uid://b5xb3tdf3yoon" path="res://resources/game/building_types/BuildingType.cs" id="1_htw2b"]
+[ext_resource type="Resource" uid="uid://dj1451b3jiwbw" path="res://resources/game/resource_types/sand.tres" id="1_yhpbs"]
+[ext_resource type="Script" uid="uid://clkqk6nbux1c1" path="res://resources/visual/Noun.cs" id="2_din8q"]
+[ext_resource type="Resource" uid="uid://dbmt5icgtucsx" path="res://resources/game/resource_types/water.tres" id="2_vbo82"]
+[ext_resource type="Resource" uid="uid://ry6ft31wbb01" path="res://resources/game/resource_types/mud.tres" id="3_58suv"]
+[ext_resource type="Script" uid="uid://c3n4csk46p0uc" path="res://resources/game/building_types/crafting/CraftingJobDef.cs" id="4_din8q"]
+[ext_resource type="Resource" uid="uid://lda3p80x02sh" path="res://resources/game/resource_types/clay.tres" id="7_din8q"]
+
+[sub_resource type="Resource" id="Resource_l43mk"]
+script = ExtResource("1_58suv")
+Infinitive = "make"
+Progressive = "making"
+metadata/_custom_type_script = "uid://cbiuqlrd8yyxx"
+
+[sub_resource type="Resource" id="Resource_w4jqb"]
+script = ExtResource("2_din8q")
+Singular = "mud"
+Plural = "mud"
+metadata/_custom_type_script = "uid://clkqk6nbux1c1"
+
+[sub_resource type="Resource" id="Resource_q4r8h"]
+script = ExtResource("4_din8q")
+inputs = Dictionary[Object, int]({
+ExtResource("1_yhpbs"): 5,
+ExtResource("2_vbo82"): 2
+})
+outputs = Dictionary[Object, int]({
+ExtResource("3_58suv"): 5
+})
+timeTakenMinutes = 60
+Product = SubResource("Resource_w4jqb")
+Process = SubResource("Resource_l43mk")
+metadata/_custom_type_script = "uid://c3n4csk46p0uc"
+
+[sub_resource type="Resource" id="Resource_24igv"]
+script = ExtResource("1_58suv")
+Infinitive = "dry"
+Progressive = "drying"
+metadata/_custom_type_script = "uid://cbiuqlrd8yyxx"
+
+[sub_resource type="Resource" id="Resource_din8q"]
+script = ExtResource("2_din8q")
+Singular = "clay"
+Plural = "clay"
+metadata/_custom_type_script = "uid://clkqk6nbux1c1"
+
+[sub_resource type="Resource" id="Resource_58suv"]
+script = ExtResource("4_din8q")
+inputs = Dictionary[Object, int]({
+ExtResource("3_58suv"): 1
+})
+outputs = Dictionary[Object, int]({
+ExtResource("7_din8q"): 1
+})
+timeTakenMinutes = 5760
+maxWorkers = 3
+Product = SubResource("Resource_din8q")
+Process = SubResource("Resource_24igv")
+metadata/_custom_type_script = "uid://c3n4csk46p0uc"
+
+[resource]
+script = ExtResource("1_htw2b")
+name = "mud pit"
+description = "Mud and clay can be made here."
+ResourceCosts = Dictionary[Object, int]({})
+CraftingJobs = Array[Object]([SubResource("Resource_q4r8h"), SubResource("Resource_58suv")])
+HoursToConstruct = 9.0
+metadata/_custom_type_script = "uid://b5xb3tdf3yoon"

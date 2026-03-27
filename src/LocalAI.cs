@@ -157,6 +157,19 @@ public partial class LocalAI {
 			}, $"PlaceBuildingJob({buildingType.AssetName})");
 		}
 
+		public static Action PlaceQuarryBuildingJob(DecisionFactor[] factors, FactionActions ac, GroundTileType whatground) {
+			var btype = Registry.BuildingsS.Quarry;
+			return new(factors, () => {
+				AIAssert(ac.Faction.HasBuildingMaterials(btype), "Don't have building materials", ac);
+				foreach (var (pos, ground) in ac.GetTiles()) {
+					if ((ground & whatground) == 0 || !ac.CanPlaceBuilding(btype, pos)) continue;
+					ac.PlaceBuilding(btype, pos);
+					return;
+				}
+				AIAssert(false, $"No free tiles left to place building {btype.AssetName}", ac);
+			}, $"PlaceQuarryBuildingJob({whatground})");
+		}
+
 		public static Action SendTradeOffer(DecisionFactor[] factors, FactionActions ac, int giveSilver, ResourceBundle wantResources) {
 			return new(factors, () => {
 				AIAssert(ac.Faction.Silver >= giveSilver, "Don't have enough silver to make trade offer", ac);
@@ -796,8 +809,9 @@ public class GamerAI : LocalAI {
 		if (marketJob == null || marketJob.Workers == 0) return;
 		var partners = marketJob.TradeOffers.Keys.ToArray();
 		if (partners.Length == 0) return; // don't know any partners yet
-										  // creating trade offeers
-										  // if we have a bunch of something and don't really want it, try to sel, it
+
+		// creating trade offeers
+		// if we have a bunch of something and don't really want it, try to sel, it
 		foreach (var (res, store) in factionActions.GetResourceStorage()) {
 			int inStorage = store.Amount;
 			if (inStorage < 30) continue;

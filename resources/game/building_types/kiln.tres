@@ -37,6 +37,33 @@ Product = SubResource("Resource_1r4bu")
 Process = SubResource("Resource_qx22m")
 metadata/_custom_type_script = "uid://c3n4csk46p0uc"
 
+[sub_resource type="Resource" id="Resource_kj1u5"]
+script = ExtResource("1_1r4bu")
+Infinitive = "make"
+Progressive = "making"
+metadata/_custom_type_script = "uid://cbiuqlrd8yyxx"
+
+[sub_resource type="Resource" id="Resource_i7sut"]
+script = ExtResource("1_e481t")
+Singular = "mud brick"
+Plural = "mud bricks"
+metadata/_custom_type_script = "uid://clkqk6nbux1c1"
+
+[sub_resource type="Resource" id="Resource_cbn3x"]
+script = ExtResource("4_1r4bu")
+inputs = Dictionary[Object, int]({
+ExtResource("1_77qvn"): 1,
+ExtResource("7_qx22m"): 15
+})
+outputs = Dictionary[Object, int]({
+ExtResource("3_e481t"): 15
+})
+timeTakenMinutes = 300
+maxWorkers = 3
+Product = SubResource("Resource_i7sut")
+Process = SubResource("Resource_kj1u5")
+metadata/_custom_type_script = "uid://c3n4csk46p0uc"
+
 [sub_resource type="Resource" id="Resource_y2f7q"]
 script = ExtResource("8_kj1u5")
 This = ExtResource("7_qx22m")
@@ -46,11 +73,11 @@ metadata/_custom_type_script = "uid://1887h8ejjt6v"
 [resource]
 script = ExtResource("3_wr3si")
 name = "kiln"
-description = "Converts clay and mud to bricks, using logs as fuel."
+description = "Converts clay or mud to bricks, using logs as fuel."
 ResourceCosts = Dictionary[Object, int]({
 ExtResource("1_77qvn"): 8,
 SubResource("Resource_y2f7q"): 5
 })
-CraftingJobs = Array[Resource]([SubResource("Resource_po5cf")])
+CraftingJobs = Array[Resource]([SubResource("Resource_po5cf"), SubResource("Resource_cbn3x")])
 HoursToConstruct = 8.0
 metadata/_custom_type_script = "uid://b5xb3tdf3yoon"
