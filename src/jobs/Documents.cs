@@ -226,6 +226,7 @@ public partial class TradeOffer {
 	public Faction Recipient => acceptor;
 
 	public TimeT CreationMinute { get; init; }
+	public TimeT LastInteractionMinute { get; private set; }
 
 	bool valid = false;
 	public bool IsValid => valid;
@@ -258,6 +259,7 @@ public partial class TradeOffer {
 		takeResourcesUnit = wants.Divide(maxUnits);
 
 		CreationMinute = starter.GetTime();
+		LastInteractionMinute = CreationMinute;
 		valid = true;
 		Log("created with first constructor ");
 	}
@@ -286,6 +288,7 @@ public partial class TradeOffer {
 		takeSilverUnit = wants / maxUnits;
 
 		CreationMinute = starter.GetTime();
+		LastInteractionMinute = CreationMinute;
 		valid = true;
 		Log("created with second constructor ");
 	}
@@ -336,6 +339,7 @@ public partial class TradeOffer {
 		} else {
 			MakeTradeAcceptorGivesSilver(units);
 		}
+		LastInteractionMinute = Offerer.GetTime();
 		Debug.Assert(StoredUnits >= 0);
 		Log("made trade");
 		GD.Print($"TradeOffer::MakeTrade : made trade {str} (traded {units} units)");

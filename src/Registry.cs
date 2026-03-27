@@ -409,6 +409,13 @@ public static class ProductionNet {
 		return from.ToArray();
 	}
 
+	public static IResourceType[] GetParentBuildingMaterials(IResourceType resourceType) {
+		bool had = Resources.TryGetValue(resourceType, out var node);
+		if (!had) return [];
+		var from = node.RetrievedFrom.SelectMany(lnpns => lnpns.Value.Where(v => v.MadeAt is BuildingNode).SelectMany(v => (v.MadeAt as BuildingNode).SourceMaterials).Select(c => c.Item1.Resource));
+		return from.ToArray();
+	}
+
 	public static void PrintSources() {
 		void PrintProduction(ProductionNode p, int indent) {
 			if (p.Consumed.Length == 0) return;

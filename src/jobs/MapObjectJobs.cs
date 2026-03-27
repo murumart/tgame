@@ -295,7 +295,7 @@ public class QuarryJob : MapObjectJob {
 
 	public override string Title {
 		get {
-			return $"Quarry {mineResource.AssetName.Capitalize()}";
+			return $"Quarry {MineResources.AssetName.Capitalize()}";
 		}
 	}
 
@@ -309,11 +309,11 @@ public class QuarryJob : MapObjectJob {
 
 	ResourceStorage storage;
 	public readonly Building Quarry;
-	readonly IResourceType mineResource;
+	public readonly IResourceType MineResources;
 	//public Well Well => Site.Wells[wellIx];
 
 	float timeSpent; // storing as float due to workers
-	readonly TimeT timeTaken;
+	public readonly TimeT TimeTaken;
 	readonly List<ResourceBundle> grant = new();
 
 
@@ -325,8 +325,8 @@ public class QuarryJob : MapObjectJob {
 		Debug.Assert(resource is not null);
 		Debug.Assert(quarry.Type.GetSpecial() == Building.IBuildingType.Special.Quarry);
 		MaxWorkers = 10;
-		timeTaken = GameTime.Hours(24);
-		mineResource = resource;
+		TimeTaken = GameTime.Hours(24);
+		MineResources = resource;
 		this.Quarry = quarry;
 	}
 
@@ -350,9 +350,9 @@ public class QuarryJob : MapObjectJob {
 		// 	Well.Deplete();
 		// 	grant.Add(new(Well.ResourceType, 1));
 		// }
-		while (timeSpent >= timeTaken && storage.CanAdd(1)) {
-			timeSpent -= timeTaken;
-			grant.Add(new(mineResource, 1));
+		while (timeSpent >= TimeTaken && storage.CanAdd(1)) {
+			timeSpent -= TimeTaken;
+			grant.Add(new(MineResources, 1));
 		}
 
 		if (grant.Count != 0) {
@@ -375,7 +375,7 @@ public class QuarryJob : MapObjectJob {
 
 	public override float GetProgressEstimate() {
 		float estimate = 0f;
-		estimate = Math.Max(estimate, timeSpent / timeTaken);
+		estimate = Math.Max(estimate, timeSpent / TimeTaken);
 		return estimate;
 	}
 
@@ -385,12 +385,12 @@ public class QuarryJob : MapObjectJob {
 		}
 		Debug.Assert(Workers >= 0, $"Worker count can't be negative (is {Workers})");
 		var str = "";
-		if (storage is null) str += $"Create a job to mine {mineResource.AssetName}";
-		else if (Workers == 0) str += $"Employ workers to mine {mineResource.AssetName}";
+		if (storage is null) str += $"Create a job to mine {MineResources.AssetName}";
+		else if (Workers == 0) str += $"Employ workers to mine {MineResources.AssetName}";
 		else {
 			str = $"Mining ";
-			float time = timeTaken / MathF.Max(GetWorkTime(1), 1);
-			str += $"{1} {mineResource.AssetName} every {GameTime.GetFancyTimeString((TimeT)time)}.\n";
+			float time = TimeTaken / MathF.Max(GetWorkTime(1), 1);
+			str += $"{1} {MineResources.AssetName} every {GameTime.GetFancyTimeString((TimeT)time)}.\n";
 		}
 
 		return str;
@@ -398,12 +398,12 @@ public class QuarryJob : MapObjectJob {
 
 	public override string GetStatusDescription() {
 		if (Workers == 0) return "";
-		float timeLeft = timeTaken - timeSpent;
+		float timeLeft = TimeTaken - timeSpent;
 		timeLeft /= GetWorkTime(1);
-		return GameTime.GetFancyTimeString((TimeT)timeLeft) + " until more " + mineResource.AssetName + ".";
+		return GameTime.GetFancyTimeString((TimeT)timeLeft) + " until more " + MineResources.AssetName + ".";
 	}
 
-	public override string ToString() => $"QuarryJob({(mineResource is not null ? mineResource.AssetName : "?")})";
+	public override string ToString() => $"QuarryJob({(MineResources is not null ? MineResources.AssetName : "?")})";
 
 }
 

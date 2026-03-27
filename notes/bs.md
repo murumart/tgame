@@ -136,7 +136,8 @@ Rünnakud. rünnak mingi teise ruudu vastu oleks problem, mida teine peaks lahen
 	- [ ]
   - teise riigi rünnak
     - [X] kõigil factionitel military = inimesed tööl barracksides
-    - 
+    - [ ] kaardi peal nupp sõja kuulutamiseks
+    - [ ] kaardi peal nupp rahu sobitamiseksw
 - [ ] juice+heli
   - [ ] ehitisi maha pannes madal heli + tolm
   - [ ] mingid inimeste particleid töökohtade juures

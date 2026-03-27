@@ -86,8 +86,11 @@ public partial class LocalAI {
 		public static Action AssignWorkersToJob(DecisionFactor[] factors, FactionActions ac, Job job) {
 			return new(factors, () => {
 				AIAssert(job.NeedsWorkers, "Job doesn't \"need workers\"", ac);
-				int maxChange = Math.Min((int)ac.GetFreeWorkers(), (int)job.MaxWorkers);
+				int maxChange = (int)(job.MaxWorkers * 0.75);
+				if (job is ConstructBuildingJob || job is SolveProblemJob) maxChange = (int)job.MaxWorkers;
+				maxChange = Math.Min((int)ac.GetFreeWorkers(), maxChange);
 				maxChange = Math.Min(maxChange, (int)job.MaxWorkers - job.Workers);
+				//if (job is not ConstructBuildingJob) 
 				maxChange = GD.RandRange(maxChange / 2, maxChange);
 				ac.ChangeJobWorkerCount(job, maxChange);
 			}, $"AssignWorkersToJob({job})");
@@ -221,6 +224,23 @@ public partial class LocalAI {
 			}, "FoodPANIC!!!CancelEverything");
 		}
 
+		// hacky way to get more free workers over time instead of mindfully removing them from jobs
+		public static Action FreeAWorker(DecisionFactor[] factors, FactionActions ac) {
+			return new(factors, () => {
+				Job maxj = null;
+				int maxworkers = 0;
+				foreach (var job in ac.Faction.GetJobs()) {
+					if (job.Workers > maxworkers) {
+						maxj = job;
+						maxworkers = job.Workers;
+					}
+				}
+				if (maxj is null || maxworkers == 0) return;
+				AIAssert(maxj is not null && maxworkers != 0, "Bad, ", ac);
+				ac.ChangeJobWorkerCount(maxj, -1);
+			}, "FreeAWorker");
+		}
+
 	}
 
 }
@@ -248,27 +268,27 @@ public partial class LocalAI {
 		}
 
 		public static DecisionFactor Ease(DecisionFactor fac, float t) {
-			return new(() => Mathf.Ease(fac.Score(), t), $"Ease({fac})");
+			return new(() => Mathf.Ease(fac.Score(), t), $"Ease({fac}?)");
 		}
 
 		public static DecisionFactor Curve(DecisionFactor fac, Curve curve) {
-			return new(() => curve.SampleBaked(fac.Score()), $"Curve({fac})");
+			return new(() => curve.SampleBaked(fac.Score()), $"Curve({fac}?)");
 		}
 
 		public static DecisionFactor Max(DecisionFactor fac, float with) {
-			return new(() => Mathf.Max(with, fac.Score()), $"Max({fac}, {with})");
+			return new(() => Mathf.Max(with, fac.Score()), $"Max({fac}?)");
 		}
 
 		public static DecisionFactor OneMinus(DecisionFactor fac) {
-			return new(() => 1.0f - fac.Score(), $"(1 - {fac})");
+			return new(() => 1.0f - fac.Score(), $"(1-{fac})");
 		}
 
 		public static DecisionFactor Mult(DecisionFactor fac, float with) {
-			return new(() => Mathf.Clamp(fac.Score() * with, 0f, 1f), $"({fac} * {with})");
+			return new(() => Mathf.Clamp(fac.Score() * with, 0f, 1f), $"({fac}*)");
 		}
 
 		public static DecisionFactor Pow(DecisionFactor fac, float up) {
-			return new(() => { var a = fac.Score(); return Mathf.Pow(a, up); }, $"({fac}^{up})");
+			return new(() => { var a = fac.Score(); return Mathf.Pow(a, up); }, $"({fac}^)");
 		}
 
 		public static DecisionFactor Group(DecisionFactor[] factors) {
@@ -455,7 +475,7 @@ public partial class LocalAI {
 
 		public static DecisionFactor SeeNoInterestInTradeOffer(Faction me, TradeOffer toff, TimeT disintrestTime) {
 			return new(() => {
-				var timeTaken = me.GetTime() - toff.CreationMinute;
+				var timeTaken = me.GetTime() - toff.LastInteractionMinute;
 				return Mathf.Clamp((float)timeTaken / disintrestTime, 0f, 1f);
 			}, $"SeeNoInterestInTradeOffer");
 		}
@@ -504,7 +524,7 @@ public partial class LocalAI {
 		}
 
 		public static DecisionFactor EmploymentRate(FactionActions actions) {
-			return new(() => actions.Faction.GetPopulationCount() == 0 ? 0f : (float)actions.GetUnemployedPopulationCount() / actions.Faction.GetPopulationCount(), "EmploymentRate");
+			return new(() => actions.Faction.GetPopulationCount() == 0 ? 0f : (float)actions.Faction.Population.EmployedCount / actions.Faction.GetPopulationCount(), "EmploymentRate");
 		}
 
 		public static DecisionFactor ArePeopleStarving(FactionActions actions) {
@@ -688,6 +708,9 @@ public class GamerAI : LocalAI {
 			Factors.HasMarketplace(actions),
 			Factors.IsMarketplaceConstructed(actions),
 		], actions));
+		startActions.Add(Actions.FreeAWorker([
+			Factors.Ease(Factors.EmploymentRate(actions), 5),
+		], actions));
 		startActions.Add(Actions.FoodPanicCancelEverything([
 			Factors.ArePeopleStarving(actions),
 			Factors.EmploymentRate(actions),
@@ -725,15 +748,17 @@ public class GamerAI : LocalAI {
 		// decay wants over time
 		foreach (var res in ResourceWants.Keys) {
 			int want = ResourceWants[res];
-			ResourceWants[res] = Mathf.Max(DefaultResourceWant, want - (int)(want * 0.025 + 1));
+			want = Mathf.Max(DefaultResourceWant, want - (int)(want * 0.025 + 1));
 
 			// and increase want for prerequisites
-			var parents = ProductionNet.GetParentMaterials(res);
+			var parents = ProductionNet.GetParentMaterials(res).Concat(ProductionNet.GetParentBuildingMaterials(res));
 			foreach (var r in parents) ResourceWants[r] = Math.Max(want, ResourceWants[r]);
 
 			// and reduce want if we have it already
 			var has = factionActions.GetResourceStorage().GetCount(res);
-			ResourceWants[res] = Math.Max(ResourceWants[res] - has, DefaultResourceWant);
+			want = Math.Max(DefaultResourceWant, want - has);
+
+			ResourceWants[res] = want;
 		}
 		uint homeless = factionActions.GetHomelessPopulationCount() ;
 		if (homeless > 0) {
@@ -768,6 +793,9 @@ public class GamerAI : LocalAI {
 					if (job is CraftJob craftJob) ephemeralActions.Add(Actions.AddMapObjectJob([
 						Factors.Group(craftJob.Outputs.Select(o => Factors.Mult(Factors.ResourceWant(factionActions, this, o.Type), (float)o.Amount / craftJob.TimeTaken)).ToArray()),
 					], factionActions, mopbject, craftJob));
+					else if (job is QuarryJob qJob) ephemeralActions.Add(Actions.AddMapObjectJob([
+						Factors.ResourceWant(factionActions, this, qJob.MineResources),
+					], factionActions, mopbject, qJob));
 				}
 			}
 		}
@@ -787,13 +815,17 @@ public class GamerAI : LocalAI {
 			} else if (job is CraftJob cjob) {
 				factors.Add(Factors.Mult(Factors.Group(cjob.Outputs.Select(o => Factors.ResourceWant(factionActions, this, o.Type)).ToArray()), 0.1f));
 				factors.Add(Factors.ResourcesNeed(factionActions, cjob.Inputs));
-				var mopject = factionActions.Region.GetMapObject(cjob.GlobalPosition - factionActions.Region.WorldPosition);
+				//var mopject = factionActions.Region.GetMapObject(cjob.GlobalPosition - factionActions.Region.WorldPosition);
 				//IEnumerable<CraftJob> othersPossible = mopject.GetAvailableJobs().Where(j => j is CraftJob cj && cj.Outputs != cjob.Outputs).Cast<CraftJob>();
 				//negativeFactors.Add(Factors.Group(othersPossible.Select(p => Factors.Group(p.Outputs.Select(o => Factors.ResourceWant(factionActions, this, o.Type)).ToArray())).ToArray()));
+			} else if (job is QuarryJob qjob) {
+				factors.Add(Factors.Mult(Factors.ResourceWant(factionActions, this, qjob.MineResources), 1 / qjob.TimeTaken));
+			} else if (job is SolveProblemJob sjob) {
+				factors.Add(Factors.One);
 			}
 			factors.Add(Factors.JobHasEmploymentSpots(factionActions, job));
 			factors.Add(Factors.HasFreeWorkers(factionActions));
-			factors.Add(Factors.Ease(Factors.OneMinus(Factors.JobEmploymentRate(job)), 7f));
+			factors.Add(Factors.Ease(Factors.OneMinus(Factors.JobEmploymentRate(job)), 2f));
 			factors.Add(Factors.IsJobUnlocked(job));
 			if (factors != null) {
 				ephemeralActions.Add(Actions.AssignWorkersToJob(factors.ToArray(), factionActions, job));
