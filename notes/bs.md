@@ -106,6 +106,8 @@ Marketplace töötab imelikult, vist lisab kõik offerid mingilt factionilt korr
 
 Revolutsioonid: kui AI juhtimisel nulli läheb approval siis +50% approval ning muuda nime või värvi?
 
+Rünnakud. rünnak mingi teise ruudu vastu oleks problem, mida teine peaks lahendama. Siis military number kummalgi peaks seda mõjutama.. kui liiga suur vahe, siis ei saa solvida. Aga solvivad inimesed peaks olema seotud militaryga. Military jõud siis mitte sõltuv militarys tööl olevatest inimestest vaid lihtsalt barrackside / mingite kaitsevallide olemasolust ? Military jagada offensi ja defensi vahel? Siis olekski attack job ühelt poolt ja defend job teiselt poolt, ning attack ja defend mõjutaks seda. Kas attack ja defend peaks eraldi olema, lihtsalt militaryt võrrelda ning ehitised mõistlikud välja mõelda, mis seotud üldiselt sõdimisega.
+
 ### Mida teha enne testimist
 
 - [ ] rohkem contenti
@@ -132,16 +134,19 @@ Revolutsioonid: kui AI juhtimisel nulli läheb approval siis +50% approval ning 
 	- [ ] metsatulekajhu
 	- [X] kalurite paat läks ümber
 	- [ ]
+  - teise riigi rünnak
+    - [X] kõigil factionitel military = inimesed tööl barracksides
+    - 
 - [ ] juice+heli
-  - [ ] ehitisi maha pannes sügav heli + tolm
+  - [ ] ehitisi maha pannes madal heli + tolm
   - [ ] mingid inimeste particleid töökohtade juures
-  - [ ] kõigile nuppudele hover + click
+  - [X] kõigile nuppudele hover + click
   - [X] keskkonnahelid sõltuvalt kaamera asukohale
 - [ ] muusika
 - [X] seadete menüü
   - [ ]
 
-**Fiksid**:
+**Parandada**:
 
 - [X] ehitise tööd tulevad ekraanil ette kui ehitamata ehitis eemaldatakse
-- [ ]
+- [ ] mingi memory leak uute maailmade tegemisel

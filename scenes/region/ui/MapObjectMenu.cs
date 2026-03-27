@@ -38,7 +38,7 @@ public partial class MapObjectMenu : Control {
 				Debug.Assert(myMapObject is not null, "Map object menu isn't attached to map object");
 				return ui.GetMapObjectJob(myMapObject);
 			} else {
-				return myProblem.Job;
+				return myProblem.SolveJob;
 			}
 		}
 	}

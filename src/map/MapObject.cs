@@ -43,6 +43,7 @@ public partial class MapObject {
 public partial class Building : MapObject {
 
 	public event Action<Building> BuildingConstructed;
+	public event Action<Building> BuildingDemolished; public void InvokeBuildingDemolished() => BuildingDemolished?.Invoke(this);
 
 	readonly IBuildingType type;
 	public override IBuildingType Type => type;
@@ -87,10 +88,6 @@ public partial class Building : MapObject {
 					if ((ground & GroundTileType.HasSand) != 0) {
 						jobs.Add(new QuarryJob(Registry.ResourcesS.Sand, this));
 					}
-				}
-				break;
-			case IBuildingType.Special.Barracks: {
-					jobs.Add(new MilitaryStationJob(this));
 				}
 				break;
 		}

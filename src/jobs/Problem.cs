@@ -13,7 +13,7 @@ public abstract class Problem {
 	public Vector2I LocalPosition { get; private set; }
 
 	public bool Applied { get; private set; }
-	public SolveProblemJob Job { get; private set; }
+	public SolveProblemJob SolveJob { get; private set; }
 
 
 	protected Problem(Vector2I pos, TimeT maxTime) {
@@ -38,8 +38,8 @@ public abstract class Problem {
 	}
 
 	public void SetJob(SolveProblemJob solveProblemJob) {
-		Debug.Assert(Job is null, "Already have a job solving this problem");
-		Job = solveProblemJob;
+		Debug.Assert(SolveJob is null, "Already have a job solving this problem");
+		SolveJob = solveProblemJob;
 	}
 
 	public float GetProgress() {
@@ -60,6 +60,7 @@ public class SolveProblemJob : Job {
 
 
 	public SolveProblemJob(Problem problem, uint maxWorkers = 10) {
+		Debug.Assert(problem is not null);
 		this.Problem = problem;
 		MaxWorkers = maxWorkers;
 	}
@@ -68,6 +69,7 @@ public class SolveProblemJob : Job {
 		Debug.Assert(Problem is not null);
 		Problem.SetJob(this);
 	}
+
 	public override void Deinitialise(Faction ctxFaction) {
 		if (Problem.ProblemTime <= 0) {
 			ctxFaction.RemoveProblem(Problem.LocalPosition);
@@ -127,5 +129,24 @@ public class WorkplaceAccidentProblem : Problem {
 
 	public override void OnAddressed(Faction fac) {
 		localJob.Lock(false);
+	}
+}
+
+public class MilitaryAttackproblem : Problem {
+
+	public override string Title => "Military attack";
+	public override string SolveJobTitle => "Repel attack";
+	public override string NotificationTitle => "An attack on our nation! Repel it!";
+
+
+	public MilitaryAttackproblem(Vector2I pos, TimeT maxTime) : base(pos, maxTime) {
+	}
+
+	public override void OnAddressed(Faction fac) {
+		
+	}
+
+	public override void OnFailedToAddress(Faction fac) {
+		
 	}
 }

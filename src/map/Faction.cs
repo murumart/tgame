@@ -29,6 +29,7 @@ public class Faction : IEntity {
 	public event Action<Problem> ProblemSolvedEvent;
 	public event Action<TradeOffer, int> MyTradeOfferAcceptedEvent;
 	public event Action<TradeOffer> MyTradeOfferRejectedEvent;
+	public event Action<Building> BuildingRemoved;
 
 	public Region Region { get; init; }
 
@@ -257,6 +258,13 @@ public class Faction : IEntity {
 
 	void OnBuildingConstructed(Building building) {
 		Population.ChangeHousingCapacity((int)building.GetHousingCapacity());
+		var special = building.Type.GetSpecial();
+		if (special == IBuildingType.Special.Barracks) 
+	}
+
+	void OnBuildingRemoved(Building building) {
+				var special = building.Type.GetSpecial();
+				if (special == IBuildingType.Special.Barracks) 
 	}
 
 	// deletes a building from the faction's records and has the region also delete it
@@ -270,6 +278,8 @@ public class Faction : IEntity {
 			Population.ChangeHousingCapacity(-(int)building.GetHousingCapacity());
 		}
 		Region.RemoveMapObject(at);
+		OnBuildingRemoved(building);
+		BuildingRemoved?.Invoke(building);
 	}
 
 	// just removes a map object, intended for resource sites etc
