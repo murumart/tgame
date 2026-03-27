@@ -387,6 +387,7 @@ alignment = 2
 [node name="MenuTabs" type="TabContainer" parent="VBoxContainer2/HBoxContainer/VBoxContainer2" unique_id=1179149039]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_vertical = 3
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_bjdfm")
 tabs_visible = false

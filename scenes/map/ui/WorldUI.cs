@@ -81,13 +81,26 @@ public partial class WorldUI : Control {
 	}
 
 	public void SelectRegion(Region region) {
+		selectedRegion = region;
+
+		switch (mode) {
+			case Modes.Generation:
+				RegionDisplayGeneration(region);
+				break;
+			case Modes.InGame:
+				RegionDisplayInGame(region);
+				break;
+		}
+
+		RegionSelected?.Invoke(region);
+	}
+
+	void RegionDisplayGeneration(Region region) {
 		if (region == null) {
 			factionTitleLabel.Text = ". . .";
 			factionInfoLabel.Text = "Select a Faction";
-			selectedRegion = null;
 			return;
 		}
-		selectedRegion = region;
 		factionTitleLabel.Text = region.LocalFaction.Name;
 		var things = string.Join(", ", region.GetMapObjects().Select(a => ((IAssetType)a.Type).AssetName).Distinct());
 		factionInfoLabel.Text =
@@ -104,7 +117,49 @@ public partial class WorldUI : Control {
 			+ $"Map objects: {things}\n"
 			+ $"Region IX: {region.WorldIndex}"
 		;
-		RegionSelected?.Invoke(region);
+	}
+
+	void RegionDisplayInGame(Region region) {
+		Region myRegion = GameMan.Game.PlayRegion;
+		Faction myFaction = myRegion.LocalFaction;
+		factionTitleLabel.Text = "...?";
+		factionInfoLabel.Text = "";
+		if (region is null) {
+			factionInfoLabel.Text = "Select a Faction";
+			return;
+		}
+
+		Faction faction = region.LocalFaction;
+		bool wild = region.LocalFaction.IsWild;
+		if (!myRegion.Neighbors.Contains(region) && myRegion != region) {
+			factionInfoLabel.Text = "This faction is far away from us... Don't know much.";
+			return;
+		}
+		factionTitleLabel.Text = region.LocalFaction.Name;
+		if (myRegion == region) factionTitleLabel.Text += " (your location)";
+		if (myFaction.IsAtWarWith(faction)) factionTitleLabel.Text += " (AT WAR WITH YOU)";
+		if (wild) {
+			factionInfoLabel.Text = "Empty of meaningful civilisation.\n"
+				+ $"Land tiles: {region.LandTileCount}\n"
+				+ $"Sea tiles: {region.OceanTileCount}\n";
+			return;
+		}
+		int myMilitary = myFaction.Military;
+		int military = faction.Military;
+		int mildiff = military - myMilitary;
+		string mildesc = mildiff < 0
+			? $"({-mildiff} less than ours)"
+			: mildiff > 0
+				? $"({mildiff} more than ours)"
+				: "";
+		factionInfoLabel.Text = ""
+			+ $"Land tiles: {region.LandTileCount}\n"
+			+ $"Sea tiles: {region.OceanTileCount}\n"
+			+ $"Population: {(region.LocalFaction.GetPopulationCount())}\n"
+			+ $"Silver: {(region.LocalFaction.Silver)} (total {region.LocalFaction.LiquidSilver})\n"
+			+ $"Military power: {(region.LocalFaction.Military)} {mildesc}\n"
+			+ $"Happiness with ruler: {((int)(region.LocalFaction.Population.Approval * 100))}%\n"
+		;
 	}
 
 	void SetRendererParams() {
@@ -124,12 +179,33 @@ public partial class WorldUI : Control {
 		worldRenderer.ResetImages();
 		SetRendererParams();
 		worldRenderer.DrawWorld();
+		switch (mode) {
+			case Modes.Generation:
+				GenerationDisplay(world);
+				break;
+			case Modes.InGame:
+				InGameDisplay(world);
+				break;
+		}
+	}
+
+	void GenerationDisplay(World world) {
 		camera.Position = new(world.Width * 0.5f, world.Height * 0.5f);
+	}
+
+	void InGameDisplay(World world) {
+		camera.Position = GameMan.Game.PlayRegion.WorldPosition;
+		camera.ZoomIn(4f);
 	}
 
 	public void DrawRegions(Region[] regions) {
 		Debug.Assert(_ready);
-		worldRenderer.DrawRegions(regions);
+		switch (mode)
+		{
+			case Modes.Generation: worldRenderer.DrawRegions(regions); break;
+			case Modes.InGame : worldRenderer.DrawRegionsDark(GameMan.Game.PlayRegion, regions); break;
+		}
+		
 	}
 
 	void OnDrawLayersChanged() {

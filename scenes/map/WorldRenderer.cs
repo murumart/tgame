@@ -1,3 +1,4 @@
+using System;
 using Godot;
 using scenes.region;
 using scenes.ui;
@@ -166,7 +167,23 @@ public partial class WorldRenderer : Node {
 		if (regions == null) return;
 		var image = GetImage(RegionSprite);
 		foreach (var region in regions) {
-			var color = region.LocalFaction?.Color.Lightened(0.5f) ?? Color.FromHsv(region.WorldIndex / (float)regions.Length, 1f, 1f);
+			var color = region.LocalFaction?.Color.Lightened(0.5f) ?? Color.FromHsv(region.WorldIndex / (float)regions.Length, 1f, 1f).Lightened(0.5f);
+			if (region.LocalFaction != null && region.LocalFaction.HasOwningFaction()) color = region.LocalFaction.GetOwningFaction().Region.LocalFaction.Color.Darkened(0.25f);
+			foreach (var px in region.GroundTilePositions) {
+				image.SetPixelv(px + region.WorldPosition, color);
+			}
+		}
+		UpdateImage(image, RegionSprite);
+	}
+
+	internal void DrawRegionsDark(Region playRegion, Region[] regions) {
+		if (regions is null) return;
+		var image = GetImage(RegionSprite);
+		foreach (var region in regions) {
+			var color = region == playRegion ? region.LocalFaction.Color.Lightened(0.5f) : region.LocalFaction.Color;
+			if (region != playRegion) {
+				if (!playRegion.Neighbors.Contains(region)) color = color.Darkened(0.75f);
+			}
 			if (region.LocalFaction != null && region.LocalFaction.HasOwningFaction()) color = region.LocalFaction.GetOwningFaction().Region.LocalFaction.Color.Darkened(0.25f);
 			foreach (var px in region.GroundTilePositions) {
 				image.SetPixelv(px + region.WorldPosition, color);
@@ -202,4 +219,5 @@ public partial class WorldRenderer : Node {
 		UpdateImage(image, highlightSprite);
 	}
 
+	
 }

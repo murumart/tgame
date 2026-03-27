@@ -302,6 +302,7 @@ size_flags_vertical = 0
 [node name="MarginContainer2" type="MarginContainer" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/HBoxContainer" unique_id=723366520]
 layout_mode = 2
 size_flags_vertical = 3
+size_flags_stretch_ratio = 1.2
 mouse_filter = 2
 theme_override_constants/margin_left = 2
 theme_override_constants/margin_top = 2

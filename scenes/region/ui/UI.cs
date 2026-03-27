@@ -253,6 +253,7 @@ public partial class UI : Control {
 		} else if (which == Tab.World) {
 			worldUI.DisplayWorld(GameMan.Game.Map.World);
 			worldUI.DrawRegions(GameMan.Game.Map.GetRegions());
+			worldUI.SelectRegion(GetFactionActions().Region);
 		}
 		menuTabs.CurrentTab = (int)which;
 	}
