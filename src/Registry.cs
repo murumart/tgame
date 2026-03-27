@@ -45,6 +45,7 @@ public static class Registry {
 		public static readonly IResourceType Fruit = Resources.GetAsset("fruit");
 		public static readonly IResourceType Fish = Resources.GetAsset("fish");
 		public static readonly IResourceType Grain = Resources.GetAsset("grain");
+		public static readonly IResourceType Sand = Resources.GetAsset("sand");
 		public static readonly IResourceType Flour = Resources.GetAsset("flour");
 		//public static readonly IResourceType Dough = Resources.GetAsset("dough");
 		public static readonly IResourceType Bread = Resources.GetAsset("bread");

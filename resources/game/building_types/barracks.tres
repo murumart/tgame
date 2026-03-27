@@ -18,4 +18,5 @@ ExtResource("4_uunl6"): 3
 })
 CraftingJobs = Array[Resource]([])
 HoursToConstruct = 56.0
+special = 3
 metadata/_custom_type_script = "uid://b5xb3tdf3yoon"

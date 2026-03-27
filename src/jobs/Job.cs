@@ -11,6 +11,7 @@ public abstract class Job {
 	public virtual string Title => "Some king of job???";
 	public virtual bool NeedsWorkers => true;
 	public virtual bool IsInternal => false;
+	public virtual bool TimedWork => true;
 
 	// locked jobs cannot be removed or edited
 	public bool Locked { get; private set; }
@@ -42,7 +43,10 @@ public abstract class Job {
 	public void SetWorkers(int to) {
 		Debug.Assert(MaxWorkers >= 0, "Max workers can't be negative");
 		Debug.Assert(to <= MaxWorkers, $"Employment overflow: can fit {MaxWorkers} but want to fit {to}");
+		if (to == Workers) return;
+		int old = Workers;
 		Workers = to;
+		OnWorkerCountChanged(old);
 	}
 
 	protected static void ConsumeRequirements(ResourceBundle[] requirements, ResourceStorage resources) {
@@ -91,6 +95,8 @@ public abstract class Job {
 		GD.PushWarning(txt);
 		return txt;
 	}
+
+	protected virtual void OnWorkerCountChanged(int old) { }
 
 	public virtual string GetProductionDescription() => "This job produces nothing.";
 

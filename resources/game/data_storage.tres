@@ -41,6 +41,7 @@
 [ext_resource type="Resource" uid="uid://b41i53hgxp8vw" path="res://resources/game/resource_types/grain.tres" id="24_2hkqv"]
 [ext_resource type="Resource" uid="uid://6yhyfqkyjatx" path="res://resources/game/resource_site_types/swamp_iron_pit.tres" id="24_kfeoj"]
 [ext_resource type="Resource" uid="uid://b1lgcs27h3c62" path="res://resources/game/resource_types/flour.tres" id="27_wbpcg"]
+[ext_resource type="Resource" uid="uid://dj1451b3jiwbw" path="res://resources/game/resource_types/sand.tres" id="31_eqp6s"]
 [ext_resource type="Resource" uid="uid://bc6plc0ceu8uw" path="res://resources/game/resource_types/coconuts.tres" id="34_0g6uw"]
 [ext_resource type="Resource" uid="uid://diiapemabucoq" path="res://resources/game/resource_types/iron_ore.tres" id="35_fyte2"]
 [ext_resource type="Resource" uid="uid://c3t2noe72dcgc" path="res://resources/game/resource_types/iron.tres" id="36_fqx13"]
@@ -49,7 +50,7 @@
 
 [resource]
 script = ExtResource("1_wv3fg")
-resourceTypes = Array[Object]([ExtResource("4_xflvh"), ExtResource("6_cosqq"), ExtResource("5_c2mn5"), ExtResource("23_jidsk"), ExtResource("10_dyo1l"), ExtResource("11_8wepv"), ExtResource("12_7f1xh"), ExtResource("18_tycsq"), ExtResource("24_2hkqv"), ExtResource("27_wbpcg"), ExtResource("17_t4jud"), ExtResource("34_0g6uw"), ExtResource("35_fyte2"), ExtResource("36_fqx13"), ExtResource("39_0h8m4"), ExtResource("44_ucx1w")])
+resourceTypes = Array[Object]([ExtResource("4_xflvh"), ExtResource("31_eqp6s"), ExtResource("6_cosqq"), ExtResource("5_c2mn5"), ExtResource("23_jidsk"), ExtResource("10_dyo1l"), ExtResource("11_8wepv"), ExtResource("12_7f1xh"), ExtResource("18_tycsq"), ExtResource("24_2hkqv"), ExtResource("27_wbpcg"), ExtResource("17_t4jud"), ExtResource("34_0g6uw"), ExtResource("35_fyte2"), ExtResource("36_fqx13"), ExtResource("39_0h8m4"), ExtResource("44_ucx1w")])
 buildingTypes = Array[Object]([ExtResource("1_8bhaa"), ExtResource("3_0g2bt"), ExtResource("1_r67qw"), ExtResource("3_o7ste"), ExtResource("4_h1ebs"), ExtResource("7_mrkhr"), ExtResource("8_andqa"), ExtResource("9_blgao"), ExtResource("10_qffbb"), ExtResource("11_jidsk"), ExtResource("11_v0t8m"), ExtResource("12_isx83"), ExtResource("13_ucx1w"), ExtResource("14_isx83"), ExtResource("15_rda4d")])
 resourceSiteTypes = Array[Object]([ExtResource("8_tk3xj"), ExtResource("11_n7e6t"), ExtResource("9_tycsq"), ExtResource("11_umw7u"), ExtResource("12_j5uyn"), ExtResource("14_2hkqv"), ExtResource("6_7f1xh"), ExtResource("16_k4mii"), ExtResource("21_fyte2"), ExtResource("22_fqx13"), ExtResource("23_xi4a3"), ExtResource("23_kfeoj"), ExtResource("24_kfeoj")])
 foodValues = ExtResource("7_t4jud")

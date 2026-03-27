@@ -26,7 +26,7 @@ metadata/_custom_type_script = "uid://clkqk6nbux1c1"
 [sub_resource type="Resource" id="Resource_lmehe"]
 script = ExtResource("6_mu1on")
 inputs = Dictionary[Object, int]({
-ExtResource("3_e67mk"): 5,
+ExtResource("3_e67mk"): 2,
 ExtResource("4_mu1on"): 5
 })
 outputs = Dictionary[Object, int]({

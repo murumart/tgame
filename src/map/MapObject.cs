@@ -35,7 +35,7 @@ public partial class MapObject {
 		bool IsPlacementAllowed(GroundTileType on);
 
 		MapObject CreateDummyMapObject() => this.CreateMapObject(Vector2I.Zero, null);
-	
+
 	}
 
 }
@@ -77,11 +77,22 @@ public partial class Building : MapObject {
 
 	public override IEnumerable<Job> GetAvailableJobs() {
 		var jobs = base.GetAvailableJobs().ToList();
+		var special = type.GetSpecial();
 		if (!HasFurniture && GetHousingCapacity() > 0) jobs.Add(new AddFurnitureJob(this));
-		if (type.GetSpecial() == IBuildingType.Special.Quarry) {
-			GroundTileType ground = region.GetGroundTile(GlobalPosition - region.WorldPosition);
-			Debug.Assert((ground & GroundTileType.HasLand) != 0);
-			if ((ground & GroundTileType.HasSand) != 0) {}
+		switch (special) {
+			case IBuildingType.Special.Quarry: {
+					GroundTileType ground = region.GetGroundTile(GlobalPosition - region.WorldPosition);
+					Debug.Assert((ground & GroundTileType.HasLand) != 0);
+					jobs.Add(new QuarryJob(Registry.ResourcesS.Rocks, this));
+					if ((ground & GroundTileType.HasSand) != 0) {
+						jobs.Add(new QuarryJob(Registry.ResourcesS.Sand, this));
+					}
+				}
+				break;
+			case IBuildingType.Special.Barracks: {
+					jobs.Add(new MilitaryStationJob(this));
+				}
+				break;
 		}
 		jobs.Add(new DemolishMapObjectJob());
 		return jobs;
@@ -97,6 +108,7 @@ public partial class Building {
 			None,
 			Marketplace,
 			Quarry,
+			Barracks,
 		}
 
 		public Special GetSpecial();

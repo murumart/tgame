@@ -193,7 +193,7 @@ public partial class RegionDisplay : Node2D {
 				mopview.DisplayJobProgress(progress, show: true);
 			} else if (region.LocalFaction.GetJob(tpos + region.WorldPosition, out var job)) {
 				float progress = job.GetProgressEstimate();
-				mopview.DisplayJobProgress(progress, show: job.Workers != 0 || progress > 0f, showBuildingTape: job is ConstructBuildingJob);
+				mopview.DisplayJobProgress(progress, show: job.TimedWork && job.Workers != 0 || progress > 0f, showBuildingTape: job is ConstructBuildingJob);
 			} else {
 				mopview.DisplayJobProgress(0f, false);
 			}

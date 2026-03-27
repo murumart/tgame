@@ -8,6 +8,7 @@ public class Population {
 	public event Func<uint, uint> FoodRequested;
 	public event Func<int> SilverRequested;
 	public event Func<float> FurnitureRateRequested;
+	public event Func<int> MilitaryMightRequested;
 	public event Action<Job, int> JobEmploymentChanged;
 	public event Action ApprovalDroppedToZero;
 	public event Action PopulationDroppedToZero;
@@ -171,12 +172,13 @@ public class Population {
 	(float, string)[] reasons = null;
 	void UpdateApprovalMonthlyChangeReasons() {
 		if (reasons == null) {
-			reasons = new (float, string)[5];
+			reasons = new (float, string)[6];
 			reasons[0].Item2 = "no people";
 			reasons[1].Item2 = "people are starving";
 			reasons[2].Item2 = "not enough housing for people";
 			reasons[3].Item2 = "your coffers are";
 			reasons[4].Item2 = "furnidur";
+			reasons[5].Item2 = "your military is mighty";
 		}
 		if (Count == 0) {
 			return;
@@ -190,6 +192,8 @@ public class Population {
 		float furnitureapprovalchange = 0.4f * Mathf.Clamp(Mathf.Pow((FurnitureRateRequested?.Invoke() ?? 0f - 0.1f), 3) / 0.8f, -0.16f, 0.16f);
 		reasons[4].Item1 = furnitureapprovalchange;
 		reasons[4].Item2 = furnitureapprovalchange > 0f ? "people have furniture in their homes" : "people are missing furniture in their homes";
+		float militaryapprovalchange = Mathf.Clamp((MilitaryMightRequested?.Invoke() ?? 0f) * 0.001f, 0f, 0.05f);
+		reasons[5].Item1 = militaryapprovalchange;
 	}
 
 	public (float, string)[] GetApprovalMonthlyChangeReasons() => reasons;

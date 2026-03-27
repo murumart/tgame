@@ -46,6 +46,7 @@ public class Faction : IEntity {
 	public uint UnemployedPopulation => Population.Count - Population.EmployedCount;
 
 	public int Silver { get; private set; }
+	public int Military { get; private set; }
 
 	public readonly string Name;
 	public Color Color { get; init; } // used for displaying
@@ -90,7 +91,7 @@ public class Faction : IEntity {
 		}
 	}
 
-	// *** MANAGING WORKERS AND JOBS ***
+	#region Workers & Jobs
 
 	public uint GetPopulationCount() => Population.Count;
 
@@ -214,7 +215,9 @@ public class Faction : IEntity {
 		return f;
 	}
 
-	// *** MANAGING BUILDINGS ***
+	#endregion
+
+	#region Buildings
 
 	// does what the method name says: a construction site is created and placed in the world
 	public Building PlaceBuildingConstructionSite(IBuildingType type, Vector2I position) {
@@ -314,7 +317,9 @@ public class Faction : IEntity {
 
 	void OnMapObjectUpdated(Vector2I at) { }
 
-	// *** TIMING AND CONTRACTS ***
+	#endregion
+	
+	#region Timing & Contracts
 
 	public TimeT GetTime() => time;
 
@@ -383,7 +388,9 @@ public class Faction : IEntity {
 		}
 	}
 
-	// *** PROBLEMS ***
+	#endregion
+
+	#region Problems & Military
 
 	public void AddProblem(Problem proble, Vector2I where) {
 		Debug.Assert(proble.LocalPosition == where, $"This problem's position is wrong compartedf to where it's supposed to be added {proble.LocalPosition} vs {where}");
@@ -413,7 +420,14 @@ public class Faction : IEntity {
 		}
 	}
 
-	// *** TRADING ***
+	public void ChangeMilitaryBy(int delta) {
+		Debug.Assert(Military + delta >= 0, $"Don't go negative militarily (would be {Military + delta})");
+		Military += delta;
+	}
+
+	#endregion
+
+	#region Trading
 
 	public IEnumerable<Faction> GetTradePartners() => gottenTradeOffers.Keys;
 
@@ -534,12 +548,13 @@ public class Faction : IEntity {
 		gottenTradeOffers[source].Remove(offer);
 	}
 
-	// *** VISUALISATION ***
+	#endregion
+
+	#region Visualisation
 
 	public override string ToString() {
 		return $"Faction {Name}";
 	}
-
 
 	public static class Naming {
 
@@ -584,6 +599,8 @@ public class Faction : IEntity {
 			return prexes[GD.Randi() % prexes.Length] + GenRandomName();
 		}
 	}
+
+	#endregion
 
 }
 

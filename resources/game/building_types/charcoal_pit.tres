@@ -26,7 +26,7 @@ inputs = Dictionary[Object, int]({
 ExtResource("1_ufbqd"): 5
 })
 outputs = Dictionary[Object, int]({
-ExtResource("2_4dmvp"): 1
+ExtResource("2_4dmvp"): 5
 })
 timeTakenMinutes = 1440
 maxWorkers = 3

@@ -352,6 +352,7 @@ public partial class UI : Control {
 				else if (!map.TileOwners.TryGetValue(inRegionTilepos + reg.WorldPosition, out var reg2)) (c as Label).Text = "faction: ...?";
 				else (c as Label).Text = $"faction: {reg2.LocalFaction.Name}";
 			});
+			resourceDisplay.Display(c => (c as Label).Text = "military: " + fac.Military);
 		} else {
 			resourceDisplay.Display(c => (c as Label).Text = fac.Name);
 		}

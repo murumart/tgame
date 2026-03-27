@@ -297,8 +297,7 @@ public class QuarryJob : MapObjectJob {
 
 	public override string Title {
 		get {
-			Debug.Assert(Quarry != null, "Can't get QuarryJob Title without site");
-			return $"Quarry ";
+			return $"Quarry {mineResource.AssetName.Capitalize()}";
 		}
 	}
 
@@ -312,7 +311,7 @@ public class QuarryJob : MapObjectJob {
 
 	ResourceStorage storage;
 	public readonly Building Quarry;
-	readonly int wellIx;
+	readonly IResourceType mineResource;
 	//public Well Well => Site.Wells[wellIx];
 
 	float timeSpent; // storing as float due to workers
@@ -324,12 +323,12 @@ public class QuarryJob : MapObjectJob {
 		Debug.Assert(false, "Don't use no parameter QuarryJob constructor");
 	}
 
-	public QuarryJob(int wellix, Building quarry) {
-		Debug.Assert(wellix >= 0);
+	public QuarryJob(IResourceType resource, Building quarry) {
+		Debug.Assert(resource is not null);
 		Debug.Assert(quarry.Type.GetSpecial() == Building.IBuildingType.Special.Quarry);
 		MaxWorkers = 10;
 		timeTaken = GameTime.Hours(24);
-		wellIx = wellix;
+		mineResource = resource;
 		this.Quarry = quarry;
 	}
 
@@ -355,7 +354,7 @@ public class QuarryJob : MapObjectJob {
 		// }
 		while (timeSpent >= timeTaken && storage.CanAdd(1)) {
 			timeSpent -= timeTaken;
-			grant.Add(new(Registry.ResourcesS.Rocks, 1));
+			grant.Add(new(mineResource, 1));
 		}
 
 		if (grant.Count != 0) {
@@ -388,13 +387,13 @@ public class QuarryJob : MapObjectJob {
 		}
 		Debug.Assert(Workers >= 0, $"Worker count can't be negative (is {Workers})");
 		var str = "Gathering";
-		// if (storage == null) str += $"Create a job to {well.Production.Infinitive} {well.ResourceType.AssetName}.";
-		// else if (Workers == 0) str += $"Employ workers to {well.Production.Infinitive} {well.ResourceType.AssetName}.";
-		// else {
-		// 	str = $"{well.Production.Progressive.Capitalize()} ";
-		// 	float time = well.MinutesPerBunch / MathF.Max(GetWorkTime(1), 1);
-		// 	str += $"{1} {well.ResourceType.AssetName} every {GameTime.GetFancyTimeString((TimeT)time)}.\n";
-		// }
+		if (storage is null) str += $"Create a job to mine {mineResource.AssetName}";
+		else if (Workers == 0) str += $"Employ workers to mine {mineResource.AssetName}";
+		else {
+			str = $"Mining ";
+			float time = timeTaken / MathF.Max(GetWorkTime(1), 1);
+			str += $"{1} {mineResource.AssetName} every {GameTime.GetFancyTimeString((TimeT)time)}.\n";
+		}
 
 		return str;
 	}
@@ -403,10 +402,10 @@ public class QuarryJob : MapObjectJob {
 		if (Workers == 0) return "";
 		float timeLeft = timeTaken - timeSpent;
 		timeLeft /= GetWorkTime(1);
-		return GameTime.GetFancyTimeString((TimeT)timeLeft) + " until more " + "RESOURCES" + ".";
+		return GameTime.GetFancyTimeString((TimeT)timeLeft) + " until more " + mineResource.AssetName + ".";
 	}
 
-	public override string ToString() => $"QuarryJob({(Quarry != null ? "rock porobalby" : "?")})";
+	public override string ToString() => $"QuarryJob({(mineResource is not null ? mineResource.AssetName : "?")})";
 
 }
 
@@ -689,3 +688,59 @@ public class AddFurnitureJob : MapObjectJob {
 	}
 
 }
+
+public class MilitaryStationJob : MapObjectJob {
+
+	public override string Title => "Station at barracks";
+	public override bool TimedWork => false;
+
+	readonly Building barracks;
+	Faction faction;
+
+	public override Vector2I GlobalPosition => barracks.GlobalPosition;
+	public override bool IsValid => barracks is not null;
+
+
+	public MilitaryStationJob(Building barracks) {
+		MaxWorkers = 10;
+		Debug.Assert(barracks.Type.GetSpecial() == Building.IBuildingType.Special.Barracks, "Building is not a barracks");
+		this.barracks = barracks;
+	}
+
+	public override bool CanInitialise(Faction ctxFaction, MapObject mapObject) {
+		return mapObject == barracks;
+	}
+
+	public override void Initialise(Faction ctxFaction, MapObject mapObject) {
+		this.faction = ctxFaction;
+		Debug.Assert(mapObject == barracks, "TGhis map object is nmot the barracks we constructed with");
+	}
+
+	public override void Deinitialise(Faction ctxFaction) { }
+
+	public override float GetWorkTime(TimeT minutes) {
+		return 1f;
+	}
+
+	public override void PassTime(TimeT minutes) {
+		
+	}
+
+	protected override void OnWorkerCountChanged(int old) {
+		int delta = Workers - old;
+		faction.ChangeMilitaryBy(delta);
+	}
+
+	public override string GetStatusDescription() {
+		if (Workers == 0) return "Assign people to train your military.";
+		return $"{Workers} military personnel training here now";
+	}
+
+	public override string GetProductionDescription() {
+		return "Military might is produced here.";
+	}
+
+	public override string ToString() => "MilitaryStationJob";
+
+}
+
