@@ -22,7 +22,7 @@ public partial class WorldGenUi : MarginContainer {
 	[Export] SpinBox worldHeightSpinbox;
 	[Export] SpinBox noiseScaleSpinbox;
 	[Export] SpinBox depthSpinbox;
-	
+
 
 	[Export] Button backButton;
 
@@ -134,13 +134,17 @@ public partial class WorldGenUi : MarginContainer {
 	async void OnGenRegionsPressed() {
 		Debug.Assert(!worldGenerator.Generating);
 		OnStartGenerating();
-		var drawRegionsCallable = Callable.From(() => worldUI.DrawRegions(worldGenerator.Regions));
-		var tw = CreateTween().SetLoops();
-		tw.TweenInterval(0.05f);
-		tw.TweenCallback(drawRegionsCallable);
+		if (!Input.IsKeyPressed(Key.F)) {
+			var drawRegionsCallable = Callable.From(() => worldUI.DrawRegions(worldGenerator.Regions));
+			var tw = CreateTween().SetLoops();
+			tw.TweenInterval(0.05f);
+			tw.TweenCallback(drawRegionsCallable);
 
-		this.map = await worldGenerator.GenerateRegions(world);
-		tw.Stop();
+			this.map = await worldGenerator.GenerateRegions(world);
+			tw.Stop();
+		} else {
+			this.map = await worldGenerator.GenerateRegions(world, 128);
+		}
 
 		worldUI.DrawRegions(map.GetRegions());
 

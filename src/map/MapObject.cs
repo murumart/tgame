@@ -22,6 +22,8 @@ public abstract partial class MapObject {
 
 	public abstract void PassTime(TimeT minutes);
 
+	public virtual void ChangedRegions(Region newregion) { this.region = newregion; }
+
 	public void Remove() => Removed = true;
 
 }

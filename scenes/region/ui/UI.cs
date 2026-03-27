@@ -470,6 +470,7 @@ public partial class UI : Control {
 	}
 
 	public void OnResourceSiteClicked(ResourceSite resourceSite) {
+		Debug.Assert(resourceSite is not null);
 		Debug.Assert(state == State.Idle, "Can't click on resourceSite outside of idle state");
 		state = State.MapObjectMenu;
 		mopjectMenu.Open(resourceSite);

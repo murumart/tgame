@@ -179,12 +179,12 @@ public partial class PlayerRegion : Node {
 			ui.TileSelected(tile);
 		} else if (!region.GetGroundTile(tile, out _)) {
 			// DEBUG annex
-			//foreach (var ne in region.Neighbors) {
-			//	var thereCoord = tile + region.WorldPosition - ne.WorldPosition;
-			//	if (ne.GroundTiles.ContainsKey(thereCoord)) {
-			//		region.AnnexTile(ne, thereCoord);
-			//	}
-			//}
+			foreach (var ne in region.Neighbors) {
+				var thereCoord = tile + region.WorldPosition - ne.WorldPosition;
+				if (ne.GetGroundTile(thereCoord, out _)) {
+					region.AnnexTile(ne, thereCoord);
+				}
+			}
 		}
 	}
 

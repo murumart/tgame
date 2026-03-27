@@ -24,9 +24,10 @@ fill = 1
 fill_from = Vector2(0.5, 0.5)
 fill_to = Vector2(0.8119658, 0.8418803)
 
-[node name="UiLayer" type="CanvasLayer" unique_id=1064052168 node_paths=PackedStringArray("infoPanel", "debugLabelParent", "loadingScreen", "loadingScreenDark")]
+[node name="UiLayer" type="CanvasLayer" unique_id=1064052168 node_paths=PackedStringArray("infoPanel", "optionsMenu", "debugLabelParent", "loadingScreen", "loadingScreenDark")]
 script = ExtResource("1_4ql2r")
 infoPanel = NodePath("Infopanel")
+optionsMenu = NodePath("OptionsMenu")
 debugLabelParent = NodePath("Control/DebugLabels/VBoxContainer")
 loadingScreen = NodePath("LoadingScreen")
 loadingScreenDark = NodePath("LoadingScreen/Dark")
@@ -99,10 +100,9 @@ offset_bottom = 0.0399971
 context_menu_enabled = true
 metadata/_edit_use_anchors_ = true
 
-[node name="OptionsMenu" parent="Control" unique_id=1574865454 instance=ExtResource("4_qveqe")]
+[node name="OptionsMenu" parent="." unique_id=1574865454 instance=ExtResource("4_qveqe")]
 visible = false
 z_index = 15
-layout_mode = 1
 
 [node name="LoadingScreen" type="Control" parent="." unique_id=162142060]
 visible = false

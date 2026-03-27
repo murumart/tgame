@@ -85,17 +85,7 @@ public partial class RegionDisplay : Node2D {
 		this.camera = camera;
 		ConnectEvents();
 		tilemaps.DisplayGround(region);
-		var wposes = region.GroundTilePositions.Select(p => Tilemaps.TilePosToWorldPos(p) + Vector2.Up * Tilemaps.TileElevationVerticalOffset(region.WorldPosition + p, GameMan.Game.Map.World));
-		float minx = wposes.MinBy(p => p.X).X - Tilemaps.TILE_SIZE.X * 0.5f;
-		float miny = wposes.MinBy(p => p.Y).Y - Tilemaps.TILE_SIZE.Y * 0.5f;
-		float maxx = wposes.MaxBy(p => p.X).X - Tilemaps.TILE_SIZE.X * 0.5f;
-		float maxy = wposes.MaxBy(p => p.Y).Y - Tilemaps.TILE_SIZE.Y * 0.5f;
-
-		var visiblerect = new Rect2(minx, miny, maxx - minx, maxy - miny);
-		visibilityArea.Rect = visiblerect;
-		//visibilityDebug.Position = visiblerect.Position;
-		//visibilityDebug.Size = visiblerect.Size;
-		//visibilityDebug.Visible = region == GameMan.Game.PlayRegion;
+		CalcVisibilityRect();
 
 		if (Lod < 2) {
 			foreach (var m in region.GetMapObjects()) {
@@ -117,6 +107,20 @@ public partial class RegionDisplay : Node2D {
 		//		;
 		//	});
 		//}
+	}
+
+	void CalcVisibilityRect() {
+		var wposes = region.GroundTilePositions.Select(p => Tilemaps.TilePosToWorldPos(p) + Vector2.Up * Tilemaps.TileElevationVerticalOffset(region.WorldPosition + p, GameMan.Game.Map.World));
+		float minx = wposes.MinBy(p => p.X).X - Tilemaps.TILE_SIZE.X * 0.5f;
+		float miny = wposes.MinBy(p => p.Y).Y - Tilemaps.TILE_SIZE.Y * 0.5f;
+		float maxx = wposes.MaxBy(p => p.X).X - Tilemaps.TILE_SIZE.X * 0.5f;
+		float maxy = wposes.MaxBy(p => p.Y).Y - Tilemaps.TILE_SIZE.Y * 0.5f;
+
+		var visiblerect = new Rect2(minx, miny, maxx - minx, maxy - miny);
+		visibilityArea.Rect = visiblerect;
+		//visibilityDebug.Position = visiblerect.Position;
+		//visibilityDebug.Size = visiblerect.Size;
+		//visibilityDebug.Visible = region == GameMan.Game.PlayRegion;
 	}
 
 	void ConnectEvents() {
@@ -288,6 +292,7 @@ public partial class RegionDisplay : Node2D {
 
 	void OnTileChanged(Vector2I at) {
 		tilemaps.DisplayGround(region);
+		CalcVisibilityRect();
 	}
 
 	void OnScreenEntered() {

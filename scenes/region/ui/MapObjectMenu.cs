@@ -73,7 +73,7 @@ public partial class MapObjectMenu : Control {
 		bool problematic = myProblem is not null;
 		detailsText.Text = "";
 		addJobDescription.Text = "";
-		if (ExtantJob == null && AvailableJobs.Count != 0) {
+		if (ExtantJob is null && AvailableJobs.Count != 0) {
 			if (problematic) {
 				OpenAddJobScreen();
 			} else if (myMapObject is Building building && building.IsConstructed) {
@@ -94,6 +94,7 @@ public partial class MapObjectMenu : Control {
 	}
 
 	public void Open(MapObject mapObject) {
+		Debug.Assert(mapObject is not null);
 		this.myMapObject = mapObject;
 		this.myProblem = null;
 
@@ -101,6 +102,7 @@ public partial class MapObjectMenu : Control {
 	}
 
 	public void Open(Problem problem) {
+		Debug.Assert(problem is not null);
 		this.myProblem = problem;
 		this.myMapObject = null;
 

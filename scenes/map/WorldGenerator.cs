@@ -219,10 +219,10 @@ namespace scenes.map {
 			return await GenerateRegions(world, LandRegionCount);
 		}
 
-		public async Task<Map> GenerateRegions(World world, int regionCountLand) {
+		public async Task<Map> GenerateRegions(World world, int iterations = 1) {
 			Generating = true;
 			Dictionary<Vector2I, Region> landOccupied; // coordinates in global space
-			landOccupied = GenerateRegionStarts(world, regionCountLand);
+			landOccupied = GenerateRegionStarts(world, LandRegionCount);
 
 			Region[] regionsLand = landOccupied.Values.ToArray();
 
@@ -232,7 +232,7 @@ namespace scenes.map {
 				freeEdgeTiles[reg] = new() { (Vector2I.Zero, 0b1111) };
 			}
 
-			await GrowRegions(world, regionsLand, landOccupied, freeEdgeTiles);
+			await GrowRegions(world, regionsLand, landOccupied, freeEdgeTiles, iterations: iterations);
 
 			freeEdgeTiles.Clear();
 
@@ -299,12 +299,13 @@ namespace scenes.map {
 			Region[] regions,
 			Dictionary<Vector2I, Region> occupied,
 			Dictionary<Region, List<(Vector2I, byte)>> freeEdgeTiles,
-			bool sea = false
+			bool sea = false,
+			int iterations = 1
 		) {
 
 			var tw = CreateTween().SetLoops(0);
 			var growCallback = Callable.From(() => {
-				var grew = Region.GenerationAccessor.GrowAllRegionsOneStep(regions, occupied, freeEdgeTiles, world, rng, sea: sea, iterations: 1);
+				var grew = Region.GenerationAccessor.GrowAllRegionsOneStep(regions, occupied, freeEdgeTiles, world, rng, sea: sea, iterations: iterations);
 				Regions = regions;
 				if (!grew) {
 					tw.EmitSignal(Tween.SignalName.Finished);

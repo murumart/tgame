@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using Godot;
+using scenes.autoload;
 using static ResourceSite;
 
 
@@ -146,30 +147,43 @@ public class Region {
 
 	public void AnnexTile(Region from, Vector2I fromCoordinate) {
 		Debug.Assert(from.groundTiles.ContainsKey(fromCoordinate), $"Region to annex from doesn't own tile at {fromCoordinate}");
-		var localCoord = fromCoordinate + from.WorldPosition - WorldPosition;
+		var globalCoord = fromCoordinate + from.WorldPosition;
+		var localCoord = globalCoord - WorldPosition;
 		Debug.Assert(!groundTiles.ContainsKey(localCoord), $"Annexing region somehow already owns tile at {localCoord}");
 		var tile = from.groundTiles[fromCoordinate];
 		from.groundTiles.Remove(fromCoordinate);
 		groundTiles[localCoord] = tile;
-		from.NotifyTileChangedAt(fromCoordinate);
-		NotifyTileChangedAt(localCoord);
+		GameMan.Game.Map.TileOwners[globalCoord] = this;
 		if (from.HasMapObject(fromCoordinate)) {
 			Debug.Assert(!HasMapObject(localCoord), "Somehow, I already have a map object where im trying to steal it from??");
+			if (from.LocalFaction.GetJob(globalCoord, out var job)) {
+				from.LocalFaction.RemoveJob(job);
+			}
+			if (from.LocalFaction.HasProblem(fromCoordinate)) {
+				from.LocalFaction.RemoveProblem(fromCoordinate);
+			}
 			var mop = from.GetMapObject(fromCoordinate);
-			from.RemoveMapObject(fromCoordinate);
-			AddMapObjectToSpot(mop, localCoord);
+			from.mapObjects.Remove(fromCoordinate);
+			from.NotifyMapObjectUpdateAt(fromCoordinate);
+			from.NaturalResources.Touch();
+			mapObjects[localCoord] = mop;
+			mop.ChangedRegions(this);
+			NotifyMapObjectUpdateAt(localCoord);
+			NaturalResources.Touch();
 		}
+		from.NotifyTileChangedAt(fromCoordinate);
+		NotifyTileChangedAt(localCoord);
 	}
 
 	public float GetPotentialFoodFirstMonth() {
 		float f = 0;
 		float minutesInMonth = GameTime.Months(1);
 		foreach (var mapObject in mapObjects.Values) if (mapObject is ResourceSite rs) foreach (var w in rs.Wells) {
-			bool isFood = Registry.ResourcesS.FoodValues.TryGetValue(w.ResourceType, out int value);
-			if (!isFood) continue;
-			float bunchesInMonth = minutesInMonth / w.MinutesPerBunch;
-			f += value * Mathf.Min(bunchesInMonth, w.Bunches);
-		}
+					bool isFood = Registry.ResourcesS.FoodValues.TryGetValue(w.ResourceType, out int value);
+					if (!isFood) continue;
+					float bunchesInMonth = minutesInMonth / w.MinutesPerBunch;
+					f += value * Mathf.Min(bunchesInMonth, w.Bunches);
+				}
 		return f;
 	}
 
