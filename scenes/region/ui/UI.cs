@@ -309,11 +309,16 @@ public partial class UI : Control {
 			if (fac.GetPopulationCount() == 0) (c as Label).Text = "no one lives here.";
 			(c as Label).Text = $"population: {fac.GetPopulationCount()} "
 				+ $"({fac.HomelessPopulation} homeless, "
-				+ $"{fac.Population.EmployedCount} employed, "
-				+ $"{fac.Population.GetYearlyBirths():0} births/year)";
+				+ $"{fac.Population.EmployedCount} employed)"
+			;
 		}, () => {
-			return "house and feed your people to make sure a new generation will be born.\n"
-				+ $"housing available: {fac.Population.MaxHousing} ({fac.Population.MaxHousing - fac.Population.HousedCount} spots free)"
+			float birthincreaseperminute = (fac.Population.GetYearlyBirths()) / GameTime.Years(1);
+			float progresstogrow = 1f - fac.Population.OngrowingPopulation;
+			float minutesbeforebirth = progresstogrow / birthincreaseperminute;
+			string timetext = GameTime.GetFancyTimeString((TimeT)minutesbeforebirth);
+			return "house and feed your people.\n"
+				+ $"housing available: {fac.Population.MaxHousing} ({fac.Population.MaxHousing - fac.Population.HousedCount} spots free)\n"
+				+ $"new person born in {timetext} ({fac.Population.GetYearlyBirths():0} births/year)"
 			;
 		});
 		if (!fac.IsWild) {
@@ -334,7 +339,11 @@ public partial class UI : Control {
 					return sb.ToString();
 				});
 			resourceDisplay.Display(c => {
-				(c as Label).Text = $"silver: {fac.Silver}";
+				(c as Label).Text = $"    silver: {fac.Silver}    ";
+			}, () => {
+				float liq = fac.LiquidSilver;
+				float tot = GameMan.Game.Map.TotalSilver;
+				return $"{liq} total\n{(int)(liq / tot * 100)}% of world silver owned";
 			});
 			resourceDisplay.Display(c => {
 				string txt = $"{inRegionTilepos}";

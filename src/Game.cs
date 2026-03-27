@@ -38,7 +38,7 @@ public class Game {
 		for (int i = 0; i < regionAIs.Length; i++) {
 			while (Time.Minutes - regionAIs[i].Item2 >= 15) {
 				var regs = Map.GetRegions();
-				if (regs[i] == PlayRegion && !AIPlaysInPlayerRegion) continue;
+				if (regs[i] == PlayRegion && !AIPlaysInPlayerRegion) break;
 				regionAIs[i].Item1.PreUpdate(Time.Minutes);
 				regionAIs[i].Item1.Update(Time.Minutes);
 				regionAIs[i].Item2 += 15;

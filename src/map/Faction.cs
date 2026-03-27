@@ -47,6 +47,13 @@ public class Faction : IEntity {
 	public uint UnemployedPopulation => Population.Count - Population.EmployedCount;
 
 	public int Silver { get; private set; }
+	public int LiquidSilver {get {
+		int s = 0;
+		foreach (var (_, l) in sentTradeOffers) {
+			foreach (var toff in l) if (toff.OffererGivesRecipientSilver) s += toff.OffererPaidSilverUnit * toff.StoredUnits;
+		}
+		return Silver + s;
+	}}
 	public int Military { get; private set; }
 
 	public readonly string Name;

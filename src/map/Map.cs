@@ -8,6 +8,10 @@ public class Map {
 	public readonly World World;
 	protected readonly List<Region> regions;
 
+	public readonly int TotalSilver;
+	public readonly int TotalLandTiles;
+	public readonly int TotalSeaTiles;
+
 	public Dictionary<Vector2I, Region> TileOwners { get; init; }
 	
 
@@ -16,13 +20,23 @@ public class Map {
 		World = world;
 
 		TileOwners = new();
+		int totalSilver = 0;
+		int totalLand = 0;
+		int totalSea = 0;
 		foreach (Region region in regions) {
-			foreach (Vector2I pos in region.GroundTilePositions) {
+			foreach (var (pos, tile) in region.GetGroundTiles()) {
 				var wpos = pos + region.WorldPosition;
 				Debug.Assert(!TileOwners.ContainsKey(wpos), $"The tile {wpos} is contested and wrong please behave");
 				TileOwners[wpos] = region;
+				if ((tile & GroundTileType.HasLand) == 0) totalSea++;
+				else totalLand++;
 			}
+			totalSilver += region.LocalFaction.Silver;
 		}
+		TotalSilver = totalSilver;
+		TotalLandTiles = totalLand;
+		TotalSeaTiles = totalSea;
+		GD.Print($"Map::Map : TotalSilver = {TotalSilver}, TotalLandTiles = {TotalLandTiles}, TotalSeaTiles = {TotalSeaTiles}");
 	}
 
 	public Region GetRegion(int ix) {
