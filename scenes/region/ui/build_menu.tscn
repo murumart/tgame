@@ -1,15 +1,17 @@
 [gd_scene format=3 uid="uid://cf2srkx2edx3u"]
 
 [ext_resource type="Script" uid="uid://2xhwk4iyfu73" path="res://scenes/region/ui/BuildingList.cs" id="1_78e78"]
+[ext_resource type="StyleBox" uid="uid://bvafrlmq6sivc" path="res://resources/visual/theme/sb_lighter.tres" id="2_r2ht2"]
 
-[node name="BuildMenu" type="VBoxContainer" unique_id=1956105093 node_paths=PackedStringArray("itemList", "buildConfirmation", "resourceListText")]
+[node name="BuildMenu" type="VBoxContainer" unique_id=1956105093 node_paths=PackedStringArray("itemList", "buildConfirmation", "descriptionText", "resourceListText")]
 size_flags_horizontal = 3
 theme_override_constants/separation = 0
 alignment = 2
 script = ExtResource("1_78e78")
-itemList = NodePath("BuildingList/MarginContainer/VBoxContainer/BuildMenuList")
-buildConfirmation = NodePath("BuildingList/MarginContainer/VBoxContainer/HBoxContainer/BuildMenuConfirmation")
-resourceListText = NodePath("BuildingList/MarginContainer/VBoxContainer/ResourceList")
+itemList = NodePath("BuildingList/MarginContainer/HBoxContainer2/VBoxContainer/BuildMenuList")
+buildConfirmation = NodePath("BuildingList/MarginContainer/HBoxContainer2/VBoxContainer/BuildMenuConfirmation")
+descriptionText = NodePath("BuildingList/MarginContainer/HBoxContainer2/VBoxContainer/Description")
+resourceListText = NodePath("BuildingList/MarginContainer/HBoxContainer2/VBoxContainer2/ResourceList")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1520222375]
 layout_mode = 2
@@ -38,32 +40,60 @@ theme_override_constants/margin_top = 2
 theme_override_constants/margin_right = 2
 theme_override_constants/margin_bottom = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="BuildingList/MarginContainer" unique_id=958737905]
-layout_mode = 2
-
-[node name="BuildMenuList" type="ItemList" parent="BuildingList/MarginContainer/VBoxContainer" unique_id=666566716]
-unique_name_in_owner = true
+[node name="HBoxContainer2" type="HBoxContainer" parent="BuildingList/MarginContainer" unique_id=2135549622]
 layout_mode = 2
 size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="BuildingList/MarginContainer/HBoxContainer2" unique_id=958737905]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="BuildMenuList" type="ItemList" parent="BuildingList/MarginContainer/HBoxContainer2/VBoxContainer" unique_id=666566716]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = ExtResource("2_r2ht2")
 allow_search = false
-item_count = 3
+item_count = 9
+max_columns = 2
+same_column_width = true
 item_0/text = "Housing"
 item_1/text = "Well"
 item_2/text = "Idk"
+item_3/text = "adasa"
+item_4/text = "gfjhdhhsdhf"
+item_5/text = "dfgsh"
+item_6/text = "sdfgst"
+item_7/text = "wwerwer"
+item_8/text = "erhserherh"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="BuildingList/MarginContainer/VBoxContainer" unique_id=1348484348]
-layout_mode = 2
-alignment = 2
-
-[node name="BuildMenuConfirmation" type="Button" parent="BuildingList/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1291213956]
+[node name="BuildMenuConfirmation" type="Button" parent="BuildingList/MarginContainer/HBoxContainer2/VBoxContainer" unique_id=1291213956]
 unique_name_in_owner = true
 layout_mode = 2
 disabled = true
 text = "select"
 
-[node name="ResourceList" type="RichTextLabel" parent="BuildingList/MarginContainer/VBoxContainer" unique_id=1303932614]
+[node name="Description" type="RichTextLabel" parent="BuildingList/MarginContainer/HBoxContainer2/VBoxContainer" unique_id=1303932614]
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.33
 bbcode_enabled = true
-text = "you need my resources. to construct these building aa a a a a a a  aa aaa aaaaa aa aa aaa a a  a aa a a aa a a a aa a aaa a a"
+text = "this building is so cool and does this and that."
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="BuildingList/MarginContainer/HBoxContainer2" unique_id=70081947]
+layout_mode = 2
+
+[node name="ResourceList" type="RichTextLabel" parent="BuildingList/MarginContainer/HBoxContainer2/VBoxContainer2" unique_id=1844702093]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.33
+bbcode_enabled = true
+text = "blaab x 10
+p x 120"
+fit_content = true
+scroll_active = false
+autowrap_mode = 0
+shortcut_keys_enabled = false

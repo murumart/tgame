@@ -399,6 +399,7 @@ metadata/_tab_index = 0
 
 [node name="BuildMenu" parent="VBoxContainer2/HBoxContainer/VBoxContainer2/MenuTabs/HBoxContainer" unique_id=1956105093 node_paths=PackedStringArray("ui") instance=ExtResource("3_iwag8")]
 layout_mode = 2
+size_flags_horizontal = 1
 ui = NodePath("../../../../../..")
 
 [node name="Fat" type="Control" parent="VBoxContainer2/HBoxContainer/VBoxContainer2/MenuTabs/HBoxContainer" unique_id=1181721685]

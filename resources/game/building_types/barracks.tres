@@ -9,7 +9,7 @@
 [resource]
 script = ExtResource("9_erlfh")
 name = "barracks"
-description = "Soldiers are stationed here to bolster the nation's military might."
+description = "This building bolsters the nation's military might."
 ResourceCosts = Dictionary[Object, int]({
 ExtResource("6_oedpi"): 8,
 ExtResource("8_c8ugj"): 20,

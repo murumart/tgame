@@ -8,11 +8,14 @@ using scenes.region.ui;
 using scenes.ui;
 using static Building;
 
+namespace scenes.region.ui;
+
 public partial class BuildingList : Control {
 
 	[Export] UI ui;
 	[Export] ItemList itemList;
 	[Export] Button buildConfirmation;
+	[Export] RichTextLabel descriptionText;
 	[Export] RichTextLabel resourceListText;
 
 	long selectedBuildThingId = -1;
@@ -47,7 +50,8 @@ public partial class BuildingList : Control {
 		selectedBuildThingId = which;
 		var btype = (BuildingType)itemList.GetItemMetadata((int)which).Obj;
 		buildConfirmation.Text = "Build " + btype.AssetName;
-		resourceListText.Text = btype.GetDescription() + '\n';
+		descriptionText.Text = btype.GetDescription();
+		resourceListText.Text = "";
 		var resources = ui.GetResources();
 		foreach (var r in btype.GetConstructionResources()) {
 			var str = $"{r.Type.AssetName} x {r.Amount}";
@@ -113,7 +117,11 @@ public partial class BuildingList : Control {
 			// in between calls here, we should still get the correct buildings that the visual
 			// ItemList was set up with
 			itemList.SetItemMetadata(ix, Variant.CreateFrom(buildingType));
-			itemList.SetItemCustomBgColor(ix, ui.GetHasBuildingMaterials(buildingType) ? Palette.LunarGreen : Palette.Dune);
+			itemList.SetItemCustomFgColor(ix, Palette.StormDust);
+			if (ui.GetHasBuildingMaterials(buildingType)) {
+				itemList.SetItemCustomFgColor(ix, Palette.WhiteSmoke);
+				itemList.SetItemCustomBgColor(ix, Palette.LunarGreen);
+			}
 		}
 	}
 
@@ -122,6 +130,7 @@ public partial class BuildingList : Control {
 		buildConfirmation.Disabled = true;
 		buildConfirmation.Text = "select";
 		resourceListText.Text = "";
+		descriptionText.Text = "";
 		itemList.Clear();
 	}
 

@@ -105,7 +105,7 @@ public partial class Building {
 			None,
 			Marketplace,
 			Quarry,
-			Barracks,
+			Military,
 		}
 
 		public Special GetSpecial();

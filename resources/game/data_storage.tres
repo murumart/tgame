@@ -51,7 +51,7 @@
 [resource]
 script = ExtResource("1_wv3fg")
 resourceTypes = Array[Object]([ExtResource("4_xflvh"), ExtResource("31_eqp6s"), ExtResource("6_cosqq"), ExtResource("5_c2mn5"), ExtResource("23_jidsk"), ExtResource("10_dyo1l"), ExtResource("11_8wepv"), ExtResource("12_7f1xh"), ExtResource("18_tycsq"), ExtResource("24_2hkqv"), ExtResource("27_wbpcg"), ExtResource("17_t4jud"), ExtResource("34_0g6uw"), ExtResource("35_fyte2"), ExtResource("36_fqx13"), ExtResource("39_0h8m4"), ExtResource("44_ucx1w")])
-buildingTypes = Array[Object]([ExtResource("1_8bhaa"), ExtResource("3_0g2bt"), ExtResource("1_r67qw"), ExtResource("3_o7ste"), ExtResource("4_h1ebs"), ExtResource("7_mrkhr"), ExtResource("8_andqa"), ExtResource("9_blgao"), ExtResource("10_qffbb"), ExtResource("11_jidsk"), ExtResource("11_v0t8m"), ExtResource("12_isx83"), ExtResource("13_ucx1w"), ExtResource("14_isx83"), ExtResource("15_rda4d")])
+buildingTypes = Array[Object]([ExtResource("7_mrkhr"), ExtResource("3_0g2bt"), ExtResource("10_qffbb"), ExtResource("1_8bhaa"), ExtResource("1_r67qw"), ExtResource("8_andqa"), ExtResource("11_jidsk"), ExtResource("15_rda4d"), ExtResource("4_h1ebs"), ExtResource("3_o7ste"), ExtResource("9_blgao"), ExtResource("11_v0t8m"), ExtResource("12_isx83"), ExtResource("13_ucx1w"), ExtResource("14_isx83")])
 resourceSiteTypes = Array[Object]([ExtResource("8_tk3xj"), ExtResource("11_n7e6t"), ExtResource("9_tycsq"), ExtResource("11_umw7u"), ExtResource("12_j5uyn"), ExtResource("14_2hkqv"), ExtResource("6_7f1xh"), ExtResource("16_k4mii"), ExtResource("21_fyte2"), ExtResource("22_fqx13"), ExtResource("23_xi4a3"), ExtResource("23_kfeoj"), ExtResource("24_kfeoj")])
 foodValues = ExtResource("7_t4jud")
 metadata/_custom_type_script = "uid://05g7rc21q2sd"

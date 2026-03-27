@@ -259,12 +259,12 @@ public class Faction : IEntity {
 	void OnBuildingConstructed(Building building) {
 		Population.ChangeHousingCapacity((int)building.GetHousingCapacity());
 		var special = building.Type.GetSpecial();
-		if (special == IBuildingType.Special.Barracks) 
+		if (special == IBuildingType.Special.Military) Military += 5;
 	}
 
 	void OnBuildingRemoved(Building building) {
-				var special = building.Type.GetSpecial();
-				if (special == IBuildingType.Special.Barracks) 
+		var special = building.Type.GetSpecial();
+		if (special == IBuildingType.Special.Military) Military -= 5;
 	}
 
 	// deletes a building from the faction's records and has the region also delete it
@@ -328,7 +328,7 @@ public class Faction : IEntity {
 	void OnMapObjectUpdated(Vector2I at) { }
 
 	#endregion
-	
+
 	#region Timing & Contracts
 
 	public TimeT GetTime() => time;
