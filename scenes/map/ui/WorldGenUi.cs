@@ -131,10 +131,12 @@ public partial class WorldGenUi : MarginContainer {
 		worldSeedRandomButton.Disabled = false;
 	}
 
+
 	async void OnGenRegionsPressed() {
 		Debug.Assert(!worldGenerator.Generating);
 		OnStartGenerating();
-		if (!Input.IsKeyPressed(Key.F)) {
+#if !DEBUG
+		{
 			var drawRegionsCallable = Callable.From(() => worldUI.DrawRegions(worldGenerator.Regions));
 			var tw = CreateTween().SetLoops();
 			tw.TweenInterval(0.05f);
@@ -142,9 +144,12 @@ public partial class WorldGenUi : MarginContainer {
 
 			this.map = await worldGenerator.GenerateRegions(world);
 			tw.Stop();
-		} else {
+		} 
+#else
+		{
 			this.map = await worldGenerator.GenerateRegions(world, 128);
 		}
+#endif
 
 		worldUI.DrawRegions(map.GetRegions());
 

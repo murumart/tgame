@@ -16,6 +16,7 @@ public partial class PlayerRegion : Node {
 	[Export] RegionCamera camera;
 	[Export] RegionDisplay regionDisplay;
 	[Export] Node otherDisplaysParent;
+	readonly Dictionary<Region, RegionDisplay> managedDisplays = new();
 
 	Region region;
 	Faction faction;
@@ -68,6 +69,7 @@ public partial class PlayerRegion : Node {
 		faction.ProblemUnsolvedEvent += ui.Notifications.ProblemStopped;
 
 		region.MapObjectUpdatedAtEvent += OnRegionMapObjectUpdated;
+		region.NewNeighborGainedEvent += OnNewNeighborGained;
 		camera.Region = region;
 
 		ui.TileSelectedEvent += regionDisplay.OnTileSelected;
@@ -80,19 +82,11 @@ public partial class PlayerRegion : Node {
 
 			// show also neighboring regions and neighbors' neighbors
 			foreach (var neighbor in region.Neighbors) {
-				var rdisp = RegionDisplay.Instantiate();
-				otherDisplaysParent.AddChild(rdisp);
-				rdisp.Modulate = new Color(0.3f, 0.3f, 0.3f).Lerp(neighbor.LocalFaction.Color, 0.05f);
-				rdisp.Position = Tilemaps.TilePosToWorldPos(neighbor.WorldPosition - region.WorldPosition) - Tilemaps.TILE_SIZE / 2;
-				rdisp.LoadRegion(neighbor, 1, camera);
+				DisplayNeighbor(neighbor, 1);
 			}
 			foreach (var neighbor in GameMan.Game.Map.GetRegions()) {
 				if (neighbor == region || region.Neighbors.Contains(neighbor)) continue;
-				var rdisp = RegionDisplay.Instantiate();
-				otherDisplaysParent.AddChild(rdisp);
-				rdisp.Modulate = new Color(0.1f, 0.1f, 0.1f).Lerp(neighbor.LocalFaction.Color.Lightened(0.5f), 0.1f);
-				rdisp.Position = Tilemaps.TilePosToWorldPos(neighbor.WorldPosition - region.WorldPosition) - Tilemaps.TILE_SIZE / 2;
-				rdisp.LoadRegion(neighbor, 2, camera);
+				DisplayNeighbor(neighbor, 2);
 			}
 
 			ui.Announce("What brought you here will not bring you much longer forward -- food supplies are dwindling.\n\n"
@@ -183,9 +177,25 @@ public partial class PlayerRegion : Node {
 				var thereCoord = tile + region.WorldPosition - ne.WorldPosition;
 				if (ne.GetGroundTile(thereCoord, out _)) {
 					region.AnnexTile(ne, thereCoord);
+					break;
 				}
 			}
 		}
+	}
+
+	// displaying
+
+	void DisplayNeighbor(Region neighbor, int lod) {
+		var rdisp = RegionDisplay.Instantiate();
+		otherDisplaysParent.AddChild(rdisp);
+		rdisp.Modulate = lod == 1
+			? new Color(0.3f, 0.3f, 0.3f).Lerp(neighbor.LocalFaction.Color, 0.05f)
+			: lod == 2
+				? new Color(0.1f, 0.1f, 0.1f).Lerp(neighbor.LocalFaction.Color.Lightened(0.5f), 0.1f)
+				: Colors.White;
+		rdisp.Position = Tilemaps.TilePosToWorldPos(neighbor.WorldPosition - region.WorldPosition) - Tilemaps.TILE_SIZE / 2;
+		rdisp.LoadRegion(neighbor, lod, camera);
+		managedDisplays.Add(neighbor, rdisp);
 	}
 
 	// building
@@ -272,6 +282,13 @@ public partial class PlayerRegion : Node {
 	}
 
 	void OnRegionMapObjectUpdated(Vector2I tile) { }
+
+	void OnNewNeighborGained(Region region) {
+		var disp = managedDisplays[region];
+		managedDisplays.Remove(region);
+		disp.QueueFree();
+		DisplayNeighbor(region, 1);
+	}
 
 	void OnRegionMandateFailed(Document doc) {
 		GD.Print("RegionMan::OnRegionMandateFailed : MY MANDATE FAILED:::::: DAMN");

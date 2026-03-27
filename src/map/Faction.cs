@@ -47,13 +47,15 @@ public class Faction : IEntity {
 	public uint UnemployedPopulation => Population.Count - Population.EmployedCount;
 
 	public int Silver { get; private set; }
-	public int LiquidSilver {get {
-		int s = 0;
-		foreach (var (_, l) in sentTradeOffers) {
-			foreach (var toff in l) if (toff.OffererGivesRecipientSilver) s += toff.OffererPaidSilverUnit * toff.StoredUnits;
+	public int LiquidSilver {
+		get {
+			int s = 0;
+			foreach (var (_, l) in sentTradeOffers) {
+				foreach (var toff in l) if (toff.OffererGivesRecipientSilver) s += toff.OffererPaidSilverUnit * toff.StoredUnits;
+			}
+			return Silver + s;
 		}
-		return Silver + s;
-	}}
+	}
 	public int Military { get; private set; }
 
 	public readonly string Name;
@@ -64,6 +66,15 @@ public class Faction : IEntity {
 
 	readonly Dictionary<Faction, List<TradeOffer>> gottenTradeOffers = new();
 	readonly Dictionary<Faction, List<TradeOffer>> sentTradeOffers = new();
+
+	public readonly struct WarInfo(string reason, Faction aggressor, Faction defender) {
+
+		public readonly string Reason = reason;
+		public readonly Faction Aggressor = aggressor;
+		public readonly Faction Defnder = defender;
+
+	}
+	readonly Dictionary<Faction, WarInfo> atWar = new();
 
 	TimeT time;
 
@@ -440,6 +451,18 @@ public class Faction : IEntity {
 	public void ChangeMilitaryBy(int delta) {
 		Debug.Assert(Military + delta >= 0, $"Don't go negative militarily (would be {Military + delta})");
 		Military += delta;
+	}
+
+	public bool IsAtWarWith(Faction faction) {
+		return atWar.ContainsKey(faction);
+	}
+
+	public void DeclareWarOn(Faction faction, string reason) {
+		Debug.Assert(!atWar.ContainsKey(faction), $"{this} is Already at war with {faction}");
+		Debug.Assert(!faction.atWar.ContainsKey(this), $"{faction} is Already at war with {this}");
+		var war = new WarInfo(reason, this, faction);
+		atWar[faction] = war;
+		faction.atWar[this] = war;
 	}
 
 	#endregion

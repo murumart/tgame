@@ -17,10 +17,13 @@ public class Region {
 	public event Action<Vector2I> TileChangedAtEvent;
 	public void NotifyTileChangedAt(Vector2I p) => TileChangedAtEvent?.Invoke(p);
 
+	public event Action<Region> NewNeighborGainedEvent;
+
 	public readonly int WorldIndex;
 
 	public Vector2I WorldPosition { get; init; }
 	readonly Dictionary<Vector2I, GroundTileType> groundTiles = new();
+	readonly List<(Vector2I, byte)> freeEdgeTiles = new() { (Vector2I.Zero, 0b1111) };
 	public IEnumerable<Vector2I> GroundTilePositions => groundTiles.Keys;
 	public Faction LocalFaction { get; private set; }
 
@@ -173,6 +176,21 @@ public class Region {
 		}
 		from.NotifyTileChangedAt(fromCoordinate);
 		NotifyTileChangedAt(localCoord);
+		// check if the tile change exposed new neighbors
+		for (int x = -1; x <= 1; x += 2) {
+			for (int y = -1; y <= 1; y += 2) {
+				var othercheck = globalCoord + new Vector2I(x, y);
+				var has = GameMan.Game.Map.TileOwners.TryGetValue(othercheck, out var reg);
+				if (!has || reg == this) continue;
+				if (!Neighbors.Contains(reg)) {
+					// found a new neighbord!
+					AddNeighbor(reg);
+					reg.AddNeighbor(this);
+					NewNeighborGainedEvent?.Invoke(reg);
+					reg.NewNeighborGainedEvent?.Invoke(this);
+				}
+			}
+		}
 	}
 
 	public float GetPotentialFoodFirstMonth() {
@@ -221,7 +239,6 @@ public class Region {
 
 		public static bool GrowAllRegionsOneStep(
 			Region[] regions, Dictionary<Vector2I, Region> occupied,
-			Dictionary<Region, List<(Vector2I, byte)>> freeEdgeTiles,
 			World world,
 			RandomNumberGenerator rng,
 			int iterations = 10,
@@ -231,21 +248,20 @@ public class Region {
 
 			for (int xxx = 0; xxx < iterations; xxx++) for (int i = 0; i < regions.Length; i++) {
 					var region = regions[i];
-					var freeEdges = freeEdgeTiles[region];
-					var c = freeEdges.Count;
+					var c = region.freeEdgeTiles.Count;
 					for (int x = 0; x < c; x++) {
 						var addKeys = new HashSet<Vector2I>(); // coordinates in region local space
 						addKeys.Clear();
 						for (int dirIx = 0; dirIx < 4; dirIx++) {
-							var ix = rng.RandiRange(0, freeEdges.Count - 1);
-							growthOccurred = GrowRegionInDirection(occupied, addKeys, freeEdges, ix, region, dirIx, world, GroundTileType.All) || growthOccurred;
-							if (freeEdges.Count == 0) break;
+							var ix = rng.RandiRange(0, region.freeEdgeTiles.Count - 1);
+							growthOccurred = GrowRegionInDirection(occupied, addKeys, ix, region, dirIx, world, GroundTileType.All) || growthOccurred;
+							if (region.freeEdgeTiles.Count == 0) break;
 						}
 						foreach (var k in addKeys) {
 							Debug.Assert(!region.groundTiles.ContainsKey(k), "region {region} already owns the local tile {k}");
 							region.groundTiles.Add(k, world.GetTile(k.X + region.WorldPosition.X, k.Y + region.WorldPosition.Y));
 						}
-						if (freeEdges.Count == 0) break;
+						if (region.freeEdgeTiles.Count == 0) break;
 					}
 				}
 			if (!growthOccurred) {
@@ -257,7 +273,6 @@ public class Region {
 		private static bool GrowRegionInDirection(
 			Dictionary<Vector2I, Region> occupied, // global spcae
 			HashSet<Vector2I> addKeys, // region space
-			List<(Vector2I, byte)> freeEdgeTiles, // local space
 			int tileIndex,
 			Region region,
 			int dirIx,
@@ -268,7 +283,7 @@ public class Region {
 
 			int i = tileIndex;
 			{
-				var (localPos, directionsThatAreFree) = freeEdgeTiles[i];
+				var (localPos, directionsThatAreFree) = region.freeEdgeTiles[i];
 				if ((directionTryingToGrowIn & directionsThatAreFree) == 0) return false;
 
 				var moveLocal = localPos + vectorDirectionTryingToGrowIn;
@@ -282,12 +297,12 @@ public class Region {
 				directionsThatAreFree &= (byte)~directionTryingToGrowIn;
 				if (grew) {
 					byte opposite = directionTryingToGrowIn switch { 0b10 => 0b1, 0b01 => 0b10, 0b100 => 0b1000, 0b1000 => 0b100, _ => throw new NotImplementedException() };
-					freeEdgeTiles.Add((moveLocal, (byte)(0b1111 & (byte)~opposite)));
+					region.freeEdgeTiles.Add((moveLocal, (byte)(0b1111 & (byte)~opposite)));
 				}
 
-				if (directionsThatAreFree == 0) freeEdgeTiles.RemoveAt(i);
+				if (directionsThatAreFree == 0) region.freeEdgeTiles.RemoveAt(i);
 				else {
-					freeEdgeTiles[i] = (localPos, directionsThatAreFree);
+					region.freeEdgeTiles[i] = (localPos, directionsThatAreFree);
 				}
 
 				return grew;

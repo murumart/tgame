@@ -226,15 +226,7 @@ namespace scenes.map {
 
 			Region[] regionsLand = landOccupied.Values.ToArray();
 
-			Dictionary<Region, List<(Vector2I, byte)>> freeEdgeTiles = new();
-
-			foreach (var reg in regionsLand) {
-				freeEdgeTiles[reg] = new() { (Vector2I.Zero, 0b1111) };
-			}
-
-			await GrowRegions(world, regionsLand, landOccupied, freeEdgeTiles, iterations: iterations);
-
-			freeEdgeTiles.Clear();
+			await GrowRegions(world, regionsLand, landOccupied, iterations: iterations);
 
 			foreach (Region region in regionsLand) {
 				foreach (Vector2I pos in region.GroundTilePositions) {
@@ -298,14 +290,13 @@ namespace scenes.map {
 			World world,
 			Region[] regions,
 			Dictionary<Vector2I, Region> occupied,
-			Dictionary<Region, List<(Vector2I, byte)>> freeEdgeTiles,
 			bool sea = false,
 			int iterations = 1
 		) {
 
 			var tw = CreateTween().SetLoops(0);
 			var growCallback = Callable.From(() => {
-				var grew = Region.GenerationAccessor.GrowAllRegionsOneStep(regions, occupied, freeEdgeTiles, world, rng, sea: sea, iterations: iterations);
+				var grew = Region.GenerationAccessor.GrowAllRegionsOneStep(regions, occupied, world, rng, sea: sea, iterations: iterations);
 				Regions = regions;
 				if (!grew) {
 					tw.EmitSignal(Tween.SignalName.Finished);
