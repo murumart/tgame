@@ -177,7 +177,7 @@ public class Population {
 			reasons[1].Item2 = "people are starving";
 			reasons[2].Item2 = "not enough housing for people";
 			reasons[3].Item2 = "your coffers are";
-			reasons[4].Item2 = "furnidur";
+			reasons[4].Item2 = "people have furniture in their homes";
 			reasons[5].Item2 = "your military is mighty";
 		}
 		if (Count == 0) {
@@ -191,7 +191,6 @@ public class Population {
 		reasons[3].Item2 = silverapprovalchange > 0.005f ? "your coffers are full" : silverapprovalchange < -0.005f ? "your faction is poor" : "your budget is just okay";
 		float furnitureapprovalchange = 0.4f * Mathf.Clamp(Mathf.Pow((FurnitureRateRequested?.Invoke() ?? 0f - 0.1f), 3) / 0.8f, -0.16f, 0.16f);
 		reasons[4].Item1 = furnitureapprovalchange;
-		reasons[4].Item2 = furnitureapprovalchange > 0f ? "people have furniture in their homes" : "people are missing furniture in their homes";
 		float militaryapprovalchange = Mathf.Clamp((MilitaryMightRequested?.Invoke() ?? 0f) * 0.001f, 0f, 0.05f);
 		reasons[5].Item1 = militaryapprovalchange;
 	}
