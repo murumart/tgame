@@ -8,6 +8,7 @@
 [ext_resource type="Script" uid="uid://b5xb3tdf3yoon" path="res://resources/game/building_types/BuildingType.cs" id="5_vpym2"]
 [ext_resource type="Resource" uid="uid://nw83fam2omvi" path="res://resources/game/resource_types/rock.tres" id="5_yk4pq"]
 [ext_resource type="Resource" uid="uid://b8507qbvqvdy8" path="res://resources/game/resource_types/lumber.tres" id="7_757gq"]
+[ext_resource type="Resource" uid="uid://dj1451b3jiwbw" path="res://resources/game/resource_types/sand.tres" id="7_vpym2"]
 
 [sub_resource type="Resource" id="Resource_dvfb3"]
 script = ExtResource("1_721p6")
@@ -35,6 +36,32 @@ Product = SubResource("Resource_721p6")
 Process = SubResource("Resource_dvfb3")
 metadata/_custom_type_script = "uid://c3n4csk46p0uc"
 
+[sub_resource type="Resource" id="Resource_vpym2"]
+script = ExtResource("1_721p6")
+Infinitive = "grind"
+Progressive = "grinding"
+metadata/_custom_type_script = "uid://cbiuqlrd8yyxx"
+
+[sub_resource type="Resource" id="Resource_2jxwl"]
+script = ExtResource("2_01v6k")
+Singular = "sand"
+Plural = "sand"
+metadata/_custom_type_script = "uid://clkqk6nbux1c1"
+
+[sub_resource type="Resource" id="Resource_3en3e"]
+script = ExtResource("4_757gq")
+inputs = Dictionary[Object, int]({
+ExtResource("5_yk4pq"): 2
+})
+outputs = Dictionary[Object, int]({
+ExtResource("7_vpym2"): 1
+})
+timeTakenMinutes = 480
+maxWorkers = 4
+Product = SubResource("Resource_2jxwl")
+Process = SubResource("Resource_vpym2")
+metadata/_custom_type_script = "uid://c3n4csk46p0uc"
+
 [resource]
 script = ExtResource("5_vpym2")
 name = "windmill"
@@ -43,6 +70,6 @@ ResourceCosts = Dictionary[Object, int]({
 ExtResource("5_yk4pq"): 10,
 ExtResource("7_757gq"): 40
 })
-CraftingJobs = Array[Object]([SubResource("Resource_i1gtf")])
+CraftingJobs = Array[Object]([SubResource("Resource_i1gtf"), SubResource("Resource_3en3e")])
 HoursToConstruct = 56.0
 metadata/_custom_type_script = "uid://b5xb3tdf3yoon"

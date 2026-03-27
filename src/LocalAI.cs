@@ -730,6 +730,10 @@ public class GamerAI : LocalAI {
 			// and increase want for prerequisites
 			var parents = ProductionNet.GetParentMaterials(res);
 			foreach (var r in parents) ResourceWants[r] = Math.Max(want, ResourceWants[r]);
+
+			// and reduce want if we have it already
+			var has = factionActions.GetResourceStorage().GetCount(res);
+			ResourceWants[res] = Math.Max(ResourceWants[res] - has, DefaultResourceWant);
 		}
 		uint homeless = factionActions.GetHomelessPopulationCount() ;
 		if (homeless > 0) {
@@ -782,6 +786,7 @@ public class GamerAI : LocalAI {
 			} else if (job is ProcessMarketJob pjob) {
 			} else if (job is CraftJob cjob) {
 				factors.Add(Factors.Mult(Factors.Group(cjob.Outputs.Select(o => Factors.ResourceWant(factionActions, this, o.Type)).ToArray()), 0.1f));
+				factors.Add(Factors.ResourcesNeed(factionActions, cjob.Inputs));
 				var mopject = factionActions.Region.GetMapObject(cjob.GlobalPosition - factionActions.Region.WorldPosition);
 				//IEnumerable<CraftJob> othersPossible = mopject.GetAvailableJobs().Where(j => j is CraftJob cj && cj.Outputs != cjob.Outputs).Cast<CraftJob>();
 				//negativeFactors.Add(Factors.Group(othersPossible.Select(p => Factors.Group(p.Outputs.Select(o => Factors.ResourceWant(factionActions, this, o.Type)).ToArray())).ToArray()));

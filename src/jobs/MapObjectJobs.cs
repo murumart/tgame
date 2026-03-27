@@ -384,7 +384,7 @@ public class QuarryJob : MapObjectJob {
 			return Title;
 		}
 		Debug.Assert(Workers >= 0, $"Worker count can't be negative (is {Workers})");
-		var str = "Gathering";
+		var str = "";
 		if (storage is null) str += $"Create a job to mine {mineResource.AssetName}";
 		else if (Workers == 0) str += $"Employ workers to mine {mineResource.AssetName}";
 		else {
