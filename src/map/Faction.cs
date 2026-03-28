@@ -30,6 +30,8 @@ public class Faction : IEntity {
 	public event Action<TradeOffer, int> MyTradeOfferAcceptedEvent;
 	public event Action<TradeOffer> MyTradeOfferRejectedEvent;
 	public event Action<Building> BuildingRemoved;
+	public event Action<Faction> StartedWarWith;
+	public event Action<Faction> EndedWarWith;
 
 	public Region Region { get; init; }
 
@@ -67,14 +69,17 @@ public class Faction : IEntity {
 	readonly Dictionary<Faction, List<TradeOffer>> gottenTradeOffers = new();
 	readonly Dictionary<Faction, List<TradeOffer>> sentTradeOffers = new();
 
-	public readonly struct WarInfo(string reason, Faction aggressor, Faction defender) {
+	class WarStatus(string reason, Faction aggressor, Faction defender) {
 
 		public readonly string Reason = reason;
 		public readonly Faction Aggressor = aggressor;
-		public readonly Faction Defnder = defender;
+		public readonly Faction Defender = defender;
+
+		public bool AggressorAsksForPeace;
+		public bool DefenderAsksForPeace;
 
 	}
-	readonly Dictionary<Faction, WarInfo> atWar = new();
+	readonly Dictionary<Faction, WarStatus> atWar = new();
 
 	TimeT time;
 
@@ -302,7 +307,7 @@ public class Faction : IEntity {
 
 	// just removes a map object, intended for resource sites etc
 	public void Uproot(Vector2I at) {
-		bool has = Region.HasMapObject(at, out var obj);
+		bool has = Region.HasMapObject(at, out var _);
 		Debug.Assert(has, $"No map object to uproot at {at}");
 		Region.RemoveMapObject(at);
 	}
@@ -460,9 +465,26 @@ public class Faction : IEntity {
 	public void DeclareWarOn(Faction faction, string reason) {
 		Debug.Assert(!atWar.ContainsKey(faction), $"{this} is Already at war with {faction}");
 		Debug.Assert(!faction.atWar.ContainsKey(this), $"{faction} is Already at war with {this}");
-		var war = new WarInfo(reason, this, faction);
+		var war = new WarStatus(reason, this, faction);
 		atWar[faction] = war;
 		faction.atWar[this] = war;
+		StartedWarWith?.Invoke(faction);
+		faction.StartedWarWith?.Invoke(this);
+	}
+
+	public void RequestPeace(Faction with) {
+		bool at = atWar.TryGetValue(with, out var status);
+		Debug.Assert(at, "Peace with not at war what.s");
+		if (this == status.Aggressor) status.AggressorAsksForPeace = true;
+		else if (this == status.Defender) status.DefenderAsksForPeace = true;
+		else Debug.Assert(false, "Completely unrelated faction with to this status..  ");
+
+		if (status.AggressorAsksForPeace && status.DefenderAsksForPeace) {
+			atWar.Remove(with);
+			with.atWar.Remove(this);
+			EndedWarWith?.Invoke(with);
+			with.EndedWarWith?.Invoke(this);
+		}
 	}
 
 	#endregion

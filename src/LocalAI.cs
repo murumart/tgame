@@ -180,6 +180,7 @@ public partial class LocalAI {
 				var partners = ac.GetProcessMarketJob().TradeOffers.Keys.ToArray();
 				AIAssert(partners.Length > 0, "Need more partner than0", ac);
 				var to = partners[GD.Randi() % partners.Length];
+				AIAssert(!ac.Faction.IsAtWarWith(to), "Sjpiöldt be at awar", ac);
 				from.SendTradeOfferTo(to, new(from, giveSilver, to, wantResources, false));
 			}, $"SendTradeOffer(silver -> resources)");
 		}
@@ -191,6 +192,7 @@ public partial class LocalAI {
 				var partners = ac.GetProcessMarketJob().TradeOffers.Keys.ToArray();
 				AIAssert(partners.Length > 0, "Need more partner than0", ac);
 				var to = partners[GD.Randi() % partners.Length];
+				AIAssert(!ac.Faction.IsAtWarWith(to), "Sjpiöldt be at awar", ac);
 				from.SendTradeOfferTo(to, new(from, giveResources, to, wantSilver, false));
 			}, $"SendTradeOffer(resources -> silver)");
 		}
@@ -715,29 +717,6 @@ public class GamerAI : LocalAI {
 			Factors.ArePeopleStarving(actions),
 			Factors.EmploymentRate(actions),
 		], actions));
-
-		foreach (var res in Registry.Resources.GetAssets()) {
-			//int srand1 = (int)(GD.Randi() % 3) + 1;
-			//int srand2 = (int)(GD.Randi() % 4) + 1;
-			//startActions.Add(Actions.SendTradeOffer([
-			//	Factors.Curve(Factors.Group([
-			//		Factors.MarketplaceIsBeingWorkedAt(actions),
-			//		Factors.SentTradeOfferLimit(actions, 10),
-			//		Factors.ResourceWant(actions, this, res),
-			//		Factors.SilverNeed(actions, srand1),
-			//		Factors.OneMinus(Factors.HasResourceSiteThatProduces(actions, res)),
-			//	]), sendTradeOfferCurve),
-			//], actions, srand1, new ResourceBundle(res, srand1 * srand2)));
-			// boost the econony hopwefull 📈📈📈📈
-			//startActions.Add(Actions.SendTradeOffer([
-			//	Factors.MarketplaceIsBeingWorkedAt(actions),
-			//	Factors.SentTradeOfferLimit(actions, 10),
-			//	Factors.Mult(Factors.ResourceWant(actions, this, res), 2f),
-			//	Factors.SilverNeed(actions, srand1),
-			//	Factors.RichnessSpendable(actions, 45),
-			//	Factors.Const(0.5f),
-			//], actions, srand1, new ResourceBundle(res, srand1 * srand2)));
-		}
 
 		this.mainActions = startActions.ToList();
 		this.ephemeralActions = new();

@@ -539,7 +539,11 @@ public class ProcessMarketJob : MapObjectJob {
 	readonly Dictionary<Faction, List<TradeOffer>> tradeOffers = new();
 	public Dictionary<Faction, List<TradeOffer>> TradeOffers {
 		get {
-			foreach (var (_, l) in tradeOffers) {
+			List<Faction> marked = new();
+			foreach (var (fac, l) in tradeOffers) {
+				if (faction.IsAtWarWith(fac)) {
+					marked.Add(faction);
+				}
 				for (int i = l.Count - 1; i > -1; i--) {
 					if (!l[i].IsValid) {
 						l[i].Log("getting trade offers, removing because it's not valid");
@@ -547,6 +551,7 @@ public class ProcessMarketJob : MapObjectJob {
 					}
 				}
 			}
+			foreach (var m in marked) tradeOffers.Remove(m);
 			return tradeOffers;
 		}
 	}

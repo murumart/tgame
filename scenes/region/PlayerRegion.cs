@@ -50,6 +50,11 @@ public partial class PlayerRegion : Node {
 		};
 		faction.MyTradeOfferAcceptedEvent += (o, u) => ui.Notifications.Notify($"{o.Recipient.Name} accepted a trade offer from us. ({o.GetOutputDescription(faction, u)})", timeLimit: 20f);
 		faction.MyTradeOfferRejectedEvent += o => ui.Notifications.Notify($"{o.Recipient.Name} rejected a trade offer from us...", timeLimit: 10f);
+		faction.StartedWarWith += w => ui.Notifications.Notify($"We started a war with {w.Name}.", gradientColors: (Palette.BrownRust, new(Palette.Dark, 0f)));
+		faction.EndedWarWith += w => ui. Announce(
+			"After much too much fighting, we have decided to put down our weapons and bury this feud. In such a beautiful moment, we can not but celebrate and wish that this peace is lasting and fair...\n\nAt least for us.",
+			title: $"War Ended With {w}"
+		);
 		foreach (var neighbor in region.Neighbors) {
 			if (neighbor.LocalFaction.IsWild) continue;
 			neighbor.LocalFaction.Population.PopulationDroppedToZero += () => {
