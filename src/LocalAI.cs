@@ -243,6 +243,39 @@ public partial class LocalAI {
 			}, "FreeAWorker");
 		}
 
+		static readonly string[] starts = [
+			"{0} hereby declares war on {1}.",
+			"The mighty Empire of {0} must expand.",
+			"The new project of the Empire of {0} is to abolish borders between {0} and {1}. We also aim to abolish {1} itself.",
+			"The eons-lasting feud between peoples of {0} and {1} must be stopped at once. So we're gonna invade you.",
+			"At this historical moment, {0} no longer recognises the territorial integrity of {1}. Nor the humanity of its people."
+		];
+		static readonly string[] insults = [
+			"And another thing: you're ugly.",
+			"Consider this a mercy toward the world...",
+			"Your ugly city should be demolished, dug up and paved over, converting it into a fancy beach resort.",
+			"We encourage all citizens to wear clown noses so you make a funny noise once we come and stab you.",
+			"Your unsightly city will be no big loss.",
+			"Your city will be forgotten about by history.",
+			"Our peoples shouldn't be divided like this, by a border -- instead, they should live alongside, except yours at like a lower social rank and you'd also serve us and bring us drinks while we lounge.",
+			"\nP.S. Your city is really ugly.",
+		];
+		public static Action DeclareWar(DecisionFactor[] factors, FactionActions ac, Faction target) {
+			return new(factors, () => {
+				StringBuilder reason = new();
+				reason.Append(string.Format(starts[GD.Randi() % starts.Length], ac.Faction.Name, target.Name));
+				reason.Append(' ');
+				reason.Append(insults[GD.Randi() % insults.Length]);
+				ac.Faction.DeclareWarOn(target, reason.ToString());
+			}, $"DeclareWarWith({target})");
+		}
+
+		public static Action SendPeaceRequest(DecisionFactor[] factors, FactionActions ac, Faction target) {
+			return new(factors, () => {
+				ac.Faction.RequestPeace(target);
+			}, $"SendPeaceRequest({target})");
+		}
+
 	}
 
 }
@@ -543,6 +576,21 @@ public partial class LocalAI {
 
 		public static DecisionFactor IsJobUnlocked(Job job) {
 			return new(() => job.Locked ? 0f : 1f, "IsJobUnlocked");
+		}
+
+		public static DecisionFactor MilitaryMight(FactionActions ac) {
+			return new(() => Mathf.Min(1f, ac.Faction.Military / 100f), "MilitaryMight");
+		}
+
+		public static DecisionFactor IsAtWarWith(FactionActions ac, Faction fac) {
+			return new(() => ac.Faction.IsAtWarWith(fac) ? 1f : 0f, "IsAtWarWith");
+		}
+
+		public static DecisionFactor MilitaryAdvantageOver(FactionActions ac, Faction fac) {
+			return new(() => {
+				int milsum = ac.Faction.Military + fac.Military;
+				return Mathf.Clamp((ac.Faction.Military - fac.Military) / (float)(milsum == 0 ? 0.001f : milsum), 0f, 1f);
+			}, "MilitaryAdvantageOver");
 		}
 	}
 

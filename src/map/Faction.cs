@@ -30,7 +30,8 @@ public class Faction : IEntity {
 	public event Action<TradeOffer, int> MyTradeOfferAcceptedEvent;
 	public event Action<TradeOffer> MyTradeOfferRejectedEvent;
 	public event Action<Building> BuildingRemoved;
-	public event Action<Faction> StartedWarWith;
+	public event Action<Faction, string> StartedWarWith;
+	public event Action<Faction, string> PulledIntoWarWith;
 	public event Action<Faction> EndedWarWith;
 
 	public Region Region { get; init; }
@@ -468,8 +469,8 @@ public class Faction : IEntity {
 		var war = new WarStatus(reason, this, faction);
 		atWar[faction] = war;
 		faction.atWar[this] = war;
-		StartedWarWith?.Invoke(faction);
-		faction.StartedWarWith?.Invoke(this);
+		StartedWarWith?.Invoke(faction, reason);
+		faction.PulledIntoWarWith?.Invoke(this, reason);
 	}
 
 	public void RequestPeace(Faction with) {
