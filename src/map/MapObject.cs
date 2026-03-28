@@ -112,12 +112,12 @@ public partial class Building {
 			None,
 			Marketplace,
 			Quarry,
-			Military,
 		}
 
 		public Special GetSpecial();
 
 		int GetPopulationCapacity();
+		int GetMilitaryBoost();
 		ResourceConsumer[] GetConstructionResources();
 		float GetHoursToConstruct();
 		string GetDescription();

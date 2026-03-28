@@ -10,6 +10,7 @@
 script = ExtResource("9_erlfh")
 name = "barracks"
 description = "This building bolsters the nation's military might."
+MilitaryBoost = 10
 ResourceCosts = Dictionary[Object, int]({
 ExtResource("6_oedpi"): 8,
 ExtResource("8_c8ugj"): 20,
@@ -18,5 +19,4 @@ ExtResource("4_uunl6"): 3
 })
 CraftingJobs = Array[Resource]([])
 HoursToConstruct = 56.0
-special = 3
 metadata/_custom_type_script = "uid://b5xb3tdf3yoon"

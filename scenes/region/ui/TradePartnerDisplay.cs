@@ -64,6 +64,13 @@ namespace scenes.region.ui {
 			Debug.Assert(has, "Don't have trade relations with this faction");
 
 			PartnerNameLabel.Text = partner.Name;
+			if (me.IsAtWarWith(partner)) {
+				PartnerNameLabel.Text += " (AT WAR WITH)";
+				GottenOffersParent.Hide();
+				SentOffersParent.Hide();
+				NoOffersLabel.Hide();
+				return;
+			}
 
 			bool hadGotten = false;
 			bool hadSent = false;

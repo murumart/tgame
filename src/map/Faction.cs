@@ -284,13 +284,13 @@ public class Faction : IEntity {
 
 	void OnBuildingConstructed(Building building) {
 		Population.ChangeHousingCapacity((int)building.GetHousingCapacity());
-		var special = building.Type.GetSpecial();
-		if (special == IBuildingType.Special.Military) Military += 5;
+		//var special = building.Type.GetSpecial();
+		Military += building.Type.GetMilitaryBoost();
 	}
 
 	void OnBuildingRemoved(Building building) {
-		var special = building.Type.GetSpecial();
-		if (special == IBuildingType.Special.Military) Military -= 5;
+		//var special = building.Type.GetSpecial();
+		Military -= building.Type.GetMilitaryBoost();
 	}
 
 	// deletes a building from the faction's records and has the region also delete it

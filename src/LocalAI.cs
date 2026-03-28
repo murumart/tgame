@@ -598,6 +598,17 @@ public partial class LocalAI {
 			return new(() => Mathf.Min(1f, ac.Faction.Military / 100f), "MilitaryMight");
 		}
 
+		public static DecisionFactor MilitaryBehind(FactionActions ac) {
+			return new(() => {
+				int maxMil = 0;
+				foreach (var n in ac.Region.Neighbors) {
+					if (n.LocalFaction.Military > maxMil) maxMil = n.LocalFaction.Military;
+				}
+				int diffFromMax = ac.Faction.Military - maxMil;
+				return Mathf.Clamp(-diffFromMax / 10f, 0f, 1f);
+			}, "MilitaryBehind");
+		}
+
 		public static DecisionFactor IsAtWarWith(FactionActions ac, Faction fac) {
 			return new(() => ac.Faction.IsAtWarWith(fac) ? 1f : 0f, "IsAtWarWith");
 		}
@@ -724,12 +735,13 @@ public class GamerAI : LocalAI {
 	public const int DefaultBuildingWant = 1;
 	public readonly Dictionary<IResourceType, int> ResourceWants;
 	public readonly Dictionary<IBuildingType, int> BuildingWants;
+	public readonly float Militarism = Mathf.Clamp((float)GD.Randfn(0f, 0.1f), 0f, 1f);
 	readonly List<Action> mainActions;
 	readonly List<Action> ephemeralActions;
 	TimeT time;
 
 	readonly HashSet<IBuildingType> farms = [Registry.BuildingsS.GrainField];
-	readonly HashSet<IBuildingType> military = Registry.Buildings.GetAssets().Where(b => b.GetSpecial() == IBuildingType.Special.Military).ToHashSet();
+	readonly HashSet<IBuildingType> military = Registry.Buildings.GetAssets().Where(b => b.GetMilitaryBoost() > 0).ToHashSet();
 
 	static readonly Curve sendTradeOfferCurve = GD.Load<Curve>("res://resources/game/ai/send_trade_offer.tres");
 
@@ -793,7 +805,7 @@ public class GamerAI : LocalAI {
 		foreach (var b in Registry.Buildings.GetAssets()) {
 			bool isFarm = farms.Contains(b);
 			bool isHousing = b.GetPopulationCapacity() > 2;
-			bool isMilitary = b.GetSpecial() == IBuildingType.Special.Military;
+			bool isMilitary = b.GetMilitaryBoost() > 0;
 			if (!isFarm && !isHousing && !isMilitary) continue;
 
 			var rneed = Factors.ResourcesNeed(factionActions, b.GetConstructionResources());
@@ -801,7 +813,9 @@ public class GamerAI : LocalAI {
 				startActions.Add(Actions.PlaceBuildingJob([
 					rneed,
 					Factors.OneMinus(Factors.MilitaryMight(factionActions)),
+					Factors.Max(Factors.MilitaryBehind(factionActions), Militarism),
 				], factionActions, b));
+				continue;
 			}
 			startActions.Add(Actions.PlaceBuildingJob([
 				rneed,
@@ -871,6 +885,11 @@ public class GamerAI : LocalAI {
 				ResourceWants[foodit.Key] += (int)(eaten2day * 0.25 * foodit.Value * ((5f - daystoeat) / 5f));
 			}
 		}
+		// gear up!!
+		foreach (var ne in factionActions.Region.Neighbors) {
+			int mildiff = factionActions.Faction.Military - ne.LocalFaction.Military;
+			if (mildiff < 0) ResourceWants[Registry.ResourcesS.IronWeapons] += -mildiff;
+		}
 		// random inspiration to get some crap
 		if (GD.Randf() < 0.0005f) {
 			var random = Registry.Resources.GetAssets()[GD.Randi() % Registry.Resources.GetAssets().Length];
@@ -917,13 +936,13 @@ public class GamerAI : LocalAI {
 			}
 			factors.Add(Factors.JobHasEmploymentSpots(factionActions, job));
 			factors.Add(Factors.HasFreeWorkers(factionActions));
-			factors.Add(Factors.Ease(Factors.OneMinus(Factors.JobEmploymentRate(job)), 2f));
+			factors.Add(Factors.Ease(Factors.OneMinus(Factors.JobEmploymentRate(job)), 4f));
 			factors.Add(Factors.IsJobUnlocked(job));
 			if (factors != null) {
 				ephemeralActions.Add(Actions.AssignWorkersToJob(factors.ToArray(), factionActions, job));
 				ephemeralActions.Add(Actions.RemoveWorkersFromJob([
 					Factors.IsJobUnlocked(job),
-					Factors.Mult(Factors.OneMinus(Factors.Group(factors.ToArray())), 0.0000001f),
+					Factors.Ease(Factors.OneMinus(Factors.Group(factors.ToArray())), 5),
 					Factors.OneMinus(Factors.JobCompletion(job)),
 					Factors.JobEmploymentRate(job),
 					Factors.SentTradeOfferLimit(factionActions, 15),

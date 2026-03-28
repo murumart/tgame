@@ -27,6 +27,7 @@ namespace resources.game.building_types {
 		}
 
 		[Export(PropertyHint.Range, "0,99,or_greater")] int PopulationCapacity;
+		[Export(PropertyHint.Range, "0,99,or_greater")] int MilitaryBoost;
 		//[Export] Godot.Collections.Dictionary<ResourceType, int> ResourceCapacities;
 		[Export] Godot.Collections.Dictionary<ResourceType, int> ResourceCosts;
 		[Export] Godot.Collections.Array<CraftingJobDef> CraftingJobs;
@@ -46,6 +47,11 @@ namespace resources.game.building_types {
 		public int GetPopulationCapacity() {
 			Debug.Assert(PopulationCapacity >= 0, "Population capacity can't be negative");
 			return PopulationCapacity;
+		}
+
+		public int GetMilitaryBoost() {
+			Debug.Assert(MilitaryBoost >= 0, "Military capacity can't be negative");
+			return MilitaryBoost;
 		}
 
 		ResourceConsumer[] constructionResources = null;

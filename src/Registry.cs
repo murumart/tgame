@@ -50,6 +50,9 @@ public static class Registry {
 		//public static readonly IResourceType Dough = Resources.GetAsset("dough");
 		public static readonly IResourceType Bread = Resources.GetAsset("bread");
 		public static readonly IResourceType Furniture = Resources.GetAsset("furniture");
+		
+		public static readonly IResourceType Iron = Resources.GetAsset("iron");
+		public static readonly IResourceType IronWeapons = Resources.GetAsset("iron_weapons");
 
 		public static IAssetGroup<IResourceType, int> FoodValues { get; private set; }
 

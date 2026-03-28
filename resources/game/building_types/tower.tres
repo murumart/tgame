@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="BuildingType" format=3 uid="uid://brre1i81fgfrc"]
+
+[ext_resource type="Resource" uid="uid://nw83fam2omvi" path="res://resources/game/resource_types/rock.tres" id="2_i0awj"]
+[ext_resource type="Resource" uid="uid://cbynhxq0y3kkl" path="res://resources/game/resource_types/bricks.tres" id="3_2shqw"]
+[ext_resource type="Resource" uid="uid://b8507qbvqvdy8" path="res://resources/game/resource_types/lumber.tres" id="3_oxbim"]
+[ext_resource type="Script" uid="uid://b5xb3tdf3yoon" path="res://resources/game/building_types/BuildingType.cs" id="5_wtkit"]
+
+[resource]
+script = ExtResource("5_wtkit")
+name = "tower"
+description = "Watch your neighbors' every move here..."
+MilitaryBoost = 1
+ResourceCosts = Dictionary[Object, int]({
+ExtResource("2_i0awj"): 20,
+ExtResource("3_oxbim"): 10,
+ExtResource("3_2shqw"): 25
+})
+CraftingJobs = null
+HoursToConstruct = 36.0
+metadata/_custom_type_script = "uid://b5xb3tdf3yoon"

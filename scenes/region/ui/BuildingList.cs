@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Text;
 using Godot;
 using resources.game;
 using resources.game.building_types;
@@ -50,7 +51,11 @@ public partial class BuildingList : Control {
 		selectedBuildThingId = which;
 		var btype = (BuildingType)itemList.GetItemMetadata((int)which).Obj;
 		buildConfirmation.Text = "Build " + btype.AssetName;
-		descriptionText.Text = btype.GetDescription();
+		var desc = new StringBuilder();
+		if (btype.GetPopulationCapacity() > 0) desc.Append($"+ {btype.GetPopulationCapacity()} population cap\n");
+		if (btype.GetMilitaryBoost() > 0) desc.Append($"+ {btype.GetMilitaryBoost()} military\n");
+		desc.Append(btype.GetDescription());
+		descriptionText.Text = desc.ToString();
 		resourceListText.Text = "";
 		var resources = ui.GetResources();
 		foreach (var r in btype.GetConstructionResources()) {
