@@ -183,6 +183,7 @@ public partial class WorldRenderer : Node {
 			var color = region == playRegion ? region.LocalFaction.Color.Lightened(0.5f) : region.LocalFaction.Color;
 			if (region != playRegion) {
 				if (!playRegion.Neighbors.Contains(region)) color = color.Darkened(0.75f);
+				if (playRegion.LocalFaction.IsAtWarWith(region.LocalFaction)) { color.G = 0; color.B = 0; }
 			}
 			if (region.LocalFaction != null && region.LocalFaction.HasOwningFaction()) color = region.LocalFaction.GetOwningFaction().Region.LocalFaction.Color.Darkened(0.25f);
 			foreach (var px in region.GroundTilePositions) {
@@ -219,5 +220,5 @@ public partial class WorldRenderer : Node {
 		UpdateImage(image, highlightSprite);
 	}
 
-	
+
 }

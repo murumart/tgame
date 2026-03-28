@@ -10,6 +10,7 @@
 [ext_resource type="Texture2D" uid="uid://cv7fy4w30iimq" path="res://resources/visual/theme/icons/toggle_on_disabled.svg" id="5_xbfgx"]
 [ext_resource type="Texture2D" uid="uid://dnipngpjdenb3" path="res://resources/visual/theme/icons/toggle_off.svg" id="6_nm6iw"]
 [ext_resource type="Texture2D" uid="uid://bv0y4o2dpj8uv" path="res://resources/visual/theme/icons/toggle_off_disabled.svg" id="7_i6uvl"]
+[ext_resource type="StyleBox" uid="uid://bvafrlmq6sivc" path="res://resources/visual/theme/sb_lighter.tres" id="11_i6uvl"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_noo5t"]
 content_margin_left = 2.0
@@ -168,3 +169,5 @@ Slider/icons/grabber_highlight = ExtResource("3_hwdam")
 Slider/styles/grabber_area = SubResource("StyleBoxFlat_i0op6")
 Slider/styles/grabber_area_highlight = SubResource("StyleBoxFlat_3wo1x")
 Slider/styles/slider = SubResource("StyleBoxFlat_hwdam")
+Window/fonts/title_font = ExtResource("1_70gfe")
+Window/styles/embedded_unfocused_border = ExtResource("11_i6uvl")

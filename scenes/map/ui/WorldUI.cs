@@ -29,6 +29,9 @@ public partial class WorldUI : Control {
 	[Export] Godot.Collections.Array<CheckButton> drawLayerButtons;
 	[Export] CheckButton regionDisplayCheck;
 
+	[Export] Button declareWarButton;
+	[Export] WarEssay warEssayPopup;
+
 	Region selectedRegion;
 	public Region SelectedRegion => selectedRegion;
 
@@ -40,6 +43,13 @@ public partial class WorldUI : Control {
 
 		foreach (var but in drawLayerButtons) but.Pressed += OnDrawLayersChanged;
 		regionDisplayCheck.Toggled += OnRegionDisplayChanged;
+
+		if (mode == Modes.InGame) {
+			declareWarButton.Pressed += OnDeclareWarPressed;
+			warEssayPopup.WarDeclared += OnWarDeclared;
+		} else {
+			declareWarButton.Hide();
+		}
 
 		ResourceDisplay.Display(c => {
 			if (!camera.IsInsideTree()) (c as Label).Text = "...";
@@ -124,21 +134,25 @@ public partial class WorldUI : Control {
 		Faction myFaction = myRegion.LocalFaction;
 		factionTitleLabel.Text = "...?";
 		factionInfoLabel.Text = "";
+		declareWarButton.Disabled = true;
+		declareWarButton.Text = "Declare War";
 		if (region is null) {
 			factionInfoLabel.Text = "Select a Faction";
 			return;
 		}
 
 		Faction faction = region.LocalFaction;
-		bool wild = region.LocalFaction.IsWild;
-		if (!myRegion.Neighbors.Contains(region) && myRegion != region) {
+		bool iswild = region.LocalFaction.IsWild;
+		bool isneighbor = myRegion.Neighbors.Contains(region); 
+		if (!isneighbor && myRegion != region) {
 			factionInfoLabel.Text = "This faction is far away from us... Don't know much.";
 			return;
 		}
 		factionTitleLabel.Text = region.LocalFaction.Name;
 		if (myRegion == region) factionTitleLabel.Text += " (your location)";
-		if (myFaction.IsAtWarWith(faction)) factionTitleLabel.Text += " (AT WAR WITH YOU)";
-		if (wild) {
+		bool isatwar = myFaction.IsAtWarWith(faction); 
+		if (isatwar) factionTitleLabel.Text += " (AT WAR WITH YOU)";
+		if (iswild) {
 			factionInfoLabel.Text = "Empty of meaningful civilisation.\n"
 				+ $"Land tiles: {region.LandTileCount}\n"
 				+ $"Sea tiles: {region.OceanTileCount}\n";
@@ -160,6 +174,13 @@ public partial class WorldUI : Control {
 			+ $"Military power: {(region.LocalFaction.Military)} {mildesc}\n"
 			+ $"Happiness with ruler: {((int)(region.LocalFaction.Population.Approval * 100))}%\n"
 		;
+		if (myRegion != region) { 
+			if (isatwar) {
+				declareWarButton.Text = "Ask for peace";
+			} else if (isneighbor) {
+				declareWarButton.Disabled = false;
+			}
+		}
 	}
 
 	void SetRendererParams() {
@@ -200,12 +221,11 @@ public partial class WorldUI : Control {
 
 	public void DrawRegions(Region[] regions) {
 		Debug.Assert(_ready);
-		switch (mode)
-		{
+		switch (mode) {
 			case Modes.Generation: worldRenderer.DrawRegions(regions); break;
-			case Modes.InGame : worldRenderer.DrawRegionsDark(GameMan.Game.PlayRegion, regions); break;
+			case Modes.InGame: worldRenderer.DrawRegionsDark(GameMan.Game.PlayRegion, regions); break;
 		}
-		
+
 	}
 
 	void OnDrawLayersChanged() {
@@ -215,6 +235,15 @@ public partial class WorldUI : Control {
 
 	void OnRegionDisplayChanged(bool to) {
 		worldRenderer.RegionSprite.Visible = to;
+	}
+
+	void OnDeclareWarPressed() {
+		warEssayPopup.PopupCentered();
+	}
+
+	void OnWarDeclared(string reason) {
+		GameMan.Game.PlayRegion.LocalFaction.DeclareWarOn(selectedRegion.LocalFaction, reason);
+		SelectRegion(selectedRegion);
 	}
 
 }

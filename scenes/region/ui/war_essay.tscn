@@ -1,0 +1,59 @@
+[gd_scene format=3 uid="uid://6petycb31tlv"]
+
+[ext_resource type="Script" uid="uid://cc1ne6epejdeo" path="res://scenes/region/ui/WarEssay.cs" id="1_4uh2j"]
+[ext_resource type="Theme" uid="uid://beql3um0mpmyd" path="res://resources/visual/theme/main_theme.tres" id="1_ogu63"]
+[ext_resource type="LabelSettings" uid="uid://btwbnjxri1gdg" path="res://resources/visual/theme/label_styles/8px.tres" id="2_vsja8"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_4uh2j"]
+
+[node name="WarEssay" type="ConfirmationDialog" unique_id=248841037 node_paths=PackedStringArray("essayBox", "wordCountLabel")]
+transparent_bg = true
+oversampling_override = 1.0
+title = "Declaring War"
+initial_position = 1
+size = Vector2i(342, 180)
+visible = true
+always_on_top = true
+transparent = true
+theme = ExtResource("1_ogu63")
+ok_button_text = "Declare War"
+dialog_autowrap = true
+script = ExtResource("1_4uh2j")
+essayBox = NodePath("Control/VBoxContainer2/TextBox")
+wordCountLabel = NodePath("Control/VBoxContainer2/Wc")
+
+[node name="Control" type="Control" parent="." unique_id=34284249]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -35.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="Control" unique_id=126737510]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="Control/VBoxContainer2" unique_id=1526010326]
+layout_mode = 2
+text = "Please write at least 10 words to explain your decision."
+
+[node name="TextBox" type="TextEdit" parent="Control/VBoxContainer2" unique_id=1975791208]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/focus = SubResource("StyleBoxEmpty_4uh2j")
+placeholder_text = "Write your reason..."
+wrap_mode = 1
+
+[node name="Wc" type="Label" parent="Control/VBoxContainer2" unique_id=1631580800]
+layout_mode = 2
+text = "X/Y words"
+label_settings = ExtResource("2_vsja8")
