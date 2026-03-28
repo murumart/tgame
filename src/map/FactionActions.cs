@@ -47,6 +47,11 @@ public class FactionActions {
 
 	public IEnumerable<MapObject> GetMapObjects() => region.GetMapObjects();
 
+	
+	public int GetBuildingCount(IBuildingType buildingType) {
+		return faction.GetBuildingCount(buildingType);
+	}
+
 	ProcessMarketJob _marketJobCached = null;
 	public ProcessMarketJob GetProcessMarketJob() {
 		if (_marketJobCached == null || !_marketJobCached.IsValid) {
@@ -126,6 +131,5 @@ public class FactionActions {
 	public override string ToString() {
 		return $"FactionActions({region}, {faction})";
 	}
-
 
 }

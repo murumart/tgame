@@ -272,8 +272,10 @@ public class Faction : IEntity {
 	}
 
 	public bool CanPlaceBuilding(IBuildingType type, Vector2I tilepos) {
-		bool toomuch = type.GetBuiltLimit() != 0 && GetBuildingCount(type) >= type.GetBuiltLimit();
-		return !toomuch && HasBuildingMaterials(type) && Region.HasBuildingSpace(tilepos) && type.IsPlacementAllowed(Region.GetGroundTile(tilepos));
+		return type.IsPlacementAllowed(Region.GetGroundTile(tilepos))
+			&& !(type.GetBuiltLimit() != 0 && GetBuildingCount(type) >= type.GetBuiltLimit())
+			&& HasBuildingMaterials(type)
+			&& Region.HasBuildingSpace(tilepos);
 	}
 
 	public bool HasBuildingMaterials(IBuildingType type) {

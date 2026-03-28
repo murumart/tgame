@@ -318,7 +318,7 @@ public static class ProductionNet {
 	static bool generated = false;
 
 	public static readonly Dictionary<IResourceType, ResourceNode> Resources = new();
-	public static readonly Dictionary<(IMapObjectType, LocationContext), LocationNode> Locations = new();
+	public static readonly Dictionary<(IMapObjectType MapObjectType, LocationContext Context), LocationNode> Locations = new();
 
 
 	public static void Generate() {

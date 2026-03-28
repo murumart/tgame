@@ -115,6 +115,10 @@ public partial class PlayerRegion : Node {
 			foreach (var (food, want) in ai.ResourceWants) {
 				sb.Append(food.AssetName).Append('\t').Append(want).Append('\n');
 			}
+			sb.Append("\nBuildingWants wants:\n");
+			foreach (var (bild, want) in ai.BuildingWants) {
+				sb.Append(bild.AssetName).Append('\t').Append(want).Append('\n');
+			}
 			return sb.ToString();
 		});
 		UILayer.DebugDisplay(() => $"mousepos: {regionDisplay.GetLocalMousePosition()}");

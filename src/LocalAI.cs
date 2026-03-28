@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Godot;
+using resources.game.building_types;
 using scenes.autoload;
 using static Building;
 using static ResourceSite;
@@ -150,7 +151,7 @@ public partial class LocalAI {
 
 		public static Action PlaceBuildingJob(DecisionFactor[] factors, FactionActions ac, IBuildingType buildingType) {
 			return new(factors, () => {
-				AIAssert(ac.Faction.HasBuildingMaterials(buildingType), "Don't have building materials", ac);
+				AIAssert(ac.Faction.HasBuildingMaterials(buildingType), $"Don't have building materials for {buildingType.AssetIDString}", ac);
 				foreach (var (pos, _) in ac.GetTiles()) {
 					if (!ac.CanPlaceBuilding(buildingType, pos)) continue;
 					ac.PlaceBuilding(buildingType, pos);
@@ -367,6 +368,15 @@ public partial class LocalAI {
 			}, $"HasSpotForBuilding({buildingType.AssetName})");
 		}
 
+		public static DecisionFactor HasSpotForQuarryBuilding(FactionActions ac, GroundTileType whatground) {
+			return new(() => {
+				foreach (var (pos, ground) in ac.GetTiles()) {
+					if ((ground & whatground) != 0 && ac.CanPlaceBuilding(Registry.BuildingsS.Quarry, pos)) return 1f;
+				}
+				return 0f;
+			}, $"HasSpotForQuarryBuilding({whatground})");
+		}
+
 		public static DecisionFactor BuildingProgress(Building building) {
 			return new(() => building.GetBuildProgress(), "BuildingProgress");
 		}
@@ -461,17 +471,23 @@ public partial class LocalAI {
 			return new(() => Mathf.Clamp(ac.Faction.Population.GetApprovalMonthlyChange(), 0f, 1f), "ApprovalRatingChange");
 		}
 
-		public static float CalculateWant(int want, FactionActions ac, IResourceType resourceType) {
-			var count = ac.GetResourceStorage().GetCount(resourceType);
-			var a = Mathf.Max(0f, (float)(want - count) / want);
-			a -= (100f - want) / 100f;
+		public static float CalculateWant(int want, int count) {
+			//var a = Mathf.Max(0f, (float)(want - count) / want);
+			//a -= (100f - want) / 100f;
+			float a = (float)want / count;
 			return Mathf.Clamp(a, 0f, 1f);
 		}
 
 		public static DecisionFactor ResourceWant(FactionActions ac, GamerAI ai, IResourceType resourceType) {
 			return new(() => {
-				return CalculateWant(ai.ResourceWants.GetValueOrDefault(resourceType, GamerAI.DefaultResourceWant), ac, resourceType);
+				return CalculateWant(ai.ResourceWants.GetValueOrDefault(resourceType, GamerAI.DefaultResourceWant), ac.GetResourceStorage().GetCount(resourceType));
 			}, $"ResourceWant({resourceType.AssetName})");
+		}
+
+		public static DecisionFactor BuildingWant(FactionActions ac, GamerAI ai, IBuildingType buildingType) {
+			return new(() => {
+				return CalculateWant(ai.BuildingWants.GetValueOrDefault(buildingType, GamerAI.DefaultResourceWant), ac.GetBuildingCount(buildingType));
+			}, $"BuildingWant({buildingType.AssetName})");
 		}
 
 		public static DecisionFactor ResourceNeed(FactionActions ac, IResourceType resourceType, int need) {
@@ -705,14 +721,15 @@ public partial class LocalAI {
 public class GamerAI : LocalAI {
 
 	public const int DefaultResourceWant = 10;
+	public const int DefaultBuildingWant = 1;
 	public readonly Dictionary<IResourceType, int> ResourceWants;
+	public readonly Dictionary<IBuildingType, int> BuildingWants;
 	readonly List<Action> mainActions;
 	readonly List<Action> ephemeralActions;
 	TimeT time;
 
 	readonly HashSet<IBuildingType> farms = [Registry.BuildingsS.GrainField];
-	readonly HashSet<IBuildingType> housing = [Registry.BuildingsS.LogCabin, Registry.BuildingsS.Housing, Registry.BuildingsS.BrickHousing];
-	readonly HashSet<IBuildingType> crafting = [Registry.BuildingsS.Windmill, Registry.BuildingsS.Bakery,  Registry.BuildingsS.Kiln];
+	readonly HashSet<IBuildingType> military = Registry.Buildings.GetAssets().Where(b => b.GetSpecial() == IBuildingType.Special.Military).ToHashSet();
 
 	static readonly Curve sendTradeOfferCurve = GD.Load<Curve>("res://resources/game/ai/send_trade_offer.tres");
 
@@ -723,28 +740,77 @@ public class GamerAI : LocalAI {
 
 		this.ResourceWants = new();
 		foreach (var it in Registry.Resources.GetAssets()) ResourceWants[it] = DefaultResourceWant;
-		var startActions = new List<Action>();
+		this.BuildingWants = new();
+		foreach (var it in Registry.Buildings.GetAssets()) BuildingWants[it] = DefaultBuildingWant;
 
+		var startActions = new List<Action>();
 		foreach (var rs in Registry.ResourceSites.GetAssets()) {
 			foreach (var w in rs.GetDefaultWells()) {
 				startActions.Add(CreateGatherJob(rs, w.ResourceType));
 			}
 		}
-		foreach (var b in Registry.Buildings.GetAssets()) {
-			bool isFarm = farms.Contains(b);
-			bool isHousing = housing.Contains(b);
-			bool isCrafting  = crafting.Contains(b);
+		//foreach (var b in Registry.Buildings.GetAssets()) {
+		//	startActions.Add(Actions.PlaceBuildingJob([
+		//		Factors.ResourcesNeed(factionActions, b.GetConstructionResources()),
+		//		Factors.BuildingWant(actions, this, b),
+		//		Factors.ReasonableBuildingCount(factionActions, b, b.GetBuiltLimit() == 0 ? GD.RandRange(1, 99) : b.GetBuiltLimit()),
+		//	], factionActions, b));
+		//}
+		foreach (var bnodekvp in ProductionNet.Locations) {
+			if (bnodekvp.Value is not ProductionNet.BuildingNode bnode) continue;
+			var b = bnodekvp.Key.MapObjectType as BuildingType;
+			Debug.Assert(b is not null);
+
+			bool isCrafting = b.GetCraftJobs().Length > 0;
+			bool isQuarry = b.GetSpecial() == IBuildingType.Special.Quarry;
+
+			var rneed = Factors.ResourcesNeed(factionActions, b.GetConstructionResources());
+			if (isQuarry) {
+				var ground = GroundTileType.HasLand;
+				List<IResourceType> gets = [Registry.ResourcesS.Rocks];
+				if (bnodekvp.Key.Context == ProductionNet.LocationContext.SandyQuarry) {
+					ground |= GroundTileType.HasSand;
+					gets.Add(Registry.ResourcesS.Sand);
+				}
+				startActions.Add(Actions.PlaceQuarryBuildingJob([
+					rneed,
+					Factors.Group(gets.Select(rt => Factors.ResourceWant(factionActions, this, rt)).ToArray()),
+					Factors.HasSpotForQuarryBuilding(factionActions, ground),
+					Factors.ReasonableBuildingCount(factionActions, b, b.GetBuiltLimit() == 0 ? GD.RandRange(1, 6) : b.GetBuiltLimit()),
+				], factionActions, ground));
+				continue;
+			}
+
 			startActions.Add(Actions.PlaceBuildingJob([
-				Factors.ResourcesNeed(factionActions, b.GetConstructionResources()),
-				isHousing ? Factors.Group([
-					Factors.HomelessnessRate(factionActions),
-					Factors.OneMinus(Factors.HousingSlotsPerPerson(factionActions)),
-					Factors.HousingCapacity(b),
-				]) : isFarm ? Factors.ReasonableBuildingCountByPopulation(factionActions, b, 18f) : Factors.ReasonableBuildingCount(factionActions, b, b.GetBuiltLimit() == 0 ? GD.RandRange(1, 6) : b.GetBuiltLimit()),
+				rneed,
+				Factors.ReasonableBuildingCount(factionActions, b, b.GetBuiltLimit() == 0 ? GD.RandRange(1, 6) : b.GetBuiltLimit()),
 				isCrafting ? Factors.Group([
 					Factors.Group(b.GetCraftJobs().Select(j => Factors.Group(j.Outputs.Select(o => Factors.ResourceWant(factionActions, this, o.Type)).ToArray())).ToArray())
 				]) : Factors.One,
-				!isHousing && !isFarm && !isCrafting ? Factors.Const(0.001f) : Factors.One,
+				!isCrafting ? Factors.Const(0.001f) : Factors.One,
+			], factionActions, b));
+		}
+		foreach (var b in Registry.Buildings.GetAssets()) {
+			bool isFarm = farms.Contains(b);
+			bool isHousing = b.GetPopulationCapacity() > 2;
+			bool isMilitary = b.GetSpecial() == IBuildingType.Special.Military;
+			if (!isFarm && !isHousing && !isMilitary) continue;
+
+			var rneed = Factors.ResourcesNeed(factionActions, b.GetConstructionResources());
+			if (isMilitary) {
+				startActions.Add(Actions.PlaceBuildingJob([
+					rneed,
+					Factors.OneMinus(Factors.MilitaryMight(factionActions)),
+				], factionActions, b));
+			}
+			startActions.Add(Actions.PlaceBuildingJob([
+				rneed,
+				isHousing ? Factors.Ease(Factors.Group([
+					Factors.HomelessnessRate(factionActions),
+					Factors.OneMinus(Factors.HousingSlotsPerPerson(factionActions)),
+					Factors.HousingCapacity(b),
+				]), 0.1f) : isFarm ? Factors.ReasonableBuildingCountByPopulation(factionActions, b, 18f) : Factors.ReasonableBuildingCount(factionActions, b, b.GetBuiltLimit() == 0 ? GD.RandRange(1, 6) : b.GetBuiltLimit()),
+				!isHousing && !isFarm ? Factors.Const(0.001f) : Factors.One,
 			], factionActions, b));
 		}
 		startActions.Add(Actions.PlaceBuildingJob([
@@ -752,7 +818,6 @@ public class GamerAI : LocalAI {
 			//Factors.HasSpotForBuilding(factionActions, Registry.BuildingsS.Marketplace),
 			Factors.ResourcesNeed(factionActions, Registry.BuildingsS.Marketplace.GetConstructionResources()),
 		], factionActions, Registry.BuildingsS.Marketplace));
-
 		startActions.Add(Actions.CreateProcessMarketJob([
 			Factors.OneMinus(Factors.MarketplaceJobExists(actions)),
 			Factors.HasMarketplace(actions),
@@ -891,7 +956,7 @@ public class GamerAI : LocalAI {
 		}
 		// if we have a really bad need for something try to send an expensive offer for it
 		foreach (var (res, want) in ResourceWants) {
-			float wantf = Mathf.Ease(Factors.CalculateWant(want, factionActions, res), 4.9f);
+			float wantf = Mathf.Ease(Factors.CalculateWant(want, factionActions.GetResourceStorage().GetCount(res)), 4.9f);
 			if (GD.Randf() < wantf && factionActions.Faction.Silver > 0) {
 				int unitprice = Mathf.Max(1, (int)(wantf * GD.Randfn(4, 2)) + 1);
 				int cansend = factionActions.Faction.Silver / unitprice;
