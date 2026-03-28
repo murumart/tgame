@@ -150,8 +150,10 @@ public partial class WorldUI : Control {
 		}
 		factionTitleLabel.Text = region.LocalFaction.Name;
 		if (myRegion == region) factionTitleLabel.Text += " (your location)";
-		bool isatwar = myFaction.IsAtWarWith(faction); 
+		bool isatwar = myFaction.IsAtWarWith(faction);
+		bool isdead = faction.Population.Count == 0;
 		if (isatwar) factionTitleLabel.Text += " (AT WAR WITH YOU)";
+		if (isdead) factionTitleLabel.Text += " (Abandoned)";
 		if (iswild) {
 			factionInfoLabel.Text = "Empty of meaningful civilisation.\n"
 				+ $"Land tiles: {region.LandTileCount}\n"

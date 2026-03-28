@@ -98,6 +98,7 @@ public class Faction : IEntity {
 		Population.FurnitureRateRequested += GetFurnitureRate;
 		Population.SilverRequested += () => Silver;
 		Population.Manifest(initialPopulation);
+		Population.PopulationDroppedToZero += EndMe;
 
 		Region.SetLocalFaction(this);
 
@@ -283,13 +284,13 @@ public class Faction : IEntity {
 	}
 
 	void OnBuildingConstructed(Building building) {
+		// this is also called when annexing a building
 		Population.ChangeHousingCapacity((int)building.GetHousingCapacity());
-		//var special = building.Type.GetSpecial();
 		Military += building.Type.GetMilitaryBoost();
 	}
 
 	void OnBuildingRemoved(Building building) {
-		//var special = building.Type.GetSpecial();
+		// this is also called when a building has been annexed
 		Military -= building.Type.GetMilitaryBoost();
 	}
 
@@ -353,7 +354,7 @@ public class Faction : IEntity {
 
 	void OnMapObjectUpdated(Vector2I at) { }
 
-	
+
 	// these are meant to be called externally when annexing a tile. they should help keep data in sync
 	public void OnMapObjectAdded(MapObject mapObject) {
 		if (mapObject is Building building) {
@@ -497,11 +498,31 @@ public class Faction : IEntity {
 		else Debug.Assert(false, "Completely unrelated faction with to this status..  ");
 
 		if (status.AggressorAsksForPeace && status.DefenderAsksForPeace) {
-			atWar.Remove(with);
-			with.atWar.Remove(this);
-			EndedWarWith?.Invoke(with);
-			with.EndedWarWith?.Invoke(this);
+			EndWar(with);
 		}
+	}
+
+	void EndWar(Faction with) {
+		atWar.Remove(with);
+		with.atWar.Remove(this);
+		EndedWarWith?.Invoke(with);
+		with.EndedWarWith?.Invoke(this);
+	}
+
+	void EndMe() {
+		foreach (var (f, l) in gottenTradeOffers) foreach (var t in l) RejectTradeOffer(f, t);
+		foreach (var (f, l) in sentTradeOffers) foreach (var t in l) CancelTradeOffer(f, t);
+		foreach (var (f, _) in atWar) EndWar(f);
+	}
+
+	public void Absorb(Faction other) {
+		// does not do land change . do that in Region::AnnexAll
+		resourceStorage.AbsorbFrom(other.Resources);
+		uint count = other.Population.Count;
+		other.Population.Reduce(count);
+		Population.Manifest(count);
+		other.TransferSilver(this, other.Silver);
+		other.EndMe();
 	}
 
 	#endregion

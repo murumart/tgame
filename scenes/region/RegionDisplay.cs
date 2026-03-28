@@ -111,6 +111,7 @@ public partial class RegionDisplay : Node2D {
 
 	void CalcVisibilityRect() {
 		var wposes = region.GroundTilePositions.Select(p => Tilemaps.TilePosToWorldPos(p) + Vector2.Up * Tilemaps.TileElevationVerticalOffset(region.WorldPosition + p, GameMan.Game.Map.World));
+		if (!wposes.Any()) return;
 		float minx = wposes.MinBy(p => p.X).X - Tilemaps.TILE_SIZE.X * 0.5f;
 		float miny = wposes.MinBy(p => p.Y).Y - Tilemaps.TILE_SIZE.Y * 0.5f;
 		float maxx = wposes.MaxBy(p => p.X).X - Tilemaps.TILE_SIZE.X * 0.5f;
@@ -136,6 +137,7 @@ public partial class RegionDisplay : Node2D {
 			camera.ZoomChanged += OnZoomChanged;
 		}
 		region.TileChangedAtEvent += OnTileChanged;
+		region.DisappearedEvent += OnDisappeared;
 	}
 
 	void DisconnectEvents() {
@@ -151,6 +153,7 @@ public partial class RegionDisplay : Node2D {
 			camera.ZoomChanged -= OnZoomChanged;
 		}
 		region.TileChangedAtEvent -= OnTileChanged;
+		region.DisappearedEvent -= OnDisappeared;
 	}
 
 	void OnZoomChanged() {
@@ -293,6 +296,10 @@ public partial class RegionDisplay : Node2D {
 	void OnTileChanged(Vector2I at) {
 		tilemaps.DisplayGround(region);
 		CalcVisibilityRect();
+	}
+
+	void OnDisappeared() {
+		
 	}
 
 	void OnScreenEntered() {

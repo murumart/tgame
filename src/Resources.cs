@@ -177,6 +177,13 @@ public partial class ResourceStorage : IEnumerable<KeyValuePair<IResourceType, I
 		return gives;
 	}
 
+	public void AbsorbFrom(ResourceStorage resources) {
+		foreach (var (t, v) in resources.storageAmounts) {
+			AddResource(new(t, v.Amount));
+		}
+		resources.storageAmounts.Clear();
+	}
+
 	// enumerating over the object
 
 	public IEnumerator<KeyValuePair<IResourceType, InStorage>> GetEnumerator() {

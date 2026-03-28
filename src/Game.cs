@@ -39,6 +39,7 @@ public class Game {
 			while (Time.Minutes - regionAIs[i].Item2 >= 15) {
 				var regs = Map.GetRegions();
 				if (regs[i] == PlayRegion && !AIPlaysInPlayerRegion) break;
+				if (regs[i].LocalFaction.GetPopulationCount() == 0) break; // we are dead here
 				regionAIs[i].Item1.PreUpdate(Time.Minutes);
 				regionAIs[i].Item1.Update(Time.Minutes);
 				regionAIs[i].Item2 += 15;

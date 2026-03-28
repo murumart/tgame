@@ -56,7 +56,7 @@ public partial class PlayerRegion : Node {
 		faction.PulledIntoWarWith += (w, r) => {
 			ui.Announce($"A preface: we at {w.Name} are terribly sad to be forced to do this. But our national interests are most important, and it'd do good for the world to adapt:\n\n{r}", title: $"War from {w.Name}");
 		};
-		faction.EndedWarWith += w => ui. Announce(
+		faction.EndedWarWith += w => ui.Announce(
 			"After much too much fighting, we have decided to put down our weapons and bury this feud. In such a beautiful moment, we can not but celebrate and wish that this peace is lasting and fair...\n\nAt least for us.",
 			title: $"War Ended With {w}"
 		);
@@ -190,7 +190,11 @@ public partial class PlayerRegion : Node {
 			foreach (var ne in region.Neighbors) {
 				var thereCoord = tile + region.WorldPosition - ne.WorldPosition;
 				if (ne.GetGroundTile(thereCoord, out _)) {
-					region.AnnexTile(ne, thereCoord);
+					if (Input.IsPhysicalKeyPressed(Key.Shift)) {
+						region.AnnexAll(ne);
+					} else {
+						region.AnnexTile(ne, thereCoord);
+					}
 					break;
 				}
 			}
@@ -210,6 +214,13 @@ public partial class PlayerRegion : Node {
 		rdisp.Position = Tilemaps.TilePosToWorldPos(neighbor.WorldPosition - region.WorldPosition) - Tilemaps.TILE_SIZE / 2;
 		rdisp.LoadRegion(neighbor, lod, camera);
 		managedDisplays.Add(neighbor, rdisp);
+		neighbor.DisappearedEvent += () => DisappearNeighbor(neighbor);
+	}
+
+	void DisappearNeighbor(Region neighbor) {
+		var rdisp = managedDisplays[neighbor];
+		managedDisplays.Remove(neighbor);
+		rdisp.QueueFree();
 	}
 
 	// building

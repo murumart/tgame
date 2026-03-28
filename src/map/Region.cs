@@ -18,6 +18,7 @@ public class Region {
 	public void NotifyTileChangedAt(Vector2I p) => TileChangedAtEvent?.Invoke(p);
 
 	public event Action<Region> NewNeighborGainedEvent;
+	public event Action DisappearedEvent;
 
 	public readonly int WorldIndex;
 
@@ -196,6 +197,14 @@ public class Region {
 				}
 			}
 		}
+	}
+
+	public void AnnexAll(Region from) {
+		foreach (var t in from.groundTiles.Keys) {
+			AnnexTile(from, t);
+		}
+		LocalFaction.Absorb(from.LocalFaction);
+		from.DisappearedEvent?.Invoke();
 	}
 
 	public float GetPotentialFoodFirstMonth() {
