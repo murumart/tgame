@@ -165,14 +165,19 @@ public class Region {
 			if (from.LocalFaction.HasProblem(fromCoordinate)) {
 				from.LocalFaction.RemoveProblem(fromCoordinate);
 			}
-			var mop = from.GetMapObject(fromCoordinate);
-			from.mapObjects.Remove(fromCoordinate);
-			from.NotifyMapObjectUpdateAt(fromCoordinate);
-			from.NaturalResources.Touch();
-			mapObjects[localCoord] = mop;
-			mop.ChangedRegions(this);
-			NotifyMapObjectUpdateAt(localCoord);
-			NaturalResources.Touch();
+			// could have been removed if was in progress consturction job
+			if (from.HasMapObject(fromCoordinate)) {
+				var mop = from.GetMapObject(fromCoordinate);
+				from.mapObjects.Remove(fromCoordinate);
+				from.NotifyMapObjectUpdateAt(fromCoordinate);
+				from.NaturalResources.Touch();
+				from.LocalFaction.OnMapObjectRemoved(mop);
+				mapObjects[localCoord] = mop;
+				mop.ChangedRegions(this);
+				NotifyMapObjectUpdateAt(localCoord);
+				NaturalResources.Touch();
+				LocalFaction.OnMapObjectAdded(mop);
+			}
 		}
 		from.NotifyTileChangedAt(fromCoordinate);
 		NotifyTileChangedAt(localCoord);

@@ -47,7 +47,7 @@ public class FactionActions {
 
 	public IEnumerable<MapObject> GetMapObjects() => region.GetMapObjects();
 
-	
+
 	public int GetBuildingCount(IBuildingType buildingType) {
 		return faction.GetBuildingCount(buildingType);
 	}
@@ -120,8 +120,6 @@ public class FactionActions {
 
 	void HourlyUpdate(TimeT timeInMinutes) {
 	}
-
-	void OnRegionMapObjectUpdated(Vector2I tile) { }
 
 	void OnRegionMandateFailed(Document doc) {
 		GD.Print("FactionAction::OnRegionMandateFailed : MY MANDATE FAILED:::::: DAMN");

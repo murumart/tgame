@@ -353,6 +353,20 @@ public class Faction : IEntity {
 
 	void OnMapObjectUpdated(Vector2I at) { }
 
+	
+	// these are meant to be called externally when annexing a tile. they should help keep data in sync
+	public void OnMapObjectAdded(MapObject mapObject) {
+		if (mapObject is Building building) {
+			OnBuildingConstructed(building);
+		}
+	}
+
+	public void OnMapObjectRemoved(MapObject mapObject) {
+		if (mapObject is Building building) {
+			OnBuildingRemoved(building);
+		}
+	}
+
 	#endregion
 
 	#region Timing & Contracts
