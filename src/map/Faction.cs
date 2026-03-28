@@ -33,6 +33,7 @@ public class Faction : IEntity {
 	public event Action<Faction, string> StartedWarWith;
 	public event Action<Faction, string> PulledIntoWarWith;
 	public event Action<Faction> EndedWarWith;
+	public event Action<DefunctReason> Done;
 
 	public Region Region { get; init; }
 
@@ -84,6 +85,13 @@ public class Faction : IEntity {
 
 	TimeT time;
 
+	public enum DefunctReason {
+		None,
+		Starvation,
+		Annexation,
+	}
+	DefunctReason defunct = DefunctReason.None;
+
 
 	public Faction(Region region, uint initialPopulation = 30, uint initialSilver = 30) {
 
@@ -98,7 +106,7 @@ public class Faction : IEntity {
 		Population.FurnitureRateRequested += GetFurnitureRate;
 		Population.SilverRequested += () => Silver;
 		Population.Manifest(initialPopulation);
-		Population.PopulationDroppedToZero += EndMe;
+		Population.PopulationDroppedToZero += () => EndMe(DefunctReason.Starvation);
 
 		Region.SetLocalFaction(this);
 
@@ -509,20 +517,27 @@ public class Faction : IEntity {
 		with.EndedWarWith?.Invoke(this);
 	}
 
-	void EndMe() {
-		foreach (var (f, l) in gottenTradeOffers) foreach (var t in l) RejectTradeOffer(f, t);
-		foreach (var (f, l) in sentTradeOffers) foreach (var t in l) CancelTradeOffer(f, t);
-		foreach (var (f, _) in atWar) EndWar(f);
+	void EndMe(DefunctReason reason) {
+		Debug.Assert(defunct == DefunctReason.None, "Faction is already over");
+		foreach (var f in gottenTradeOffers.Keys.ToList()) foreach (var t in gottenTradeOffers[f].ToList()) RejectTradeOffer(f, t);
+		foreach (var f in sentTradeOffers.Keys.ToList()) foreach (var t in sentTradeOffers[f].ToList()) CancelTradeOffer(f, t);
+		foreach (var f in atWar.Keys.ToList()) EndWar(f);
+		defunct = reason;
+		Done?.Invoke(reason);
 	}
 
 	public void Absorb(Faction other) {
 		// does not do land change . do that in Region::AnnexAll
+		if (other.IsWild) {
+			if (other.defunct == DefunctReason.None) other.EndMe(DefunctReason.Annexation);
+			return;
+		}
 		resourceStorage.AbsorbFrom(other.Resources);
 		uint count = other.Population.Count;
 		other.Population.Reduce(count);
 		Population.Manifest(count);
 		other.TransferSilver(this, other.Silver);
-		other.EndMe();
+		if (other.defunct == DefunctReason.None) other.EndMe(DefunctReason.Annexation);
 	}
 
 	#endregion

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Godot;
@@ -16,7 +17,7 @@ public partial class PlayerRegion : Node {
 	[Export] RegionCamera camera;
 	[Export] RegionDisplay regionDisplay;
 	[Export] Node otherDisplaysParent;
-	readonly Dictionary<Region, RegionDisplay> managedDisplays = new();
+	readonly Dictionary<Region, (RegionDisplay Display, Action OnDisappear, Action<Faction.DefunctReason> OnDie)> managedDisplays = new();
 
 	Region region;
 	Faction faction;
@@ -60,12 +61,6 @@ public partial class PlayerRegion : Node {
 			"After much too much fighting, we have decided to put down our weapons and bury this feud. In such a beautiful moment, we can not but celebrate and wish that this peace is lasting and fair...\n\nAt least for us.",
 			title: $"War Ended With {w}"
 		);
-		foreach (var neighbor in region.Neighbors) {
-			if (neighbor.LocalFaction.IsWild) continue;
-			neighbor.LocalFaction.Population.PopulationDroppedToZero += () => {
-				ui.Notifications.Notify($"Communication ceases from our neighbor {neighbor.LocalFaction.Name}.");
-			};
-		}
 
 		GameMan.Game.Time.TimePassedEvent += PassTime;
 		GameMan.Game.Time.HourPassedEvent += HourlyUpdate;
@@ -213,14 +208,23 @@ public partial class PlayerRegion : Node {
 				: Colors.White;
 		rdisp.Position = Tilemaps.TilePosToWorldPos(neighbor.WorldPosition - region.WorldPosition) - Tilemaps.TILE_SIZE / 2;
 		rdisp.LoadRegion(neighbor, lod, camera);
-		managedDisplays.Add(neighbor, rdisp);
-		neighbor.DisappearedEvent += () => DisappearNeighbor(neighbor);
+		void onDisappear() => DisappearNeighbor(neighbor);
+		void onFactionDie(Faction.DefunctReason rs) {
+			if (rs == Faction.DefunctReason.Starvation) ui.Notifications.Notify($"Communication ceases from our neighbor {neighbor.LocalFaction.Name}.");
+			else if (rs == Faction.DefunctReason.Annexation) ui.Notifications.Notify($"{neighbor.LocalFaction.Name} has been annexed.");
+		}
+		neighbor.DisappearedEvent += onDisappear;
+		neighbor.LocalFaction.Done += onFactionDie;
+		managedDisplays.Add(neighbor, (rdisp, onDisappear, onFactionDie));
 	}
 
 	void DisappearNeighbor(Region neighbor) {
-		var rdisp = managedDisplays[neighbor];
+		bool has = managedDisplays.TryGetValue(neighbor, out var rdisp);
+		Debug.Assert(has, $"No has {neighbor}");
 		managedDisplays.Remove(neighbor);
-		rdisp.QueueFree();
+		neighbor.DisappearedEvent -= rdisp.OnDisappear;
+		neighbor.LocalFaction.Done -= rdisp.OnDie;
+		rdisp.Display.QueueFree();
 	}
 
 	// building
@@ -308,11 +312,13 @@ public partial class PlayerRegion : Node {
 
 	void OnRegionMapObjectUpdated(Vector2I tile) { }
 
-	void OnNewNeighborGained(Region region) {
-		var disp = managedDisplays[region];
-		managedDisplays.Remove(region);
-		disp.QueueFree();
-		DisplayNeighbor(region, 1);
+	void OnNewNeighborGained(Region neighbor) {
+		var disp = managedDisplays[neighbor];
+		managedDisplays.Remove(neighbor);
+		disp.Display.QueueFree();
+		neighbor.DisappearedEvent -= disp.OnDisappear;
+		neighbor.LocalFaction.Done -= disp.OnDie;
+		DisplayNeighbor(neighbor, 1);
 	}
 
 	void OnRegionMandateFailed(Document doc) {

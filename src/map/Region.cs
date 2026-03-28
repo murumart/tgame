@@ -15,7 +15,6 @@ public class Region {
 	public void NotifyMapObjectUpdateAt(Vector2I p) => MapObjectUpdatedAtEvent?.Invoke(p);
 
 	public event Action<Vector2I> TileChangedAtEvent;
-	public void NotifyTileChangedAt(Vector2I p) => TileChangedAtEvent?.Invoke(p);
 
 	public event Action<Region> NewNeighborGainedEvent;
 	public event Action DisappearedEvent;
@@ -149,7 +148,7 @@ public class Region {
 		return resourceSite;
 	}
 
-	public void AnnexTile(Region from, Vector2I fromCoordinate) {
+	public void AnnexTile(Region from, Vector2I fromCoordinate, bool notify = true) {
 		Debug.Assert(from.groundTiles.ContainsKey(fromCoordinate), $"Region to annex from doesn't own tile at {fromCoordinate}");
 		var globalCoord = fromCoordinate + from.WorldPosition;
 		var localCoord = globalCoord - WorldPosition;
@@ -180,8 +179,10 @@ public class Region {
 				LocalFaction.OnMapObjectAdded(mop);
 			}
 		}
-		from.NotifyTileChangedAt(fromCoordinate);
-		NotifyTileChangedAt(localCoord);
+		if (notify) { // only thing currently connected is the RegionDisplay really slow rebuild method
+			from.TileChangedAtEvent?.Invoke(fromCoordinate);
+			TileChangedAtEvent?.Invoke(localCoord);
+		}
 		// check if the tile change exposed new neighbors
 		for (int x = -1; x <= 1; x += 2) {
 			for (int y = -1; y <= 1; y += 2) {
@@ -200,10 +201,11 @@ public class Region {
 	}
 
 	public void AnnexAll(Region from) {
-		foreach (var t in from.groundTiles.Keys) {
-			AnnexTile(from, t);
-		}
 		LocalFaction.Absorb(from.LocalFaction);
+		foreach (var t in from.groundTiles.Keys) {
+			AnnexTile(from, t, notify: false);
+		}
+		TileChangedAtEvent?.Invoke(Vector2I.Zero); // only thing connected is currently ReginoDisplay, this should be fixed better style.
 		from.DisappearedEvent?.Invoke();
 	}
 
@@ -220,7 +222,7 @@ public class Region {
 	}
 
 	public override string ToString() {
-		return $"Reg{WorldPosition}";
+		return $"Reg({WorldPosition},({LocalFaction}))";
 	}
 
 	public static Region GetTestCircleRegion(int index, int radius, Vector2I center) { // debugging
