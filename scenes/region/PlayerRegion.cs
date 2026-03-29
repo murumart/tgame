@@ -52,7 +52,7 @@ public partial class PlayerRegion : Node {
 		faction.MyTradeOfferAcceptedEvent += (o, u) => ui.Notifications.Notify($"{o.Recipient.Name} accepted a trade offer from us. ({o.GetOutputDescription(faction, u)})", timeLimit: 20f);
 		faction.MyTradeOfferRejectedEvent += o => ui.Notifications.Notify($"{o.Recipient.Name} rejected a trade offer from us...", timeLimit: 10f);
 		faction.StartedWarWith += (w, r) => {
-			ui.Notifications.Notify($"We started a war with {w.Name}.", gradientColors: (Palette.BrownRust, new(Palette.Dark, 0f)));
+			ui.Notifications.Notify($"We started a war with {w.Name}.", gradientColors: (new(Palette.Dark, 0f), Palette.BrownRust));
 		};
 		faction.PulledIntoWarWith += (w, r) => {
 			ui.Announce($"A preface: we at {w.Name} are terribly sad to be forced to do this. But our national interests are most important, and it'd do good for the world to adapt:\n\n{r}", title: $"War from {w.Name}");
@@ -182,17 +182,17 @@ public partial class PlayerRegion : Node {
 			ui.TileSelected(tile);
 		} else if (!region.GetGroundTile(tile, out _)) {
 			// DEBUG annex
-			foreach (var ne in region.Neighbors) {
-				var thereCoord = tile + region.WorldPosition - ne.WorldPosition;
-				if (ne.GetGroundTile(thereCoord, out _)) {
-					if (Input.IsPhysicalKeyPressed(Key.Shift)) {
-						region.AnnexAll(ne, GameMan.Game.Map.TileOwners);
-					} else {
-						region.AnnexTile(ne, thereCoord, GameMan.Game.Map.TileOwners);
-					}
-					break;
-				}
-			}
+			//foreach (var ne in region.Neighbors) {
+			//	var thereCoord = tile + region.WorldPosition - ne.WorldPosition;
+			//	if (ne.GetGroundTile(thereCoord, out _)) {
+			//		if (Input.IsPhysicalKeyPressed(Key.Shift)) {
+			//			region.AnnexAll(ne, GameMan.Game.Map.TileOwners);
+			//		} else {
+			//			region.AnnexTile(ne, thereCoord, GameMan.Game.Map.TileOwners);
+			//		}
+			//		break;
+			//	}
+			//}
 		}
 	}
 

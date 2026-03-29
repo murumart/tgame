@@ -48,6 +48,7 @@ public partial class UI : Control {
 		JobsMenu,
 		TradeMenu,
 		WorldMenu,
+		WarMenu,
 	}
 
 	public enum Tab : int {
@@ -57,6 +58,7 @@ public partial class UI : Control {
 		Jobs,
 		Trade,
 		World,
+		War,
 	}
 
 	public bool GameIsOver { get; private set; }
@@ -70,6 +72,7 @@ public partial class UI : Control {
 	[Export] public Button jobsButton;
 	[Export] public Button tradeButton;
 	[Export] public Button worldButton;
+	[Export] public Button warButton;
 
 	// bottom bar menus menus
 	[Export] TabContainer menuTabs;
@@ -78,6 +81,7 @@ public partial class UI : Control {
 	[Export] JobsList jobsList;
 	[Export] TradeInfoPanel tradeInfoPanel;
 	[Export] WorldUI worldUI;
+	[Export] WarInfoPanel warInfoPanel;
 
 	// right
 	[Export] public MapObjectMenu mopjectMenu;
@@ -137,6 +141,7 @@ public partial class UI : Control {
 		jobsButton.Pressed += () => OnTabButtonPressed(Tab.Jobs, State.JobsMenu);
 		tradeButton.Pressed += () => OnTabButtonPressed(Tab.Trade, State.TradeMenu);
 		worldButton.Pressed += () => OnTabButtonPressed(Tab.World, State.WorldMenu);
+		warButton.Pressed += () => OnTabButtonPressed(Tab.War, State.WarMenu);
 
 		pauseButton.Pressed += OnPauseButtonPressed;
 		normalSpeedButton.Pressed += OnNormalSpeedButtonPressed;
@@ -234,26 +239,36 @@ public partial class UI : Control {
 	// menu activites
 
 	public void SelectTab(Tab which) {
-		if (which == Tab.None) {
-			// reset some things
-			buildingList.Reset();
-		} else if (which == Tab.Build) {
-			buildingList.Update();
-			buildingList.Show();
-		} else if (which == Tab.Documents) {
-			documentsDisplay.Display(GetBriefcase());
-		} else if (which == Tab.Jobs) {
-			jobsList.Display();
-		} else if (which == Tab.Trade) {
-			var fac = GetFactionActions();
-			var pm = fac.GetProcessMarketJob();
-			if (pm is null) {
-				tradeInfoPanel.DisplayNoMarket();
-			} else tradeInfoPanel.Display(fac.Faction, pm.TradeOffers);
-		} else if (which == Tab.World) {
-			worldUI.DisplayWorld(GameMan.Game.Map.World);
-			worldUI.DrawRegions(GameMan.Game.Map.GetRegions());
-			worldUI.SelectRegion(GetFactionActions().Region);
+		switch (which) {
+			case Tab.None:
+				buildingList.Reset();
+				break;
+			case Tab.Build:
+				buildingList.Update();
+				buildingList.Show();
+				break;
+			case Tab.Documents:
+				documentsDisplay.Display(GetBriefcase());
+				break;
+			case Tab.Jobs:
+				jobsList.Display();
+				break;
+			case Tab.Trade: {
+					var fac = GetFactionActions();
+					var pm = fac.GetProcessMarketJob();
+					if (pm is null) {
+						tradeInfoPanel.DisplayNoMarket();
+					} else tradeInfoPanel.Display(fac.Faction, pm.TradeOffers);
+				}
+				break;
+			case Tab.World:
+				worldUI.DisplayWorld(GameMan.Game.Map.World);
+				worldUI.DrawRegions(GameMan.Game.Map.GetRegions());
+				worldUI.SelectRegion(GetFactionActions().Region);
+				break;
+			case Tab.War:
+				warInfoPanel.Display(GetFactionActions().Faction);
+				break;
 		}
 		menuTabs.CurrentTab = (int)which;
 	}
@@ -409,23 +424,17 @@ public partial class UI : Control {
 	// utilities
 
 	void Escape() {
-		if (state == State.PlacingBuild || state == State.ChoosingBuild) {
-			state = State.Idle;
-		}
-		if (state == State.MapObjectMenu) {
-			state = State.Idle;
-		}
-		if (state == State.AgreementsMenu) {
-			state = State.Idle;
-		}
-		if (state == State.JobsMenu) {
-			state = State.Idle;
-		}
-		if (state == State.TradeMenu) {
-			state = State.Idle;
-		}
-		if (state == State.WorldMenu) {
-			state = State.Idle;
+		switch (state) {
+			case State.PlacingBuild:
+			case State.ChoosingBuild:
+			case State.MapObjectMenu:
+			case State.AgreementsMenu:
+			case State.JobsMenu:
+			case State.TradeMenu:
+			case State.WorldMenu:
+			case State.WarMenu:
+				state = State.Idle;
+				break;
 		}
 	}
 
@@ -449,6 +458,9 @@ public partial class UI : Control {
 			// 	state = State.Idle;
 			// 	MapClick(tilePosition);
 			// 	break;
+			case State.WarMenu:
+				warInfoPanel.Click(tilePosition + GetFactionActions().Region.WorldPosition);
+				break;
 			default:
 				state = State.Idle;
 				MapClick(tilePosition);
@@ -509,6 +521,12 @@ public partial class UI : Control {
 				SetTimeSpeedAlteringAllowed(true);
 				if (GameMan.IsPaused && !wasPausedBefore) GameMan.TogglePause();
 			}
+			if (old == State.WarMenu) {
+				SelectTab(Tab.None);
+				SetTimeSpeedAlteringAllowed(true);
+				if (GameMan.IsPaused && !wasPausedBefore) GameMan.TogglePause();
+				warInfoPanel.Undisplay();
+			}
 		}
 		if (current == State.ChoosingBuild
 			|| current == State.MapObjectMenu
@@ -516,6 +534,7 @@ public partial class UI : Control {
 			|| current == State.JobsMenu
 			|| current == State.TradeMenu
 			|| current == State.WorldMenu
+			|| current == State.WarMenu
 		) {
 			SetTimeSpeedAlteringAllowed(false);
 			if (!GameMan.IsPaused) {

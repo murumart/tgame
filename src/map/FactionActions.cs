@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Godot;
+using scenes.autoload;
 using static Building;
 
 public class FactionActions {
@@ -26,7 +27,7 @@ public class FactionActions {
 		return region.GetGroundTiles();
 	}
 
-	public (float, float) GetFoodAndUsage() {
+	public (float Food, float Usage) GetFoodAndUsage() {
 		return (
 			faction.GetFood(),
 			faction.GetFoodUsage()
@@ -115,6 +116,10 @@ public class FactionActions {
 	public uint GetFreeWorkers() => GetUnemployedPopulationCount();
 
 	public uint GetUnemployedPopulationCount() => faction.UnemployedPopulation;
+
+	public void Surrender(Faction to) {
+		to.Region.AnnexAll(region, GameMan.Game.Map.TileOwners);
+	}
 
 	// notifications
 

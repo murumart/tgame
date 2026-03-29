@@ -46,7 +46,7 @@ public partial class RegionDisplayHighlight : Node2D {
 				var lpos = new Vector2I(x, y);
 				var s = spritesByTile[lpos];
 				s.Position = Tilemaps.TilePosToWorldPos(lpos - Vector2I.Right/* ??? */) + Vector2.Up * Tilemaps.TileElevationVerticalOffset(wpos, world);
-				displayFunc(s, wpos, lpos, MathF.Sqrt(sqdist));
+				displayFunc(s, wpos, lpos, 1f - MathF.Sqrt(sqdist) / radius);
 			}
 		}
 	}

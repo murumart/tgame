@@ -85,6 +85,10 @@ public class Region {
 		return neighbors.Add(neighbor);
 	}
 
+	public bool GetEdge(Vector2I pos, out (Region Right, Region Left, Region Below, Region Above) edge) {
+		return edges.TryGetValue(pos, out edge);
+	}
+
 	public void SetLocalFaction(Faction regionFaction) {
 		LocalFaction = regionFaction;
 	}

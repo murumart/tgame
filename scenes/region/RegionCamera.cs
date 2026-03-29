@@ -8,7 +8,7 @@ public partial class RegionCamera : Camera {
 
 	[Export] public Node2D Cursor;
 	[Export] Node2D debugCursor;
-	[Export] RegionDisplayHighlight regionDisplayHighlight;
+	[Export] public RegionDisplayHighlight RegionDisplayHighlight;
 	[Export] RegionDisplay regionDisplay;
 	[Export] UI ui;
 
@@ -23,7 +23,7 @@ public partial class RegionCamera : Camera {
 
 		// debug
 		//GetTree().Connect(SceneTree.SignalName.ProcessFrame, Callable.From(() => {
-		//	regionDisplayHighlight.SetDisplay(Region.GetEdgesHighlightFunction(GameMan.Game.Map.TileOwners));
+		//	RegionDisplayHighlight.SetDisplay(Region.GetEdgesHighlightFunction(GameMan.Game.Map.TileOwners));
 		//}), (uint)ConnectFlags.OneShot);
 	}
 
@@ -51,7 +51,7 @@ public partial class RegionCamera : Camera {
 			var tileWorldPos = regionDisplay.Region.WorldPosition + tilepos;
 			Cursor.Position = Tilemaps.TilePosToWorldPos(tilepos) + Vector2.Up * Tilemaps.TileElevationVerticalOffset(tileWorldPos, GameMan.Game.Map.World);
 			debugCursor.Position = Tilemaps.TilePosToWorldPos(tilepos);
-			regionDisplayHighlight.Update(GameMan.Game.Map.World, tilepos, tileWorldPos);
+			RegionDisplayHighlight.Update(GameMan.Game.Map.World, tilepos, tileWorldPos);
 			ui.OnTileHighlighted(tilepos, Region);
 			lastTilePos = tilepos;
 		}

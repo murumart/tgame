@@ -15,6 +15,7 @@
 [ext_resource type="PackedScene" uid="uid://b311cvqibnmx0" path="res://scenes/region/ui/trade_info_panel.tscn" id="11_3haic"]
 [ext_resource type="PackedScene" uid="uid://oq1d8aheub65" path="res://scenes/map/ui/world_ui.tscn" id="12_igkl3"]
 [ext_resource type="AudioStream" uid="uid://clyck37eh7i6m" path="res://sound/ui/menusounds-01.ogg" id="13_lkpo6"]
+[ext_resource type="PackedScene" uid="uid://hum5yr63np8w" path="res://scenes/region/ui/war_infopanel.tscn" id="13_nqtah"]
 [ext_resource type="Script" uid="uid://budv3jk6vkbdc" path="res://sound/ui/UISoundCreator.cs" id="14_igkl3"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_suhma"]
@@ -106,7 +107,15 @@ unicode = 118
 [sub_resource type="Shortcut" id="Shortcut_cb21y"]
 events = [SubResource("InputEventKey_euv85")]
 
-[node name="Ui" type="MarginContainer" unique_id=948088031 node_paths=PackedStringArray("buildButton", "agreementsButton", "jobsButton", "tradeButton", "worldButton", "menuTabs", "buildingList", "documentsDisplay", "jobsList", "tradeInfoPanel", "worldUI", "mopjectMenu", "resourceDisplay", "pauseDisplayPanel", "panButton", "zoomLabel", "zoomInButton", "zoomResetButton", "zoomOutButton", "gameSpeedLabel", "pauseButton", "normalSpeedButton", "fastSpeedButton", "fasterSpeedButton", "resourceLabel", "announcementOkayButton", "announcementText", "announcementTitle", "announcementParent", "Notifications")]
+[sub_resource type="InputEventKey" id="InputEventKey_nqtah"]
+device = -1
+keycode = 66
+unicode = 98
+
+[sub_resource type="Shortcut" id="Shortcut_3haic"]
+events = [SubResource("InputEventKey_nqtah")]
+
+[node name="Ui" type="MarginContainer" unique_id=948088031 node_paths=PackedStringArray("buildButton", "agreementsButton", "jobsButton", "tradeButton", "worldButton", "warButton", "menuTabs", "buildingList", "documentsDisplay", "jobsList", "tradeInfoPanel", "worldUI", "warInfoPanel", "mopjectMenu", "resourceDisplay", "pauseDisplayPanel", "panButton", "zoomLabel", "zoomInButton", "zoomResetButton", "zoomOutButton", "gameSpeedLabel", "pauseButton", "normalSpeedButton", "fastSpeedButton", "fasterSpeedButton", "resourceLabel", "announcementOkayButton", "announcementText", "announcementTitle", "announcementParent", "Notifications")]
 z_index = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -124,12 +133,14 @@ agreementsButton = NodePath("VBoxContainer2/HBoxContainer/VBoxContainer2/Control
 jobsButton = NodePath("VBoxContainer2/HBoxContainer/VBoxContainer2/ControlButtons/VBoxContainer2/JobsButton")
 tradeButton = NodePath("VBoxContainer2/HBoxContainer/VBoxContainer2/ControlButtons/VBoxContainer3/TradeButton")
 worldButton = NodePath("VBoxContainer2/HBoxContainer/VBoxContainer2/ControlButtons/VBoxContainer4/WorldButton")
+warButton = NodePath("VBoxContainer2/HBoxContainer/VBoxContainer2/ControlButtons/VBoxContainer5/WarButton")
 menuTabs = NodePath("VBoxContainer2/HBoxContainer/VBoxContainer2/MenuTabs")
 buildingList = NodePath("VBoxContainer2/HBoxContainer/VBoxContainer2/MenuTabs/HBoxContainer/BuildMenu")
 documentsDisplay = NodePath("VBoxContainer2/HBoxContainer/VBoxContainer2/MenuTabs/HBoxContainer2/Agreements")
 jobsList = NodePath("VBoxContainer2/HBoxContainer/VBoxContainer2/MenuTabs/HBoxContainer3/Jobs")
 tradeInfoPanel = NodePath("VBoxContainer2/HBoxContainer/VBoxContainer2/MenuTabs/HBoxContainer4/TradeInfopanel")
 worldUI = NodePath("VBoxContainer2/HBoxContainer/VBoxContainer2/MenuTabs/HBoxContainer5/WorldUI")
+warInfoPanel = NodePath("VBoxContainer2/HBoxContainer/VBoxContainer2/MenuTabs/HBoxContainer6/WarInfopanel")
 mopjectMenu = NodePath("VBoxContainer2/HBoxContainer/MapObjectMenu")
 resourceDisplay = NodePath("VBoxContainer/VBoxContainer/ResourceDisplay")
 pauseDisplayPanel = NodePath("PausePanel")
@@ -507,6 +518,21 @@ size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.88
 mouse_filter = 2
 
+[node name="HBoxContainer6" type="HBoxContainer" parent="VBoxContainer2/HBoxContainer/VBoxContainer2/MenuTabs" unique_id=1465725724]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 5
+
+[node name="WarInfopanel" parent="VBoxContainer2/HBoxContainer/VBoxContainer2/MenuTabs/HBoxContainer6" unique_id=91762423 node_paths=PackedStringArray("ui") instance=ExtResource("13_nqtah")]
+layout_mode = 2
+ui = NodePath("../../../../../..")
+
+[node name="Fat" type="Control" parent="VBoxContainer2/HBoxContainer/VBoxContainer2/MenuTabs/HBoxContainer6" unique_id=1670378756]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.88
+mouse_filter = 2
+
 [node name="ControlButtons" type="HBoxContainer" parent="VBoxContainer2/HBoxContainer/VBoxContainer2" unique_id=1935346688]
 layout_mode = 2
 mouse_filter = 2
@@ -582,6 +608,23 @@ focus_mode = 0
 shortcut = SubResource("Shortcut_cb21y")
 shortcut_in_tooltip = false
 text = "World"
+
+[node name="VBoxContainer5" type="VBoxContainer" parent="VBoxContainer2/HBoxContainer/VBoxContainer2/ControlButtons" unique_id=1410777783]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="Label" type="Label" parent="VBoxContainer2/HBoxContainer/VBoxContainer2/ControlButtons/VBoxContainer5" unique_id=1376612688]
+layout_mode = 2
+text = "B"
+label_settings = ExtResource("3_ppqjx")
+horizontal_alignment = 1
+
+[node name="WarButton" type="Button" parent="VBoxContainer2/HBoxContainer/VBoxContainer2/ControlButtons/VBoxContainer5" unique_id=1843188121]
+layout_mode = 2
+focus_mode = 0
+shortcut = SubResource("Shortcut_3haic")
+shortcut_in_tooltip = false
+text = "War"
 
 [node name="AgreementsButton" type="Button" parent="VBoxContainer2/HBoxContainer/VBoxContainer2/ControlButtons" unique_id=234576058]
 unique_name_in_owner = true

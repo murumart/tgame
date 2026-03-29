@@ -35,8 +35,8 @@ camera = NodePath("RegionCamera")
 regionDisplay = NodePath("Ysort/RegionDisplay")
 otherDisplaysParent = NodePath("Ysort/OtherDisplays")
 
-[node name="RegionCamera" parent="." unique_id=1239662942 node_paths=PackedStringArray("regionDisplayHighlight", "regionDisplay") instance=ExtResource("4_du6xo")]
-regionDisplayHighlight = NodePath("../RegionDisplayHighlight")
+[node name="RegionCamera" parent="." unique_id=1239662942 node_paths=PackedStringArray("RegionDisplayHighlight", "regionDisplay") instance=ExtResource("4_du6xo")]
+RegionDisplayHighlight = NodePath("../RegionDisplayHighlight")
 regionDisplay = NodePath("../Ysort/RegionDisplay")
 
 [node name="Ysort" type="Node2D" parent="." unique_id=1608065967]
@@ -57,3 +57,5 @@ soundChoices = ExtResource("9_4hooy")
 
 [node name="RegionDisplayHighlight" parent="." unique_id=1835308877 instance=ExtResource("12_v0ccf")]
 z_index = -1
+
+[editable path="RegionCamera"]
