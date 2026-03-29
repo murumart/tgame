@@ -5,10 +5,11 @@
 [ext_resource type="Material" uid="uid://cet7ep6cvqk3p" path="res://resources/visual/add_material.tres" id="3_snfgk"]
 [ext_resource type="Texture2D" uid="uid://ethlsfg8xmhk" path="res://scenes/region/iso_mask.png" id="4_jowqh"]
 
-[node name="RegionCamera" type="Camera2D" unique_id=633581434 node_paths=PackedStringArray("Cursor", "debugCursor", "ui")]
+[node name="RegionCamera" type="Camera2D" unique_id=633581434 node_paths=PackedStringArray("Cursor", "debugCursor", "regionDisplayHighlight", "ui")]
 script = ExtResource("1_rxgj5")
 Cursor = NodePath("Cursor")
 debugCursor = NodePath("Debugcursor")
+regionDisplayHighlight = NodePath("")
 ui = NodePath("Ui")
 
 [node name="Ui" parent="." unique_id=2048202457 node_paths=PackedStringArray("Camera") instance=ExtResource("2_lh5hp")]

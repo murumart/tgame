@@ -8,6 +8,7 @@ namespace scenes.region {
 
 		[Export] public Node2D Cursor;
 		[Export] Node2D debugCursor;
+		[Export] RegionDisplayHighlight regionDisplayHighlight;
 		[Export] RegionDisplay regionDisplay;
 		[Export] UI ui;
 
@@ -42,10 +43,12 @@ namespace scenes.region {
 			Cursor.Visible = !dragging;
 			var tilepos = regionDisplay.GetMouseHoveredTilePos();
 			debugCursor.GlobalPosition = Tilemaps.TilePosToWorldPos(tilepos);
-			Cursor.GlobalPosition = Tilemaps.TilePosToWorldPos(tilepos) + Vector2.Up * Tilemaps.TileElevationVerticalOffset(regionDisplay.Region.WorldPosition + tilepos, GameMan.Game.Map.World);
+			var tileWorldPos = regionDisplay.Region.WorldPosition + tilepos;
+			Cursor.GlobalPosition = Tilemaps.TilePosToWorldPos(tilepos) + Vector2.Up * Tilemaps.TileElevationVerticalOffset(tileWorldPos, GameMan.Game.Map.World);
 			if (tilepos != lastTilePos) {
 				lastTilePos = tilepos;
 				ui.OnTileHighlighted(tilepos, Region);
+				regionDisplayHighlight.Update(GameMan.Game.Map.World, tilepos, tileWorldPos);
 			}
 		}
 

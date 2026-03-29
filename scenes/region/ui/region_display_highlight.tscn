@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://cmjimolv31mhq"]
+
+[ext_resource type="Script" uid="uid://drif5xyadw1cy" path="res://scenes/region/ui/RegionDisplayHighlight.cs" id="1_kf7mr"]
+
+[node name="RegionDisplayHighlight" type="Node2D" unique_id=1835308877]
+script = ExtResource("1_kf7mr")
