@@ -20,7 +20,8 @@ public partial class UISoundCreator : AudioStreamPlayer {
 		if (n is Button b) {
 			b.MouseEntered += () => ElementHovered(b);
 			b.FocusEntered += () => ElementHovered(b);
-			b.Pressed += () => ElementClicked(b);
+			b.ButtonDown += () => ElementMouseDown(b);
+			b.Pressed += () => ElementMouseUp(b);
 		}
 		foreach (Node c in n.GetChildren()) ApplyToButtons(c);
 	}
@@ -32,10 +33,17 @@ public partial class UISoundCreator : AudioStreamPlayer {
 		Play();
 	}
 
-	void ElementClicked(Control c) {
+	void ElementMouseUp(Control c) {
 		if (!IsInsideTree()) return;
 		if (c is Button b && b.Disabled) return;
 		Stream = clickSound;
+		Play();
+	}
+
+	void ElementMouseDown(Control c) {
+		if (!IsInsideTree()) return;
+		if (c is Button b && b.Disabled) return;
+		Stream = hoverSound;
 		Play();
 	}
 
