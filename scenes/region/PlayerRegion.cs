@@ -186,9 +186,9 @@ public partial class PlayerRegion : Node {
 				var thereCoord = tile + region.WorldPosition - ne.WorldPosition;
 				if (ne.GetGroundTile(thereCoord, out _)) {
 					if (Input.IsPhysicalKeyPressed(Key.Shift)) {
-						region.AnnexAll(ne);
+						region.AnnexAll(ne, GameMan.Game.Map.TileOwners);
 					} else {
-						region.AnnexTile(ne, thereCoord);
+						region.AnnexTile(ne, thereCoord, GameMan.Game.Map.TileOwners);
 					}
 					break;
 				}

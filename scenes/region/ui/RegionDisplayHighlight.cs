@@ -1,19 +1,19 @@
+global using RegionDisplayHighlightDisplayFunc = System.Action<Godot.Sprite2D, Godot.Vector2I, Godot.Vector2I, float>;
+
 using System;
 using System.Collections.Generic;
 using Godot;
 
 namespace scenes.region.ui;
 
-using DisplayFunc = Action<Sprite2D, Vector2I, Vector2I, float>;
-
 public partial class RegionDisplayHighlight : Node2D {
 
-	const int maxRadius = 10;
+	const int maxRadius = 24;
 	static readonly Texture2D IsoTexture = GD.Load<Texture2D>("uid://ethlsfg8xmhk");
 
 	readonly Dictionary<Vector2I, Sprite2D> spritesByTile = new();
 
-	DisplayFunc displayFunc = DefaultDisplay;
+	RegionDisplayHighlightDisplayFunc displayFunc = DefaultDisplay;
 
 
 	public override void _Ready() {
@@ -40,19 +40,18 @@ public partial class RegionDisplayHighlight : Node2D {
 		Position = Tilemaps.TilePosToWorldPos(centerLocalPosition); // individual tiles get world offset
 		for (int x = -radius; x < radius; x++) {
 			for (int y = -radius; y < radius; y++) {
-				int dist = x * x + y * y;
-				if (dist > radius * radius) continue;
-				Vector2I wpos = new(x + centerWorldPosition.X, y + centerWorldPosition.Y);
-				Vector2I lpos = new(x, y);
-				float eleoff = Tilemaps.TileElevationVerticalOffset(wpos, world);
+				int sqdist = x * x + y * y;
+				if (sqdist > radius * radius) continue;
+				var wpos = centerWorldPosition + new Vector2I(x, y);
+				var lpos = new Vector2I(x, y);
 				var s = spritesByTile[lpos];
-				s.Position = Tilemaps.TilePosToWorldPos(lpos) + Vector2.Up * eleoff;
-				displayFunc(s, wpos, lpos, MathF.Sqrt(dist));
+				s.Position = Tilemaps.TilePosToWorldPos(lpos - Vector2I.Right/* ??? */) + Vector2.Up * Tilemaps.TileElevationVerticalOffset(wpos, world);
+				displayFunc(s, wpos, lpos, MathF.Sqrt(sqdist));
 			}
 		}
 	}
 
-	public void SetDisplay(DisplayFunc display = null) {
+	public void SetDisplay(RegionDisplayHighlightDisplayFunc display = null) {
 		this.displayFunc = display;
 	}
 

@@ -135,16 +135,16 @@ public partial class WorldGenUi : MarginContainer {
 	async void OnGenRegionsPressed() {
 		Debug.Assert(!worldGenerator.Generating);
 		OnStartGenerating();
-#if !DEBUG
+#if false//!DEBUG
 		{
 			var drawRegionsCallable = Callable.From(() => worldUI.DrawRegions(worldGenerator.Regions));
 			var tw = CreateTween().SetLoops();
 			tw.TweenInterval(0.05f);
 			tw.TweenCallback(drawRegionsCallable);
 
-			this.map = await worldGenerator.GenerateRegions(world);
+			this.map = await worldGenerator.GenerateRegions(world, 10);
 			tw.Stop();
-		} 
+		}
 #else
 		{
 			this.map = await worldGenerator.GenerateRegions(world, 128);

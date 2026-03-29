@@ -119,8 +119,8 @@ public partial class WorldUI : Control {
 				: region.LocalFaction.IsWild
 					? "Howling wilderness"
 					: "Sovereign territory") + "\n"
-			+ $"Land tiles: {region.LandTileCount}\n"
-			+ $"Sea tiles: {region.OceanTileCount}\n"
+			+ $"Land tiles: {region.GetLandTileCount()}\n"
+			+ $"Sea tiles: {region.GetOceanTileCount()}\n"
 			+ $"Population: {(region.LocalFaction.GetPopulationCount())}\n"
 			+ $"Natural Resources: {string.Join(", ", region.NaturalResources.Value.Select(a => a.ToString()))}\n"
 			+ $"Potential Food: {(int)region.GetPotentialFoodFirstMonth()}\n"
@@ -143,7 +143,7 @@ public partial class WorldUI : Control {
 
 		Faction faction = region.LocalFaction;
 		bool iswild = region.LocalFaction.IsWild;
-		bool isneighbor = myRegion.Neighbors.Contains(region); 
+		bool isneighbor = myRegion.Neighbors.Contains(region);
 		if (!isneighbor && myRegion != region) {
 			factionInfoLabel.Text = "This faction is far away from us... Don't know much.";
 			return;
@@ -151,13 +151,13 @@ public partial class WorldUI : Control {
 		factionTitleLabel.Text = region.LocalFaction.Name;
 		if (myRegion == region) factionTitleLabel.Text += " (your location)";
 		bool isatwar = myFaction.IsAtWarWith(faction);
-		bool isdead = faction.Population.Count == 0;
+		bool isdead = !iswild && faction.Population.Count == 0;
 		if (isatwar) factionTitleLabel.Text += " (AT WAR WITH YOU)";
 		if (isdead) factionTitleLabel.Text += " (Abandoned)";
 		if (iswild) {
 			factionInfoLabel.Text = "Empty of meaningful civilisation.\n"
-				+ $"Land tiles: {region.LandTileCount}\n"
-				+ $"Sea tiles: {region.OceanTileCount}\n";
+				+ $"Land tiles: {region.GetLandTileCount()}\n"
+				+ $"Sea tiles: {region.GetOceanTileCount()}\n";
 			return;
 		}
 		int myMilitary = myFaction.Military;
@@ -169,14 +169,14 @@ public partial class WorldUI : Control {
 				? $"({mildiff} more than ours)"
 				: "";
 		factionInfoLabel.Text = ""
-			+ $"Land tiles: {region.LandTileCount}\n"
-			+ $"Sea tiles: {region.OceanTileCount}\n"
+			+ $"Land tiles: {region.GetLandTileCount()}\n"
+			+ $"Sea tiles: {region.GetOceanTileCount()}\n"
 			+ $"Population: {(region.LocalFaction.GetPopulationCount())}\n"
 			+ $"Silver: {(region.LocalFaction.Silver)} (total {region.LocalFaction.LiquidSilver})\n"
 			+ $"Military power: {(region.LocalFaction.Military)} {mildesc}\n"
 			+ $"Happiness with ruler: {((int)(region.LocalFaction.Population.Approval * 100))}%\n"
 		;
-		if (myRegion != region) { 
+		if (myRegion != region) {
 			if (isatwar) {
 				declareWarButton.Text = "Ask for peace";
 			} else if (isneighbor) {

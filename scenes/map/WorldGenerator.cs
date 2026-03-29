@@ -10,7 +10,7 @@ namespace scenes.map {
 
 	public partial class WorldGenerator : Node {
 
-		
+
 
 		readonly struct KernelVal(int x, int y, float coef) {
 			public readonly int X => x;
@@ -215,10 +215,6 @@ namespace scenes.map {
 			Generating = false;
 		}
 
-		public async Task<Map> GenerateRegions(World world) {
-			return await GenerateRegions(world, LandRegionCount);
-		}
-
 		public async Task<Map> GenerateRegions(World world, int iterations = 1) {
 			Generating = true;
 			Dictionary<Vector2I, Region> landOccupied; // coordinates in global space
@@ -254,7 +250,7 @@ namespace scenes.map {
 			}
 			await War(regionsLand, AggressiveFactionCount);
 
-			Map map = new(regionsLand, world);
+			Map map = new(regionsLand.ToList(), world);
 
 			Generating = false;
 			return map;
@@ -336,7 +332,7 @@ namespace scenes.map {
 		async Task War(Region[] regions, int aggressiveRegionCount) {
 			// all regions get initial populations
 			foreach (Region region in regions) {
-				int initPop = (int)populationLandTileCurve.SampleBaked(region.LandTileCount);
+				int initPop = (int)populationLandTileCurve.SampleBaked(region.GetLandTileCount());
 				int sustainsForOneMonth = (int)(region.GetPotentialFoodFirstMonth() / (GameTime.WEEKS_PER_MONTH * GameTime.DAYS_PER_WEEK));
 				initPop = Math.Min(initPop, sustainsForOneMonth) * 3;
 				// taper it out ... 300 people is much for the game when starting out
@@ -345,7 +341,7 @@ namespace scenes.map {
 				var faction = new Faction(
 					region,
 					initialPopulation: (uint)initPop,
-					initialSilver:(uint)(region.LandTileCount * 0.1 + 1)
+					initialSilver:(uint)(region.GetLandTileCount() * 0.1 + 1)
 				);
 			}
 

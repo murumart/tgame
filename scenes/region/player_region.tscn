@@ -56,3 +56,4 @@ Camera = NodePath("../RegionCamera")
 soundChoices = ExtResource("9_4hooy")
 
 [node name="RegionDisplayHighlight" parent="." unique_id=1835308877 instance=ExtResource("12_v0ccf")]
+z_index = -1

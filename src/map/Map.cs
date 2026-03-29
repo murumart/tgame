@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using Godot;
 
 public class Map {
@@ -13,9 +15,10 @@ public class Map {
 	public readonly int TotalSeaTiles;
 
 	public Dictionary<Vector2I, Region> TileOwners { get; init; }
-	
 
-	public Map(ICollection<Region> regions, World world) {
+	readonly Vector2I[] checkAdds = [Vector2I.Right, Vector2I.Left, Vector2I.Down, Vector2I.Up];
+
+	public Map(List<Region> regions, World world) {
 		this.regions = regions.ToList();
 		World = world;
 
@@ -33,6 +36,8 @@ public class Map {
 			}
 			totalSilver += region.LocalFaction.Silver;
 		}
+		Region.GenerationAccessor.BuildEdges(CollectionsMarshal.AsSpan(regions), TileOwners);
+
 		TotalSilver = totalSilver;
 		TotalLandTiles = totalLand;
 		TotalSeaTiles = totalSea;

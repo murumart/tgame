@@ -1,11 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
 using Godot;
-using scenes.autoload;
+using scenes.ui;
 using static ResourceSite;
 
 
@@ -23,16 +20,14 @@ public class Region {
 
 	public Vector2I WorldPosition { get; init; }
 	readonly Dictionary<Vector2I, GroundTileType> groundTiles = new();
-	readonly List<(Vector2I, byte)> freeEdgeTiles = new() { (Vector2I.Zero, 0b1111) };
+	readonly List<(Vector2I Position, byte FreeDirections)> freeEdgeTiles = new() { (Vector2I.Zero, 0b1111) };
+	readonly Dictionary<Vector2I, (Region ToRight, Region ToLeft, Region Below, Region Above)> edges = new();
 	public IEnumerable<Vector2I> GroundTilePositions => groundTiles.Keys;
+	readonly HashSet<Region> neighbors = new(); public ICollection<Region> Neighbors => neighbors;
+
 	public Faction LocalFaction { get; private set; }
 
 	readonly Dictionary<Vector2I, MapObject> mapObjects = new();
-
-	readonly HashSet<Region> neighbors = new(); public ICollection<Region> Neighbors => neighbors;
-
-	public int LandTileCount => groundTiles.Values.Where(t => (t & GroundTileType.HasLand) != 0).Count();
-	public int OceanTileCount => groundTiles.Values.Where(t => (t & GroundTileType.HasLand) == 0).Count();
 
 	public readonly Field<ResourceBundle[]> NaturalResources;
 
@@ -67,6 +62,9 @@ public class Region {
 		Debug.Assert(got, "Don't have ground tile at this location");
 		return value;
 	}
+
+	public int GetLandTileCount() => groundTiles.Values.Where(t => (t & GroundTileType.HasLand) != 0).Count();
+	public int GetOceanTileCount() => groundTiles.Values.Where(t => (t & GroundTileType.HasLand) == 0).Count();
 
 	public bool GetGroundTile(Vector2I localpos, out GroundTileType gtile) {
 		return groundTiles.TryGetValue(localpos, out gtile);
@@ -148,7 +146,7 @@ public class Region {
 		return resourceSite;
 	}
 
-	public void AnnexTile(Region from, Vector2I fromCoordinate, bool notify = true) {
+	public void AnnexTile(Region from, Vector2I fromCoordinate, Dictionary<Vector2I, Region> TileOwners, bool bulkop = false) {
 		Debug.Assert(from.groundTiles.ContainsKey(fromCoordinate), $"Region to annex from doesn't own tile at {fromCoordinate}");
 		var globalCoord = fromCoordinate + from.WorldPosition;
 		var localCoord = globalCoord - WorldPosition;
@@ -156,7 +154,12 @@ public class Region {
 		var tile = from.groundTiles[fromCoordinate];
 		from.groundTiles.Remove(fromCoordinate);
 		groundTiles[localCoord] = tile;
-		GameMan.Game.Map.TileOwners[globalCoord] = this;
+		TileOwners[globalCoord] = this;
+		if (!bulkop) {
+			// a bit lazy to regenerate edges like this
+			GenerationAccessor.RebuildEdge(this, TileOwners);
+			GenerationAccessor.RebuildEdge(from, TileOwners);
+		}
 		if (from.HasMapObject(fromCoordinate)) {
 			Debug.Assert(!HasMapObject(localCoord), "Somehow, I already have a map object where im trying to steal it from??");
 			if (from.LocalFaction.GetJob(globalCoord, out var job)) {
@@ -179,7 +182,7 @@ public class Region {
 				LocalFaction.OnMapObjectAdded(mop);
 			}
 		}
-		if (notify) { // only thing currently connected is the RegionDisplay really slow rebuild method
+		if (!bulkop) { // only thing currently connected is the RegionDisplay really slow rebuild method
 			from.TileChangedAtEvent?.Invoke(fromCoordinate);
 			TileChangedAtEvent?.Invoke(localCoord);
 		}
@@ -187,7 +190,7 @@ public class Region {
 		for (int x = -1; x <= 1; x += 2) {
 			for (int y = -1; y <= 1; y += 2) {
 				var othercheck = globalCoord + new Vector2I(x, y);
-				var has = GameMan.Game.Map.TileOwners.TryGetValue(othercheck, out var reg);
+				var has = TileOwners.TryGetValue(othercheck, out var reg);
 				if (!has || reg == this) continue;
 				if (!Neighbors.Contains(reg)) {
 					// found a new neighbord!
@@ -200,11 +203,13 @@ public class Region {
 		}
 	}
 
-	public void AnnexAll(Region from) {
+	public void AnnexAll(Region from, Dictionary<Vector2I, Region> TileOwners) {
 		LocalFaction.Absorb(from.LocalFaction);
 		foreach (var t in from.groundTiles.Keys) {
-			AnnexTile(from, t, notify: false);
+			AnnexTile(from, t, TileOwners, bulkop: true);
 		}
+		GenerationAccessor.RebuildEdge(this, TileOwners);
+		GenerationAccessor.RebuildEdge(from, TileOwners);
 		TileChangedAtEvent?.Invoke(Vector2I.Zero); // only thing connected is currently ReginoDisplay, this should be fixed better style.
 		from.DisappearedEvent?.Invoke();
 	}
@@ -249,9 +254,35 @@ public class Region {
 		return reg;
 	}
 
+	public static RegionDisplayHighlightDisplayFunc GetEdgesHighlightFunction(Dictionary<Vector2I, Region> tileOwners) {
+		return (s, gp, lp, dis) => {
+			if (!tileOwners.TryGetValue(gp, out var reg)) {
+				s.Modulate = new(Palette.Dark, 0.2f);
+				return;
+			}
+			if (reg.edges.TryGetValue(gp - reg.WorldPosition, out var e)) {
+				s.Modulate = new(reg.LocalFaction.Color, 0.2f);
+				return;
+			}
+			s.Modulate = new(Palette.BrownRust, 0.2f);
+		};
+	}
+
 	public static class GenerationAccessor {
 
-		static readonly (Vector2I, byte)[] GrowDirs = { (Vector2I.Right, 0b1), (Vector2I.Left, 0b10), (Vector2I.Down, 0b100), (Vector2I.Up, 0b1000) };
+		enum DirectionBits : byte {
+			Right = 0b1,
+			Left  = 0b10,
+			Down  = 0b100,
+			Up    = 0b1000,
+		}
+
+		static readonly (Vector2I Direction, DirectionBits ByteRep)[] GrowDirs = [
+			(Vector2I.Right, DirectionBits.Right),
+			(Vector2I.Left, DirectionBits.Left),
+			(Vector2I.Down, DirectionBits.Down),
+			(Vector2I.Up, DirectionBits.Up),
+  		];
 
 		public static bool GrowAllRegionsOneStep(
 			Region[] regions, Dictionary<Vector2I, Region> occupied,
@@ -262,8 +293,7 @@ public class Region {
 		) {
 			var growthOccurred = false;
 
-			for (int xxx = 0; xxx < iterations; xxx++) for (int i = 0; i < regions.Length; i++) {
-					var region = regions[i];
+			for (int xxx = 0; xxx < iterations; xxx++) foreach (var region in regions) {
 					var c = region.freeEdgeTiles.Count;
 					for (int x = 0; x < c; x++) {
 						var addKeys = new HashSet<Vector2I>(); // coordinates in region local space
@@ -281,7 +311,7 @@ public class Region {
 					}
 				}
 			if (!growthOccurred) {
-				GD.Print("WorldGenerator::GrowAllRegionsOneStep : region growth filled up all space attainable");
+				GD.Print("Region::GenerationAccessor::GrowAllRegionsOneStep : region growth filled up all space attainable");
 			}
 			return growthOccurred;
 		}
@@ -297,35 +327,51 @@ public class Region {
 		) {
 			var (vectorDirectionTryingToGrowIn, directionTryingToGrowIn) = GrowDirs[dirIx];
 
-			int i = tileIndex;
-			{
-				var (localPos, directionsThatAreFree) = region.freeEdgeTiles[i];
-				if ((directionTryingToGrowIn & directionsThatAreFree) == 0) return false;
+			var (localPos, directionsThatAreFree) = region.freeEdgeTiles[tileIndex];
+			if (((byte)directionTryingToGrowIn & directionsThatAreFree) == 0) return false;
 
-				var moveLocal = localPos + vectorDirectionTryingToGrowIn;
-				var moveGlobal = region.WorldPosition + moveLocal;
-				var (neighbor, grew) = TryGrowRegionTo(region, moveGlobal, occupied, addKeys, world, allowedTile);
-				if (neighbor != null && neighbor != region) {
-					region.AddNeighbor(neighbor);
-					neighbor.AddNeighbor(region);
-				}
-
-				directionsThatAreFree &= (byte)~directionTryingToGrowIn;
-				if (grew) {
-					byte opposite = directionTryingToGrowIn switch { 0b10 => 0b1, 0b01 => 0b10, 0b100 => 0b1000, 0b1000 => 0b100, _ => throw new NotImplementedException() };
-					region.freeEdgeTiles.Add((moveLocal, (byte)(0b1111 & (byte)~opposite)));
-				}
-
-				if (directionsThatAreFree == 0) region.freeEdgeTiles.RemoveAt(i);
-				else {
-					region.freeEdgeTiles[i] = (localPos, directionsThatAreFree);
-				}
-
-				return grew;
+			var moveLocal = localPos + vectorDirectionTryingToGrowIn;
+			var moveGlobal = region.WorldPosition + moveLocal;
+			var (neighbor, grew) = TryGrowRegionTo(region, moveGlobal, occupied, addKeys, world, allowedTile);
+			if (neighbor != null && neighbor != region) {
+				region.AddNeighbor(neighbor);
+				neighbor.AddNeighbor(region);
 			}
+
+			directionsThatAreFree &= (byte)~directionTryingToGrowIn;
+			if (grew) {
+				DirectionBits opposite = directionTryingToGrowIn switch {
+					DirectionBits.Left => DirectionBits.Right,
+					DirectionBits.Right => DirectionBits.Left,
+					DirectionBits.Down => DirectionBits.Up,
+					DirectionBits.Up => DirectionBits.Down,
+					_ => throw new NotImplementedException(),
+				};
+				region.freeEdgeTiles.Add((moveLocal, (byte)(0b1111 & (byte)~opposite)));
+			} else {
+				// region edge detection could be done smartly probably TODO
+				//bool edged = region.edges.TryGetValue(localPos, out var e);
+				//if (!edged) {
+				//	e = (null, null, null, null);
+				//}
+				//switch (directionTryingToGrowIn) {
+				//	case DirectionBits.Right: e = (neighbor, e.ToLeft, e.Below, e.Above); break;
+				//	case DirectionBits.Left: e = (e.ToRight, neighbor, e.Below, e.Above); break;
+				//	case DirectionBits.Down: e = (e.ToRight, e.ToLeft, neighbor, e.Above); break;
+				//	case DirectionBits.Up: e = (e.ToRight, e.ToLeft, e.Below, neighbor); break;
+				//}
+				//region.edges[localPos] = e;
+			}
+
+			if (directionsThatAreFree == 0) region.freeEdgeTiles.RemoveAt(tileIndex);
+			else {
+				region.freeEdgeTiles[tileIndex] = (localPos, directionsThatAreFree);
+			}
+
+			return grew;
 		}
 
-		private static (Region, bool) TryGrowRegionTo(
+		private static (Region Neighbor, bool Grew) TryGrowRegionTo(
 			Region region,
 			Vector2I where, // world space
 			Dictionary<Vector2I, Region> occupied, // world space
@@ -344,6 +390,35 @@ public class Region {
 				return (null, true);
 			}
 			return (there, false);
+		}
+
+		public static void BuildEdges(Span<Region> regions, Dictionary<Vector2I, Region> TileOwners) {
+			// edge detection that's sucks, probably could do this during worlgen instead
+			// (Region ToRight, Region ToLeft, Region Below, Region Above)
+			Region[] neighborsoftile = new Region[4];
+			foreach (Region region in regions) {
+				foreach (var pos in region.groundTiles.Keys) {
+					for (int i = 0; i < 4; i++) {
+						neighborsoftile[i] = TileOwners.GetValueOrDefault(pos + region.WorldPosition + GrowDirs[i].Direction, null);
+					}
+					if (neighborsoftile.Any(a => a is null || a != region)) {
+						region.edges.Add(pos, (neighborsoftile[0], neighborsoftile[1], neighborsoftile[2], neighborsoftile[3]));
+					}
+				}
+			}
+		}
+
+		public static void RebuildEdge(Region region, Dictionary<Vector2I, Region> TileOwners) {
+			Region[] neighborsoftile = new Region[4];
+			region.edges.Clear();
+			foreach (var pos in region.groundTiles.Keys) {
+				for (int i = 0; i < 4; i++) {
+					neighborsoftile[i] = TileOwners.GetValueOrDefault(pos + region.WorldPosition + GrowDirs[i].Direction, null);
+				}
+				if (neighborsoftile.Any(a => a is null || a != region)) {
+					region.edges[pos] = (neighborsoftile[0], neighborsoftile[1], neighborsoftile[2], neighborsoftile[3]);
+				}
+			}
 		}
 
 	}
