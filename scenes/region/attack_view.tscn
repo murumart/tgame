@@ -1,0 +1,84 @@
+[gd_scene format=3 uid="uid://bim3whrkgyn4r"]
+
+[ext_resource type="PackedScene" uid="uid://dl17gbjn423tk" path="res://scenes/region/_map_object_view_base.tscn" id="1_ncgxc"]
+[ext_resource type="Script" uid="uid://b6ow23fmdpqs2" path="res://scenes/region/AttackView.cs" id="2_8pu8q"]
+[ext_resource type="Material" uid="uid://cet7ep6cvqk3p" path="res://resources/visual/add_material.tres" id="2_phfin"]
+[ext_resource type="Texture2D" uid="uid://ethlsfg8xmhk" path="res://scenes/region/iso_mask.png" id="4_6xlek"]
+[ext_resource type="Material" uid="uid://bgn20t7sk75w4" path="res://addons/line2d_animation_shader/marching.tres" id="4_ncgxc"]
+
+[sub_resource type="Animation" id="Animation_k3cwo"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:self_modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(0.70980394, 0.34901962, 0.27058825, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_n51wg"]
+resource_name = "pulse"
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:self_modulate")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.36666667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(0.70980394, 0.34901962, 0.27058825, 1), Color(0.70980394, 0.34901962, 0.27058825, 0.40392157)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_ov10g"]
+_data = {
+&"RESET": SubResource("Animation_k3cwo"),
+&"pulse": SubResource("Animation_n51wg")
+}
+
+[node name="AttackView" unique_id=1991676390 node_paths=PackedStringArray("attackDirectionDisplay", "mapObjectDisplay") instance=ExtResource("1_ncgxc")]
+script = ExtResource("2_8pu8q")
+attackDirectionDisplay = NodePath("Dam/Line2D")
+mapObjectDisplay = NodePath("Dam")
+
+[node name="Dam" type="Sprite2D" parent="." index="0" unique_id=1082710809]
+
+[node name="Line2D" type="Line2D" parent="Dam" index="0" unique_id=1668885234]
+z_index = 1
+material = ExtResource("4_ncgxc")
+scale = Vector2(1, 0.99999994)
+skew = 0.7853982
+points = PackedVector2Array(-8.999998, 11.313709, 15.999999, 22.627419, 23.999998, 11.313709, 31.999998, 0, 7.4168854, -11.5886, -15.999999, -22.627419, -22.725815, -12.48156, -30.999998, 0)
+closed = true
+texture_mode = 1
+
+[node name="Clickarea" parent="." index="1" unique_id=1540038721]
+visible = false
+
+[node name="IconTransform" parent="." index="2" unique_id=1589336146]
+InverseLimit = 30
+
+[node name="IconContainer" parent="IconTransform" index="0" unique_id=1378133112]
+visible = false
+
+[node name="Building" parent="IconTransform/IconContainer" index="0" unique_id=1898010729]
+visible = false
+
+[node name="JobProgress" parent="IconTransform/VBoxContainer" parent_id_path=PackedInt32Array(31811092) index="0" unique_id=1818928608]
+visible = true
+
+[node name="Highlight" type="Sprite2D" parent="." index="5" unique_id=763788786]
+self_modulate = Color(0.70980394, 0.34901962, 0.27058825, 1)
+material = ExtResource("2_phfin")
+texture = ExtResource("4_6xlek")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Highlight" index="0" unique_id=1995037372]
+libraries/ = SubResource("AnimationLibrary_ov10g")
+autoplay = &"pulse"

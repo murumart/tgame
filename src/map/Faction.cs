@@ -71,7 +71,7 @@ public class Faction : IEntity {
 	readonly Dictionary<Faction, List<TradeOffer>> gottenTradeOffers = new();
 	readonly Dictionary<Faction, List<TradeOffer>> sentTradeOffers = new();
 
-	class WarStatus(string reason, Faction aggressor, Faction defender) {
+	class MilitaryOperationStatus(string reason, Faction aggressor, Faction defender) {
 
 		public readonly string Reason = reason;
 		public readonly Faction Aggressor = aggressor;
@@ -81,7 +81,7 @@ public class Faction : IEntity {
 		public bool DefenderAsksForPeace;
 
 	}
-	readonly Dictionary<Faction, WarStatus> atWar = new();
+	readonly Dictionary<Faction, MilitaryOperationStatus> militaryOperations = new();
 
 	TimeT time;
 
@@ -145,6 +145,14 @@ public class Faction : IEntity {
 		JobAddedEvent?.Invoke(job);
 	}
 
+	public void AddAttackJob(TileAttackJob job) {
+		RegisterJob(job.GlobalPosition, job);
+
+		Debug.Assert(job.CanInitialise(this), "Job cannot be initialised!");
+		job.Initialise(this);
+		JobAddedEvent?.Invoke(job);
+	}
+
 	void RegisterJob(Job job) {
 		Debug.Assert(!jobs.Contains(job), "This exact job already registred");
 		Debug.Assert(!job.Locked, "Job unexpectedly locked while adding it");
@@ -162,6 +170,9 @@ public class Faction : IEntity {
 		if (job is MapObjectJob mopjob) {
 			Debug.Assert(jobsByPosition.ContainsKey(mopjob.GlobalPosition), "Can't remove job ({job}) that doesn't exist here ({mopjob.GlobalPosition})?? Hello?");
 			jobsByPosition.Remove(mopjob.GlobalPosition);
+		} else if (job is TileAttackJob attackjob) {
+			Debug.Assert(jobsByPosition.ContainsKey(attackjob.GlobalPosition));
+			jobsByPosition.Remove(attackjob.GlobalPosition);
 		}
 		Debug.Assert(jobs.Contains(job), "Dont have this job, can't remove it");
 		if (job.NeedsWorkers) UnemployAllWorkers(job);
@@ -485,21 +496,27 @@ public class Faction : IEntity {
 	}
 
 	public bool IsAtWarWith(Faction faction) {
-		return atWar.ContainsKey(faction);
+		return militaryOperations.ContainsKey(faction);
 	}
 
-	public void DeclareWarOn(Faction faction, string reason) {
-		Debug.Assert(!atWar.ContainsKey(faction), $"{this} is Already at war with {faction}");
-		Debug.Assert(!faction.atWar.ContainsKey(this), $"{faction} is Already at war with {this}");
-		var war = new WarStatus(reason, this, faction);
-		atWar[faction] = war;
-		faction.atWar[this] = war;
+	public bool HasSentPeaceRequestTo(Faction faction) {
+		bool has = militaryOperations.TryGetValue(faction, out var status);
+		if (!has) return false;
+		return this == status.Aggressor ? status.AggressorAsksForPeace : status.DefenderAsksForPeace;
+	}
+
+	public void StartMilitaryOperation(Faction faction, string reason) {
+		Debug.Assert(!militaryOperations.ContainsKey(faction), $"{this} is Already at war with {faction}");
+		Debug.Assert(!faction.militaryOperations.ContainsKey(this), $"{faction} is Already at war with {this}");
+		var war = new MilitaryOperationStatus(reason, this, faction);
+		militaryOperations[faction] = war;
+		faction.militaryOperations[this] = war;
 		StartedWarWith?.Invoke(faction, reason);
 		faction.PulledIntoWarWith?.Invoke(this, reason);
 	}
 
 	public void RequestPeace(Faction with) {
-		bool at = atWar.TryGetValue(with, out var status);
+		bool at = militaryOperations.TryGetValue(with, out var status);
 		Debug.Assert(at, "Peace with not at war what.s");
 		if (this == status.Aggressor) status.AggressorAsksForPeace = true;
 		else if (this == status.Defender) status.DefenderAsksForPeace = true;
@@ -511,8 +528,8 @@ public class Faction : IEntity {
 	}
 
 	void EndWar(Faction with) {
-		atWar.Remove(with);
-		with.atWar.Remove(this);
+		militaryOperations.Remove(with);
+		with.militaryOperations.Remove(this);
 		EndedWarWith?.Invoke(with);
 		with.EndedWarWith?.Invoke(this);
 	}
@@ -521,7 +538,7 @@ public class Faction : IEntity {
 		Debug.Assert(defunct == DefunctReason.None, "Faction is already over");
 		foreach (var f in gottenTradeOffers.Keys.ToList()) foreach (var t in gottenTradeOffers[f].ToList()) RejectTradeOffer(f, t);
 		foreach (var f in sentTradeOffers.Keys.ToList()) foreach (var t in sentTradeOffers[f].ToList()) CancelTradeOffer(f, t);
-		foreach (var f in atWar.Keys.ToList()) EndWar(f);
+		foreach (var f in militaryOperations.Keys.ToList()) EndWar(f);
 		defunct = reason;
 		Done?.Invoke(reason);
 	}

@@ -12,6 +12,11 @@ namespace scenes.region.ui {
 		[Export] Label MoneyLabel;
 		[Export] Slider Slider;
 
+		public bool Editable {
+			get => Slider.Editable;
+			set => Slider.Editable = value;
+		}
+
 		string unitSymbol;
 		bool round;
 		bool _ready;

@@ -5,7 +5,6 @@
 [ext_resource type="StyleBox" uid="uid://bvafrlmq6sivc" path="res://resources/visual/theme/sb_lighter.tres" id="3_kmexs"]
 [ext_resource type="LabelSettings" uid="uid://ddruam7fh1y7l" path="res://resources/visual/theme/label_styles/title.tres" id="3_mu82y"]
 [ext_resource type="Script" uid="uid://3don1v6ha6ia" path="res://scenes/map/WorldMan.cs" id="5_tvelx"]
-[ext_resource type="PackedScene" uid="uid://6petycb31tlv" path="res://scenes/region/ui/war_essay.tscn" id="11_qyfey"]
 [ext_resource type="Script" uid="uid://jdld04xxcpmv" path="res://scenes/map/WorldRenderer.cs" id="14_qgxsg"]
 [ext_resource type="Gradient" uid="uid://dqpagals78i71" path="res://resources/visual/map/elevation_gradient.tres" id="15_gl1ga"]
 [ext_resource type="Gradient" uid="uid://ypkjsovb40j4" path="res://resources/visual/map/temperature_gradient.tres" id="16_hclyy"]
@@ -25,7 +24,7 @@ blend_mode = 3
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_5lxtd"]
 blend_mode = 1
 
-[node name="WorldUI" type="BoxContainer" unique_id=832899595 node_paths=PackedStringArray("worldRenderer", "ResourceDisplay", "camera", "factionPanel", "factionTitleLabel", "factionInfoLabel", "drawLayerButtons", "regionDisplayCheck", "declareWarButton", "warEssayPopup")]
+[node name="WorldUI" type="BoxContainer" unique_id=832899595 node_paths=PackedStringArray("worldRenderer", "ResourceDisplay", "camera", "factionPanel", "factionTitleLabel", "factionInfoLabel", "drawLayerButtons", "regionDisplayCheck")]
 custom_minimum_size = Vector2(0.08, 0)
 anchors_preset = 15
 anchor_right = 1.0
@@ -42,8 +41,6 @@ factionTitleLabel = NodePath("PanelContainer2/MarginContainer/VBoxContainer/Pane
 factionInfoLabel = NodePath("PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/HBoxContainer/MarginContainer2/HBoxContainer/Factionpanel/MarginContainer/VBoxContainer/FactionInfo")
 drawLayerButtons = [NodePath("PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle6/HBoxContainer/Ground"), NodePath("PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle/HBoxContainer/Elevation"), NodePath("PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle2/HBoxContainer/Temperature"), NodePath("PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle3/HBoxContainer/Humidity"), NodePath("PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle7/HBoxContainer/Drainage"), NodePath("PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle4/HBoxContainer/SeaWind")]
 regionDisplayCheck = NodePath("PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle5/HBoxContainer/Regions")
-declareWarButton = NodePath("PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/HBoxContainer/MarginContainer2/HBoxContainer/Factionpanel/MarginContainer/VBoxContainer/DeclareWarButton")
-warEssayPopup = NodePath("PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/HBoxContainer/MarginContainer2/HBoxContainer/Factionpanel/MarginContainer/VBoxContainer/DeclareWarButton/WarEssay")
 
 [node name="WorldMan" type="Node" parent="." unique_id=1901136187 node_paths=PackedStringArray("worldRenderer", "worldUI", "camera")]
 script = ExtResource("5_tvelx")
@@ -342,11 +339,3 @@ size_flags_vertical = 3
 theme_override_font_sizes/normal_font_size = 10
 text = "asdasdasdasdadasdasdsadaasdadadsadadsadsadsasaasdassadasdsadsadsadsadsadsadsadsadsadsadsadsadsadsadsadsadasdadadadadasdasdadadadadasdasdadadadadadasdasdadasdasdasdadasdasdasdadasdasdass"
 fit_content = true
-
-[node name="DeclareWarButton" type="Button" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/HBoxContainer/MarginContainer2/HBoxContainer/Factionpanel/MarginContainer/VBoxContainer" unique_id=1358088176]
-layout_mode = 2
-focus_mode = 0
-text = "Declare War"
-
-[node name="WarEssay" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/HBoxContainer/MarginContainer2/HBoxContainer/Factionpanel/MarginContainer/VBoxContainer/DeclareWarButton" unique_id=204779690 instance=ExtResource("11_qyfey")]
-visible = false

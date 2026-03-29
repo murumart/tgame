@@ -14,6 +14,12 @@ public partial class MapObjectView : Node2D {
 		Max
 	}
 
+	protected enum Type {
+		MapObject,
+		Problem,
+		Attack,
+	}
+
 	[Export] protected IconTransform iconTransformParent;
 	[Export] protected Container iconContainer;
 	protected TextureRect Icon(int i) => (TextureRect)iconContainer.GetChild(i);
@@ -23,13 +29,13 @@ public partial class MapObjectView : Node2D {
 	[Export] protected Sprite2D selectedHighlight;
 
 	[Export] protected Node2D mapObjectDisplay;
-	[Export] public bool IsProblem;
+	[Export] protected Type type;
 
 	protected MapObject mapObjectRef;
 
 
 	public override void _Ready() {
-		if (!IsProblem) {
+		if (type == Type.MapObject) {
 			Debug.Assert(mapObjectRef != null, "MapObjectView needs a map object ref");
 			Debug.Assert(mapObjectDisplay != null, "MapObjectView needs a reference to the display object");
 		}
@@ -95,6 +101,12 @@ public partial class MapObjectView : Node2D {
 
 	public static MapObjectView MakeProblem() {
 		var view = GD.Load<PackedScene>("res://scenes/region/problem_view.tscn").Instantiate<MapObjectView>();
+		Debug.Assert(view is not null, "Scene must not be null");
+		return view;
+	}
+
+	public static AttackView MakeAttack() {
+		var view = GD.Load<PackedScene>("res://scenes/region/attack_view.tscn").Instantiate<AttackView>();
 		Debug.Assert(view is not null, "Scene must not be null");
 		return view;
 	}

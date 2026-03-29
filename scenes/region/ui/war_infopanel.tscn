@@ -5,13 +5,13 @@
 [ext_resource type="LabelSettings" uid="uid://ddruam7fh1y7l" path="res://resources/visual/theme/label_styles/title.tres" id="2_prdl7"]
 [ext_resource type="LabelSettings" uid="uid://btwbnjxri1gdg" path="res://resources/visual/theme/label_styles/8px.tres" id="4_g1gx4"]
 [ext_resource type="Script" uid="uid://dppylceab8dnc" path="res://scenes/region/ui/affirmations.gd" id="5_ag32c"]
-[ext_resource type="PackedScene" uid="uid://bbhbv3hm6dqgh" path="res://scenes/region/ui/job_slider.tscn" id="5_rgqmg"]
+[ext_resource type="PackedScene" uid="uid://bit7aavyxpq38" path="res://scenes/region/ui/job_info_panel.tscn" id="7_hq3dj"]
 [ext_resource type="PackedScene" uid="uid://6petycb31tlv" path="res://scenes/region/ui/war_essay.tscn" id="7_q8tmp"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_jmbgv"]
 content_margin_left = 2.0
 
-[node name="WarInfopanel" type="VBoxContainer" unique_id=91762423 node_paths=PackedStringArray("tutorialLabel", "ourNameLabel", "ourInfo", "theirDisplayParent", "theirNameLabel", "theirInfo", "aggressionAdjustmentButton", "attackDisplay", "attackJobSlider", "essayPrompt")]
+[node name="WarInfopanel" type="VBoxContainer" unique_id=91762423 node_paths=PackedStringArray("tutorialLabel", "ourNameLabel", "ourInfo", "theirDisplayParent", "theirNameLabel", "theirInfo", "aggressionAdjustmentButton", "attackDisplay", "attackStartButton", "essayPrompt")]
 custom_minimum_size = Vector2(0, 30)
 offset_right = 242.0
 offset_bottom = 45.0
@@ -19,15 +19,15 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 0
 script = ExtResource("1_f1wdw")
-tutorialLabel = NodePath("DetailsContainer/MarginContainer2/VBoxContainer/Totoriallable")
-ourNameLabel = NodePath("DetailsContainer/MarginContainer2/VBoxContainer/FactionComparison/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Label2")
-ourInfo = NodePath("DetailsContainer/MarginContainer2/VBoxContainer/FactionComparison/PanelContainer/MarginContainer/VBoxContainer/OurDescription")
-theirDisplayParent = NodePath("DetailsContainer/MarginContainer2/VBoxContainer/FactionComparison/PanelContainer2/MarginContainer")
-theirNameLabel = NodePath("DetailsContainer/MarginContainer2/VBoxContainer/FactionComparison/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Label2")
-theirInfo = NodePath("DetailsContainer/MarginContainer2/VBoxContainer/FactionComparison/PanelContainer2/MarginContainer/VBoxContainer/TheirDescription")
-aggressionAdjustmentButton = NodePath("DetailsContainer/MarginContainer2/VBoxContainer/FactionComparison/PanelContainer2/MarginContainer/VBoxContainer/AggressionAdjustmentButton")
-attackDisplay = NodePath("DetailsContainer/MarginContainer2/VBoxContainer/AttackDisplay")
-attackJobSlider = NodePath("DetailsContainer/MarginContainer2/VBoxContainer/AttackDisplay/MarginContainer/VBoxContainer/JobSlider")
+tutorialLabel = NodePath("DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer2/VBoxContainer/MarginContainer/Totoriallable")
+ourNameLabel = NodePath("DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer2/VBoxContainer/FactionComparison/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Label2")
+ourInfo = NodePath("DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer2/VBoxContainer/FactionComparison/PanelContainer/MarginContainer/VBoxContainer/OurDescription")
+theirDisplayParent = NodePath("DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer2/VBoxContainer/FactionComparison/PanelContainer2")
+theirNameLabel = NodePath("DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer2/VBoxContainer/FactionComparison/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Label2")
+theirInfo = NodePath("DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer2/VBoxContainer/FactionComparison/PanelContainer2/MarginContainer/VBoxContainer/TheirDescription")
+aggressionAdjustmentButton = NodePath("DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer2/VBoxContainer/FactionComparison/PanelContainer2/MarginContainer/VBoxContainer/AggressionAdjustmentButton")
+attackDisplay = NodePath("DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer2/VBoxContainer/AttackDisplay2")
+attackStartButton = NodePath("DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer2/VBoxContainer/ToggleAttack")
 essayPrompt = NodePath("WarEssay")
 
 [node name="InfoHeader" type="HBoxContainer" parent="." unique_id=1095998216]
@@ -46,200 +46,236 @@ theme_override_constants/margin_right = 2
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/normal = SubResource("StyleBoxEmpty_jmbgv")
-text = "War"
+text = "Military Operations"
 horizontal_alignment = 1
 
 [node name="DetailsContainer" type="PanelContainer" parent="." unique_id=1979315961]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="MarginContainer2" type="MarginContainer" parent="DetailsContainer" unique_id=1877212142]
+[node name="VBoxContainer" type="VBoxContainer" parent="DetailsContainer" unique_id=1859266430]
 layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="DetailsContainer/VBoxContainer" unique_id=711633915]
+layout_mode = 2
+
+[node name="MarginContainer2" type="MarginContainer" parent="DetailsContainer/VBoxContainer/HBoxContainer" unique_id=1877212142]
+layout_mode = 2
+size_flags_horizontal = 3
 theme_override_constants/margin_left = 2
 theme_override_constants/margin_top = 2
 theme_override_constants/margin_right = 2
 theme_override_constants/margin_bottom = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="DetailsContainer/MarginContainer2" unique_id=1355697470]
+[node name="VBoxContainer" type="VBoxContainer" parent="DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer2" unique_id=1355697470]
 layout_mode = 2
 theme_override_constants/separation = 2
 
-[node name="Inf" type="RichTextLabel" parent="DetailsContainer/MarginContainer2/VBoxContainer" unique_id=1872505142]
+[node name="Inf" type="RichTextLabel" parent="DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer2/VBoxContainer" unique_id=1872505142]
 layout_mode = 2
 theme_override_font_sizes/normal_font_size = 8
 text = "Aggress and degress."
 fit_content = true
 tab_stops = PackedFloat32Array(5, 10)
 
-[node name="Totoriallable" type="Label" parent="DetailsContainer/MarginContainer2/VBoxContainer" unique_id=1293496750]
+[node name="MarginContainer" type="MarginContainer" parent="DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer2/VBoxContainer" unique_id=345815170]
 layout_mode = 2
-text = "Select a tile for further options."
+theme_override_constants/margin_bottom = 6
 
-[node name="Legend" type="GridContainer" parent="DetailsContainer/MarginContainer2/VBoxContainer" unique_id=797128672]
+[node name="Totoriallable" type="Label" parent="DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer2/VBoxContainer/MarginContainer" unique_id=1293496750]
+custom_minimum_size = Vector2(0.05, 0)
+layout_mode = 2
+autowrap_mode = 2
+
+[node name="Legend" type="GridContainer" parent="DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer2/VBoxContainer" unique_id=797128672]
 layout_mode = 2
 columns = 4
 
-[node name="HBoxContainer" type="HBoxContainer" parent="DetailsContainer/MarginContainer2/VBoxContainer/Legend" unique_id=217060613]
+[node name="HBoxContainer" type="HBoxContainer" parent="DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer2/VBoxContainer/Legend" unique_id=217060613]
 layout_mode = 2
 
-[node name="ColorRect" type="ColorRect" parent="DetailsContainer/MarginContainer2/VBoxContainer/Legend/HBoxContainer" unique_id=74939153]
+[node name="ColorRect" type="ColorRect" parent="DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer2/VBoxContainer/Legend/HBoxContainer" unique_id=74939153]
 custom_minimum_size = Vector2(8, 8)
 layout_mode = 2
 color = Color(0.42352942, 0.5058824, 0.6313726, 1)
 
-[node name="Label" type="Label" parent="DetailsContainer/MarginContainer2/VBoxContainer/Legend/HBoxContainer" unique_id=688778780]
+[node name="Label" type="Label" parent="DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer2/VBoxContainer/Legend/HBoxContainer" unique_id=688778780]
 layout_mode = 2
 text = "our land"
 label_settings = ExtResource("4_g1gx4")
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="DetailsContainer/MarginContainer2/VBoxContainer/Legend" unique_id=758589168]
+[node name="HBoxContainer2" type="HBoxContainer" parent="DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer2/VBoxContainer/Legend" unique_id=758589168]
 layout_mode = 2
 
-[node name="ColorRect" type="ColorRect" parent="DetailsContainer/MarginContainer2/VBoxContainer/Legend/HBoxContainer2" unique_id=468586975]
+[node name="ColorRect" type="ColorRect" parent="DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer2/VBoxContainer/Legend/HBoxContainer2" unique_id=468586975]
 custom_minimum_size = Vector2(8, 8)
 layout_mode = 2
 color = Color(0.70980394, 0.34901962, 0.27058825, 1)
 
-[node name="Label" type="Label" parent="DetailsContainer/MarginContainer2/VBoxContainer/Legend/HBoxContainer2" unique_id=566386066]
+[node name="Label" type="Label" parent="DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer2/VBoxContainer/Legend/HBoxContainer2" unique_id=566386066]
 layout_mode = 2
 text = "at war with"
 label_settings = ExtResource("4_g1gx4")
 
-[node name="HBoxContainer3" type="HBoxContainer" parent="DetailsContainer/MarginContainer2/VBoxContainer/Legend" unique_id=1855955660]
+[node name="HBoxContainer3" type="HBoxContainer" parent="DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer2/VBoxContainer/Legend" unique_id=1855955660]
 layout_mode = 2
 
-[node name="ColorRect" type="ColorRect" parent="DetailsContainer/MarginContainer2/VBoxContainer/Legend/HBoxContainer3" unique_id=1383685095]
+[node name="ColorRect" type="ColorRect" parent="DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer2/VBoxContainer/Legend/HBoxContainer3" unique_id=1383685095]
 custom_minimum_size = Vector2(8, 8)
 layout_mode = 2
 color = Color(0.6509804, 0.6901961, 0.30980393, 1)
 
-[node name="Label" type="Label" parent="DetailsContainer/MarginContainer2/VBoxContainer/Legend/HBoxContainer3" unique_id=1626371678]
+[node name="Label" type="Label" parent="DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer2/VBoxContainer/Legend/HBoxContainer3" unique_id=1626371678]
 layout_mode = 2
 text = "attackable"
 label_settings = ExtResource("4_g1gx4")
 
-[node name="HBoxContainer4" type="HBoxContainer" parent="DetailsContainer/MarginContainer2/VBoxContainer/Legend" unique_id=1328702297]
+[node name="HBoxContainer4" type="HBoxContainer" parent="DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer2/VBoxContainer/Legend" unique_id=1328702297]
 layout_mode = 2
 
-[node name="ColorRect" type="ColorRect" parent="DetailsContainer/MarginContainer2/VBoxContainer/Legend/HBoxContainer4" unique_id=221472709]
+[node name="ColorRect" type="ColorRect" parent="DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer2/VBoxContainer/Legend/HBoxContainer4" unique_id=221472709]
 custom_minimum_size = Vector2(8, 8)
 layout_mode = 2
 color = Color(0.1882353, 0.21960784, 0.2627451, 1)
 
-[node name="Label" type="Label" parent="DetailsContainer/MarginContainer2/VBoxContainer/Legend/HBoxContainer4" unique_id=1019061226]
+[node name="Label" type="Label" parent="DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer2/VBoxContainer/Legend/HBoxContainer4" unique_id=1019061226]
 layout_mode = 2
 text = "neutral"
 label_settings = ExtResource("4_g1gx4")
 
-[node name="FactionComparison" type="HBoxContainer" parent="DetailsContainer/MarginContainer2/VBoxContainer" unique_id=180567158]
+[node name="FactionComparison" type="HBoxContainer" parent="DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer2/VBoxContainer" unique_id=180567158]
 layout_mode = 2
 theme_override_constants/separation = 2
 
-[node name="PanelContainer" type="PanelContainer" parent="DetailsContainer/MarginContainer2/VBoxContainer/FactionComparison" unique_id=407005186]
+[node name="PanelContainer" type="PanelContainer" parent="DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer2/VBoxContainer/FactionComparison" unique_id=407005186]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/panel = ExtResource("2_joigp")
 
-[node name="MarginContainer" type="MarginContainer" parent="DetailsContainer/MarginContainer2/VBoxContainer/FactionComparison/PanelContainer" unique_id=1130284450]
+[node name="MarginContainer" type="MarginContainer" parent="DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer2/VBoxContainer/FactionComparison/PanelContainer" unique_id=1130284450]
 layout_mode = 2
 theme_override_constants/margin_left = 2
 theme_override_constants/margin_top = 2
 theme_override_constants/margin_right = 2
 theme_override_constants/margin_bottom = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="DetailsContainer/MarginContainer2/VBoxContainer/FactionComparison/PanelContainer/MarginContainer" unique_id=1410122612]
+[node name="VBoxContainer" type="VBoxContainer" parent="DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer2/VBoxContainer/FactionComparison/PanelContainer/MarginContainer" unique_id=1410122612]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="HBoxContainer" type="HBoxContainer" parent="DetailsContainer/MarginContainer2/VBoxContainer/FactionComparison/PanelContainer/MarginContainer/VBoxContainer" unique_id=671935133]
+[node name="HBoxContainer" type="HBoxContainer" parent="DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer2/VBoxContainer/FactionComparison/PanelContainer/MarginContainer/VBoxContainer" unique_id=671935133]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="DetailsContainer/MarginContainer2/VBoxContainer/FactionComparison/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1706429325]
+[node name="Label" type="Label" parent="DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer2/VBoxContainer/FactionComparison/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1706429325]
 layout_mode = 2
 text = "Us: "
 
-[node name="Label2" type="Label" parent="DetailsContainer/MarginContainer2/VBoxContainer/FactionComparison/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1267957095]
+[node name="Label2" type="Label" parent="DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer2/VBoxContainer/FactionComparison/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1267957095]
 layout_mode = 2
 text = "name"
 label_settings = ExtResource("2_prdl7")
 
-[node name="OurDescription" type="RichTextLabel" parent="DetailsContainer/MarginContainer2/VBoxContainer/FactionComparison/PanelContainer/MarginContainer/VBoxContainer" unique_id=1003488897]
+[node name="OurDescription" type="RichTextLabel" parent="DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer2/VBoxContainer/FactionComparison/PanelContainer/MarginContainer/VBoxContainer" unique_id=1003488897]
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 bbcode_enabled = true
 text = "Population: 5
 Military power: 0"
 fit_content = true
 
-[node name="Label" type="Label" parent="DetailsContainer/MarginContainer2/VBoxContainer/FactionComparison/PanelContainer/MarginContainer/VBoxContainer" unique_id=22832215]
+[node name="Label" type="Label" parent="DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer2/VBoxContainer/FactionComparison/PanelContainer/MarginContainer/VBoxContainer" unique_id=22832215]
 custom_minimum_size = Vector2(5, 0)
 layout_mode = 2
 label_settings = ExtResource("4_g1gx4")
 autowrap_mode = 2
 script = ExtResource("5_ag32c")
 
-[node name="PanelContainer2" type="PanelContainer" parent="DetailsContainer/MarginContainer2/VBoxContainer/FactionComparison" unique_id=2057535718]
+[node name="PanelContainer2" type="PanelContainer" parent="DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer2/VBoxContainer/FactionComparison" unique_id=2057535718]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/panel = ExtResource("2_joigp")
 
-[node name="MarginContainer" type="MarginContainer" parent="DetailsContainer/MarginContainer2/VBoxContainer/FactionComparison/PanelContainer2" unique_id=140815013]
+[node name="MarginContainer" type="MarginContainer" parent="DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer2/VBoxContainer/FactionComparison/PanelContainer2" unique_id=140815013]
 layout_mode = 2
 theme_override_constants/margin_left = 2
 theme_override_constants/margin_top = 2
 theme_override_constants/margin_right = 2
 theme_override_constants/margin_bottom = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="DetailsContainer/MarginContainer2/VBoxContainer/FactionComparison/PanelContainer2/MarginContainer" unique_id=522613241]
+[node name="VBoxContainer" type="VBoxContainer" parent="DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer2/VBoxContainer/FactionComparison/PanelContainer2/MarginContainer" unique_id=522613241]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="HBoxContainer" type="HBoxContainer" parent="DetailsContainer/MarginContainer2/VBoxContainer/FactionComparison/PanelContainer2/MarginContainer/VBoxContainer" unique_id=1768326475]
+[node name="HBoxContainer" type="HBoxContainer" parent="DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer2/VBoxContainer/FactionComparison/PanelContainer2/MarginContainer/VBoxContainer" unique_id=1768326475]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="DetailsContainer/MarginContainer2/VBoxContainer/FactionComparison/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1972752411]
+[node name="Label" type="Label" parent="DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer2/VBoxContainer/FactionComparison/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1972752411]
 layout_mode = 2
 text = "Them:"
 
-[node name="Label2" type="Label" parent="DetailsContainer/MarginContainer2/VBoxContainer/FactionComparison/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer" unique_id=88203792]
+[node name="Label2" type="Label" parent="DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer2/VBoxContainer/FactionComparison/PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer" unique_id=88203792]
 layout_mode = 2
 text = "name"
 label_settings = ExtResource("2_prdl7")
 
-[node name="TheirDescription" type="RichTextLabel" parent="DetailsContainer/MarginContainer2/VBoxContainer/FactionComparison/PanelContainer2/MarginContainer/VBoxContainer" unique_id=1445783219]
+[node name="TheirDescription" type="RichTextLabel" parent="DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer2/VBoxContainer/FactionComparison/PanelContainer2/MarginContainer/VBoxContainer" unique_id=1445783219]
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 bbcode_enabled = true
-text = "Population: [color]5[/color]
+text = "Population: [color=]5[/color]
 Military power: 0"
 fit_content = true
 
-[node name="AggressionAdjustmentButton" type="Button" parent="DetailsContainer/MarginContainer2/VBoxContainer/FactionComparison/PanelContainer2/MarginContainer/VBoxContainer" unique_id=98676869]
+[node name="AggressionAdjustmentButton" type="Button" parent="DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer2/VBoxContainer/FactionComparison/PanelContainer2/MarginContainer/VBoxContainer" unique_id=98676869]
 layout_mode = 2
 focus_mode = 0
 text = "declare war"
 
-[node name="AttackDisplay" type="PanelContainer" parent="DetailsContainer/MarginContainer2/VBoxContainer" unique_id=1366362766]
+[node name="AttackDisplay2" parent="DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer2/VBoxContainer" unique_id=1362104975 instance=ExtResource("7_hq3dj")]
+layout_mode = 2
+
+[node name="PanelContainer" parent="DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer2/VBoxContainer/AttackDisplay2/VBoxContainer2/TopBar2" parent_id_path=PackedInt32Array(1362104975, 1596772754) index="0" unique_id=1570056122]
+size_flags_horizontal = 3
+
+[node name="Fat" parent="DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer2/VBoxContainer/AttackDisplay2/VBoxContainer2/TopBar2" parent_id_path=PackedInt32Array(1362104975, 1596772754) index="1" unique_id=1291002602]
+visible = false
+
+[node name="CloseButton" parent="DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer2/VBoxContainer/AttackDisplay2/VBoxContainer2/TopBar2" parent_id_path=PackedInt32Array(1362104975, 1596772754) index="3" unique_id=1694965561]
+visible = false
+
+[node name="ToggleAttack" type="Button" parent="DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer2/VBoxContainer" unique_id=1793069747]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_styles/panel = ExtResource("2_joigp")
+focus_mode = 0
+disabled = true
+text = "Start"
 
-[node name="MarginContainer" type="MarginContainer" parent="DetailsContainer/MarginContainer2/VBoxContainer/AttackDisplay" unique_id=1669059420]
+[node name="MarginContainer" type="MarginContainer" parent="DetailsContainer/VBoxContainer/HBoxContainer" unique_id=413773978]
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_constants/margin_left = 2
 theme_override_constants/margin_top = 2
 theme_override_constants/margin_right = 2
 theme_override_constants/margin_bottom = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="DetailsContainer/MarginContainer2/VBoxContainer/AttackDisplay/MarginContainer" unique_id=984947930]
+[node name="VBoxContainer" type="VBoxContainer" parent="DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer" unique_id=1311714754]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer/VBoxContainer" unique_id=711030783]
+layout_mode = 2
+text = "Ongoing Operations"
+horizontal_alignment = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer/VBoxContainer" unique_id=1316705677]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer/VBoxContainer/ScrollContainer" unique_id=1443919126]
 layout_mode = 2
 size_flags_horizontal = 3
-
-[node name="Label2" type="Label" parent="DetailsContainer/MarginContainer2/VBoxContainer/AttackDisplay/MarginContainer/VBoxContainer" unique_id=958603308]
-layout_mode = 2
-text = "Attack on xyz (0, 0)"
-label_settings = ExtResource("2_prdl7")
-
-[node name="JobSlider" parent="DetailsContainer/MarginContainer2/VBoxContainer/AttackDisplay/MarginContainer/VBoxContainer" unique_id=1872956985 instance=ExtResource("5_rgqmg")]
-layout_mode = 2
+size_flags_vertical = 3
 
 [node name="WarEssay" parent="." unique_id=248841037 instance=ExtResource("7_q8tmp")]
 visible = false
+
+[editable path="DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer2/VBoxContainer/AttackDisplay2"]

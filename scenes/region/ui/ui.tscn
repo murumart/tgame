@@ -425,6 +425,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 1.75
 mouse_filter = 2
+theme_override_constants/separation = 2
 alignment = 2
 
 [node name="MenuTabs" type="TabContainer" parent="VBoxContainer2/HBoxContainer/VBoxContainer2" unique_id=1179149039]
@@ -624,7 +625,7 @@ layout_mode = 2
 focus_mode = 0
 shortcut = SubResource("Shortcut_3haic")
 shortcut_in_tooltip = false
-text = "War"
+text = "Military"
 
 [node name="AgreementsButton" type="Button" parent="VBoxContainer2/HBoxContainer/VBoxContainer2/ControlButtons" unique_id=234576058]
 unique_name_in_owner = true

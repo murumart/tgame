@@ -121,6 +121,37 @@ public class FactionActions {
 		to.Region.AnnexAll(region, GameMan.Game.Map.TileOwners);
 	}
 
+	public static bool CanAttack(Region who, Region whom, Vector2I worldpos) {
+		if (whom.GetEdge(worldpos - whom.WorldPosition, out var edge)) {
+			if (edge.Above == who || edge.Below == who || edge.Left == who || edge.Right == who) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static TileAttackJob GetAttackJob(Faction from, Faction to, Vector2I globalPosition) {
+		var job = new TileAttackJob(to.Region, globalPosition);
+		return job;
+	}
+
+	public static void ApplyAttackJob(Faction from, TileAttackJob job) {
+		from.AddAttackJob(job);
+	}
+
+	public static bool IsAttacking(Faction who, Faction whom, Vector2I globalPosition, out TileAttackJob tajob) {
+		tajob = null;
+		if (!who.GetJob(globalPosition, out var job)) return false;
+		if (job is not TileAttackJob tj) return false;
+		tajob = tj;
+		if (tajob.Target.LocalFaction != whom) return false;
+		return true;
+	}
+
+	public static void RemoveAttackingJob(Faction who, TileAttackJob job) {
+		who.RemoveJob(job);
+	}
+
 	// notifications
 
 	void HourlyUpdate(TimeT timeInMinutes) {

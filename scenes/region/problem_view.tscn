@@ -73,7 +73,7 @@ _data = {
 
 [node name="ProblemView" unique_id=1991676390 node_paths=PackedStringArray("mapObjectDisplay") instance=ExtResource("1_bpuof")]
 mapObjectDisplay = NodePath("Dam")
-IsProblem = true
+type = 1
 
 [node name="Dam" type="Sprite2D" parent="." index="0" unique_id=1082710809]
 

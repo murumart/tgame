@@ -16,6 +16,11 @@ public partial class JobInfoPanel : Control {
 	[Export] Button FocusOnJobButton;
 	[Export] JobSlider workerCountSlider;
 
+	public bool Editable {
+		get => workerCountSlider.Editable;
+		set => workerCountSlider.Editable = value;
+	}
+
 	UI ui;
 	Job jobBox;
 
@@ -26,28 +31,39 @@ public partial class JobInfoPanel : Control {
 	}
 
 	public void Display(UI ui, Job job, int jobIndex, uint sliderMax, Action<int, float> workersSelected) {
+		DisplayPreview(job);
+
 		this.ui = ui;
 		jobBox = job;
 		if (job.NeedsWorkers) {
 			Debug.Assert(sliderMax < 1000, $"Slider max value ({sliderMax}) overflowed probably");
 			workerCountSlider.Setup(workersSelected, jobIndex, job.Workers, "workers", sliderMax, "");
 			workerCountSlider.Show();
-		} else {
-			workerCountSlider.Hide();
 		}
-
-		titleLabel.Text = job.Title;
-
-		var desc = job.GetStatusDescription();
-		if (desc.Length != 0) desc += '\n';
-		desc += job.GetProductionDescription();
-		infoLabel.Text = desc;
+		DeleteJobButton.Disabled = false;
 
 		if (job.Locked) {
 			DeleteJobButton.Disabled = true;
 			workerCountSlider.Disable();
 			titleLabel.Text += " (INACCESSIBLE)";
 		}
+	}
+
+	public void DisplayPreview(Job job) {
+		ClearDisplay();
+		titleLabel.Text = job.Title;
+
+		var desc = job.GetStatusDescription();
+		if (desc.Length != 0) desc += '\n';
+		desc += job.GetProductionDescription();
+		infoLabel.Text = desc;
+	}
+
+	public void ClearDisplay() {
+		workerCountSlider.Hide();
+		DeleteJobButton.Disabled = true;
+		infoLabel.Text = "";
+		titleLabel.Text = "?";
 	}
 
 	void RemoveJob() {

@@ -91,7 +91,7 @@ public partial class LocalAI {
 				if (job is ConstructBuildingJob || job is SolveProblemJob) maxChange = (int)job.MaxWorkers;
 				maxChange = Math.Min((int)ac.GetFreeWorkers(), maxChange);
 				maxChange = Math.Min(maxChange, (int)job.MaxWorkers - job.Workers);
-				//if (job is not ConstructBuildingJob) 
+				//if (job is not ConstructBuildingJob)
 				maxChange = GD.RandRange(maxChange / 2, maxChange);
 				ac.ChangeJobWorkerCount(job, maxChange);
 			}, $"AssignWorkersToJob({job})");
@@ -267,7 +267,7 @@ public partial class LocalAI {
 				reason.Append(string.Format(starts[GD.Randi() % starts.Length], ac.Faction.Name, target.Name));
 				reason.Append(' ');
 				reason.Append(insults[GD.Randi() % insults.Length]);
-				ac.Faction.DeclareWarOn(target, reason.ToString());
+				ac.Faction.StartMilitaryOperation(target, reason.ToString());
 			}, $"DeclareWarWith({target})");
 		}
 

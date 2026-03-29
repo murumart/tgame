@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Godot;
@@ -15,6 +16,7 @@ public partial class RegionDisplay : Node2D {
 
 	readonly Dictionary<Vector2I, MapObjectView> mapObjectViews = new();
 	readonly Dictionary<Vector2I, MapObjectView> problemViews = new();
+	readonly Dictionary<Vector2I, AttackView> attackViews = new();
 	Region region;
 	Camera camera;
 
@@ -24,6 +26,8 @@ public partial class RegionDisplay : Node2D {
 	readonly Queue<Job> jobsToUndisplay = new();
 	readonly Queue<Problem> problemsToDisplay = new();
 	readonly Queue<Problem> problemsToUndisplay = new();
+	readonly Queue<TileAttackJob> attacksToDisplay = new();
+	readonly Queue<TileAttackJob> attacksToUndisplay = new();
 
 	public int Lod { get; private set; }
 	public Region Region { get => region; }
@@ -64,6 +68,14 @@ public partial class RegionDisplay : Node2D {
 		if (problemsToUndisplay.Count > 0) {
 			var p = problemsToUndisplay.Dequeue();
 			UndisplayRegionProblem(p);
+		}
+		if (attacksToDisplay.Count > 0) {
+			var p = attacksToDisplay.Dequeue();
+			DisplayRegionAttack(p);
+		}
+		if (attacksToUndisplay.Count > 0) {
+			var p = attacksToUndisplay.Dequeue();
+			UndisplayRegionAttack(p);
 		}
 		if (GameMan.IsPaused && Engine.GetFramesDrawn() % 16 == 0) {
 			DisplayJobProgress();
@@ -125,15 +137,17 @@ public partial class RegionDisplay : Node2D {
 	}
 
 	void ConnectEvents() {
+		if (Lod < 1) {
+			region.LocalFaction.ProblemAddedEvent += OnRegionProblemAdded;
+			region.LocalFaction.ProblemUnsolvedEvent += OnRegionProblemEnded;
+			region.LocalFaction.ProblemSolvedEvent += OnRegionProblemEnded;
+		}
 		if (Lod < 2) {
 			region.MapObjectUpdatedAtEvent += OnRegionMapObjectUpdated;
 			region.LocalFaction.JobAddedEvent += OnRegionJobAdded;
 			region.LocalFaction.JobRemovedEvent += OnRegionJobRemoved;
 			region.LocalFaction.JobChangedEvent += OnJobChanged;
 
-			region.LocalFaction.ProblemAddedEvent += OnRegionProblemAdded;
-			region.LocalFaction.ProblemUnsolvedEvent += OnRegionProblemEnded;
-			region.LocalFaction.ProblemSolvedEvent += OnRegionProblemEnded;
 			camera.ZoomChanged += OnZoomChanged;
 		}
 		region.TileChangedAtEvent += OnTileChanged;
@@ -141,15 +155,17 @@ public partial class RegionDisplay : Node2D {
 	}
 
 	void DisconnectEvents() {
+		if (Lod < 1) {
+			region.LocalFaction.ProblemAddedEvent -= OnRegionProblemAdded;
+			region.LocalFaction.ProblemUnsolvedEvent -= OnRegionProblemEnded;
+			region.LocalFaction.ProblemSolvedEvent -= OnRegionProblemEnded;
+		}
 		if (Lod < 2) {
 			region.MapObjectUpdatedAtEvent -= OnRegionMapObjectUpdated;
 			region.LocalFaction.JobAddedEvent -= OnRegionJobAdded;
 			region.LocalFaction.JobRemovedEvent -= OnRegionJobRemoved;
 			region.LocalFaction.JobChangedEvent -= OnJobChanged;
 
-			region.LocalFaction.ProblemAddedEvent -= OnRegionProblemAdded;
-			region.LocalFaction.ProblemUnsolvedEvent -= OnRegionProblemEnded;
-			region.LocalFaction.ProblemSolvedEvent -= OnRegionProblemEnded;
 			camera.ZoomChanged -= OnZoomChanged;
 		}
 		region.TileChangedAtEvent -= OnTileChanged;
@@ -205,6 +221,15 @@ public partial class RegionDisplay : Node2D {
 				mopview.DisplayJobProgress(0f, false);
 			}
 		}
+		if (Lod > 0) return;
+		foreach (var (tpos, view) in attackViews) {
+			bool has = region.LocalFaction.GetJob(tpos + region.WorldPosition, out var job);
+			if (job is not TileAttackJob atk) continue;
+			float progress = atk.GetProgressEstimate();
+			view.DisplayJobProgress(progress, show: true);
+			if (job.Workers > 0) view.IconSetShow(MapObjectView.IconSetIcons.Workers);
+			else view.IconSetHide(MapObjectView.IconSetIcons.Workers);
+		}
 	}
 
 	// reactions to notifications
@@ -219,6 +244,10 @@ public partial class RegionDisplay : Node2D {
 	}
 
 	void OnRegionJobAdded(Job job) {
+		if (job is TileAttackJob tak) {
+			attacksToDisplay.Enqueue(tak);
+			return;
+		}
 		jobsToDisplay.Enqueue(job);
 	}
 
@@ -246,6 +275,10 @@ public partial class RegionDisplay : Node2D {
 	}
 
 	void OnRegionJobRemoved(Job job) {
+		if (job is TileAttackJob tak) {
+			attacksToUndisplay.Enqueue(tak);
+			return;
+		}
 		jobsToUndisplay.Enqueue(job);
 	}
 
@@ -293,13 +326,34 @@ public partial class RegionDisplay : Node2D {
 		}
 	}
 
+	void DisplayRegionAttack(TileAttackJob atk) {
+		var view = MapObjectView.MakeAttack();
+		buildingsParent.AddChild(view);
+		var localpos = atk.GlobalPosition - region.WorldPosition;
+		attackViews[localpos] = view;
+		var viewpos = Tilemaps.TilePosToWorldPos(localpos);
+		viewpos.Y -= Tilemaps.TileElevationVerticalOffset(atk.GlobalPosition, GameMan.Game.Map.World);
+		view.Position = viewpos;
+	}
+
+	void UndisplayRegionAttack(TileAttackJob atk) {
+		var yes = attackViews.TryGetValue(atk.GlobalPosition - region.WorldPosition, out var view);
+		Debug.Assert(yes, "No problemview exists to undisplay");
+		attackViews.Remove(atk.GlobalPosition - region.WorldPosition);
+		view.QueueFree();
+		bool hasBview = mapObjectViews.TryGetValue(atk.GlobalPosition - region.WorldPosition, out var moview);
+		if (hasBview) {
+			UpdateJobDisplayAt(atk.GlobalPosition - region.WorldPosition);
+		}
+	}
+
 	void OnTileChanged(Vector2I at) {
 		tilemaps.DisplayGround(region);
 		CalcVisibilityRect();
 	}
 
 	void OnDisappeared() {
-		
+
 	}
 
 	void OnScreenEntered() {

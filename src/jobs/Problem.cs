@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using Godot;
+using scenes.autoload;
 
 public abstract class Problem {
 
@@ -130,6 +132,90 @@ public class WorkplaceAccidentProblem : Problem {
 	public override void OnAddressed(Faction fac) {
 		localJob.Lock(false);
 	}
+
+}
+
+public class TileAttackJob : Job {
+
+	public override string Title => $"Attack {Target.LocalFaction.Name} at {GlobalPosition}";
+
+	public readonly Vector2I GlobalPosition;
+	public readonly Region Target;
+
+	public Faction Attacker {get; private set;}
+	public bool Active => Attacker is not null;
+
+	float timeSpent;
+	readonly TimeT timeTaken = GameTime.Hours(34);
+
+
+	public TileAttackJob(Region target, Vector2I globalPos) {
+		Debug.Assert(GameMan.Game.Map.TileOwners.GetValueOrDefault(globalPos, null) == target, "Target region doesn't have a tile ehre");
+		GlobalPosition = globalPos;
+		Target = target;
+		MaxWorkers = 100;
+	}
+
+	public override bool CanInitialise(Faction ctxFaction) {
+		return true;
+	}
+
+	public override void Initialise(Faction ctxFaction) {
+		Attacker = ctxFaction;
+	}
+
+	public override void Deinitialise(Faction ctxFaction) {
+		Debug.Assert(ctxFaction == Attacker);
+	}
+
+	(float AttackerMil, float DefenderMil) GetMils() => (Attacker.Military, Target.LocalFaction.Military);
+
+	public override float GetWorkTime(TimeT minutes) {
+		var (atkmil, defmil) = GetMils();
+		float milsum = atkmil + defmil;
+		float mypart;
+		if (milsum == 0) mypart = 1f;
+		else mypart = atkmil / milsum / 0.5f;
+		return minutes * Mathf.Pow(Workers, 0.7f) * mypart;
+	}
+
+	public override void PassTime(TimeT minutes) {
+		timeSpent += GetWorkTime(minutes);
+	}
+
+	public override void CheckDone(Faction regionFaction) {
+		if (timeSpent < timeTaken) return;
+		regionFaction.RemoveJob(this);
+		Attacker.Region.AnnexTile(Target, GlobalPosition - Target.WorldPosition, GameMan.Game.Map.TileOwners);
+	}
+
+	readonly string[] productions = [
+		"misery",
+		"more land",
+		"power",
+		"might",
+		"glory",
+	];
+
+	public override string GetProductionDescription() {
+		return $"This job produces {productions[GD.Randi() % productions.Length]}.";
+	}
+
+	public override float GetProgressEstimate() {
+		return timeSpent / timeTaken;
+	}
+
+	public override string GetStatusDescription() {
+		if (!Active) return "Begin the attack to add soldiers.";
+		if (Workers == 0) return "Awaiting soldier assignment.";
+		float time = timeTaken / MathF.Max(GetWorkTime(1), 1);
+		var (atkmil, defmil) = GetMils();
+		var str = "";
+		if (atkmil > defmil) str = "We have military advantage. ";
+		else if (atkmil < defmil) str = "We are at a military disadvantage. ";
+		return str + $"At this rate, the tile will be taken over in {GameTime.GetFancyTimeString((TimeT)time)}.";
+	}
+
 }
 
 public class MilitaryAttackproblem : Problem {
@@ -143,10 +229,13 @@ public class MilitaryAttackproblem : Problem {
 	}
 
 	public override void OnAddressed(Faction fac) {
-		
+
 	}
 
 	public override void OnFailedToAddress(Faction fac) {
-		
+
 	}
+
 }
+
+
