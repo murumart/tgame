@@ -310,7 +310,6 @@ public class QuarryJob : MapObjectJob {
 	ResourceStorage storage;
 	public readonly Building Quarry;
 	public readonly IResourceType MineResources;
-	//public Well Well => Site.Wells[wellIx];
 
 	float timeSpent; // storing as float due to workers
 	public readonly TimeT TimeTaken;
@@ -345,13 +344,9 @@ public class QuarryJob : MapObjectJob {
 		float ts = GetWorkTime(minutes);
 		timeSpent += ts;
 
-		// while (timeSpent >= Well.MinutesPerBunch && storage.CanAdd(1) && Well.HasBunches) {
-		// 	timeSpent -= Well.MinutesPerBunch;
-		// 	Well.Deplete();
-		// 	grant.Add(new(Well.ResourceType, 1));
-		// }
 		while (timeSpent >= TimeTaken && storage.CanAdd(1)) {
 			timeSpent -= TimeTaken;
+			// TODO quarries should be able to be depleted maybe
 			grant.Add(new(MineResources, 1));
 		}
 
@@ -362,13 +357,6 @@ public class QuarryJob : MapObjectJob {
 	}
 
 	public override void CheckDone(Faction regionFaction) {
-		if (true) return;
-
-		regionFaction.RemoveJob(this);
-		// remove a completely depleted resource site
-		// let's try not doing this, actually
-		//foreach (var well in site.Wells) if (well.HasBunches) return;
-		//regionFaction.Uproot(site.GlobalPosition - regionFaction.Region.WorldPosition);
 	}
 
 	// display
@@ -403,7 +391,7 @@ public class QuarryJob : MapObjectJob {
 		return GameTime.GetFancyTimeString((TimeT)timeLeft) + " until more " + MineResources.AssetName + ".";
 	}
 
-	public override string ToString() => $"QuarryJob({(MineResources is not null ? MineResources.AssetName : "?")})";
+	public override string ToString() => $"QuarryJob({MineResources.AssetName})";
 
 }
 

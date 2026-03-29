@@ -22,6 +22,7 @@ public partial class EnvironSoundChoiceBinary : EnvironSoundChoice {
 			SampleTypes.Elevation => Mama.GetElevation(),
 			SampleTypes.Humidity => Mama.GetHumidity(),
 			SampleTypes.Temperature => Mama.GetTemperature(),
+			_ => throw new NotImplementedException(),
 		};
 	}
 
