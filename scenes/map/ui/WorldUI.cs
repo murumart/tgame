@@ -206,6 +206,10 @@ public partial class WorldUI : Control {
 		this.world = world;
 		this.game = game;
 		if (game is not null) this.map = game.Map;
+		camera.LimitLeft = 0;
+		camera.LimitTop = 0;
+		camera.LimitRight = world.Width;
+		camera.LimitBottom = world.Height;
 		worldRenderer.World = world;
 		worldRenderer.ResetImages();
 		SetRendererParams();
@@ -215,7 +219,6 @@ public partial class WorldUI : Control {
 				GenerationDisplay(world);
 				break;
 			case Modes.InGame:
-				this.game = game;
 				InGameDisplay(game.PlayRegion);
 				break;
 		}

@@ -16,7 +16,7 @@ public partial class ApprovalMeter : Label {
 	}
 
 	public void Display(float approval, float increase) {
-		Text = $"     {(int)(approval * 100)}% ({(increase > 0 ? '+' : '-')}{(int)(Mathf.Abs(increase) * 100)}%)";
+		Text = $"{(int)(approval * 100)}% ({(increase > 0 ? '+' : '-')}{(int)(Mathf.Abs(increase) * 100)}%)";
 		faceDisplay.Texture = faceTextures[(int)(faceTextures.Count * (approval - 0.01f))];
 	}
 

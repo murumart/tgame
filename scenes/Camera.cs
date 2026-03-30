@@ -10,9 +10,9 @@ public partial class Camera : Camera2D {
 	public event Action<Vector2I> ClickedMouseEvent;
 	public event Action ZoomChanged;
 
-	const float SPEED = 360.0f;
-	const float ACCEL = 60.0f;
-	const float DECEL = 20.0f;
+	[Export] float SPEED = 360.0f;
+	[Export] float ACCEL = 34.0f;
+	[Export] float DECEL = 14.0f;
 
 	bool returnMousePosition = false;
 	Vector2 lastMousePosition;
@@ -30,6 +30,7 @@ public partial class Camera : Camera2D {
 		if (oldzoom != Zoom) {
 			ZoomChanged?.Invoke();
 		}
+		Position = GetScreenCenterPosition();
 	}
 
 	public override void _UnhandledInput(InputEvent evt) {
@@ -117,17 +118,23 @@ public partial class Camera : Camera2D {
 
 	private void Movement(float delta) {
 		float speed = SPEED / zoomSize;
-		velocity = velocity.MoveToward(Vector2.Zero, delta * DECEL);
 		if (Input.IsKeyPressed(Key.Shift)) {
 			velocity = Vector2.Zero;
 			speed *= 0.5f;
 		}
 
 		Vector2 dir = Input.GetVector("left", "right", "up", "down");
-		if (dir.X != 0.0f) velocity.X = Mathf.MoveToward(velocity.X, dir.X * speed * delta, delta * ACCEL);
-		if (dir.Y != 0.0f) velocity.Y = Mathf.MoveToward(velocity.Y, dir.Y * speed * delta, delta * ACCEL);
+		if (dir.X != 0.0f) velocity.X = Mathf.MoveToward(velocity.X, dir.X * speed * delta, delta * (ACCEL / zoomSize));
+		else velocity.X = Mathf.MoveToward(velocity.X, 0f, Mathf.Abs(delta * velocity.X) * DECEL);
+		if (dir.Y != 0.0f) velocity.Y = Mathf.MoveToward(velocity.Y, dir.Y * speed * delta, delta * (ACCEL / zoomSize));
+		else velocity.Y = Mathf.MoveToward(velocity.Y, 0f, Mathf.Abs(delta * velocity.Y) * DECEL);
 
-		Position += velocity;
+		Vector2 newPos = Position;
+		//if (newPos.X + velocity.X < LimitRight && newPos.X + velocity.X > LimitLeft) newPos.X += velocity.X;
+		//if (newPos.Y + velocity.Y < LimitBottom && newPos.Y + velocity.Y > LimitTop) newPos.Y += velocity.Y;
+
+		Position = newPos;
+		//Position = Position.Clamp(new Vector2(LimitLeft, LimitTop), new Vector2(LimitRight, LimitBottom));
 	}
 
 }

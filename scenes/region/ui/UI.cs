@@ -371,12 +371,6 @@ public partial class UI : Control {
 				}
 				(c as Label).Text = txt;
 			});
-			resourceDisplay.Display(c => {
-				var map = GameMan.Game.Map;
-				if (map == null) (c as Label).Text = "map...?";
-				else if (!map.TileOwners.TryGetValue(inRegionTilepos + reg.WorldPosition, out var reg2)) (c as Label).Text = "faction: ...?";
-				else (c as Label).Text = $"faction: {reg2.LocalFaction.Name}";
-			});
 			resourceDisplay.Display(c => (c as Label).Text = "military: " + fac.Military);
 		} else {
 			resourceDisplay.Display(c => (c as Label).Text = fac.Name);
@@ -395,7 +389,7 @@ public partial class UI : Control {
 		SetGameSpeedLabelText();
 		bool gamePaused = GameMan.IsPaused || GameMan.GameSpeed == 0f;
 		pauseDisplayPanel.Visible = gamePaused;
-		zoomLabel.Text = $"zoom: {(Camera.Zoom.X >= 1 ? Camera.Zoom.X : Mathf.Remap(Camera.Zoom.X, 1f, 0.1f, 1f, -8f)):0}";
+		zoomLabel.Text = $"zoom: {(Camera.Zoom.X):F1}";
 		if (state == State.PlacingBuild) {
 			buildingList.UpdateCursorWhilePlacing(Camera.GetMouseHoveredTilePos());
 		}
@@ -580,7 +574,7 @@ public partial class UI : Control {
 	public List<BuildingType> GetBuildingTypes() => GetBuildingTypesEvent?.Invoke();
 	public ResourceStorage GetResources() => GetResourcesEvent?.Invoke();
 	public FactionActions GetFactionActions() => GetFactionActionsEvent?.Invoke();
-	public (float, float) GetFoodAndUsage() => GetFoodAndUsageEvent?.Invoke() ?? (1337, 1337);
+	public (float Food, float Usage) GetFoodAndUsage() => GetFoodAndUsageEvent?.Invoke() ?? (1337, 1337);
 	public void TileSelected(Vector2I place) => TileSelectedEvent?.Invoke(place);
 
 	public Job GetMapObjectJob(MapObject mapObject) => GetMapObjectJobEvent?.Invoke(mapObject);

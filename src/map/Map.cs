@@ -61,7 +61,7 @@ public class Map {
 		List<Region> regions = new();
 		List<Faction> regionFactions = new();
 		for (int i = 10; i < 20; i++) {
-			var region = Region.GetTestCircleRegion(i - 10, 12, new(i * 18, i * 15));
+			var region = Region.GetTestCircleRegion(i - 10, 12, new((i - 7) * 18, (i - 7) * 15));
 			regions.Add(region);
 			var regionFaction = new Faction(region);
 			regionFactions.Add(regionFaction);
@@ -82,7 +82,7 @@ public class Map {
 				region.LocalFaction.AddTradePartner(otherregion.LocalFaction);
 			}
 		}
-		var world = new World(1000, 1000, 1);
+		var world = new World(400, 400, 1);
 		for (int x = 0; x < world.Width; x++) for (int y = 0; y < world.Height; y++) {
 				world.SetElevation(x, y, Mathf.Clamp(Mathf.Sin(x * 0.04f) * Mathf.Cos(y * 0.04f), -1f, 1f));
 				world.SetTile(x, y, GroundTileType.HasLand | GroundTileType.HasVeg);

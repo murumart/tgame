@@ -77,6 +77,17 @@ public partial class PlayerRegion : Node {
 		region.NewNeighborGainedEvent += OnNewNeighborGained;
 		camera.Region = region;
 
+		(float LimitLeft, float LimitRight, float LimitTop, float LimitBottom) = (
+			Tilemaps.TilePosToWorldPos(new(                           0 - region.WorldPosition.X, GameMan.Game.Map.World.Height - region.WorldPosition.Y)).X,
+			Tilemaps.TilePosToWorldPos(new(GameMan.Game.Map.World.Width - region.WorldPosition.X,                             0 - region.WorldPosition.Y)).X,
+			Tilemaps.TilePosToWorldPos(new(                           0 - region.WorldPosition.X,                             0 - region.WorldPosition.Y)).Y,
+			Tilemaps.TilePosToWorldPos(new(GameMan.Game.Map.World.Width - region.WorldPosition.X, GameMan.Game.Map.World.Height - region.WorldPosition.Y)).Y
+		);
+		camera.LimitLeft = (int)LimitLeft - 50;
+		camera.LimitRight = (int)LimitRight + 50;
+		camera.LimitTop = (int)LimitTop - 50;
+		camera.LimitBottom = (int)LimitBottom + 50;
+
 		ui.TileSelectedEvent += regionDisplay.OnTileSelected;
 		ui.TileDeselectedEvent += regionDisplay.OnTileDeselected;
 
