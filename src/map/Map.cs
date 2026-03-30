@@ -57,27 +57,38 @@ public class Map {
 	}
 
 	public static Map GetDebugMap() {
-
+		
+		const int gridsize = 10;
+		const int regionsize = 15;
 		List<Region> regions = new();
-		List<Faction> regionFactions = new();
-		for (int i = 10; i < 20; i++) {
-			var region = Region.GetTestCircleRegion(i - 10, 12, new((i - 7) * 18, (i - 7) * 15));
-			regions.Add(region);
-			var regionFaction = new Faction(region);
-			regionFactions.Add(regionFaction);
-			// test mandate
-			//var mandate = faction.Briefcase.CreateExportMandate(
-			//	new() { new(Registry.Resources.GetAsset("logs"), 9) },
-			//	new(),
-			//	faction,
-			//	regionFaction,
-			//	60 * 7 + 120 //GameTime.DAYS_PER_WEEK * GameTime.HOURS_PER_DAY * GameTime.MINUTES_PER_HOUR
-			//);
-			//regionFaction.Briefcase.AddDocument(mandate);
+
+		for (int x = 0; x < gridsize; x++) {
+			for (int y = 0; y < gridsize; y++) {
+				var region = Region.GetTestSquareRegion(x + y * gridsize, regionsize, new(x * regionsize + regionsize / 2, y * regionsize + regionsize / 2));
+				regions.Add(region);
+				_ = new Faction(region);
+			}
 		}
+
+		//for (int i = 10; i < 20; i++) {
+		//	var region = Region.GetTestCircleRegion(i - 10, 12, new((i - 7) * 18, (i - 7) * 15));
+		//	regions.Add(region);
+		//	var regionFaction = new Faction(region);
+		//	regionFactions.Add(regionFaction);
+		//	// test mandate
+		//	//var mandate = faction.Briefcase.CreateExportMandate(
+		//	//	new() { new(Registry.Resources.GetAsset("logs"), 9) },
+		//	//	new(),
+		//	//	faction,
+		//	//	regionFaction,
+		//	//	60 * 7 + 120 //GameTime.DAYS_PER_WEEK * GameTime.HOURS_PER_DAY * GameTime.MINUTES_PER_HOUR
+		//	//);
+		//	//regionFaction.Briefcase.AddDocument(mandate);
+		//}
 		foreach (var region in regions) {
 			foreach (var otherregion in regions) {
 				if (region == otherregion) continue;
+				//if (region.WorldPosition.DistanceTo(otherregion.WorldPosition) > regionsize) continue;
 				region.AddNeighbor(otherregion);
 				region.LocalFaction.AddTradePartner(otherregion.LocalFaction);
 			}

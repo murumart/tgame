@@ -130,8 +130,8 @@ public partial class Camera : Camera2D {
 		else velocity.Y = Mathf.MoveToward(velocity.Y, 0f, Mathf.Abs(delta * velocity.Y) * DECEL);
 
 		Vector2 newPos = Position;
-		//if (newPos.X + velocity.X < LimitRight && newPos.X + velocity.X > LimitLeft) newPos.X += velocity.X;
-		//if (newPos.Y + velocity.Y < LimitBottom && newPos.Y + velocity.Y > LimitTop) newPos.Y += velocity.Y;
+		newPos.X += velocity.X;
+		newPos.Y += velocity.Y;
 
 		Position = newPos;
 		//Position = Position.Clamp(new Vector2(LimitLeft, LimitTop), new Vector2(LimitRight, LimitBottom));

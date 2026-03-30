@@ -339,6 +339,7 @@ public partial class UI : Control {
 		});
 		if (!fac.IsWild) {
 			var reg = fac.Region;
+			resourceDisplay.Display(c => (c as Label).Text = "faction: " + fac.Name);
 			resourceDisplay.Display(c => {
 				float monthlyChange = fac.Population.GetApprovalMonthlyChange();
 				(c as ApprovalMeter).Display(fac.Population.Approval, monthlyChange);

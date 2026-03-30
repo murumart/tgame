@@ -89,6 +89,10 @@ public class Region {
 		return edges.TryGetValue(pos, out edge);
 	}
 
+	public Span<KeyValuePair<Vector2I, (Region Right, Region Left, Region Below, Region Above)>> GetEdges() {
+		return edges.ToArray().AsSpan();
+	}
+
 	public void SetLocalFaction(Faction regionFaction) {
 		LocalFaction = regionFaction;
 	}
@@ -151,8 +155,8 @@ public class Region {
 	}
 
 	public void AnnexTile(Region from, Vector2I fromCoordinate, Dictionary<Vector2I, Region> TileOwners, bool bulkop = false) {
-		Debug.Assert(from.groundTiles.ContainsKey(fromCoordinate), $"Region to annex from doesn't own tile at {fromCoordinate}");
 		var globalCoord = fromCoordinate + from.WorldPosition;
+		Debug.Assert(from.groundTiles.ContainsKey(fromCoordinate), $"Region to annex from doesn't own tile at {fromCoordinate}");
 		var localCoord = globalCoord - WorldPosition;
 		Debug.Assert(!groundTiles.ContainsKey(localCoord), $"Annexing region somehow already owns tile at {localCoord}");
 		var tile = from.groundTiles[fromCoordinate];
@@ -205,6 +209,7 @@ public class Region {
 				}
 			}
 		}
+		//GD.Print("Region::AnnexTile : ", this, " annexed ", globalCoord, " from ", from);
 	}
 
 	public void AnnexAll(Region from, Dictionary<Vector2I, Region> TileOwners) {
@@ -252,6 +257,28 @@ public class Region {
 			}
 		}
 		var reg = new Region(index, center, tiles);
+		foreach (var kvp in rs) {
+			reg.CreateResourceSiteAndPlace(kvp.Value, kvp.Key);
+		}
+		return reg;
+	}
+
+	public static Region GetTestSquareRegion(int index, int size, Vector2I wpos) {
+		var tiles = new Dictionary<Vector2I, GroundTileType>();
+		var rs = new Dictionary<Vector2I, IResourceSiteType>();
+		for (int x = -size / 2; x <= size / 2; x++) {
+			for (int y = -size / 2; y <= size / 2; y++) {
+				tiles[new Vector2I(x, y)] = GroundTileType.HasLand | GroundTileType.HasVeg;
+
+				if (x != 0 || y != 0) {
+					if (GD.Randf() < 0.01f) rs.Add(new Vector2I(x, y), Registry.ResourceSitesS.Rock);
+					else if (GD.Randf() < 0.07f) rs.Add(new Vector2I(x, y), Registry.ResourceSitesS.BroadleafWoods);
+					else if (GD.Randf() < 0.01f) rs.Add(new Vector2I(x, y), Registry.ResourceSitesS.ClayPit);
+					else if (GD.Randf() < 0.01f) rs.Add(new Vector2I(x, y), Registry.ResourceSitesS.FishingSpot);
+				}
+			}
+		}
+		var reg = new Region(index, wpos, tiles);
 		foreach (var kvp in rs) {
 			reg.CreateResourceSiteAndPlace(kvp.Value, kvp.Key);
 		}

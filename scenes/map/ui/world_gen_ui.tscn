@@ -86,6 +86,7 @@ worldWidthSpinbox = NodePath("HBoxContainer/PanelContainer/MarginContainer/VBoxC
 worldHeightSpinbox = NodePath("HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer2/Height")
 noiseScaleSpinbox = NodePath("HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/NoiseScale")
 depthSpinbox = NodePath("HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/BaseDepth")
+drawFast = true
 backButton = NodePath("HBoxContainer/PanelContainer/MarginContainer/VBoxContainer/BackButton")
 
 [node name="WorldGenerator" type="Node" parent="." unique_id=941712464]
@@ -97,7 +98,7 @@ drainageNoise = ExtResource("10_1e153")
 seawindGainNoise = ExtResource("7_muf1k")
 WorldWidth = 640
 WorldHeight = 420
-LandRegionCount = 174
+LandRegionCount = 172
 AggressiveFactionCount = 40
 elevationCurve = SubResource("Curve_y27hg")
 islandCurve = SubResource("Curve_8evwd")

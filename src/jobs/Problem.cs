@@ -142,7 +142,7 @@ public class TileAttackJob : Job {
 	public readonly Vector2I GlobalPosition;
 	public readonly Region Target;
 
-	public Faction Attacker {get; private set;}
+	public Faction Attacker { get; private set; }
 	public bool Active => Attacker is not null;
 
 	float timeSpent;
@@ -150,10 +150,12 @@ public class TileAttackJob : Job {
 
 
 	public TileAttackJob(Region target, Vector2I globalPos) {
-		Debug.Assert(GameMan.Game.Map.TileOwners.GetValueOrDefault(globalPos, null) == target, "Target region doesn't have a tile ehre");
 		GlobalPosition = globalPos;
 		Target = target;
 		MaxWorkers = 100;
+		Debug.Assert(GameMan.Game.Map.TileOwners.GetValueOrDefault(globalPos, null) == target, "Target region doesn't have a tile ehre: TileOwners");
+		Debug.Assert(target.GetGroundTile(globalPos - target.WorldPosition, out _), $"Target region doesnä't have a tile {globalPos}.");
+		Debug.Assert(Target.GetEdge(GlobalPosition - Target.WorldPosition, out _), $"Target {Target} doesnä't have an edge at {GlobalPosition}.");
 	}
 
 	public override bool CanInitialise(Faction ctxFaction) {
@@ -184,8 +186,52 @@ public class TileAttackJob : Job {
 	}
 
 	public override void CheckDone(Faction regionFaction) {
+		var atk = regionFaction.Region;
+		if (!Target.GetEdge(GlobalPosition - Target.WorldPosition, out var edge) // inside the other faction now
+			|| (edge.Above != atk && edge.Below != atk && edge.Left != atk && edge.Right != atk) // blocked by another acquisition
+		) {
+			// we got cut off!!
+			// maybe even delete the workers in here?
+			//GD.Print("REMOVED ", ToMoreDescriptiveString());
+			FactionActions.RemoveAttackingJob(regionFaction, this);
+			return;
+		}
+		{
+		//	Debug.Assert(Target.GetEdge(GlobalPosition - Target.WorldPosition, out var dge), $"Target {Target} doesnä't have an edge at {GlobalPosition}.");
+		//	Job j = null;
+		//	(bool isbad, Region culprit) bad = (false, null);
+		//	bad = (bad.isbad || (dge.Above?.LocalFaction != regionFaction && (dge.Above?.LocalFaction.GetJob(GlobalPosition, out j) ?? false) && j is TileAttackJob), dge.Above);
+		//	if (bad.isbad) {
+		//		Debug.Assert(false, $"It's Bad: target {Target} is already being attacked at {GlobalPosition} by {bad.culprit}");
+		//		GD.Print($"It's Bad: target {Target} is already being attacked at {GlobalPosition} by {bad.culprit}, removing job of {regionFaction} {ToMoreDescriptiveString()}");
+		//		FactionActions.RemoveAttackingJob(regionFaction, this);
+		//		return;
+		//	}
+		//	bad = (bad.isbad || (dge.Below?.LocalFaction != regionFaction && (dge.Below?.LocalFaction.GetJob(GlobalPosition, out j) ?? false) && j is TileAttackJob), dge.Below);
+		//	if (bad.isbad) {
+		//		Debug.Assert(false, $"It's Bad: target {Target} is already being attacked at {GlobalPosition} by {bad.culprit}");
+		//		GD.Print($"It's Bad: target {Target} is already being attacked at {GlobalPosition} by {bad.culprit}, removing job of {regionFaction} {ToMoreDescriptiveString()}");
+		//		FactionActions.RemoveAttackingJob(regionFaction, this);
+		//		return;
+		//	}
+		//	bad = (bad.isbad || (dge.Left?.LocalFaction != regionFaction && (dge.Left?.LocalFaction.GetJob(GlobalPosition, out j) ?? false) && j is TileAttackJob), dge.Left);
+		//	if (bad.isbad) {
+		//		Debug.Assert(false, $"It's Bad: target {Target} is already being attacked at {GlobalPosition} by {bad.culprit}");
+		//		GD.Print($"It's Bad: target {Target} is already being attacked at {GlobalPosition} by {bad.culprit}, removing job of {regionFaction} {ToMoreDescriptiveString()}");
+		//		FactionActions.RemoveAttackingJob(regionFaction, this);
+		//		return;
+		//	}
+		//	bad = (bad.isbad || (dge.Right?.LocalFaction != regionFaction && (dge.Right?.LocalFaction.GetJob(GlobalPosition, out j) ?? false) && j is TileAttackJob), dge.Right);
+		//	if (bad.isbad) {
+		//		Debug.Assert(false, $"It's Bad: target {Target} is already being attacked at {GlobalPosition} by {bad.culprit}");
+		//		GD.Print($"It's Bad: target {Target} is already being attacked at {GlobalPosition} by {bad.culprit}, removing job of {regionFaction} {ToMoreDescriptiveString()}");
+		//		FactionActions.RemoveAttackingJob(regionFaction, this);
+		//		return;
+		//	}
+		}
+		Debug.Assert(GameMan.Game.Map.TileOwners.TryGetValue(GlobalPosition, out var reg) && reg == Target, $"Tile {GlobalPosition} somehow slipped from {Target}");
 		if (timeSpent < timeTaken) return;
-		regionFaction.RemoveJob(this);
+		FactionActions.RemoveAttackingJob(regionFaction, this);
 		Attacker.Region.AnnexTile(Target, GlobalPosition - Target.WorldPosition, GameMan.Game.Map.TileOwners);
 	}
 
@@ -214,6 +260,12 @@ public class TileAttackJob : Job {
 		if (atkmil > defmil) str = "We have military advantage. ";
 		else if (atkmil < defmil) str = "We are at a military disadvantage. ";
 		return str + $"At this rate, the tile will be taken over in {GameTime.GetFancyTimeString((TimeT)time)}.";
+	}
+
+	public override string ToString() => $"TileAttackJob";
+
+	public string ToMoreDescriptiveString() {
+		return $"{GlobalPosition},{Target},{Attacker}";
 	}
 
 }

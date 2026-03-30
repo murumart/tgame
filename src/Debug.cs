@@ -1,17 +1,17 @@
-using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Godot;
-using Environment = System.Environment;
 
 internal static class Debug {
+	static bool alerted;
 	//https://www.reddit.com/r/godot/comments/obxm0i/comment/hj4htrk/
 	//[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	internal static void Assert(bool cond, string msg = "Assertion failed")
 //#if TOOLS
 		{
+			
 		if (!cond) {
 			var st = new StackTrace(1, true);
 			var ts = new StringBuilder();
@@ -31,7 +31,7 @@ internal static class Debug {
 			//GD.PrintErr(newmsg);
 			GD.PushError(msg);
 			OS.Alert(ts.ToString(), $"Assertion Failed in {st.GetFrame(0).GetMethod().DeclaringType}::{st.GetFrame(0).GetMethod().Name}");
-			//throw new ApplicationException($"Assertion failed: {msg}");
+			alerted = true;
 		}
 	}
 //#else

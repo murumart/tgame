@@ -129,7 +129,7 @@ public partial class RegionDisplay : Node2D {
 		*              \    + <-- right x
 		*               \  /
 		*                \+ <-- bottom y
-		*/   
+		*/
 		var wposes = region.GroundTilePositions.Select(p => Tilemaps.TilePosToWorldPos(p) + Vector2.Up * Tilemaps.TileElevationVerticalOffset(region.WorldPosition + p, GameMan.Game.Map.World));
 		if (!wposes.Any()) return;
 		float minx = wposes.MinBy(p => p.X).X - Tilemaps.TILE_SIZE.X * 0.5f;
@@ -346,7 +346,8 @@ public partial class RegionDisplay : Node2D {
 
 	void UndisplayRegionAttack(TileAttackJob atk) {
 		var yes = attackViews.TryGetValue(atk.GlobalPosition - region.WorldPosition, out var view);
-		Debug.Assert(yes, "No problemview exists to undisplay");
+		//Debug.Assert(yes, "No attack view exists to undisplay");
+		if (!yes) return;
 		attackViews.Remove(atk.GlobalPosition - region.WorldPosition);
 		view.QueueFree();
 		bool hasBview = mapObjectViews.TryGetValue(atk.GlobalPosition - region.WorldPosition, out var moview);
@@ -356,8 +357,11 @@ public partial class RegionDisplay : Node2D {
 	}
 
 	void OnTileChanged(Vector2I at) {
-		tilemaps.DisplayGround(region);
-		CalcVisibilityRect();
+		//tilemaps.DisplayGround(region);
+		if (tilemaps.Visible) {
+			tilemaps.UpdateGroundAt(region, at);
+			CalcVisibilityRect();
+		}
 	}
 
 	void OnDisappeared() {
@@ -366,6 +370,7 @@ public partial class RegionDisplay : Node2D {
 
 	void OnScreenEntered() {
 		tilemaps.Show();
+		tilemaps.DisplayGround(region);
 		SetProcess(Lod < 2);
 	}
 

@@ -104,6 +104,10 @@ pause={
 ]
 }
 
+[network]
+
+limits/debugger/max_chars_per_second=262144
+
 [rendering]
 
 textures/canvas_textures/default_texture_filter=0

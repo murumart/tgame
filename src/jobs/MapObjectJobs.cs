@@ -515,13 +515,13 @@ public class ProcessMarketJob : MapObjectJob {
 	public override string Title => "Process Market";
 
 	Building marketplace;
-	Faction faction;
+	Faction myFaction;
 
 	public override Vector2I GlobalPosition => marketplace.GlobalPosition;
 
-	public override bool IsValid => marketplace != null && faction != null;
+	public override bool IsValid => marketplace != null && myFaction != null;
 
-	public Faction Faction { get => faction; }
+	public Faction Faction { get => myFaction; }
 
 	float timeSpent;
 	readonly Dictionary<Faction, List<TradeOffer>> tradeOffers = new();
@@ -529,8 +529,10 @@ public class ProcessMarketJob : MapObjectJob {
 		get {
 			List<Faction> marked = new();
 			foreach (var (fac, l) in tradeOffers) {
-				if (faction.IsAtWarWith(fac)) {
-					marked.Add(faction);
+				if (myFaction.IsAtWarWith(fac)) {
+					marked.Add(fac);
+					l?.Clear();
+					continue;
 				}
 				for (int i = l.Count - 1; i > -1; i--) {
 					if (!l[i].IsValid) {
@@ -551,11 +553,11 @@ public class ProcessMarketJob : MapObjectJob {
 	}
 
 	public override void Deinitialise(Faction ctxFaction) {
-		faction = null;
+		myFaction = null;
 	}
 
 	public override void Initialise(Faction ctxFaction, MapObject mapObject) {
-		faction = ctxFaction;
+		myFaction = ctxFaction;
 		Debug.Assert(mapObject is Building b && b.IsConstructed && b.Type.GetSpecial() == Building.IBuildingType.Special.Marketplace, "This map object isn't a marketplace");
 		marketplace = mapObject as Building;
 	}
@@ -571,25 +573,25 @@ public class ProcessMarketJob : MapObjectJob {
 	}
 
 	void TryAddTradeOffer() {
-		var newpartners = faction.GetTradePartners().Where(a => !tradeOffers.ContainsKey(a)).ToArray();
+		var newpartners = myFaction.GetTradePartners().Where(a => !tradeOffers.ContainsKey(a)).ToArray();
 		if (newpartners.Length != 0) {
 			var newpartner = newpartners[GD.Randi() % newpartners.Length];
 			tradeOffers.Add(newpartner, new());
-			faction.GetGottenTradeOffers(newpartner, out var offersenu);
+			myFaction.GetGottenTradeOffers(newpartner, out var offersenu);
 			var offers = offersenu.Where(o => o.IsValid).ToArray();
 			if (offers.Length == 0) return;
 			tradeOffers[newpartner].Add(offers[GD.Randi() % offers.Length]);
 		} else {
 			var unaddedOffers = new Dictionary<Faction, TradeOffer[]>();
-			var partnersWithUnaddedOffers = faction.GetTradePartners().Where(p => {
-				var has = faction.GetGottenTradeOffers(p, out var l);
+			var partnersWithUnaddedOffers = myFaction.GetTradePartners().Where(p => {
+				var has = myFaction.GetGottenTradeOffers(p, out var l);
 				var wo = l.Where(o => o.IsValid && !tradeOffers[p].Contains(o)).ToArray();
 				unaddedOffers[p] = wo;
 				return has && wo.Length != 0;
 			}).ToArray();
 			if (partnersWithUnaddedOffers.Length == 0) return; // there are no unadded offers
 			var partner = partnersWithUnaddedOffers[GD.Randi() % partnersWithUnaddedOffers.Length];
-			faction.GetGottenTradeOffers(partner, out var list);
+			myFaction.GetGottenTradeOffers(partner, out var list);
 			var withoutExtant = unaddedOffers[partner][GD.Randi() % unaddedOffers[partner].Length];
 			tradeOffers[partner].Add(withoutExtant);
 		}

@@ -11,10 +11,30 @@ public class FactionActions {
 	readonly Faction faction;
 	public Faction Faction { get => faction; }
 
+	readonly Field<Building> _marketplaceCached;
+	readonly Field<ProcessMarketJob> _marketJobCached;
+
 
 	public FactionActions(Region region, Faction faction) {
 		this.region = region;
 		this.faction = faction;
+
+		region.TileChangedAtEvent += (t) => { _marketJobCached.Touch(); _marketplaceCached.Touch(); };
+
+		_marketplaceCached = new(() => {
+			foreach (var m in GetMapObjects()) if (m is Building b) if (b.Type.GetSpecial() == IBuildingType.Special.Marketplace) {
+						return b;
+					}
+			return null;
+		}, Field<Building>.NullCheck);
+
+		_marketJobCached = new(() => {
+			var m = GetMarketplace();
+			if (m is null) return null;
+			var job = GetMapObjectsJob(m);
+			if (job != null && job is ProcessMarketJob) return job as ProcessMarketJob;
+			return null;
+		}, Field<ProcessMarketJob>.NullCheck);
 	}
 
 	// resources
@@ -53,27 +73,12 @@ public class FactionActions {
 		return faction.GetBuildingCount(buildingType);
 	}
 
-	ProcessMarketJob _marketJobCached = null;
-	public ProcessMarketJob GetProcessMarketJob() {
-		if (_marketJobCached == null || !_marketJobCached.IsValid) {
-			_marketJobCached = null;
-			foreach (var m in GetMapObjects()) if (m is Building b) if (b.Type.GetSpecial() == IBuildingType.Special.Marketplace && b.IsConstructed) {
-						var job = GetMapObjectsJob(m);
-						if (job != null && job is ProcessMarketJob) _marketJobCached = job as ProcessMarketJob;
-					}
-		}
-		return _marketJobCached;
+	public Building GetMarketplace() {
+		return _marketplaceCached.Value;
 	}
 
-	Building _marketplaceCahced = null;
-	public Building GetMarketplace() {
-		if (_marketplaceCahced == null) {
-			_marketplaceCahced = null;
-			foreach (var m in GetMapObjects()) if (m is Building b) if (b.Type.GetSpecial() == IBuildingType.Special.Marketplace) {
-						_marketplaceCahced = b;
-					}
-		}
-		return _marketplaceCahced;
+	public ProcessMarketJob GetProcessMarketJob() {
+		return _marketJobCached.Value;
 	}
 
 	// jobs
@@ -121,21 +126,36 @@ public class FactionActions {
 		to.Region.AnnexAll(region, GameMan.Game.Map.TileOwners);
 	}
 
-	public static bool CanAttack(Region who, Region whom, Vector2I worldpos) {
-		if (whom.GetEdge(worldpos - whom.WorldPosition, out var edge)) {
-			if (edge.Above == who || edge.Below == who || edge.Left == who || edge.Right == who) {
-				return true;
-			}
+	public static bool CanAttack(Region attacker, Region whom, Vector2I worldpos) {
+		if (!whom.GetEdge(worldpos - whom.WorldPosition, out var edge)) return false;
+
+		Job j = null;
+		if ((edge.Above is not null && edge.Above.LocalFaction.GetJob(worldpos, out j)) && j is TileAttackJob) return false;
+		if ((edge.Below is not null && edge.Below.LocalFaction.GetJob(worldpos, out j)) && j is TileAttackJob) return false;
+		if ((edge.Left is not null && edge.Left.LocalFaction.GetJob(worldpos, out j)) && j is TileAttackJob) return false;
+		if ((edge.Right is not null && edge.Right.LocalFaction.GetJob(worldpos, out j)) && j is TileAttackJob) return false;
+		
+		int ourEdges = 0;
+		if (edge.Above == attacker) ourEdges++;
+		if (edge.Below == attacker) ourEdges++;
+		if (edge.Left == attacker) ourEdges++;
+		if (edge.Right == attacker) ourEdges++;
+		if (ourEdges >= 1) {
+			return true;
 		}
+
 		return false;
 	}
 
 	public static TileAttackJob GetAttackJob(Faction from, Faction to, Vector2I globalPosition) {
+		//GD.Print($"{from} is considering an attack to {to} at {globalPosition}");
+		Debug.Assert(FactionActions.CanAttack(from.Region, to.Region, globalPosition));
 		var job = new TileAttackJob(to.Region, globalPosition);
 		return job;
 	}
 
 	public static void ApplyAttackJob(Faction from, TileAttackJob job) {
+		//GD.Print($"{from} is beginning an attack {job.ToMoreDescriptiveString()}");
 		from.AddAttackJob(job);
 	}
 

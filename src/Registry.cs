@@ -245,16 +245,20 @@ public class Field<T> {
 				value = getval();
 				dirty = false;
 			}
+			if (failedResult is not null && failedResult(value)) dirty = true;
 			return value;
 		}
 	}
 	readonly Func<T> getval;
+	readonly Func<T, bool> failedResult = null;
 
-	public Field(Func<T> get) { this.getval = get; }
+	public Field(Func<T> get, Func<T, bool> checkfail = null) { this.getval = get; this.failedResult = checkfail; }
 	public void Touch() {
 		dirty = true;
 		touches++;
 	}
+
+	public static bool NullCheck(T v) => v is null;
 
 }
 

@@ -137,15 +137,9 @@ public partial class LocalAI {
 
 		public static Action CreateProcessMarketJob(DecisionFactor[] factors, FactionActions ac) {
 			return new(factors, () => {
-				foreach (var mop in ac.GetMapObjects()) {
-					if (mop is Building b) {
-						if (b.Type.GetSpecial() == IBuildingType.Special.Marketplace && b.IsConstructed) {
-							ac.AddJob(b, new ProcessMarketJob());
-							return;
-						}
-					}
-				}
-				AIAssert(false, "Didn't find market to add job to", ac);
+				var mp = ac.GetMarketplace();
+				AIAssert(mp is not null, "Didn't find market to add job to", ac);
+				ac.AddJob(mp, new ProcessMarketJob());
 			}, $"CreateProcessMarketJob()");
 		}
 
@@ -157,7 +151,8 @@ public partial class LocalAI {
 					ac.PlaceBuilding(buildingType, pos);
 					return;
 				}
-				AIAssert(false, $"No free tiles left to place building {buildingType.AssetName}", ac);
+				// we're dropping it silentyly, ideally would check (in a way that isn't abysmally slow)1q1141
+				//AIAssert(false, $"No free tiles left to place building {buildingType.AssetName}", ac);
 			}, $"PlaceBuildingJob({buildingType.AssetName})");
 		}
 
@@ -174,11 +169,10 @@ public partial class LocalAI {
 			}, $"PlaceQuarryBuildingJob({whatground})");
 		}
 
-		public static Action SendTradeOffer(DecisionFactor[] factors, FactionActions ac, int giveSilver, ResourceBundle wantResources) {
+		public static Action SendTradeOffer(DecisionFactor[] factors, FactionActions ac, Faction[] partners, int giveSilver, ResourceBundle wantResources) {
 			return new(factors, () => {
 				AIAssert(ac.Faction.Silver >= giveSilver, "Don't have enough silver to make trade offer", ac);
 				var from = ac.Faction;
-				var partners = ac.GetProcessMarketJob().TradeOffers.Keys.ToArray();
 				AIAssert(partners.Length > 0, "Need more partner than0", ac);
 				var to = partners[GD.Randi() % partners.Length];
 				AIAssert(!ac.Faction.IsAtWarWith(to), "Sjpiöldt be at awar", ac);
@@ -186,11 +180,10 @@ public partial class LocalAI {
 			}, $"SendTradeOffer(silver -> resources)");
 		}
 
-		public static Action SendTradeOffer(DecisionFactor[] factors, FactionActions ac, ResourceBundle giveResources, int wantSilver) {
+		public static Action SendTradeOffer(DecisionFactor[] factors, FactionActions ac, Faction[] partners, ResourceBundle giveResources, int wantSilver) {
 			return new(factors, () => {
 				AIAssert(ac.GetResourceStorage().HasEnough(giveResources.Type, giveResources.Amount), "Don't have enough resoucres to make trde offer", ac);
 				var from = ac.Faction;
-				var partners = ac.GetProcessMarketJob().TradeOffers.Keys.ToArray();
 				AIAssert(partners.Length > 0, "Need more partner than0", ac);
 				var to = partners[GD.Randi() % partners.Length];
 				AIAssert(!ac.Faction.IsAtWarWith(to), "Sjpiöldt be at awar", ac);
@@ -274,7 +267,13 @@ public partial class LocalAI {
 		public static Action SendPeaceRequest(DecisionFactor[] factors, FactionActions ac, Faction target) {
 			return new(factors, () => {
 				ac.Faction.RequestPeace(target);
-			}, $"SendPeaceRequest({target})");
+			}, $"SendPeaceRequest({ac.Faction},{target})");
+		}
+
+		public static Action CreateTileInvasion(DecisionFactor[] factors, FactionActions ac, Faction against, Vector2I globalTile) {
+			return new(factors, () => {
+				FactionActions.ApplyAttackJob(ac.Faction, FactionActions.GetAttackJob(ac.Faction, against, globalTile));
+			}, $"CreateTileInvasion({ac.Faction},{against})");
 		}
 
 	}
@@ -911,7 +910,7 @@ public class GamerAI : LocalAI {
 			}
 		}
 		// assigning workers to job
-		foreach (var job in factionActions.GetMapObjectJobs()) {
+		foreach (var job in factionActions.Faction.GetJobs()) {
 			List<DecisionFactor> factors = new(10);
 			List<DecisionFactor> negativeFactors = new(10);
 			if (job is GatherResourceJob gjob) {
@@ -933,6 +932,9 @@ public class GamerAI : LocalAI {
 				factors.Add(Factors.Mult(Factors.ResourceWant(factionActions, this, qjob.MineResources), 1 / qjob.TimeTaken));
 			} else if (job is SolveProblemJob sjob) {
 				factors.Add(Factors.One);
+			} else if (job is TileAttackJob atkjob) {
+				//factors.Add(Factors.Ease(Factors.FreeWorkerRate(factionActions), 0.2f));
+				factors.Add(Factors.One);
 			}
 			factors.Add(Factors.JobHasEmploymentSpots(factionActions, job));
 			factors.Add(Factors.HasFreeWorkers(factionActions));
@@ -953,10 +955,29 @@ public class GamerAI : LocalAI {
 				ephemeralActions.Add(Actions.RemoveJob(negativeFactors.ToArray(), factionActions, job));
 			}
 		}
+		// fuck every body
+		foreach (var n in factionActions.Region.Neighbors) {
+			if (!factionActions.Faction.IsAtWarWith(n.LocalFaction)) {
+				ephemeralActions.Add(Actions.DeclareWar([
+					Factors.OneMinus(Factors.IsAtWarWith(factionActions, n.LocalFaction)),
+				], factionActions, n.LocalFaction));
+			} else {
+				var edges = n.GetEdges();
+				var ep = n.WorldPosition + edges[(int)(GD.Randi() % edges.Length)].Key;
+				if (factionActions.Faction.GetJob(ep, out _)) continue;
+				if (!FactionActions.CanAttack(factionActions.Region, n, ep)) continue;
+				ephemeralActions.Add(Actions.CreateTileInvasion([
+					//Factors.Ease(Factors.FreeWorkerRate(factionActions), 0.3f),
+					Factors.One,
+				], factionActions, n.LocalFaction, ep));
+			}
+		}
+
 		var marketJob = factionActions.GetProcessMarketJob();
 		if (marketJob == null || marketJob.Workers == 0) return;
-		var partners = marketJob.TradeOffers.Keys.ToArray();
-		if (partners.Length == 0) return; // don't know any partners yet
+		var tradePartners = marketJob.TradeOffers.Keys.ToArray();
+		AIAssert(!tradePartners.Any(f => factionActions.Faction.IsAtWarWith(f)), "Should not have any warring going on in trade pardners", factionActions);
+		if (tradePartners.Length == 0) return; // don't know any partners yet
 
 		// creating trade offeers
 		// if we have a bunch of something and don't really want it, try to sel, it
@@ -971,7 +992,7 @@ public class GamerAI : LocalAI {
 				Factors.OneMinus(Factors.Mult(Factors.ResourceWant(factionActions, this, res), tradeAmount)),
 				Factors.SilverWant(),
 				Factors.Const(0.36f),
-			], factionActions, new ResourceBundle(res, tradeAmount), silver));
+			], factionActions, tradePartners, new ResourceBundle(res, tradeAmount), silver));
 		}
 		// if we have a really bad need for something try to send an expensive offer for it
 		foreach (var (res, want) in ResourceWants) {
@@ -982,7 +1003,7 @@ public class GamerAI : LocalAI {
 				if (cansend == 0) continue;
 				ephemeralActions.Add(Actions.SendTradeOffer([
 					Factors.One,
-				], factionActions, unitprice * cansend, new(res, cansend)));
+				], factionActions, tradePartners, unitprice * cansend, new(res, cansend)));
 			}
 		}
 		// remoing trade offers that we've sent and not gotten a response on

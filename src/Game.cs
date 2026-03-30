@@ -8,7 +8,7 @@ public class Game {
 
 	public bool AIPlaysInPlayerRegion = false;
 
-	readonly (LocalAI, TimeT)[] regionAIs;
+	readonly (LocalAI AI, TimeT LastUpdate)[] regionAIs;
 	public TroubleMaker TroubleMaker { get; private set; }
 
 
@@ -36,20 +36,20 @@ public class Game {
 
 		TroubleMaker.Update(); // not synced with time, but it's ok because it exists outside of time
 		for (int i = 0; i < regionAIs.Length; i++) {
-			while (Time.Minutes - regionAIs[i].Item2 >= 15) {
+			while (Time.Minutes - regionAIs[i].LastUpdate >= 15) {
 				var regs = Map.GetRegions();
 				if (regs[i] == PlayRegion && !AIPlaysInPlayerRegion) break;
 				if (regs[i].LocalFaction.GetPopulationCount() == 0) break; // we are dead here
-				regionAIs[i].Item1.PreUpdate(Time.Minutes);
-				regionAIs[i].Item1.Update(Time.Minutes);
-				regionAIs[i].Item2 += 15;
+				regionAIs[i].AI.PreUpdate(Time.Minutes);
+				regionAIs[i].AI.Update(Time.Minutes);
+				regionAIs[i].LastUpdate += 15;
 			}
 		}
 	}
 
 	public LocalAI GetRegionAI(Region region) {
 		Debug.Assert(region.WorldIndex >= 0 && region.WorldIndex < regionAIs.Length, $"{region.WorldIndex} vs {regionAIs.Length}");
-		return regionAIs[region.WorldIndex].Item1;
+		return regionAIs[region.WorldIndex].AI;
 	}
 
 	public void Deinit() {

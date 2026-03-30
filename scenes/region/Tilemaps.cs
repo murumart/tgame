@@ -17,20 +17,26 @@ public partial class Tilemaps : Node2D {
 	}
 
 	public void DisplayGround(Region from) {
-		var watch = System.Diagnostics.Stopwatch.StartNew();
 		ground.Clear();
 		// see OffsettableTilemap.cs
-		foreach (var pair in from.GetGroundTiles()) {
-			var type = GroundCellType.MatchTileTypeToCell(pair.Value);
-			ground.SetCell(pair.Key, type.SourceId, type.AtlasCoords);
+		foreach (var (pos, type) in from.GetGroundTiles()) {
+			var tiletype = GroundCellType.MatchTileTypeToCell(type);
+			ground.SetCell(pos, tiletype.SourceId, tiletype.AtlasCoords);
 		}
 		ground.world = GameMan.Game.Map.World;
 		ground.region = from;
 		ground.heightColorGradient = heightColorGradient;
-		ground.UpdateInternals();
-		watch.Stop();
-		var elapsedMs = watch.ElapsedMilliseconds;
-		//GD.Print("Tilemaps::DisplayGround : displaying ground took " + elapsedMs + " ms");
+		//ground.UpdateInternals();
+	}
+
+	public void UpdateGroundAt(Region me, Vector2I local) {
+		if (!me.GetGroundTile(local, out var tile)) {
+			ground.EraseCell(local);
+		} else {
+			var type = GroundCellType.MatchTileTypeToCell(tile);
+			ground.SetCell(local, type.SourceId, type.AtlasCoords);
+		}
+		ground.NotifyRuntimeTileDataUpdate();
 	}
 
 	// matches Godot's TileLayout.DIAMOND_DOWN
