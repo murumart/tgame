@@ -146,7 +146,7 @@ public class TileAttackJob : Job {
 	public bool Active => Attacker is not null;
 
 	float timeSpent;
-	readonly TimeT timeTaken = GameTime.Hours(34);
+	readonly TimeT timeTaken = GameTime.Hours(16);
 
 
 	public TileAttackJob(Region target, Vector2I globalPos) {

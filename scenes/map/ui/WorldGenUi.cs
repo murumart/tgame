@@ -65,7 +65,7 @@ public partial class WorldGenUi : MarginContainer {
 
 	void NewWorld() {
 		this.world = new((int)worldWidthSpinbox.Value, (int)worldHeightSpinbox.Value, (uint)Convert.ToUInt32(worldSeedLabel.Text));
-		GameMan.NewGame(new([], world));
+		//GameMan.NewGame(new([], world));
 	}
 
 	async Task GenerateContinents() => await worldGenerator.GenerateContinents(world, (float)noiseScaleSpinbox.Value, (float)depthSpinbox.Value);
@@ -153,7 +153,7 @@ public partial class WorldGenUi : MarginContainer {
 
 		worldUI.DrawRegions(map.GetRegions());
 
-		GameMan.NewGame(map);
+		//GameMan.NewGame(map);
 		OnEndGenerating();
 	}
 

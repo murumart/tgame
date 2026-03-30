@@ -292,7 +292,9 @@ public class Faction : IEntity {
 	}
 
 	public bool CanPlaceBuilding(IBuildingType type, Vector2I tilepos) {
-		return type.IsPlacementAllowed(Region.GetGroundTile(tilepos))
+		bool hastile = Region.GetGroundTile(tilepos, out var tile);
+		return hastile
+			&& type.IsPlacementAllowed(tile)
 			&& !(type.GetBuiltLimit() != 0 && GetBuildingCount(type) >= type.GetBuiltLimit())
 			&& HasBuildingMaterials(type)
 			&& Region.HasBuildingSpace(tilepos);
@@ -499,6 +501,10 @@ public class Faction : IEntity {
 		return militaryOperations.ContainsKey(faction);
 	}
 
+	public bool IsAttacking(Vector2I localTile) {
+		return GetJob(Region.WorldPosition + localTile, out var job) && job is TileAttackJob;
+	}
+
 	public bool HasSentPeaceRequestTo(Faction faction) {
 		bool has = militaryOperations.TryGetValue(faction, out var status);
 		if (!has) return false;
@@ -522,7 +528,7 @@ public class Faction : IEntity {
 		else if (this == status.Defender) status.DefenderAsksForPeace = true;
 		else Debug.Assert(false, "Completely unrelated faction with to this status..  ");
 
-		if (status.AggressorAsksForPeace && status.DefenderAsksForPeace) {
+		if (status.AggressorAsksForPeace && status.DefenderAsksForPeace || (Population.Count == 0 || IsWild)) {
 			EndWar(with);
 		}
 	}

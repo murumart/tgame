@@ -8,7 +8,7 @@ public partial class RegionCamera : Camera {
 
 	[Export] public Node2D Cursor;
 	[Export] Node2D debugCursor;
-	[Export] public RegionDisplayHighlight RegionDisplayHighlight;
+	[Export] RegionDisplayHighlight RegionDisplayHighlight;
 	[Export] RegionDisplay regionDisplay;
 	[Export] UI ui;
 
@@ -55,6 +55,15 @@ public partial class RegionCamera : Camera {
 			ui.OnTileHighlighted(tilepos, Region);
 			lastTilePos = tilepos;
 		}
+	}
+
+	public void SetHighlightDisplay(RegionDisplayHighlightDisplayFunc func) {
+		RegionDisplayHighlight.SetDisplay(func);
+		if (func is null) {
+			RegionDisplayHighlight.TransparentiseAll();
+			return;
+		}
+		RegionDisplayHighlight.Update(GameMan.Game.Map.World, lastTilePos, lastTilePos + Region.WorldPosition);
 	}
 
 	public Vector2I GetMouseHoveredTilePos() => regionDisplay.GetMouseHoveredTilePos();

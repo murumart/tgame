@@ -22,12 +22,20 @@ public partial class DebugConsoleThing : ColorRect {
 
 		if (e.Pressed && e.Keycode == Key.F7) {
 			if (Visible) {
-				Hide();
+				Close();
 				return;
 			}
-			Show();
+			Open();
 			Callable.From(lineEdit.GrabFocus).CallDeferred();
 		}
+	}
+
+	void Open() {
+		Show();
+	}
+
+	void Close() {
+		Hide();
 	}
 
 	void TextSubmitted(string txt) {
@@ -107,6 +115,12 @@ public partial class DebugConsoleThing : ColorRect {
 			Output("Need to have a generated game, map and world");
 		}
 		GameMan.SceneTransition("res://scenes/region/debug_all_regions.tscn");
+		Close();
+	}
+
+	void _cmd_player(string[] args) {
+		GameMan.SceneTransition("uid://dfsyk55h5ioh0");
+		Close();
 	}
 
 }

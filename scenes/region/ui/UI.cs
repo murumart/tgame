@@ -495,6 +495,14 @@ public partial class UI : Control {
 		mopjectMenu.Open(problem);
 	}
 
+	public void OnAttackedTileClicked(Vector2I tile) {
+		Debug.Assert(state == State.Idle, "Can't click on attacking outside of idle state");
+		state = State.WarMenu;
+		SelectTab(Tab.War);
+		warInfoPanel.Display(GetFactionActions().Faction);
+		warInfoPanel.Click(tile + GetFactionActions().Region.WorldPosition);
+	}
+
 	bool wasPausedBefore = false;
 	void OnStateChanged(State old, State current) {
 		if (old != current) {
@@ -593,4 +601,5 @@ public partial class UI : Control {
 
 	public string GetTimeString() => GetTimeStringEvent?.Invoke() ?? "NEVER";
 
+	
 }

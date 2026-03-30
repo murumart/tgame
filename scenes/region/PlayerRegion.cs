@@ -180,6 +180,8 @@ public partial class PlayerRegion : Node {
 		} else if (region.HasMapObject(tile, out MapObject mop) && mop is ResourceSite resourceSite) {
 			ui.OnResourceSiteClicked(resourceSite);
 			ui.TileSelected(tile);
+		} else if (faction.IsAttacking(tile)) {
+			ui.OnAttackedTileClicked(tile);
 		} else if (!region.GetGroundTile(tile, out _)) {
 			// DEBUG annex
 			//foreach (var ne in region.Neighbors) {
@@ -214,7 +216,9 @@ public partial class PlayerRegion : Node {
 			else if (rs == Faction.DefunctReason.Annexation) ui.Notifications.Notify($"{neighbor.LocalFaction.Name} has been annexed.");
 		}
 		neighbor.DisappearedEvent += onDisappear;
-		neighbor.LocalFaction.Done += onFactionDie;
+		if (lod < 2) {
+			neighbor.LocalFaction.Done += onFactionDie;
+		}
 		managedDisplays.Add(neighbor, (rdisp, onDisappear, onFactionDie));
 	}
 

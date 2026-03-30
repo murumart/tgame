@@ -42,7 +42,7 @@ public partial class WarInfoPanel : VBoxContainer {
 		SetThem(null);
 
 		ourInfo.Text = GetDescription(us);
-		ui.Camera.RegionDisplayHighlight.SetDisplay(GetHighlightFunc());
+		ui.Camera.SetHighlightDisplay(GetHighlightFunc());
 	}
 
 	public void Click(Vector2I wpos) {
@@ -76,6 +76,9 @@ public partial class WarInfoPanel : VBoxContainer {
 		theirNameLabel.Text = "?";
 		theirInfo.Text = "?";
 		if (them is null) return;
+		if (!us.Region.Neighbors.Contains(them.Region)) return;
+
+		bool emptyorwild = them.Population.Count == 0 || them.IsWild;
 		theirDisplayParent.Modulate = Colors.White;
 		theirNameLabel.Text = them.Name;
 		theirInfo.Text = GetDescription(them, us);
@@ -83,7 +86,7 @@ public partial class WarInfoPanel : VBoxContainer {
 
 		if (us.IsAtWarWith(them)) {
 			aggressionAdjustmentButton.Disabled = us.HasSentPeaceRequestTo(them);
-			aggressionAdjustmentButton.Text = "Plead Mercy";
+			aggressionAdjustmentButton.Text = !emptyorwild ? "Plead Mercy" : "Stop Operation";
 			tutorialLabel.Text = TutAttackable;
 
 			bool attackingTile = FactionActions.IsAttacking(us, them, targetTile, out attackJob);
@@ -111,8 +114,7 @@ public partial class WarInfoPanel : VBoxContainer {
 	}
 
 	public void Undisplay() {
-		ui.Camera.RegionDisplayHighlight.SetDisplay(null);
-		ui.Camera.RegionDisplayHighlight.TransparentiseAll();
+		ui.Camera.SetHighlightDisplay(null);
 	}
 
 	public void AggressionAdjustmentPressed() {
@@ -138,7 +140,8 @@ public partial class WarInfoPanel : VBoxContainer {
 		if (!attackJob.Active) {
 			FactionActions.ApplyAttackJob(us, attackJob);
 			// it's weird if there's no soldiers to begin with
-			ui.ChangeJobWorkerCount(attackJob, (int)Math.Min(ui.GetMaxFreeWorkers(), 5));
+			int workersToAdd = (int)Math.Min(ui.GetMaxFreeWorkers(), 5);
+			if (workersToAdd > 0) ui.ChangeJobWorkerCount(attackJob, workersToAdd);
 		}
 		else FactionActions.RemoveAttackingJob(us, attackJob);
 		Rebuild();
@@ -188,7 +191,7 @@ public partial class WarInfoPanel : VBoxContainer {
 
 	RegionDisplayHighlightDisplayFunc GetHighlightFunc() {
 		return (s, gb, lp, d) => {
-			float alpha = 0.5f;
+			float alpha = 0.75f;
 			Color color = Palette.Dark;
 
 			if (GameMan.Game.Map.TileOwners.TryGetValue(gb, out var reg)) {

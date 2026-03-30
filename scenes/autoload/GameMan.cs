@@ -76,10 +76,11 @@ public partial class GameMan : Node {
 		GC.Collect(); // please die
 		singleton.game = new Game(map);
 		if (singleton.game.Time.Minutes == 0) singleton.game.PassTime(60 * 7); // start game at 7:00
+		GD.Print("GameMan::NewGame : started new game");
 	}
 
 	public static async void SceneTransition(string to) {
-		Debug.Assert(to != "" && to.EndsWith(".tscn"), "Scene name invalid!");
+		Debug.Assert(to != "", "Scene name invalid!");
 		Debug.Assert(ResourceLoader.Exists(to), "Scene doesn't exist!");
 		SceneTransition(GD.Load<PackedScene>(to));
 	}
