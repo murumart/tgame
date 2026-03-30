@@ -5,6 +5,12 @@
 [ext_resource type="Material" uid="uid://cet7ep6cvqk3p" path="res://resources/visual/add_material.tres" id="2_phfin"]
 [ext_resource type="Texture2D" uid="uid://ethlsfg8xmhk" path="res://scenes/region/iso_mask.png" id="4_6xlek"]
 [ext_resource type="Material" uid="uid://bgn20t7sk75w4" path="res://addons/line2d_animation_shader/marching.tres" id="4_ncgxc"]
+[ext_resource type="FontVariation" uid="uid://dliky8sbpgnxp" path="res://resources/visual/font/title_font.tres" id="5_8pu8q"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_6xlek"]
+font = ExtResource("5_8pu8q")
+font_size = 35
+font_color = Color(0.70980394, 0.34901962, 0.27058825, 1)
 
 [sub_resource type="Animation" id="Animation_k3cwo"]
 length = 0.001
@@ -43,9 +49,10 @@ _data = {
 &"pulse": SubResource("Animation_n51wg")
 }
 
-[node name="AttackView" unique_id=1991676390 node_paths=PackedStringArray("attackDirectionDisplay", "mapObjectDisplay") instance=ExtResource("1_ncgxc")]
+[node name="AttackView" unique_id=1991676390 node_paths=PackedStringArray("attackDirectionDisplay", "AttentionExclamation", "mapObjectDisplay") instance=ExtResource("1_ncgxc")]
 script = ExtResource("2_8pu8q")
 attackDirectionDisplay = NodePath("Dam/Line2D")
+AttentionExclamation = NodePath("IconTransform/AttentionLabel")
 mapObjectDisplay = NodePath("Dam")
 
 [node name="Dam" type="Sprite2D" parent="." index="0" unique_id=1082710809]
@@ -55,8 +62,9 @@ z_index = 1
 material = ExtResource("4_ncgxc")
 scale = Vector2(1, 0.99999994)
 skew = 0.7853982
-points = PackedVector2Array(15.999999, 22.627419, 23.999998, 11.313709, 31.999998, 0, 7.4168854, -11.5886, -15.999999, -22.627419, -19.520561, -17.316675, -22.725815, -12.48156, -26.399048, -6.94051, -30.999998, 0)
+points = PackedVector2Array(15.999999, 18.384777, 25.999998, 1.4142137, -14.999999, -18.384777, -25.999998, -1.4142137)
 closed = true
+width = 8.0
 texture_mode = 1
 
 [node name="Clickarea" parent="." index="1" unique_id=1540038721]
@@ -70,6 +78,19 @@ visible = false
 
 [node name="Building" parent="IconTransform/IconContainer" index="0" unique_id=1898010729]
 visible = false
+
+[node name="AttentionLabel" type="Label" parent="IconTransform" index="2" unique_id=1654446807]
+visible = false
+material = ExtResource("2_phfin")
+offset_left = -20.0
+offset_top = -21.0
+offset_right = 20.0
+offset_bottom = 20.0
+theme_override_colors/font_color = Color(0.70980394, 0.34901962, 0.27058825, 1)
+theme_override_font_sizes/font_size = 254
+text = "!"
+label_settings = SubResource("LabelSettings_6xlek")
+horizontal_alignment = 1
 
 [node name="Highlight" type="Sprite2D" parent="." index="5" unique_id=763788786]
 self_modulate = Color(0.70980394, 0.34901962, 0.27058825, 1)

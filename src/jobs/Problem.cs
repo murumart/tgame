@@ -196,6 +196,10 @@ public class TileAttackJob : Job {
 			FactionActions.RemoveAttackingJob(regionFaction, this);
 			return;
 		}
+		if (Workers == 0) {
+			FactionActions.RemoveAttackingJob(regionFaction, this);
+			return;
+		}
 		{
 		//	Debug.Assert(Target.GetEdge(GlobalPosition - Target.WorldPosition, out var dge), $"Target {Target} doesnä't have an edge at {GlobalPosition}.");
 		//	Job j = null;

@@ -59,6 +59,7 @@ public partial class WarInfoPanel : VBoxContainer {
 	const string TutCanStartWar = "Is it a good idea to start a war? Compare stats.";
 	const string TutAttackable = "You can start attacking the enemy's borders: click on the green tiles.";
 	const string TutStartAttack = "Assign soldiers to begin the attack. Our military might and people are behind them.";
+	const string TutNeedWorkers = "You need free soldiers to begin an attack.";
 
 	void SetThem(Faction them) {
 		attackJob = null;
@@ -91,9 +92,13 @@ public partial class WarInfoPanel : VBoxContainer {
 
 			bool attackingTile = FactionActions.IsAttacking(us, them, targetTile, out attackJob);
 			if (!attackingTile && FactionActions.CanAttack(us.Region, them.Region, targetTile)) {
-				attackDisplay.Modulate = Colors.White;
+				if (ui.GetMaxFreeWorkers() == 0) {
+					tutorialLabel.Text = TutNeedWorkers;
+					return;
+				}
 				attackJob = FactionActions.GetAttackJob(us, them, targetTile);
 				attackDisplay.DisplayPreview(attackJob);
+				attackDisplay.Modulate = Colors.White;
 				tutorialLabel.Text = TutStartAttack;
 				attackStartButton.Disabled = false;
 			} else if (attackingTile) {

@@ -88,7 +88,7 @@ public class Map {
 		foreach (var region in regions) {
 			foreach (var otherregion in regions) {
 				if (region == otherregion) continue;
-				//if (region.WorldPosition.DistanceTo(otherregion.WorldPosition) > regionsize) continue;
+				if (region.WorldPosition.DistanceTo(otherregion.WorldPosition) > regionsize) continue;
 				region.AddNeighbor(otherregion);
 				region.LocalFaction.AddTradePartner(otherregion.LocalFaction);
 			}

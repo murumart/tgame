@@ -614,8 +614,10 @@ public partial class LocalAI {
 
 		public static DecisionFactor MilitaryAdvantageOver(FactionActions ac, Faction fac) {
 			return new(() => {
-				int milsum = ac.Faction.Military + fac.Military;
-				return Mathf.Clamp((ac.Faction.Military - fac.Military) / (float)(milsum == 0 ? 0.001f : milsum), 0f, 1f);
+				float milsum = ac.Faction.Military + fac.Military;
+				if (milsum == 0) return 0f;
+				float stakes = milsum * 0.1f;
+				return Mathf.Clamp((ac.Faction.Military - fac.Military) / milsum * stakes, 0f, 1f);
 			}, "MilitaryAdvantageOver");
 		}
 	}
@@ -888,6 +890,7 @@ public class GamerAI : LocalAI {
 		foreach (var ne in factionActions.Region.Neighbors) {
 			int mildiff = factionActions.Faction.Military - ne.LocalFaction.Military;
 			if (mildiff < 0) ResourceWants[Registry.ResourcesS.IronWeapons] += -mildiff;
+			if (factionActions.Faction.IsAtWarWith(ne.LocalFaction)) ResourceWants[Registry.ResourcesS.IronWeapons] += 100;
 		}
 		// random inspiration to get some crap
 		if (GD.Randf() < 0.0005f) {
@@ -933,8 +936,7 @@ public class GamerAI : LocalAI {
 			} else if (job is SolveProblemJob sjob) {
 				factors.Add(Factors.One);
 			} else if (job is TileAttackJob atkjob) {
-				//factors.Add(Factors.Ease(Factors.FreeWorkerRate(factionActions), 0.2f));
-				factors.Add(Factors.One);
+				factors.Add(Factors.Ease(Factors.FreeWorkerRate(factionActions), 0.2f));
 			}
 			factors.Add(Factors.JobHasEmploymentSpots(factionActions, job));
 			factors.Add(Factors.HasFreeWorkers(factionActions));
@@ -960,6 +962,7 @@ public class GamerAI : LocalAI {
 			if (!factionActions.Faction.IsAtWarWith(n.LocalFaction)) {
 				ephemeralActions.Add(Actions.DeclareWar([
 					Factors.OneMinus(Factors.IsAtWarWith(factionActions, n.LocalFaction)),
+					Factors.MilitaryAdvantageOver(factionActions, n.LocalFaction),
 				], factionActions, n.LocalFaction));
 			} else {
 				var edges = n.GetEdges();
@@ -967,8 +970,8 @@ public class GamerAI : LocalAI {
 				if (factionActions.Faction.GetJob(ep, out _)) continue;
 				if (!FactionActions.CanAttack(factionActions.Region, n, ep)) continue;
 				ephemeralActions.Add(Actions.CreateTileInvasion([
-					//Factors.Ease(Factors.FreeWorkerRate(factionActions), 0.3f),
-					Factors.One,
+					Factors.Ease(Factors.FreeWorkerRate(factionActions), 0.3f),
+					Factors.HasFreeWorkers(factionActions),
 				], factionActions, n.LocalFaction, ep));
 			}
 		}

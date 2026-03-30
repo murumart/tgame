@@ -342,6 +342,7 @@ public partial class RegionDisplay : Node2D {
 		var viewpos = Tilemaps.TilePosToWorldPos(localpos);
 		viewpos.Y -= Tilemaps.TileElevationVerticalOffset(atk.GlobalPosition, GameMan.Game.Map.World);
 		view.Position = viewpos;
+		if (atk.Target == GameMan.Game.PlayRegion) view.AttentionExclamation.Show();
 	}
 
 	void UndisplayRegionAttack(TileAttackJob atk) {
