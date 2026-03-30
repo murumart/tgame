@@ -6,6 +6,7 @@ public partial class Camera : Camera2D {
 
 	[Export] public bool CanMoveWithKeyboard = true;
 
+	public event Action<Vector2I> MovedMouseEvent;
 	public event Action<Vector2I> ClickedMouseEvent;
 	public event Action ZoomChanged;
 
@@ -50,6 +51,7 @@ public partial class Camera : Camera2D {
 				Position = draggingStartCamPos + differ;
 				lastMousePosition = mEvent.Position;
 				draggingStartCamPos = Position;
+				MovedMouseEvent?.Invoke((Vector2I)mEvent.Position);
 			} else Input.SetDefaultCursorShape(Input.CursorShape.Arrow);
 		}
 	}

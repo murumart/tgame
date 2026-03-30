@@ -33,7 +33,10 @@ public partial class WorldGenUi : MarginContainer {
 	public override void _Ready() {
 
 		genRegionsButton.Pressed += OnGenRegionsPressed;
-		playHereButton.Pressed += EnterGame;
+		playHereButton.Pressed += () => {
+			SetupGame();
+			EnterGame();
+		};
 
 		worldWidthSpinbox.ValueChanged += OnWorldWidthChanged;
 		worldHeightSpinbox.ValueChanged += OnWorldHeightChanged;
@@ -135,7 +138,7 @@ public partial class WorldGenUi : MarginContainer {
 	async void OnGenRegionsPressed() {
 		Debug.Assert(!worldGenerator.Generating);
 		OnStartGenerating();
-#if false//!DEBUG
+#if true//!DEBUG
 		{
 			var drawRegionsCallable = Callable.From(() => worldUI.DrawRegions(worldGenerator.Regions));
 			var tw = CreateTween().SetLoops();
@@ -151,7 +154,7 @@ public partial class WorldGenUi : MarginContainer {
 		}
 #endif
 
-		worldUI.DrawRegions(map.GetRegions());
+		worldUI.DrawRegions(p_map: map);
 
 		//GameMan.NewGame(map);
 		OnEndGenerating();
@@ -163,7 +166,7 @@ public partial class WorldGenUi : MarginContainer {
 
 	void SetupGame() {
 		GameMan.NewGame(map);
-		GD.Print("WorldMan::SetupGame : game set up.");
+		GD.Print("WorldGenUi::SetupGame : game set up.");
 	}
 
 	void EnterGame() {

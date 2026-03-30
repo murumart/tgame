@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using Godot;
-using scenes.autoload;
 
 namespace scenes.map.ui;
 
@@ -12,8 +11,6 @@ public partial class WorldUI : Control {
 		InGame,
 	}
 
-	public event Func<Vector2I, (float, float, float)> WorldTileInfoRequested;
-	public event Func<Vector2I, Region> RegionRequested;
 	public event Action<Region> RegionSelected;
 
 	bool _ready;
@@ -28,6 +25,10 @@ public partial class WorldUI : Control {
 
 	[Export] Godot.Collections.Array<CheckButton> drawLayerButtons;
 	[Export] CheckButton regionDisplayCheck;
+
+	World world = null;
+	Map map = null;
+	Game game = null;
 
 	Region selectedRegion;
 	public Region SelectedRegion => selectedRegion;
@@ -46,16 +47,23 @@ public partial class WorldUI : Control {
 		}
 
 		ResourceDisplay.Display(c => {
-			if (!camera.IsInsideTree()) (c as Label).Text = "...";
-			var mousePos = (Vector2I)camera.GetMousePos();
-			if (mousePos != oldMousePos) {
-				oldMousePos = mousePos;
-				var tileInfo =  WorldTileInfoRequested?.Invoke(mousePos) ?? (-4f, -4f, -4f);
-				oldTileInfo = tileInfo;
+			if (!camera.IsInsideTree()) {
+				(c as Label).Text = "...";
+				return;
 			}
-			(c as Label).Text = $"ele: {oldTileInfo.Item1} temp: {oldTileInfo.Item2} humi: {oldTileInfo.Item3}";
+			if (world is null) {
+				(c as Label).Text = "...";
+				return;
+			}
+
+			int x = oldMousePos.X;
+			int y = oldMousePos.Y;
+			(c as Label).Text = $"ele: {world.GetElevation(x, y):F3} temp: {world.GetTemperature(x, y):F3} humi: {world.GetTemperature(x, y):F3} drain: {world.GetDrainage(x, y):F3}";
 		});
+		ResourceDisplay.Display(c => (c as Label).Text = $"hover: {oldMousePos}");
 		ResourceDisplay.DisplayFat();
+
+		SelectRegion(null);
 
 		_ready = true;
 	}
@@ -66,15 +74,26 @@ public partial class WorldUI : Control {
 		}
 	}
 
-	Vector2 oldMousePos;
-	(float, float, float) oldTileInfo;
+	Vector2I oldMousePos;
 	public override void _Process(double delta) {
+		var mousePos = (Vector2I)camera.GetMousePos();
+		if (mousePos != oldMousePos) {
+			MouseMoved(mousePos);
+			oldMousePos = mousePos;
+		}
 		ResourceDisplay.Display();
 	}
 
+	void MouseMoved(Vector2I where) {
+		if (map is not null && worldRenderer.World is not null) {
+			map.TileOwners.TryGetValue(where, out Region region);
+			worldRenderer.DrawRegionHighlight(region, SelectedRegion);
+		}
+	}
+
 	void MouseClicked(Vector2I where) {
-		var region = RegionRequested?.Invoke(where) ?? null;
-		if (region == null) return;
+		if (map is null) return;
+		if (!map.TileOwners.TryGetValue(where, out var region)) return;
 		SelectRegion(region);
 	}
 
@@ -92,7 +111,9 @@ public partial class WorldUI : Control {
 				RegionDisplayGeneration(region);
 				break;
 			case Modes.InGame:
-				RegionDisplayInGame(region);
+				if (game is null) break;
+				Debug.Assert(game is not null, "Need a Game");
+				RegionDisplayInGame(game.PlayRegion, region);
 				break;
 		}
 
@@ -123,8 +144,7 @@ public partial class WorldUI : Control {
 		;
 	}
 
-	void RegionDisplayInGame(Region region) {
-		Region myRegion = GameMan.Game.PlayRegion;
+	void RegionDisplayInGame(Region myRegion, Region region) {
 		Faction myFaction = myRegion.LocalFaction;
 		factionTitleLabel.Text = "...?";
 		factionInfoLabel.Text = "";
@@ -181,8 +201,11 @@ public partial class WorldUI : Control {
 		worldRenderer.DrawMode = a;
 	}
 
-	public void DisplayWorld(World world) {
+	public void DisplayWorld(World world, Game game = null) {
 		Debug.Assert(_ready);
+		this.world = world;
+		this.game = game;
+		if (game is not null) this.map = game.Map;
 		worldRenderer.World = world;
 		worldRenderer.ResetImages();
 		SetRendererParams();
@@ -192,7 +215,8 @@ public partial class WorldUI : Control {
 				GenerationDisplay(world);
 				break;
 			case Modes.InGame:
-				InGameDisplay(world);
+				this.game = game;
+				InGameDisplay(game.PlayRegion);
 				break;
 		}
 	}
@@ -201,23 +225,32 @@ public partial class WorldUI : Control {
 		camera.Position = new(world.Width * 0.5f, world.Height * 0.5f);
 	}
 
-	void InGameDisplay(World world) {
-		camera.Position = GameMan.Game.PlayRegion.WorldPosition;
+	void InGameDisplay(Region myRegion) {
+		camera.Position = myRegion.WorldPosition;
 		camera.ZoomIn(3f);
 	}
 
-	public void DrawRegions(Region[] regions) {
+	public void DrawRegions(Region[] p_regions = null, Map p_map = null) {
 		Debug.Assert(_ready);
+		if (p_map is not null) {
+			map = p_map;
+			p_regions = map.GetRegions();
+		}
 		switch (mode) {
-			case Modes.Generation: worldRenderer.DrawRegions(regions); break;
-			case Modes.InGame: worldRenderer.DrawRegionsDark(GameMan.Game.PlayRegion, regions); break;
+			case Modes.Generation: worldRenderer.DrawRegions(p_regions); break;
+			case Modes.InGame:
+				Debug.Assert(game is not null, "Need a Game");
+				Debug.Assert(map is not null, "Need a Map");
+				worldRenderer.DrawRegionsDark(game.PlayRegion, map.GetRegions());
+				break;
 		}
 
 	}
 
 	void OnDrawLayersChanged() {
-		DisplayWorld(GameMan.Game.Map.World);
-		DrawRegions(GameMan.Game.Map.GetRegions());
+		Debug.Assert(world is not null, "Need a Woirld");
+		DisplayWorld(world);
+		if (map is not null) DrawRegions(p_map: map);
 	}
 
 	void OnRegionDisplayChanged(bool to) {

@@ -262,8 +262,8 @@ public partial class UI : Control {
 				}
 				break;
 			case Tab.World:
-				worldUI.DisplayWorld(GameMan.Game.Map.World);
-				worldUI.DrawRegions(GameMan.Game.Map.GetRegions());
+				worldUI.DisplayWorld(GameMan.Game.Map.World, GameMan.Game);
+				worldUI.DrawRegions();
 				worldUI.SelectRegion(GetFactionActions().Region);
 				break;
 			case Tab.War:
