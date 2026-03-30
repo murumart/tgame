@@ -122,6 +122,14 @@ public partial class RegionDisplay : Node2D {
 	}
 
 	void CalcVisibilityRect() {
+		/*  top y  --> +\         
+		*             /  \     
+		* left x --> +    \
+		*             \    \              
+		*              \    + <-- right x
+		*               \  /
+		*                \+ <-- bottom y
+		*/   
 		var wposes = region.GroundTilePositions.Select(p => Tilemaps.TilePosToWorldPos(p) + Vector2.Up * Tilemaps.TileElevationVerticalOffset(region.WorldPosition + p, GameMan.Game.Map.World));
 		if (!wposes.Any()) return;
 		float minx = wposes.MinBy(p => p.X).X - Tilemaps.TILE_SIZE.X * 0.5f;

@@ -77,6 +77,14 @@ public partial class PlayerRegion : Node {
 		region.NewNeighborGainedEvent += OnNewNeighborGained;
 		camera.Region = region;
 
+		/*  top y  --> +\         
+		*             /  \     
+		* left x --> +    \
+		*             \    \              
+		*              \    + <-- right x
+		*               \  /
+		*                \+ <-- bottom y
+		*/   
 		(float LimitLeft, float LimitRight, float LimitTop, float LimitBottom) = (
 			Tilemaps.TilePosToWorldPos(new(                           0 - region.WorldPosition.X, GameMan.Game.Map.World.Height - region.WorldPosition.Y)).X,
 			Tilemaps.TilePosToWorldPos(new(GameMan.Game.Map.World.Width - region.WorldPosition.X,                             0 - region.WorldPosition.Y)).X,
