@@ -62,7 +62,7 @@ But if you gather all the food, there'll be no more food left !? What !? We need
 
 Kui süüa vähe ja vähe toidutegemistööde peal inimesi, peaks inimesi jõuga ehk töölt maha võtma nii et ta saaks uuesti assignida. Veidi hack aga vaata, äkki töötab.
 
-Tahaks, et AI otsiks toitu, kui seda on vähe. Toidukasutuse põhjal peaks ta vaatama, et oleks olemas mitme päeva varu. Selleks resourcewant peaks igal toiduesemel suurem olema, kui süüa vähe. 
+Tahaks, et AI otsiks toitu, kui seda on vähe. Toidukasutuse põhjal peaks ta vaatama, et oleks olemas mitme päeva varu. Selleks resourcewant peaks igal toiduesemel suurem olema, kui süüa vähe.
 
 #### Trades
 
@@ -151,3 +151,9 @@ Rünnakud. rünnak mingi teise ruudu vastu oleks problem, mida teine peaks lahen
 
 - [X] ehitise tööd tulevad ekraanil ette kui ehitamata ehitis eemaldatakse
 - [ ] mingi memory leak uute maailmade tegemisel
+
+**Lilleras**
+
+- [ ] enable regions switch when generate regions?
+- [ ] make camera flying less floaty
+- [ ] limit camera to edges of the world

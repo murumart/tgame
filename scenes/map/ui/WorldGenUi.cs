@@ -142,7 +142,7 @@ public partial class WorldGenUi : MarginContainer {
 			tw.TweenInterval(0.05f);
 			tw.TweenCallback(drawRegionsCallable);
 
-			this.map = await worldGenerator.GenerateRegions(world, 10);
+			this.map = await worldGenerator.GenerateRegions(world, 1);
 			tw.Stop();
 		}
 #else
