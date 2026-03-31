@@ -74,6 +74,12 @@ public partial class OptionsMenu : Control {
 		},
 		{"graphics",
 			new() {
+				{"full_screen", new(
+					get: () => Singleton.GetWindow().Mode == Window.ModeEnum.Fullscreen ? 1f : 0f,
+					set: to => Singleton.GetWindow().Mode = to == 1f ? Window.ModeEnum.Fullscreen : Window.ModeEnum.Maximized,
+					defa: 0f,
+					range: (0, 1), round: true)
+				},
 				{"display_scale", new(
 					get: () => Singleton.GetWindow().ContentScaleFactor,
 					set: to => {
