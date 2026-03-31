@@ -154,14 +154,14 @@ anchor_left = -0.115
 anchor_right = 2.344
 anchor_bottom = 2.0
 offset_left = 0.13365555
-offset_right = -590.0537
+offset_right = -378.53192
 offset_bottom = -360.0
 grow_horizontal = 2
 grow_vertical = 2
 scale = Vector2(2, 2)
 texture = ExtResource("2_x2yvf")
-expand_mode = 2
-stretch_mode = 5
+expand_mode = 3
+stretch_mode = 4
 
 [node name="TextureRect" type="TextureRect" parent="." unique_id=1145401634]
 modulate = Color(1, 1, 1, 0.2)
