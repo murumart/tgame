@@ -34,6 +34,8 @@ public class Option(Func<float> get, Action<float> set, float defa, (float, floa
 
 public partial class OptionsMenu : Control {
 
+	public static Action<bool> VisibilityToggled;
+
 	const string USER_PATH = "user://fevered_world";
 	const string SAVEFILE_PATH = USER_PATH + "/options.ini";
 
@@ -147,6 +149,7 @@ public partial class OptionsMenu : Control {
 				ix += 1;
 			}
 		}
+		VisibilityToggled?.Invoke(true);
 	}
 
 	void OptionChanged(int ix, float value) {
@@ -156,6 +159,7 @@ public partial class OptionsMenu : Control {
 	void Undisplay() {
 		Hide();
 		Save();
+		VisibilityToggled?.Invoke(false);
 	}
 
 	void Load() {

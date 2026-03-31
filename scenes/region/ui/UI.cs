@@ -5,6 +5,7 @@ using Godot;
 using resources.game.building_types;
 using scenes.autoload;
 using scenes.map.ui;
+using scenes.ui;
 using static Document;
 using IBuildingType = Building.IBuildingType;
 
@@ -151,6 +152,15 @@ public partial class UI : Control {
 		zoomInButton.Pressed += () => Camera.ZoomIn();
 		zoomOutButton.Pressed += () => Camera.ZoomOut();
 		zoomResetButton.Pressed += () => Camera.ZoomReset();
+
+		OptionsMenu.VisibilityToggled += b => {
+			if (b && !GameMan.IsPaused) {
+				wasPausedBefore = true;
+				GameMan.TogglePause();
+			} else if (!b && !wasPausedBefore && GameMan.IsPaused) {
+				GameMan.TogglePause();
+			}
+		};
 
 		panButton.ButtonDown += () => {
 			Camera.StartDragging(true);
@@ -321,6 +331,22 @@ public partial class UI : Control {
 
 	public void SetupResourceDisplay() {
 		var fac = GetFactionActions().Faction;
+		resourceDisplay.Display(c => (c as Label).Text = "faction: " + fac.Name);
+		resourceDisplay.Display(c => {
+			float monthlyChange = fac.Population.GetApprovalMonthlyChange();
+			(c as ApprovalMeter).Display(fac.Population.Approval, monthlyChange);
+		},
+			GD.Load<PackedScene>("res://scenes/region/ui/approval_meter.tscn").Instantiate<ApprovalMeter>(),
+			() => {
+				var sb = new StringBuilder();
+				sb.Append("your approval rate. when it drops to zero, you lose. change in approval is per month.\n");
+				var reasons = fac.Population.GetApprovalMonthlyChangeReasons();
+				foreach (var r in reasons) {
+					if (r.Item1 == 0f) continue;
+					sb.Append(r.Item2).Append('\t').Append($"{(r.Item1 >= 0f ? "+" : "")}{r.Item1 * 100:0}%\n");
+				}
+				return sb.ToString();
+			});
 		resourceDisplay.Display(c => {
 			if (fac.GetPopulationCount() == 0) (c as Label).Text = "no one lives here.";
 			(c as Label).Text = $"population: {fac.GetPopulationCount()} "
@@ -337,24 +363,22 @@ public partial class UI : Control {
 				+ $"new person born in {timetext} ({fac.Population.GetYearlyBirths():0} births/year)"
 			;
 		});
+		resourceDisplay.Display(c => {
+			var sb = new StringBuilder();
+			var (food, foodUsage) = GetFoodAndUsage();
+			sb.Append($"food: {(int)food}");
+			sb.Append($" ({(int)foodUsage} eaten/day)");
+
+			(c as Label).Text = sb.ToString();
+		},
+		() => {
+			var (food, foodUsage) = GetFoodAndUsage();
+			var leftForDays = food / foodUsage;
+			return $"(enough for {GameTime.GetFancyTimeString((TimeT)(leftForDays * GameTime.HOURS_PER_DAY * GameTime.MINUTES_PER_HOUR))})\n";
+		});
 		if (!fac.IsWild) {
 			var reg = fac.Region;
-			resourceDisplay.Display(c => (c as Label).Text = "faction: " + fac.Name);
-			resourceDisplay.Display(c => {
-				float monthlyChange = fac.Population.GetApprovalMonthlyChange();
-				(c as ApprovalMeter).Display(fac.Population.Approval, monthlyChange);
-			},
-				GD.Load<PackedScene>("res://scenes/region/ui/approval_meter.tscn").Instantiate<ApprovalMeter>(),
-				() => {
-					var sb = new StringBuilder();
-					sb.Append("your approval rate. when it drops to zero, you lose. change in approval is per month.\n");
-					var reasons = fac.Population.GetApprovalMonthlyChangeReasons();
-					foreach (var r in reasons) {
-						if (r.Item1 == 0f) continue;
-						sb.Append(r.Item2).Append('\t').Append($"{(r.Item1 >= 0f ? "+" : "")}{r.Item1 * 100:0}%\n");
-					}
-					return sb.ToString();
-				});
+
 			resourceDisplay.Display(c => {
 				(c as Label).Text = $"    silver: {fac.Silver}    ";
 			}, () => {
@@ -363,12 +387,16 @@ public partial class UI : Control {
 				return $"{liq} total\n{(int)(liq / tot * 100)}% of world silver owned";
 			});
 			resourceDisplay.Display(c => {
-				string txt = $"{inRegionTilepos}";
+				string txt = "";
 				if (reg.GetGroundTile(inRegionTilepos, out GroundTileType tile)) {
 					txt += $" {tile.UIString()}";
 					if (reg.HasMapObject(inRegionTilepos, out MapObject mopject)) {
 						txt += $" with {(mopject.Type as IAssetType).AssetName}";
 					}
+					txt += $" {inRegionTilepos}";
+				} else if (GameMan.Game.Map.TileOwners.TryGetValue(inRegionTilepos + reg.WorldPosition, out var reg2)) {
+					bool knowsreg = reg.Neighbors.Contains(reg2);
+					txt = $"over region {(knowsreg ? reg2.LocalFaction.Name : "?")} {inRegionTilepos + reg.WorldPosition - reg2.WorldPosition}";
 				}
 				(c as Label).Text = txt;
 			});
@@ -407,11 +435,6 @@ public partial class UI : Control {
 		foreach (var p in resources) {
 			sb.Append($"{p.Key.AssetName} x {p.Value.Amount}\n");
 		}
-		var (food, foodUsage) = GetFoodAndUsage();
-		sb.Append($"\nfood: {(int)food}\n");
-		sb.Append($"({(int)foodUsage} eaten/day)\n");
-		var leftForDays = food / foodUsage;
-		sb.Append($"(enough for {GameTime.GetFancyTimeString((TimeT)(leftForDays * GameTime.HOURS_PER_DAY * GameTime.MINUTES_PER_HOUR))})\n");
 		sb.Append($"\ntotal {resources.ItemAmount}");
 		resourceLabel.Text = sb.ToString();
 	}
@@ -596,5 +619,5 @@ public partial class UI : Control {
 
 	public string GetTimeString() => GetTimeStringEvent?.Invoke() ?? "NEVER";
 
-	
+
 }

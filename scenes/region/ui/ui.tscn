@@ -163,6 +163,7 @@ Notifications = NodePath("VBoxContainer/MarginContainer/Horizon/HBoxContainer/VB
 
 [node name="PausePanel" type="Panel" parent="." unique_id=1758856808]
 visible = false
+z_index = -1
 layout_mode = 2
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_suhma")
@@ -355,6 +356,7 @@ size_flags_vertical = 3
 mouse_filter = 2
 
 [node name="ResourcesList" type="RichTextLabel" parent="VBoxContainer/MarginContainer/Horizon" unique_id=2107477024]
+z_index = -1
 custom_minimum_size = Vector2(60, 0)
 layout_mode = 2
 mouse_filter = 2

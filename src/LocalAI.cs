@@ -758,6 +758,11 @@ public class GamerAI : LocalAI {
 	public readonly float Militarism = Mathf.Clamp((float)GD.Randfn(0f, 0.15f), 0.0001f, 1f);
 	readonly List<Action> mainActions;
 	readonly List<Action> ephemeralActions;
+
+	struct Thought {
+		public float PeaceTrustworthiness;
+	}
+	readonly Dictionary<Faction, Thought> thoughtsAboutFactions = new();
 	TimeT time;
 
 	readonly HashSet<IBuildingType> farms = [Registry.BuildingsS.GrainField];

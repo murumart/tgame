@@ -9,13 +9,13 @@
 [ext_resource type="Texture2D" uid="uid://c5f4cvgkrog7r" path="res://resources/visual/theme/icons/very_happy.svg" id="6_8hroi"]
 
 [node name="ApprovalMeter" type="Label" unique_id=1026421161 node_paths=PackedStringArray("faceDisplay")]
-custom_minimum_size = Vector2(65, 0)
+custom_minimum_size = Vector2(45, 0)
 offset_right = 39.0
 offset_bottom = 10.0
 mouse_filter = 0
 text = "ass"
 label_settings = ExtResource("2_n2vuf")
-horizontal_alignment = 1
+horizontal_alignment = 2
 script = ExtResource("1_vjqso")
 faceDisplay = NodePath("HBoxContainer/TextureRect")
 faceTextures = Array[Texture2D]([ExtResource("2_hpo3w"), ExtResource("3_oyrra"), ExtResource("4_smk3n"), ExtResource("1_bvvuo"), ExtResource("6_8hroi")])
