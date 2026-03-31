@@ -152,8 +152,11 @@ Rünnakud. rünnak mingi teise ruudu vastu oleks problem, mida teine peaks lahen
 - [X] ehitise tööd tulevad ekraanil ette kui ehitamata ehitis eemaldatakse
 - [ ] mingi memory leak uute maailmade tegemisel
 
-**Lilleras**
+**Etc**
 
 - [ ] enable regions switch when generate regions?
-- [ ] make camera flying less floaty
-- [ ] limit camera to edges of the world
+- [X] make camera flying less floaty
+- [X] limit camera to edges of the world
+- [ ] hide hud buttons on gameover
+- [ ] build quarry wouhtout rocks..?
+- [ ] might not notice silver switches out
