@@ -29,6 +29,8 @@ public partial class RegionDisplay : Node2D {
 	readonly Queue<TileAttackJob> attacksToDisplay = new();
 	readonly Queue<TileAttackJob> attacksToUndisplay = new();
 
+	readonly Queue<Vector2I> tileChangeQueue = new();
+
 	public int Lod { get; private set; }
 	public Region Region { get => region; }
 
@@ -53,29 +55,31 @@ public partial class RegionDisplay : Node2D {
 	}
 
 	public override void _Process(double delta) {
+		if (tileChangeQueue.Count > 0) {
+			while (tileChangeQueue.Count > 0) {
+				tilemaps.UpdateGroundAt(region, tileChangeQueue.Dequeue(), false);
+			}
+			tilemaps.Ground.NotifyRuntimeTileDataUpdate();
+			CalcVisibilityRect();
+		}
+		if (Lod > 1) return;
 		if (jobsToDisplay.Count > 0) {
-			var j = jobsToDisplay.Dequeue();
-			DisplayRegionJob(j);
+			DisplayRegionJob(jobsToDisplay.Dequeue());
 		}
 		if (jobsToUndisplay.Count > 0) {
-			var j = jobsToUndisplay.Dequeue();
-			UndisplayRegionJob(j);
+			UndisplayRegionJob(jobsToUndisplay.Dequeue());
 		}
 		if (problemsToDisplay.Count > 0) {
-			var p = problemsToDisplay.Dequeue();
-			DisplayRegionProblem(p);
+			DisplayRegionProblem(problemsToDisplay.Dequeue());
 		}
 		if (problemsToUndisplay.Count > 0) {
-			var p = problemsToUndisplay.Dequeue();
-			UndisplayRegionProblem(p);
+			UndisplayRegionProblem(problemsToUndisplay.Dequeue());
 		}
 		if (attacksToDisplay.Count > 0) {
-			var p = attacksToDisplay.Dequeue();
-			DisplayRegionAttack(p);
+			DisplayRegionAttack(attacksToDisplay.Dequeue());
 		}
 		if (attacksToUndisplay.Count > 0) {
-			var p = attacksToUndisplay.Dequeue();
-			UndisplayRegionAttack(p);
+			UndisplayRegionAttack(attacksToUndisplay.Dequeue());
 		}
 		if (GameMan.IsPaused && Engine.GetFramesDrawn() % 16 == 0) {
 			DisplayJobProgress();
@@ -103,8 +107,6 @@ public partial class RegionDisplay : Node2D {
 			foreach (var m in region.GetMapObjects()) {
 				DisplayMapObject(m);
 			}
-		} else {
-			SetProcess(false);
 		}
 		valid = true;
 		OnScreenExited();
@@ -360,8 +362,8 @@ public partial class RegionDisplay : Node2D {
 	void OnTileChanged(Vector2I at) {
 		//tilemaps.DisplayGround(region);
 		if (tilemaps.Visible) {
-			tilemaps.UpdateGroundAt(region, at);
-			CalcVisibilityRect();
+			
+			tileChangeQueue.Enqueue(at);
 		}
 	}
 
@@ -372,7 +374,7 @@ public partial class RegionDisplay : Node2D {
 	void OnScreenEntered() {
 		tilemaps.Show();
 		tilemaps.DisplayGround(region);
-		SetProcess(Lod < 2);
+		SetProcess(true);
 	}
 
 	void OnScreenExited() {

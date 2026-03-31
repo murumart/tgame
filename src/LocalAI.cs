@@ -270,10 +270,13 @@ public partial class LocalAI {
 			}, $"SendPeaceRequest({ac.Faction},{target})");
 		}
 
-		public static Action CreateTileInvasion(DecisionFactor[] factors, FactionActions ac, Faction against, Vector2I globalTile) {
+		public static Action StartTileInvasion(DecisionFactor[] factors, FactionActions ac, Faction against, Vector2I globalTile) {
 			return new(factors, () => {
-				FactionActions.ApplyAttackJob(ac.Faction, FactionActions.GetAttackJob(ac.Faction, against, globalTile));
-			}, $"CreateTileInvasion({ac.Faction},{against})");
+				var job = FactionActions.GetAttackJob(ac.Faction, against, globalTile);
+				FactionActions.ApplyAttackJob(ac.Faction, job);
+				int free = Math.Max(0, (int)ac.GetFreeWorkers());
+				ac.ChangeJobWorkerCount(job, Math.Min(free, Math.Min(5, (int)(GD.Randf() * free))));
+			}, $"StartTileInvasion({ac.Faction},{against})");
 		}
 
 	}
@@ -620,6 +623,14 @@ public partial class LocalAI {
 				return Mathf.Clamp((ac.Faction.Military - fac.Military) / milsum * stakes, 0f, 1f);
 			}, "MilitaryAdvantageOver");
 		}
+
+		public static DecisionFactor AtMultipleWarsAlready(Faction fac) {
+			return new(() => {
+				int wars = fac.InHowManyWars();
+				return Mathf.Clamp(wars * 0.1f, 0f, 1f);
+			}, "AtMultipleWarsAlready");
+		}
+
 	}
 
 }
@@ -736,7 +747,7 @@ public class GamerAI : LocalAI {
 	public const int DefaultBuildingWant = 1;
 	public readonly Dictionary<IResourceType, int> ResourceWants;
 	public readonly Dictionary<IBuildingType, int> BuildingWants;
-	public readonly float Militarism = Mathf.Clamp((float)GD.Randfn(0f, 0.1f), 0f, 1f);
+	public readonly float Militarism = Mathf.Clamp((float)GD.Randfn(0f, 0.15f), 0.0001f, 1f);
 	readonly List<Action> mainActions;
 	readonly List<Action> ephemeralActions;
 	TimeT time;
@@ -945,6 +956,7 @@ public class GamerAI : LocalAI {
 			if (factors != null) {
 				ephemeralActions.Add(Actions.AssignWorkersToJob(factors.ToArray(), factionActions, job));
 				ephemeralActions.Add(Actions.RemoveWorkersFromJob([
+					job is not TileAttackJob && job is not SolveProblemJob ? Factors.One : Factors.Null,
 					Factors.IsJobUnlocked(job),
 					Factors.Ease(Factors.OneMinus(Factors.Group(factors.ToArray())), 5),
 					Factors.OneMinus(Factors.JobCompletion(job)),
@@ -962,14 +974,16 @@ public class GamerAI : LocalAI {
 			if (!factionActions.Faction.IsAtWarWith(n.LocalFaction)) {
 				ephemeralActions.Add(Actions.DeclareWar([
 					Factors.OneMinus(Factors.IsAtWarWith(factionActions, n.LocalFaction)),
-					Factors.MilitaryAdvantageOver(factionActions, n.LocalFaction),
+					Factors.Max(Factors.MilitaryAdvantageOver(factionActions, n.LocalFaction), 0.00000005f),
+					Factors.Max(Factors.AtMultipleWarsAlready(n.LocalFaction), 0.3f),
 				], factionActions, n.LocalFaction));
 			} else {
 				var edges = n.GetEdges();
+				if (edges.Length == 0) continue;
 				var ep = n.WorldPosition + edges[(int)(GD.Randi() % edges.Length)].Key;
 				if (factionActions.Faction.GetJob(ep, out _)) continue;
 				if (!FactionActions.CanAttack(factionActions.Region, n, ep)) continue;
-				ephemeralActions.Add(Actions.CreateTileInvasion([
+				ephemeralActions.Add(Actions.StartTileInvasion([
 					Factors.Ease(Factors.FreeWorkerRate(factionActions), 0.3f),
 					Factors.HasFreeWorkers(factionActions),
 				], factionActions, n.LocalFaction, ep));

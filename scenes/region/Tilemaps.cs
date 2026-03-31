@@ -29,14 +29,14 @@ public partial class Tilemaps : Node2D {
 		//ground.UpdateInternals();
 	}
 
-	public void UpdateGroundAt(Region me, Vector2I local) {
+	public void UpdateGroundAt(Region me, Vector2I local, bool notify = true) {
 		if (!me.GetGroundTile(local, out var tile)) {
 			ground.EraseCell(local);
 		} else {
 			var type = GroundCellType.MatchTileTypeToCell(tile);
 			ground.SetCell(local, type.SourceId, type.AtlasCoords);
 		}
-		ground.NotifyRuntimeTileDataUpdate();
+		if (notify) ground.NotifyRuntimeTileDataUpdate();
 	}
 
 	// matches Godot's TileLayout.DIAMOND_DOWN

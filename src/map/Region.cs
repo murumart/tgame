@@ -155,14 +155,36 @@ public class Region {
 	}
 
 	public void AnnexTile(Region from, Vector2I fromCoordinate, Dictionary<Vector2I, Region> TileOwners, bool bulkop = false) {
+		AnnexTile(from, fromCoordinate, TileOwners, Vector2I.One * -1, bulkop);
+	}
+
+	readonly Vector2I[] corners = [Vector2I.Right, Vector2I.Left, Vector2I.Down, Vector2I.Up];
+
+	public void AnnexTile(Region from, Vector2I fromCoordinate, Dictionary<Vector2I, Region> TileOwners, Vector2I recursionStartGlobal, bool bulkop = false) {
+		if (from.groundTiles.Count == 1 && !bulkop) {
+			// we're annexing the last tile they have
+			AnnexAll(from, TileOwners);
+			return;
+		}
 		var globalCoord = fromCoordinate + from.WorldPosition;
-		Debug.Assert(from.groundTiles.ContainsKey(fromCoordinate), $"Region to annex from doesn't own tile at {fromCoordinate}");
+		if (!from.groundTiles.ContainsKey(fromCoordinate)) {
+			Debug.Assert(from.groundTiles.ContainsKey(fromCoordinate), $"Region to annex from doesn't own tile at {fromCoordinate}");
+		}
 		var localCoord = globalCoord - WorldPosition;
 		Debug.Assert(!groundTiles.ContainsKey(localCoord), $"Annexing region somehow already owns tile at {localCoord}");
 		var tile = from.groundTiles[fromCoordinate];
 		from.groundTiles.Remove(fromCoordinate);
 		groundTiles[localCoord] = tile;
 		TileOwners[globalCoord] = this;
+		// anti one tile enclave method
+		foreach (var corner in corners) {
+			var tileinquestion = globalCoord + corner;
+			if (tileinquestion == recursionStartGlobal) continue;
+			if (!TileOwners.TryGetValue(tileinquestion, out var questionabletileowner) || questionabletileowner != from) continue; 
+			bool takentileconnectedtoothervictimtile = corners.Any(c => TileOwners.TryGetValue(tileinquestion + c, out var reg) && reg == from);
+			if (takentileconnectedtoothervictimtile) continue;
+			AnnexTile(from, tileinquestion - from.WorldPosition, TileOwners, tileinquestion, false);
+		}
 		if (!bulkop) {
 			// a bit lazy to regenerate edges like this
 			GenerationAccessor.RebuildEdge(this, TileOwners);
@@ -190,10 +212,8 @@ public class Region {
 				LocalFaction.OnMapObjectAdded(mop);
 			}
 		}
-		if (!bulkop) { // only thing currently connected is the RegionDisplay really slow rebuild method
-			from.TileChangedAtEvent?.Invoke(fromCoordinate);
-			TileChangedAtEvent?.Invoke(localCoord);
-		}
+		from.TileChangedAtEvent?.Invoke(fromCoordinate);
+		TileChangedAtEvent?.Invoke(localCoord);
 		// check if the tile change exposed new neighbors
 		for (int x = -1; x <= 1; x += 2) {
 			for (int y = -1; y <= 1; y += 2) {

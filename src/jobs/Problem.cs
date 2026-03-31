@@ -168,6 +168,7 @@ public class TileAttackJob : Job {
 
 	public override void Deinitialise(Faction ctxFaction) {
 		Debug.Assert(ctxFaction == Attacker);
+		Attacker = null;
 	}
 
 	(float AttackerMil, float DefenderMil) GetMils() => (Attacker.Military, Target.LocalFaction.Military);
@@ -235,8 +236,8 @@ public class TileAttackJob : Job {
 		}
 		Debug.Assert(GameMan.Game.Map.TileOwners.TryGetValue(GlobalPosition, out var reg) && reg == Target, $"Tile {GlobalPosition} somehow slipped from {Target}");
 		if (timeSpent < timeTaken) return;
-		FactionActions.RemoveAttackingJob(regionFaction, this);
 		Attacker.Region.AnnexTile(Target, GlobalPosition - Target.WorldPosition, GameMan.Game.Map.TileOwners);
+		FactionActions.RemoveAttackingJob(regionFaction, this);
 	}
 
 	readonly string[] productions = [

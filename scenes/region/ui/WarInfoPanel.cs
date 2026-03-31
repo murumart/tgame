@@ -60,6 +60,7 @@ public partial class WarInfoPanel : VBoxContainer {
 	const string TutAttackable = "You can start attacking the enemy's borders: click on the green tiles.";
 	const string TutStartAttack = "Assign soldiers to begin the attack. Our military might and people are behind them.";
 	const string TutNeedWorkers = "You need free soldiers to begin an attack.";
+	const string TutFaraway = "This land is unknown to us.";
 
 	void SetThem(Faction them) {
 		attackJob = null;
@@ -67,7 +68,6 @@ public partial class WarInfoPanel : VBoxContainer {
 		tutorialLabel.Text = Tut1;
 		aggressionAdjustmentButton.Disabled = true;
 		aggressionAdjustmentButton.Text = "Diplomacy";
-		this.them = them;
 		attackDisplay.Modulate = new(Colors.White, 0.5f);
 		attackDisplay.ClearDisplay();
 		attackDisplay.Editable = false;
@@ -76,8 +76,18 @@ public partial class WarInfoPanel : VBoxContainer {
 		theirDisplayParent.Modulate = new(Colors.White, 0.5f);
 		theirNameLabel.Text = "?";
 		theirInfo.Text = "?";
-		if (them is null) return;
-		if (!us.Region.Neighbors.Contains(them.Region)) return;
+		this.them = them;
+		if (them is null) {
+			ui.Camera.SetHighlightDisplay(GetHighlightFunc());
+			return;
+		}
+		if (!us.Region.Neighbors.Contains(them.Region)) {
+			this.them = null;
+			ui.Camera.SetHighlightDisplay(GetHighlightFunc());
+			tutorialLabel.Text = TutFaraway;
+			return;
+		}
+		ui.Camera.SetHighlightDisplay(GetHighlightFunc());
 
 		bool emptyorwild = them.Population.Count == 0 || them.IsWild;
 		theirDisplayParent.Modulate = Colors.White;
@@ -93,7 +103,7 @@ public partial class WarInfoPanel : VBoxContainer {
 			bool attackingTile = FactionActions.IsAttacking(us, them, targetTile, out attackJob);
 			if (!attackingTile && FactionActions.CanAttack(us.Region, them.Region, targetTile)) {
 				if (ui.GetMaxFreeWorkers() == 0) {
-					tutorialLabel.Text = TutNeedWorkers;
+					attackStartButton.Text = TutNeedWorkers;
 					return;
 				}
 				attackJob = FactionActions.GetAttackJob(us, them, targetTile);
@@ -147,8 +157,7 @@ public partial class WarInfoPanel : VBoxContainer {
 			// it's weird if there's no soldiers to begin with
 			int workersToAdd = (int)Math.Min(ui.GetMaxFreeWorkers(), 5);
 			if (workersToAdd > 0) ui.ChangeJobWorkerCount(attackJob, workersToAdd);
-		}
-		else FactionActions.RemoveAttackingJob(us, attackJob);
+		} else FactionActions.RemoveAttackingJob(us, attackJob);
 		Rebuild();
 	}
 
@@ -201,14 +210,16 @@ public partial class WarInfoPanel : VBoxContainer {
 
 			if (GameMan.Game.Map.TileOwners.TryGetValue(gb, out var reg)) {
 				if (us.IsAtWarWith(reg.LocalFaction)) {
-					color = Palette.BrownRust;
+					color = Palette.BrownRust.Lightened(reg.LocalFaction == them ? 0.3f : 0f);
 					if (FactionActions.CanAttack(us.Region, reg, gb)) color = Palette.BrassGreen;
 				} else if (reg.LocalFaction == us) {
-					color = Palette.Hoki;
+					color = Palette.Pavlova;
+				} else if (reg.LocalFaction == them) {
+					color = Palette.Dusk;
 				}
 			}
 
-			alpha *= Mathf.Ease(d, 0.5f);
+			alpha *= Mathf.Ease(d, 0.1f);
 			s.Modulate = new Color(color, alpha);
 		};
 	}

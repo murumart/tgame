@@ -97,7 +97,7 @@ layout_mode = 2
 [node name="ColorRect" type="ColorRect" parent="DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer2/VBoxContainer/Legend/HBoxContainer" unique_id=74939153]
 custom_minimum_size = Vector2(8, 8)
 layout_mode = 2
-color = Color(0.42352942, 0.5058824, 0.6313726, 1)
+color = Color(0.83137256, 0.7764706, 0.57254905, 1)
 
 [node name="Label" type="Label" parent="DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer2/VBoxContainer/Legend/HBoxContainer" unique_id=688778780]
 layout_mode = 2
@@ -136,7 +136,7 @@ layout_mode = 2
 [node name="ColorRect" type="ColorRect" parent="DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer2/VBoxContainer/Legend/HBoxContainer4" unique_id=221472709]
 custom_minimum_size = Vector2(8, 8)
 layout_mode = 2
-color = Color(0.1882353, 0.21960784, 0.2627451, 1)
+color = Color(0.2509804, 0.32156864, 0.4509804, 1)
 
 [node name="Label" type="Label" parent="DetailsContainer/VBoxContainer/HBoxContainer/MarginContainer2/VBoxContainer/Legend/HBoxContainer4" unique_id=1019061226]
 layout_mode = 2

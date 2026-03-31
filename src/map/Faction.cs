@@ -501,6 +501,10 @@ public class Faction : IEntity {
 		return militaryOperations.ContainsKey(faction);
 	}
 
+	public int InHowManyWars() {
+		return militaryOperations.Count;
+	}
+
 	public bool IsAttacking(Vector2I localTile) {
 		return GetJob(Region.WorldPosition + localTile, out var job) && job is TileAttackJob;
 	}
@@ -528,7 +532,7 @@ public class Faction : IEntity {
 		else if (this == status.Defender) status.DefenderAsksForPeace = true;
 		else Debug.Assert(false, "Completely unrelated faction with to this status..  ");
 
-		if (status.AggressorAsksForPeace && status.DefenderAsksForPeace || (Population.Count == 0 || IsWild)) {
+		if (status.AggressorAsksForPeace && status.DefenderAsksForPeace || (status.Defender.Population.Count == 0 || status.Defender.IsWild)) {
 			EndWar(with);
 		}
 	}
