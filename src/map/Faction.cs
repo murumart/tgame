@@ -307,13 +307,15 @@ public class Faction : IEntity {
 
 	void OnBuildingConstructed(Building building) {
 		// this is also called when annexing a building
-		Population.ChangeHousingCapacity((int)building.GetHousingCapacity());
-		ChangeMilitaryBy(building.Type.GetMilitaryBoost());
+		if (building.GetBuildProgress() >= 1f) {
+			Population.ChangeHousingCapacity((int)building.GetHousingCapacity());
+			ChangeMilitaryBy(building.Type.GetMilitaryBoost());
+		}
 	}
 
 	void OnBuildingRemoved(Building building) {
 		// this is also called when a building has been annexed
-		ChangeMilitaryBy(-building.Type.GetMilitaryBoost());
+		if (building.GetBuildProgress() >= 1f) ChangeMilitaryBy(-building.Type.GetMilitaryBoost());
 	}
 
 	// deletes a building from the faction's records and has the region also delete it
