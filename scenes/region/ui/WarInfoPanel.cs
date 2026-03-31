@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Godot;
 using scenes.autoload;
 using scenes.ui;
@@ -9,6 +10,10 @@ public partial class WarInfoPanel : VBoxContainer {
 
 	[Export] UI ui;
 	[Export] Label tutorialLabel;
+
+	[Export] Container ongoingOperationsParent;
+	[Export] Container ongoingOperationsContainer;
+	[Export] PackedScene jobInfopanelScene;
 
 	[Export] Label ourNameLabel;
 	[Export] RichTextLabel ourInfo;
@@ -43,6 +48,17 @@ public partial class WarInfoPanel : VBoxContainer {
 
 		ourInfo.Text = GetDescription(us);
 		ui.Camera.SetHighlightDisplay(GetHighlightFunc());
+		
+		foreach (var n in ongoingOperationsContainer.GetChildren()) n.QueueFree();
+		bool found = false;
+		foreach (var fac in us.GetMilitaryOperatingAgainst()) {
+			var l = new Label() {
+				Text = fac.Name,
+			};
+			found = true;
+			ongoingOperationsContainer.AddChild(l);
+		}
+		ongoingOperationsParent.Visible = found;
 	}
 
 	public void Click(Vector2I wpos) {
@@ -72,7 +88,7 @@ public partial class WarInfoPanel : VBoxContainer {
 		attackDisplay.ClearDisplay();
 		attackDisplay.Editable = false;
 		attackStartButton.Disabled = true;
-		attackStartButton.Text = "Begin Attack";
+		attackStartButton.Text = $"({attackStartButton.Shortcut.GetAsText()}) Begin Attack";
 		theirDisplayParent.Modulate = new(Colors.White, 0.5f);
 		theirNameLabel.Text = "?";
 		theirInfo.Text = "?";
@@ -117,7 +133,7 @@ public partial class WarInfoPanel : VBoxContainer {
 				attackDisplay.Modulate = Colors.White;
 				attackDisplay.Display(ui, attackJob, 0, sliderMax, OnJobWorkerCountChanged);
 				attackStartButton.Disabled = false;
-				attackStartButton.Text = "Stop Attack";
+				attackStartButton.Text = $"({attackStartButton.Shortcut.GetAsText()}) Stop Attack";
 			}
 		} else {
 			aggressionAdjustmentButton.Disabled = false;
@@ -207,18 +223,18 @@ public partial class WarInfoPanel : VBoxContainer {
 	RegionDisplayHighlightDisplayFunc GetHighlightFunc() {
 		return (s, gb, lp, d) => {
 			float alpha = 0.75f;
-			Color color = Palette.Dark;
+			Color color = Palette.Dusk;
 
 			if (GameMan.Game.Map.TileOwners.TryGetValue(gb, out var reg)) {
 				if (us.IsAtWarWith(reg.LocalFaction)) {
-					color = Palette.BrownRust.Lightened(reg.LocalFaction == them ? 0.3f : 0f);
 					if (FactionActions.CanAttack(us.Region, reg, gb)) color = Palette.BrassGreen;
+					else color = Palette.BrownRust;
 				} else if (reg.LocalFaction == us) {
 					color = Palette.Pavlova;
-				} else if (reg.LocalFaction == them) {
-					color = Palette.Dusk;
 				}
 			}
+			if (reg is not null && reg.LocalFaction == them) color = color.Lightened(0.15f);
+			if (gb == targetTile) color = color.Lightened(0.3f);
 
 			alpha *= Mathf.Ease(d, 0.1f);
 			s.Modulate = new Color(color, alpha);

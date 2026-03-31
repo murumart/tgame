@@ -543,6 +543,7 @@ layout_mode = 2
 theme_override_constants/separation = 0
 
 [node name="Label" type="Label" parent="VBoxContainer2/HBoxContainer/VBoxContainer2/ControlButtons/VBoxContainer" unique_id=2119031366]
+visible = false
 layout_mode = 2
 text = "Z"
 label_settings = ExtResource("3_ppqjx")
@@ -554,13 +555,14 @@ layout_mode = 2
 focus_mode = 0
 shortcut = SubResource("Shortcut_nqtah")
 shortcut_in_tooltip = false
-text = "Build"
+text = "(z) Build"
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="VBoxContainer2/HBoxContainer/VBoxContainer2/ControlButtons" unique_id=1698379353]
 layout_mode = 2
 theme_override_constants/separation = 0
 
 [node name="Label" type="Label" parent="VBoxContainer2/HBoxContainer/VBoxContainer2/ControlButtons/VBoxContainer2" unique_id=976488106]
+visible = false
 layout_mode = 2
 text = "X"
 label_settings = ExtResource("3_ppqjx")
@@ -572,13 +574,14 @@ layout_mode = 2
 focus_mode = 0
 shortcut = SubResource("Shortcut_8owlq")
 shortcut_in_tooltip = false
-text = "Jobs"
+text = "(x) Jobs"
 
 [node name="VBoxContainer3" type="VBoxContainer" parent="VBoxContainer2/HBoxContainer/VBoxContainer2/ControlButtons" unique_id=277235276]
 layout_mode = 2
 theme_override_constants/separation = 0
 
 [node name="Label" type="Label" parent="VBoxContainer2/HBoxContainer/VBoxContainer2/ControlButtons/VBoxContainer3" unique_id=1986189515]
+visible = false
 layout_mode = 2
 text = "C"
 label_settings = ExtResource("3_ppqjx")
@@ -590,13 +593,14 @@ layout_mode = 2
 focus_mode = 0
 shortcut = SubResource("Shortcut_xic2a")
 shortcut_in_tooltip = false
-text = "Trade"
+text = "(c) Trade"
 
 [node name="VBoxContainer4" type="VBoxContainer" parent="VBoxContainer2/HBoxContainer/VBoxContainer2/ControlButtons" unique_id=1712490334]
 layout_mode = 2
 theme_override_constants/separation = 0
 
 [node name="Label" type="Label" parent="VBoxContainer2/HBoxContainer/VBoxContainer2/ControlButtons/VBoxContainer4" unique_id=1588454382]
+visible = false
 layout_mode = 2
 text = "V"
 label_settings = ExtResource("3_ppqjx")
@@ -608,13 +612,14 @@ layout_mode = 2
 focus_mode = 0
 shortcut = SubResource("Shortcut_cb21y")
 shortcut_in_tooltip = false
-text = "World"
+text = "(v) World"
 
 [node name="VBoxContainer5" type="VBoxContainer" parent="VBoxContainer2/HBoxContainer/VBoxContainer2/ControlButtons" unique_id=1410777783]
 layout_mode = 2
 theme_override_constants/separation = 0
 
 [node name="Label" type="Label" parent="VBoxContainer2/HBoxContainer/VBoxContainer2/ControlButtons/VBoxContainer5" unique_id=1376612688]
+visible = false
 layout_mode = 2
 text = "B"
 label_settings = ExtResource("3_ppqjx")
@@ -625,7 +630,7 @@ layout_mode = 2
 focus_mode = 0
 shortcut = SubResource("Shortcut_3haic")
 shortcut_in_tooltip = false
-text = "Military"
+text = "(b) Military"
 
 [node name="AgreementsButton" type="Button" parent="VBoxContainer2/HBoxContainer/VBoxContainer2/ControlButtons" unique_id=234576058]
 unique_name_in_owner = true

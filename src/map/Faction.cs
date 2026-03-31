@@ -308,12 +308,12 @@ public class Faction : IEntity {
 	void OnBuildingConstructed(Building building) {
 		// this is also called when annexing a building
 		Population.ChangeHousingCapacity((int)building.GetHousingCapacity());
-		Military += building.Type.GetMilitaryBoost();
+		ChangeMilitaryBy(building.Type.GetMilitaryBoost());
 	}
 
 	void OnBuildingRemoved(Building building) {
 		// this is also called when a building has been annexed
-		Military -= building.Type.GetMilitaryBoost();
+		ChangeMilitaryBy(-building.Type.GetMilitaryBoost());
 	}
 
 	// deletes a building from the faction's records and has the region also delete it
@@ -494,12 +494,16 @@ public class Faction : IEntity {
 	}
 
 	public void ChangeMilitaryBy(int delta) {
-		Debug.Assert(Military + delta >= 0, $"Don't go negative militarily (would be {Military + delta})");
+		Debug.Assert(Military + delta >= 0, $"Don't go negative militarily (would be {Military} + {delta} = {Military + delta})");
 		Military += delta;
 	}
 
 	public bool IsAtWarWith(Faction faction) {
 		return militaryOperations.ContainsKey(faction);
+	}
+
+	public IEnumerable<Faction> GetMilitaryOperatingAgainst() {
+		return militaryOperations.Keys;
 	}
 
 	public int InHowManyWars() {

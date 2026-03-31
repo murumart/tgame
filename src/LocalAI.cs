@@ -967,6 +967,7 @@ public class GamerAI : LocalAI {
 					job is not TileAttackJob && job is not SolveProblemJob ? Factors.One : Factors.Null,
 					Factors.IsJobUnlocked(job),
 					Factors.Ease(Factors.OneMinus(Factors.Group(factors.ToArray())), 5),
+					Factors.Const(0.001f),
 					Factors.OneMinus(Factors.JobCompletion(job)),
 					Factors.JobEmploymentRate(job),
 					Factors.SentTradeOfferLimit(factionActions, 15),

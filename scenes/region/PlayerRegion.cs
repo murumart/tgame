@@ -52,10 +52,10 @@ public partial class PlayerRegion : Node {
 		faction.MyTradeOfferAcceptedEvent += (o, u) => ui.Notifications.Notify($"{o.Recipient.Name} accepted a trade offer from us. ({o.GetOutputDescription(faction, u)})", timeLimit: 20f);
 		faction.MyTradeOfferRejectedEvent += o => ui.Notifications.Notify($"{o.Recipient.Name} rejected a trade offer from us...", timeLimit: 10f);
 		faction.StartedWarWith += (w, r) => {
-			ui.Notifications.Notify($"We started a military operation against {w.Name}.", gradientColors: (new(Palette.Dark, 0f), Palette.BrownRust));
+			ui.Notifications.Notify($"We started a military operation against {w.Name}.\n{r}", gradientColors: (new(Palette.Dark, 0f), Palette.BrownRust));
 		};
 		faction.PulledIntoWarWith += (w, r) => {
-			ui.Announce($"A preface: we at {w.Name} are terribly sad to be forced to do this. But our national interests are most important, and it'd do good for the world to adapt:\n\n{r}", title: $"War from traitorous {w.Name}");
+			ui.Announce($"{r}", title: $"War from traitorous {w.Name}");
 		};
 		faction.GotPeaceRequestFrom += (f) => {
 			ui.Notifications.Notify($"We got a request for peace from {f.Name}.", gradientColors: (new(Palette.SurfCrest, 0f), new(Palette.SurfCrest, 0.5f)));
