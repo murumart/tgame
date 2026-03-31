@@ -161,11 +161,6 @@ public class Region {
 	readonly Vector2I[] corners = [Vector2I.Right, Vector2I.Left, Vector2I.Down, Vector2I.Up];
 
 	public void AnnexTile(Region from, Vector2I fromCoordinate, Dictionary<Vector2I, Region> TileOwners, Vector2I recursionStartGlobal, bool bulkop = false) {
-		if (from.groundTiles.Count == 1 && !bulkop) {
-			// we're annexing the last tile they have
-			AnnexAll(from, TileOwners);
-			return;
-		}
 		var globalCoord = fromCoordinate + from.WorldPosition;
 		if (!from.groundTiles.ContainsKey(fromCoordinate)) {
 			Debug.Assert(from.groundTiles.ContainsKey(fromCoordinate), $"Region to annex from doesn't own tile at {fromCoordinate}");
@@ -229,7 +224,10 @@ public class Region {
 				}
 			}
 		}
-		//GD.Print("Region::AnnexTile : ", this, " annexed ", globalCoord, " from ", from);
+		// we annexed the last tile they have
+		if (from.GetLandTileCount() == 0 && !bulkop) {
+			AnnexAll(from, TileOwners);
+		}
 	}
 
 	public void AnnexAll(Region from, Dictionary<Vector2I, Region> TileOwners) {

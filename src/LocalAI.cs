@@ -631,6 +631,14 @@ public partial class LocalAI {
 			}, "AtMultipleWarsAlready");
 		}
 
+		public static DecisionFactor HaveWeNotSentPeaceRequest(FactionActions ac, Faction to) {
+			return new(() => ac.Faction.HasSentPeaceRequestTo(to) ? 0f : 1f, "HaveWeNotSentPeaceRequest");
+		}
+
+		public static DecisionFactor HasOtherSentPeaceRequest(FactionActions ac, Faction other) {
+			return new(() => other.HasSentPeaceRequestTo(ac.Faction) ? 1f : 0f, "HasOtherSentPeaceRequest");
+		}
+
 	}
 
 }
@@ -987,6 +995,11 @@ public class GamerAI : LocalAI {
 					Factors.Ease(Factors.FreeWorkerRate(factionActions), 0.3f),
 					Factors.HasFreeWorkers(factionActions),
 				], factionActions, n.LocalFaction, ep));
+				ephemeralActions.Add(Actions.SendPeaceRequest([
+					Factors.HaveWeNotSentPeaceRequest(factionActions, n.LocalFaction),
+					Factors.Max(Factors.HasOtherSentPeaceRequest(factionActions, n.LocalFaction), 0.5f),
+					Factors.Const((1f / Militarism) * 0.01f),
+				], factionActions, n.LocalFaction));
 			}
 		}
 

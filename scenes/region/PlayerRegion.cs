@@ -57,6 +57,9 @@ public partial class PlayerRegion : Node {
 		faction.PulledIntoWarWith += (w, r) => {
 			ui.Announce($"A preface: we at {w.Name} are terribly sad to be forced to do this. But our national interests are most important, and it'd do good for the world to adapt:\n\n{r}", title: $"War from traitorous {w.Name}");
 		};
+		faction.GotPeaceRequestFrom += (f) => {
+			ui.Notifications.Notify($"We got a request for peace from {f.Name}.", gradientColors: (new(Palette.SurfCrest, 0f), new(Palette.SurfCrest, 0.5f)));
+		};
 		faction.EndedWarWith += w => ui.Announce(
 			"After much too much fighting, we have decided to put down our weapons and bury this feud. In such a beautiful moment, we can not but celebrate and wish that this peace is lasting and fair...\n\nAt least for us.",
 			title: $"War Ended With {w}"
@@ -84,11 +87,11 @@ public partial class PlayerRegion : Node {
 		*              \    + <-- right x
 		*               \  /
 		*                \+ <-- bottom y
-		*/   
+		*/
 		(float LimitLeft, float LimitRight, float LimitTop, float LimitBottom) = (
-			Tilemaps.TilePosToWorldPos(new(                           0 - region.WorldPosition.X, GameMan.Game.Map.World.Height - region.WorldPosition.Y)).X,
-			Tilemaps.TilePosToWorldPos(new(GameMan.Game.Map.World.Width - region.WorldPosition.X,                             0 - region.WorldPosition.Y)).X,
-			Tilemaps.TilePosToWorldPos(new(                           0 - region.WorldPosition.X,                             0 - region.WorldPosition.Y)).Y,
+			Tilemaps.TilePosToWorldPos(new(0 - region.WorldPosition.X, GameMan.Game.Map.World.Height - region.WorldPosition.Y)).X,
+			Tilemaps.TilePosToWorldPos(new(GameMan.Game.Map.World.Width - region.WorldPosition.X, 0 - region.WorldPosition.Y)).X,
+			Tilemaps.TilePosToWorldPos(new(0 - region.WorldPosition.X, 0 - region.WorldPosition.Y)).Y,
 			Tilemaps.TilePosToWorldPos(new(GameMan.Game.Map.World.Width - region.WorldPosition.X, GameMan.Game.Map.World.Height - region.WorldPosition.Y)).Y
 		);
 		camera.LimitLeft = (int)LimitLeft - 50;

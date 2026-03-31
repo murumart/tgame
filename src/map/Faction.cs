@@ -33,6 +33,7 @@ public class Faction : IEntity {
 	public event Action<Faction, string> StartedWarWith;
 	public event Action<Faction, string> PulledIntoWarWith;
 	public event Action<Faction> EndedWarWith;
+	public event Action<Faction> GotPeaceRequestFrom;
 	public event Action<DefunctReason> Done;
 
 	public Region Region { get; init; }
@@ -528,9 +529,13 @@ public class Faction : IEntity {
 	public void RequestPeace(Faction with) {
 		bool at = militaryOperations.TryGetValue(with, out var status);
 		Debug.Assert(at, "Peace with not at war what.s");
-		if (this == status.Aggressor) status.AggressorAsksForPeace = true;
-		else if (this == status.Defender) status.DefenderAsksForPeace = true;
-		else Debug.Assert(false, "Completely unrelated faction with to this status..  ");
+		if (this == status.Aggressor) {
+			status.AggressorAsksForPeace = true;
+			status.Defender.GotPeaceRequestFrom?.Invoke(this);
+		} else if (this == status.Defender) {
+			status.DefenderAsksForPeace = true;
+			status.Aggressor.GotPeaceRequestFrom?.Invoke(this);
+		} else Debug.Assert(false, "Completely unrelated faction with to this status..  ");
 
 		if (status.AggressorAsksForPeace && status.DefenderAsksForPeace || (status.Defender.Population.Count == 0 || status.Defender.IsWild)) {
 			EndWar(with);
@@ -538,6 +543,9 @@ public class Faction : IEntity {
 	}
 
 	void EndWar(Faction with) {
+		foreach (var jop in jobs.Where(j => j is TileAttackJob tj).Cast<TileAttackJob>().ToArray()) {
+			FactionActions.RemoveAttackingJob(this, jop);
+		}
 		militaryOperations.Remove(with);
 		with.militaryOperations.Remove(this);
 		EndedWarWith?.Invoke(with);

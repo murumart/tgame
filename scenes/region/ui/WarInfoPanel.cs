@@ -98,6 +98,7 @@ public partial class WarInfoPanel : VBoxContainer {
 		if (us.IsAtWarWith(them)) {
 			aggressionAdjustmentButton.Disabled = us.HasSentPeaceRequestTo(them);
 			aggressionAdjustmentButton.Text = !emptyorwild ? "Plead Mercy" : "Stop Operation";
+			if (them.HasSentPeaceRequestTo(us)) aggressionAdjustmentButton.Text = "Accept Peace Treaty";
 			tutorialLabel.Text = TutAttackable;
 
 			bool attackingTile = FactionActions.IsAttacking(us, them, targetTile, out attackJob);
