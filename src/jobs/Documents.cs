@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Godot;
 
-
+// not used in any gampleay meaningful way.maybe in the future
 public partial class Document {
 
 	public DocType Type { get; init; }
@@ -342,7 +342,7 @@ public partial class TradeOffer {
 		LastInteractionMinute = Offerer.GetTime();
 		Debug.Assert(StoredUnits >= 0);
 		Log("made trade");
-		GD.Print($"TradeOffer::MakeTrade : made trade {str} (traded {units} units)");
+		//GD.Print($"TradeOffer::MakeTrade : made trade {str} (traded {units} units)");
 		if (StoredUnits == 0) valid = false;
 		if (!valid) Log("drained...");
 	}

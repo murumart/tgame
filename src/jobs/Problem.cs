@@ -175,10 +175,10 @@ public class TileAttackJob : Job {
 
 	public override float GetWorkTime(TimeT minutes) {
 		var (atkmil, defmil) = GetMils();
-		float milsum = atkmil + defmil;
 		float mypart;
-		if (milsum == 0) mypart = 1f;
-		else mypart = atkmil / milsum / 0.5f;
+		if (atkmil < defmil) mypart = 1f / (defmil - atkmil);
+		else if (atkmil > defmil) mypart = Mathf.Ease((atkmil - defmil) / (atkmil + defmil), 3f) + 1f;
+		else mypart = 1f;
 		return minutes * Mathf.Pow(Workers, 0.7f) * mypart;
 	}
 

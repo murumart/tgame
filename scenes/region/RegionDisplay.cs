@@ -231,9 +231,14 @@ public partial class RegionDisplay : Node2D {
 				mopview.DisplayJobProgress(0f, false);
 			}
 		}
-		if (Lod > 0) return;
-		foreach (var (tpos, view) in attackViews) {
+		if (Lod > 1) return;
+		foreach (var (tpos, view) in attackViews.ToList()) {
 			bool has = region.LocalFaction.GetJob(tpos + region.WorldPosition, out var job);
+			if (!has) {
+				view.QueueFree();
+				attackViews.Remove(tpos);
+				continue;
+			}
 			if (job is not TileAttackJob atk) continue;
 			float progress = atk.GetProgressEstimate();
 			view.DisplayJobProgress(progress, show: true);

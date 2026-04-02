@@ -128,13 +128,14 @@ public partial class WorldUI : Control {
 		}
 		factionTitleLabel.Text = region.LocalFaction.Name;
 		var things = string.Join(", ", region.GetMapObjects().Select(a => ((IAssetType)a.Type).AssetName).Distinct());
+		int landtiles = region.GetLandTileCount();
 		factionInfoLabel.Text =
 			(region.LocalFaction.HasOwningFaction()
 				? "Colony of " + region.LocalFaction.GetOwningFaction()
 				: region.LocalFaction.IsWild
 					? "Howling wilderness"
 					: "Sovereign territory") + "\n"
-			+ $"Land tiles: {region.GetLandTileCount()}\n"
+			+ $"Land tiles: {landtiles} ({(int)(((float)landtiles / map.TotalLandTiles) * 1000) * 0.1:F1}% of world land)\n"
 			+ $"Sea tiles: {region.GetOceanTileCount()}\n"
 			+ $"Population: {(region.LocalFaction.GetPopulationCount())}\n"
 			+ $"Natural Resources: {string.Join(", ", region.NaturalResources.Value.Select(a => a.ToString()))}\n"
@@ -175,16 +176,18 @@ public partial class WorldUI : Control {
 		int myMilitary = myFaction.Military;
 		int military = faction.Military;
 		int mildiff = military - myMilitary;
+		int landtiles = region.GetLandTileCount();
+		int totalsilver = region.LocalFaction.LiquidSilver;
 		string mildesc = mildiff < 0
 			? $"({-mildiff} less than ours)"
 			: mildiff > 0
 				? $"({mildiff} more than ours)"
 				: "";
 		factionInfoLabel.Text = ""
-			+ $"Land tiles: {region.GetLandTileCount()}\n"
+			+ $"Land tiles: {landtiles} ({(int)(((float)landtiles / map.TotalLandTiles) * 1000) * 0.1:F1}% of world land)\n"
 			+ $"Sea tiles: {region.GetOceanTileCount()}\n"
 			+ $"Population: {(region.LocalFaction.GetPopulationCount())}\n"
-			+ $"Silver: {(region.LocalFaction.Silver)} (total {region.LocalFaction.LiquidSilver})\n"
+			+ $"Silver: {(region.LocalFaction.Silver)} (total {totalsilver}) ({(int)((float)totalsilver / map.TotalSilver * 1000)})\n"
 			+ $"Military power: {(region.LocalFaction.Military)} {mildesc}\n"
 			+ $"Happiness with ruler: {((int)(region.LocalFaction.Population.Approval * 100))}%\n"
 		;
