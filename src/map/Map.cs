@@ -52,6 +52,7 @@ public class Map {
 
 	public void PassTime(TimeT minutes) {
 		foreach (Region region in regions) {
+			if (region.OwnedTileCount == 0) continue;
 			region.PassTime(minutes);
 		}
 	}

@@ -1,9 +1,30 @@
 [gd_resource type="Resource" script_class="BuildingType" format=3 uid="uid://c6k02q8wxqwek"]
 
 [ext_resource type="Resource" uid="uid://b8507qbvqvdy8" path="res://resources/game/resource_types/lumber.tres" id="3_gnsv6"]
+[ext_resource type="Resource" uid="uid://ry6ft31wbb01" path="res://resources/game/resource_types/mud.tres" id="3_uddgs"]
+[ext_resource type="Script" uid="uid://1887h8ejjt6v" path="res://resources/game/resource_types/ResourceOrType.cs" id="4_gmuvl"]
+[ext_resource type="Resource" uid="uid://lda3p80x02sh" path="res://resources/game/resource_types/clay.tres" id="5_gqji2"]
 [ext_resource type="Resource" uid="uid://pmrcwo4t316p" path="res://resources/game/resource_types/logs.tres" id="7_cu2xu"]
 [ext_resource type="Resource" uid="uid://nw83fam2omvi" path="res://resources/game/resource_types/rock.tres" id="8_733xp"]
 [ext_resource type="Script" uid="uid://b5xb3tdf3yoon" path="res://resources/game/building_types/BuildingType.cs" id="9_mycna"]
+
+[sub_resource type="Resource" id="Resource_gqy73"]
+script = ExtResource("4_gmuvl")
+This = ExtResource("3_uddgs")
+Or = ExtResource("3_gnsv6")
+metadata/_custom_type_script = "uid://1887h8ejjt6v"
+
+[sub_resource type="Resource" id="Resource_j6r8y"]
+script = ExtResource("4_gmuvl")
+This = ExtResource("5_gqji2")
+Or = SubResource("Resource_gqy73")
+metadata/_custom_type_script = "uid://1887h8ejjt6v"
+
+[sub_resource type="Resource" id="Resource_wt8ej"]
+script = ExtResource("4_gmuvl")
+This = ExtResource("8_733xp")
+Or = SubResource("Resource_j6r8y")
+metadata/_custom_type_script = "uid://1887h8ejjt6v"
 
 [resource]
 script = ExtResource("9_mycna")
@@ -11,8 +32,7 @@ name = "quarry"
 description = "Resources are mined from the ground here."
 ResourceCosts = Dictionary[Object, int]({
 ExtResource("7_cu2xu"): 5,
-ExtResource("8_733xp"): 20,
-ExtResource("3_gnsv6"): 15
+SubResource("Resource_wt8ej"): 20
 })
 CraftingJobs = null
 HoursToConstruct = 182.0

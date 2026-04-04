@@ -91,12 +91,13 @@ public class Faction : IEntity {
 		Starvation,
 		Annexation,
 	}
-	DefunctReason defunct = DefunctReason.None;
+	public DefunctReason Defunct { get; private set; }
 
 
 	public Faction(Region region, uint initialPopulation = 30, uint initialSilver = 30) {
 
 		Region = region;
+		Defunct = DefunctReason.None;
 		Briefcase = new();
 
 		region.MapObjectUpdatedAtEvent += OnMapObjectUpdated;
@@ -107,7 +108,9 @@ public class Faction : IEntity {
 		Population.FurnitureRateRequested += GetFurnitureRate;
 		Population.SilverRequested += () => Silver;
 		Population.Manifest(initialPopulation);
-		Population.PopulationDroppedToZero += () => EndMe(DefunctReason.Starvation);
+		Population.PopulationDroppedToZero += () => {
+			if (!IsWild) EndMe(DefunctReason.Starvation);
+		};
 
 		Region.SetLocalFaction(this);
 
@@ -525,6 +528,8 @@ public class Faction : IEntity {
 	public void StartMilitaryOperation(Faction faction, string reason) {
 		Debug.Assert(!militaryOperations.ContainsKey(faction), $"{this} is Already at war with {faction}");
 		Debug.Assert(!faction.militaryOperations.ContainsKey(this), $"{faction} is Already at war with {this}");
+		//Debug.Assert(faction.Defunct == DefunctReason.None, $"{faction} is already over reason {faction.Defunct}");
+		Debug.Assert(faction.Region.OwnedTileCount > 0, "Can't start war with no tiles owner region");
 		var war = new MilitaryOperationStatus(reason, this, faction);
 		militaryOperations[faction] = war;
 		faction.militaryOperations[this] = war;
@@ -559,26 +564,25 @@ public class Faction : IEntity {
 	}
 
 	void EndMe(DefunctReason reason) {
-		Debug.Assert(defunct == DefunctReason.None, "Faction is already over");
+		Debug.Assert(Defunct == DefunctReason.None, $"Faction {this} is already over (reason {Defunct})");
 		foreach (var f in gottenTradeOffers.Keys.ToList()) foreach (var t in gottenTradeOffers[f].ToList()) RejectTradeOffer(f, t);
 		foreach (var f in sentTradeOffers.Keys.ToList()) foreach (var t in sentTradeOffers[f].ToList()) CancelTradeOffer(f, t);
 		foreach (var f in militaryOperations.Keys.ToList()) EndWar(f);
-		defunct = reason;
+		Defunct = reason;
 		Done?.Invoke(reason);
 	}
 
 	public void Absorb(Faction other) {
 		// does not do land change . do that in Region::AnnexAll
 		if (other.IsWild) {
-			if (other.defunct == DefunctReason.None) other.EndMe(DefunctReason.Annexation);
+			if (other.Defunct == DefunctReason.None) other.EndMe(DefunctReason.Annexation);
 			return;
 		}
 		resourceStorage.AbsorbFrom(other.Resources);
-		uint count = other.Population.Count;
-		other.Population.Reduce(count);
-		Population.Manifest(count);
-		other.TransferSilver(this, other.Silver);
-		if (other.defunct == DefunctReason.None) other.EndMe(DefunctReason.Annexation);
+		if (other.Population.Count > 0) other.Population.TransferAll(Population);
+		if (other.Silver > 0) other.TransferSilver(this, other.Silver);
+		if (other.LiquidSilver > 0) ReceiveTransferSilver(other.LiquidSilver);
+		if (other.Defunct == DefunctReason.None) other.EndMe(DefunctReason.Annexation);
 	}
 
 	#endregion

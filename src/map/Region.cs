@@ -20,6 +20,7 @@ public class Region {
 
 	public Vector2I WorldPosition { get; init; }
 	readonly Dictionary<Vector2I, GroundTileType> groundTiles = new();
+	public int OwnedTileCount => groundTiles.Count;
 	readonly List<(Vector2I Position, byte FreeDirections)> freeEdgeTiles = new() { (Vector2I.Zero, 0b1111) };
 	readonly Dictionary<Vector2I, (Region ToRight, Region ToLeft, Region Below, Region Above)> edges = new();
 	public IEnumerable<Vector2I> GroundTilePositions => groundTiles.Keys;
@@ -231,6 +232,8 @@ public class Region {
 	}
 
 	public void AnnexAll(Region from, Dictionary<Vector2I, Region> TileOwners) {
+		Debug.Assert(Neighbors.Contains(from), "Can't annex non-neighbor");
+		Debug.Assert(from.groundTiles.Count > 0, "Can't annex empty region");
 		LocalFaction.Absorb(from.LocalFaction);
 		foreach (var t in from.groundTiles.Keys) {
 			AnnexTile(from, t, TileOwners, bulkop: true);
@@ -239,6 +242,7 @@ public class Region {
 		GenerationAccessor.RebuildEdge(from, TileOwners);
 		TileChangedAtEvent?.Invoke(Vector2I.Zero); // only thing connected is currently ReginoDisplay, this should be fixed better style.
 		from.DisappearedEvent?.Invoke();
+		Neighbors.Remove(from);
 	}
 
 	public float GetPotentialFoodFirstMonth() {

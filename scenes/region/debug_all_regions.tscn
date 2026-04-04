@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://b1t88emteoav4" path="res://scenes/region/camera.tscn" id="2_lj4dc"]
 [ext_resource type="PackedScene" uid="uid://cpeaxmkgldt5g" path="res://scenes/region/region_display.tscn" id="3_cgha2"]
 [ext_resource type="PackedScene" uid="uid://cq3tmeo4vasbf" path="res://scenes/map/ui/world_gen_ui.tscn" id="4_27n5n"]
+[ext_resource type="PackedScene" uid="uid://cmjimolv31mhq" path="res://scenes/region/ui/region_display_highlight.tscn" id="5_sg5ri"]
 
 [node name="AllRegions" type="Node" unique_id=581437315 node_paths=PackedStringArray("regionParent", "camera", "dummyStupid", "worldGenUi")]
 script = ExtResource("1_uee5b")
@@ -15,7 +16,8 @@ worldGenUi = NodePath("RegionCamera/CanvasLayer/Control/WorldGenUI")
 [node name="Regions" type="Node2D" parent="." unique_id=640537854]
 y_sort_enabled = true
 
-[node name="RegionCamera" parent="." unique_id=633581434 node_paths=PackedStringArray("regionDisplay") instance=ExtResource("2_lj4dc")]
+[node name="RegionCamera" parent="." unique_id=633581434 node_paths=PackedStringArray("RegionDisplayHighlight", "regionDisplay") instance=ExtResource("2_lj4dc")]
+RegionDisplayHighlight = NodePath("../RegionDisplayHighlight")
 regionDisplay = NodePath("../RegionDisplay")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="RegionCamera" unique_id=378471001]
@@ -34,3 +36,5 @@ layout_mode = 1
 
 [node name="RegionDisplay" parent="." unique_id=103253826 instance=ExtResource("3_cgha2")]
 visible = false
+
+[node name="RegionDisplayHighlight" parent="." unique_id=1835308877 instance=ExtResource("5_sg5ri")]

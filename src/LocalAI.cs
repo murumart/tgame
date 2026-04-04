@@ -641,6 +641,9 @@ public partial class LocalAI {
 			return new(() => other.HasSentPeaceRequestTo(ac.Faction) ? 1f : 0f, "HasOtherSentPeaceRequest");
 		}
 
+		public static DecisionFactor IsValidWarTarget(FactionActions ac, Region other) {
+			return new(() => ac.Region.Neighbors.Contains(other) && other.OwnedTileCount > 0 ? 1f : 0f, "IsValidWarTarget");
+		}
 	}
 
 }
@@ -657,7 +660,7 @@ public partial class LocalAI {
 		readonly static Dictionary<string, List<(ulong, float)>> ClassDecisionInfo = new();
 
 		public void LogAction(ulong time, float score, string name) {
-			#if PROFILING
+#if PROFILING
 			if (!ActionInfo.TryGetValue(name, out var list)) {
 				list = new();
 				ActionInfo[name] = list;
@@ -669,11 +672,11 @@ public partial class LocalAI {
 				ClassActionInfo[name] = list;
 			}
 			list.Add((time, score));
-			#endif
+#endif
 		}
 
 		public void LogDecisionFactor(ulong time, float score, string name) {
-			#if PROFILING
+#if PROFILING
 			if (!DecisionInfo.TryGetValue(name, out var list)) {
 				list = new();
 				DecisionInfo[name] = list;
@@ -685,14 +688,14 @@ public partial class LocalAI {
 				ClassDecisionInfo[name] = list;
 			}
 			list.Add((time, score));
-			#endif
+#endif
 		}
 
 		public string LastActionInfo() => LastInfo(ActionInfo);
 		public string LastDecisionInfo() => LastInfo(DecisionInfo);
 
 		string LastInfo(Dictionary<string, List<(ulong, float)>> timess) {
-			#if PROFILING
+#if PROFILING
 			StringBuilder sb = new();
 			var keys = timess.Keys.ToList();
 			keys.Sort((k1, k2) => timess[k2].Last().Item2.CompareTo(timess[k1].Last().Item2));
@@ -703,13 +706,13 @@ public partial class LocalAI {
 				sb.Append(k.PadRight(longestKey)).Append($"{lscore:0.000000, -20}").Append($"{ltime,-10}\n");
 			}
 			return sb.ToString();
-			#else
+#else
 			return "";
-			#endif
+#endif
 		}
 
 		static void Ep(Dictionary<string, List<(ulong, float)>> timess) {
-			#if PROFILING
+#if PROFILING
 			if (timess.Count == 0) return; // who care
 			var max = timess.MaxBy(kvp => kvp.Value.Max());
 			const string eps = "LocalAI::Profile::Ep : ";
@@ -723,11 +726,11 @@ public partial class LocalAI {
 				Console.WriteLine(eps + $"\t\tTOTAL : {vals.Sum(l => (long)l.Item1)} us");
 			}
 			Console.WriteLine(eps + $"\tOMAX    : {max.Key} {max.Value.Max()} us");
-			#endif
+#endif
 		}
 
 		public static void EndProfiling() {
-			#if PROFILING
+#if PROFILING
 			const string eps = "LocalAI::Profile::EndProfiling : ";
 			Console.WriteLine(eps + "***************");
 			Console.WriteLine(eps + "PROFILING ENDED");
@@ -747,7 +750,7 @@ public partial class LocalAI {
 			Console.WriteLine(eps + "***************");
 			Console.WriteLine(eps + "      BYE      ");
 			Console.WriteLine(eps + "***************");
-			#endif
+#endif
 		}
 
 	}
@@ -911,7 +914,7 @@ public class GamerAI : LocalAI {
 			if (!thoughtsAboutFactions.TryGetValue(f, out var t)) {
 				t = new();
 			}
-			if (t.Peace > 0){
+			if (t.Peace > 0) {
 				t.Traitorousness = t.Peace;
 				t.Peace = -t.Peace;
 			}
@@ -1053,6 +1056,7 @@ public class GamerAI : LocalAI {
 					Factors.OneMinus(Factors.IsAtWarWith(factionActions, n.LocalFaction)),
 					Factors.Max(Factors.MilitaryAdvantageOver(factionActions, n.LocalFaction), 0.00000005f),
 					Factors.Max(Factors.AtMultipleWarsAlready(n.LocalFaction), 0.3f),
+					Factors.IsValidWarTarget(factionActions, n),
 				], factionActions, n.LocalFaction));
 			} else {
 				var edges = n.GetEdges();

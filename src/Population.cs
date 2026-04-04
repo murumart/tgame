@@ -12,6 +12,7 @@ public class Population {
 	public event Action<Job, int> JobEmploymentChanged;
 	public event Action ApprovalDroppedToZero;
 	public event Action PopulationDroppedToZero;
+	bool emptyNotified = false;
 
 	public uint Count { get; private set; }
 
@@ -91,7 +92,7 @@ public class Population {
 		UpdateHousing();
 	}
 
-	public void Reduce(uint count) {
+	public void Reduce(uint count, bool notifyZero = true) {
 		Count -= count;
 		UpdateHousing();
 		// after people are removed, it may happen that EmployedCount is more than Count
@@ -113,7 +114,19 @@ public class Population {
 			}
 			Debug.Assert(Count >= EmployedCount, $"Somehow more people are employed than are actually alive here ({EmployedCount} vs {Count})");
 		}
-		if (Count == 0) {
+		if (Count == 0 && notifyZero && !emptyNotified) {
+			emptyNotified = true;
+			PopulationDroppedToZero?.Invoke();
+		}
+	}
+
+	public void TransferAll(Population to) {
+		Debug.Assert(Count > 0, "Don't try to transfer empty popüullation into another (no sensde)");
+		uint count = Count;
+		Reduce(count, false);
+		to.Manifest(count);
+		if (Count == 0 && !emptyNotified) {
+			emptyNotified = true;
 			PopulationDroppedToZero?.Invoke();
 		}
 	}
