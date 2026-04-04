@@ -533,6 +533,8 @@ public class Faction : IEntity {
 		var war = new MilitaryOperationStatus(reason, this, faction);
 		militaryOperations[faction] = war;
 		faction.militaryOperations[this] = war;
+		if (sentTradeOffers.TryGetValue(faction, out var sents)) foreach (var sent in sents.ToList()) CancelTradeOffer(faction, sent);
+		if (gottenTradeOffers.TryGetValue(faction, out var gottens)) foreach (var sent in gottens.ToList()) RejectTradeOffer(faction, sent);
 		StartedWarWith?.Invoke(faction, reason);
 		faction.PulledIntoWarWith?.Invoke(this, reason);
 	}
