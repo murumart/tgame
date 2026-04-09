@@ -151,8 +151,8 @@ Rünnakud. rünnak mingi teise ruudu vastu oleks problem, mida teine peaks lahen
 
 - [X] ehitise tööd tulevad ekraanil ette kui ehitamata ehitis eemaldatakse
 - [X] boonus building kirjeldusse
-- [ ] assert failid "empty region" annekteerimisel
-- [ ] edgeid pole õiged kui võtad mingi sõjas oleva riigi naaberriigi tilesid endale siis ei uuene teise edgeid sinuga
+- [X] assert failid "empty region" annekteerimisel
+- [X] edgeid pole õiged kui võtad mingi sõjas oleva riigi naaberriigi tilesid endale siis ei uuene teise edgeid sinuga
 - [ ] mingi memory leak uute maailmade tegemisel
 - [ ] ei saa silverit?
 - [ ] ära näöita processmarketjob kui on üle ühe marketplacei

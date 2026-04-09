@@ -24,7 +24,7 @@ public class Region {
 	readonly List<(Vector2I Position, byte FreeDirections)> freeEdgeTiles = new() { (Vector2I.Zero, 0b1111) };
 
 	public readonly struct Edge {
-		
+
 		public readonly Region ToRight;
 		public readonly Region ToLeft;
 		public readonly Region Below;
@@ -172,13 +172,15 @@ public class Region {
 		return resourceSite;
 	}
 
-	public void AnnexTile(Region from, Vector2I fromCoordinate, Dictionary<Vector2I, Region> TileOwners, bool bulkop = false) {
-		AnnexTile(from, fromCoordinate, TileOwners, Vector2I.One * -1, bulkop);
+	public AnnexResult AnnexTile(Region from, Vector2I fromCoordinate, Dictionary<Vector2I, Region> TileOwners, bool bulkop = false) {
+		return AnnexTile(from, fromCoordinate, TileOwners, Vector2I.One * -1, bulkop);
 	}
 
 	readonly Vector2I[] corners = [Vector2I.Right, Vector2I.Left, Vector2I.Down, Vector2I.Up];
 
-	public void AnnexTile(Region from, Vector2I fromCoordinate, Dictionary<Vector2I, Region> TileOwners, Vector2I recursionStartGlobal, bool bulkop = false) {
+	public enum AnnexResult { AnnexedTile, AnnexedAll }
+
+	public AnnexResult AnnexTile(Region from, Vector2I fromCoordinate, Dictionary<Vector2I, Region> TileOwners, Vector2I recursionStartGlobal, bool bulkop = false) {
 		var globalCoord = fromCoordinate + from.WorldPosition;
 		if (!from.groundTiles.ContainsKey(fromCoordinate)) {
 			Debug.Assert(from.groundTiles.ContainsKey(fromCoordinate), $"Region to annex from doesn't own tile at {fromCoordinate}");
@@ -189,16 +191,17 @@ public class Region {
 		from.groundTiles.Remove(fromCoordinate);
 		groundTiles[localCoord] = tile;
 		TileOwners[globalCoord] = this;
-		// anti one tile enclave method
-		foreach (var corner in corners) {
-			var tileinquestion = globalCoord + corner;
-			if (tileinquestion == recursionStartGlobal) continue;
-			if (!TileOwners.TryGetValue(tileinquestion, out var questionabletileowner) || questionabletileowner != from) continue;
-			bool takentileconnectedtoothervictimtile = corners.Any(c => TileOwners.TryGetValue(tileinquestion + c, out var reg) && reg == from);
-			if (takentileconnectedtoothervictimtile) continue;
-			AnnexTile(from, tileinquestion - from.WorldPosition, TileOwners, tileinquestion, false);
-		}
+		bool gotAll = false;
 		if (!bulkop) {
+			// anti one tile enclave method
+			foreach (var corner in corners) {
+				var tileinquestion = globalCoord + corner;
+				if (tileinquestion == recursionStartGlobal) continue;
+				if (!TileOwners.TryGetValue(tileinquestion, out var questionabletileowner) || questionabletileowner != from) continue;
+				bool takentileconnectedtoothervictimtile = corners.Any(c => TileOwners.TryGetValue(tileinquestion + c, out var reg) && reg == from);
+				if (takentileconnectedtoothervictimtile) continue;
+				gotAll = AnnexTile(from, tileinquestion - from.WorldPosition, TileOwners, tileinquestion, false) == AnnexResult.AnnexedAll || gotAll;
+			}
 			// a very lazy to regenerate edges like this
 			// between all neighbors because encountering a new region after annexation would otherwise mean we have no edges with them ?
 			foreach (var reg in this.Neighbors) {
@@ -248,23 +251,30 @@ public class Region {
 			}
 		}
 		// we annexed the last tile they have
-		if (from.GetLandTileCount() == 0 && !bulkop) {
-			AnnexAll(from, TileOwners, true);
+		if (from.GetLandTileCount() == 0 && !bulkop && !gotAll) {
+			return AnnexAll(from, TileOwners);
 		}
+		return AnnexResult.AnnexedTile;
 	}
 
-	public void AnnexAll(Region from, Dictionary<Vector2I, Region> TileOwners, bool allowEmptyAnnex = false) {
+	public AnnexResult AnnexAll(Region from, Dictionary<Vector2I, Region> TileOwners) {
+		//Debug.PrintWithStack($"{this} annexing all {from}");
 		Debug.Assert(Neighbors.Contains(from), "Can't annex non-neighbor");
-		Debug.Assert(!allowEmptyAnnex && from.groundTiles.Count > 0, "Can't annex empty region");
 		LocalFaction.Absorb(from.LocalFaction);
 		foreach (var t in from.groundTiles.Keys) {
 			AnnexTile(from, t, TileOwners, bulkop: true);
 		}
-		GenerationAccessor.RebuildEdge(this, TileOwners);
-		GenerationAccessor.RebuildEdge(from, TileOwners);
+
+		foreach (var reg in this.Neighbors) {
+			GenerationAccessor.RebuildEdge(reg, TileOwners);
+		}
+		foreach (var reg in from.Neighbors) {
+			GenerationAccessor.RebuildEdge(reg, TileOwners);
+		}
 		TileChangedAtEvent?.Invoke(Vector2I.Zero); // only thing connected is currently ReginoDisplay, this should be fixed better style.
 		from.DisappearedEvent?.Invoke();
 		Neighbors.Remove(from);
+		return AnnexResult.AnnexedAll;
 	}
 
 	public float GetPotentialFoodFirstMonth() {

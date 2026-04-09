@@ -60,7 +60,7 @@ public class Map {
 	public static Map GetDebugMap() {
 		
 		const int gridsize = 10;
-		const int regionsize = 15;
+		const int regionsize = 3;
 		List<Region> regions = new();
 
 		for (int x = 0; x < gridsize; x++) {

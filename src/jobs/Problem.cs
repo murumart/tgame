@@ -236,7 +236,11 @@ public class TileAttackJob : Job {
 		}
 		Debug.Assert(GameMan.Game.Map.TileOwners.TryGetValue(GlobalPosition, out var reg) && reg == Target, $"Tile {GlobalPosition} somehow slipped from {Target}");
 		if (timeSpent < timeTaken) return;
-		Attacker.Region.AnnexTile(Target, GlobalPosition - Target.WorldPosition, GameMan.Game.Map.TileOwners);
+		if (Target.GetGroundTiles().Length != 0) {
+			Attacker.Region.AnnexTile(Target, GlobalPosition - Target.WorldPosition, GameMan.Game.Map.TileOwners);
+		} else {
+			GD.Print("TileAttackJob::CheckDone : dropping job, region is out of tiles");
+		}
 		FactionActions.RemoveAttackingJob(regionFaction, this);
 	}
 
