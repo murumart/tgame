@@ -26,6 +26,8 @@ public partial class WorldUI : Control {
 	[Export] Godot.Collections.Array<CheckButton> drawLayerButtons;
 	[Export] CheckButton regionDisplayCheck;
 
+	[Export] ControlButtons controlButtons;
+
 	World world = null;
 	Map map = null;
 	Game game = null;
@@ -82,6 +84,7 @@ public partial class WorldUI : Control {
 			oldMousePos = mousePos;
 		}
 		ResourceDisplay.Display();
+		controlButtons.UpdateDisplays();
 	}
 
 	void MouseMoved(Vector2I where) {
@@ -187,7 +190,7 @@ public partial class WorldUI : Control {
 			+ $"Land tiles: {landtiles} ({(int)(((float)landtiles / map.TotalLandTiles) * 1000) * 0.1:F1}% of world land)\n"
 			+ $"Sea tiles: {region.GetOceanTileCount()}\n"
 			+ $"Population: {(region.LocalFaction.GetPopulationCount())}\n"
-			+ $"Silver: {(region.LocalFaction.Silver)} (total {totalsilver}) ({(int)((float)totalsilver / map.TotalSilver * 1000)})\n"
+			+ $"Silver: {(region.LocalFaction.Silver)} (total {totalsilver}) ({(int)((float)totalsilver / map.TotalSilver * 100):F1}% of world silver)\n"
 			+ $"Military power: {(region.LocalFaction.Military)} {mildesc}\n"
 			+ $"Happiness with ruler: {((int)(region.LocalFaction.Population.Approval * 100))}%\n"
 		;

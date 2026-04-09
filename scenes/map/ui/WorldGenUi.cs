@@ -140,7 +140,7 @@ public partial class WorldGenUi : MarginContainer {
 		Debug.Assert(!worldGenerator.Generating);
 		OnStartGenerating();
 
-		if (!drawFast) {
+		if (!drawFast && !OS.HasFeature("editor_runtime")) {
 			var drawRegionsCallable = Callable.From(() => worldUI.DrawRegions(worldGenerator.Regions));
 			var tw = CreateTween().SetLoops();
 			tw.TweenInterval(0.05f);

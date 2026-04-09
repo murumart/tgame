@@ -24,7 +24,7 @@ blend_mode = 3
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_5lxtd"]
 blend_mode = 1
 
-[node name="WorldUI" type="BoxContainer" unique_id=832899595 node_paths=PackedStringArray("worldRenderer", "ResourceDisplay", "camera", "factionPanel", "factionTitleLabel", "factionInfoLabel", "drawLayerButtons", "regionDisplayCheck")]
+[node name="WorldUI" type="BoxContainer" unique_id=832899595 node_paths=PackedStringArray("worldRenderer", "ResourceDisplay", "camera", "factionPanel", "factionTitleLabel", "factionInfoLabel", "drawLayerButtons", "regionDisplayCheck", "controlButtons")]
 custom_minimum_size = Vector2(0.08, 0)
 anchors_preset = 15
 anchor_right = 1.0
@@ -41,6 +41,7 @@ factionTitleLabel = NodePath("PanelContainer2/MarginContainer/VBoxContainer/Pane
 factionInfoLabel = NodePath("PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/HBoxContainer/MarginContainer2/HBoxContainer/Factionpanel/MarginContainer/VBoxContainer/FactionInfo")
 drawLayerButtons = [NodePath("PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle6/HBoxContainer/Ground"), NodePath("PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle/HBoxContainer/Elevation"), NodePath("PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle2/HBoxContainer/Temperature"), NodePath("PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle3/HBoxContainer/Humidity"), NodePath("PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle7/HBoxContainer/Drainage"), NodePath("PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle4/HBoxContainer/SeaWind")]
 regionDisplayCheck = NodePath("PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle5/HBoxContainer/Regions")
+controlButtons = NodePath("PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/HBoxContainer/VBoxContainer/ControlButtons")
 
 [node name="PanelContainer2" type="PanelContainer" parent="." unique_id=1657113591]
 layout_mode = 2
