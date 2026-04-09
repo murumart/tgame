@@ -17,6 +17,9 @@ public partial class ResourceType : Resource, IResourceType {
 			return assetIDString;
 		}
 	}
+
+	public override string ToString() => $"[img]{Icon.ResourcePath}[/img] {name}";
+
 }
 
 

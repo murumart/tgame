@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Godot;
 using resources.game.building_types;
@@ -433,7 +434,7 @@ public partial class UI : Control {
 		var resources = GetResourcesEvent?.Invoke();
 		if (resources == null) return;
 		foreach (var p in resources) {
-			sb.Append($"{p.Key.AssetName} x {p.Value.Amount}\n");
+			sb.Append($"{p.Key.ToString()} x {p.Value.Amount}\n");
 		}
 		sb.Append($"\ntotal {resources.ItemAmount}");
 		resourceLabel.Text = sb.ToString();

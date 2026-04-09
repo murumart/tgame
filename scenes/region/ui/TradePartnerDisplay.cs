@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Godot;
+using resources.game.resource_types;
 using scenes.autoload;
 
 namespace scenes.region.ui {
@@ -109,7 +110,7 @@ namespace scenes.region.ui {
 			GiveResourceList.AddItem("silver");
 			foreach (var rest in me.Resources) {
 				int idx = GiveResourceList.ItemCount;
-				GiveResourceList.AddItem(rest.Key.AssetName);
+				GiveResourceList.AddIconItem(((ResourceType)rest.Key).Icon, rest.Key.AssetName);
 				string idstr = rest.Key.GetIdString();
 				GiveResourceList.SetItemMetadata(idx, Variant.CreateFrom(idstr));
 			}
@@ -119,7 +120,7 @@ namespace scenes.region.ui {
 			TakeResourceList.AddItem("silver");
 			foreach (var rest in Registry.Resources.GetAssets()) {
 				int idx = TakeResourceList.ItemCount;
-				TakeResourceList.AddItem(rest.AssetName);
+				TakeResourceList.AddIconItem(((ResourceType)rest).Icon, rest.AssetName);
 				TakeResourceList.SetItemMetadata(idx, Variant.CreateFrom(rest.GetIdString()));
 			}
 			TakeResourceList.Select(-1);

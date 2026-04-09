@@ -7,8 +7,8 @@ namespace scenes.region.ui {
 
 		public event Action OfferChanged;
 
-		[Export] Label GiveLabel;
-		[Export] Label GetLabel;
+		[Export] RichTextLabel GiveLabel;
+		[Export] RichTextLabel GetLabel;
 		[Export] Slider UnitsSlider;
 		[Export] Button ConfirmButton;
 		[Export] Button RejectButton;
@@ -31,18 +31,18 @@ namespace scenes.region.ui {
 				UnitsSlider.ValueChanged += OnSliderValueChanged;
 				ConfirmButton.Pressed += OnBought;
 
-				GiveLabel.Text = tradeOffer.OffererGivesRecipientSilver ? $"{tradeOffer.RecepientRequiredResourcesUnit.Type.AssetName} x {tradeOffer.RecepientRequiredResourcesUnit.Amount}" : tradeOffer.RecipientPaidSilverUnit + " silver";
-				GetLabel.Text = tradeOffer.OffererGivesRecipientSilver ? tradeOffer.OffererPaidSilverUnit + " silver" : $"{tradeOffer.OffererSoldResourcesUnit.Type.AssetName} x {tradeOffer.OffererSoldResourcesUnit.Amount}";
+				GiveLabel.Text = tradeOffer.OffererGivesRecipientSilver ? $"{tradeOffer.RecepientRequiredResourcesUnit.Type} x {tradeOffer.RecepientRequiredResourcesUnit.Amount}" : tradeOffer.RecipientPaidSilverUnit + " silver";
+				GetLabel.Text = tradeOffer.OffererGivesRecipientSilver ? tradeOffer.OffererPaidSilverUnit + " silver" : $"{tradeOffer.OffererSoldResourcesUnit.Type} x {tradeOffer.OffererSoldResourcesUnit.Amount}";
 				UnitsSlider.MaxValue = tradeOffer.StoredUnits;
 			} else {
 				UnitsSlider.Hide();
 				ConfirmButton.Hide();
 				GiveLabel.Text = tradeOffer.OffererGivesRecipientSilver
-					? $"{tradeOffer.RecepientRequiredResourcesUnit.Type.AssetName} x {tradeOffer.RecepientRequiredResourcesUnit.Amount}"
+					? $"{tradeOffer.RecepientRequiredResourcesUnit.Type} x {tradeOffer.RecepientRequiredResourcesUnit.Amount}"
 					: tradeOffer.RecipientPaidSilverUnit + " silver";
 				GetLabel.Text = tradeOffer.OffererGivesRecipientSilver
 					? tradeOffer.OffererPaidSilverUnit + " silver"
-					: $"{tradeOffer.OffererSoldResourcesUnit.Type.AssetName} x {tradeOffer.OffererSoldResourcesUnit.Amount}";
+					: $"{tradeOffer.OffererSoldResourcesUnit.Type} x {tradeOffer.OffererSoldResourcesUnit.Amount}";
 				GetLabel.Text += $" ({tradeOffer.StoredUnits} units stored)";
 			}
 			RejectButton.Pressed += OnRejected;
@@ -59,7 +59,8 @@ namespace scenes.region.ui {
 				ConfirmButton.Text = $"Sell resources => ({offer.OffererPaidSilverUnit * sliderVal} silver)";
 			} else {
 				shouldDisable = shouldDisable || me.Silver < offer.RecipientPaidSilverUnit * sliderVal;
-				ConfirmButton.Text = $"Buy ({offer.RecipientPaidSilverUnit * sliderVal}) => {offer.OffererSoldResourcesUnit.Multiply(sliderVal)}";
+				var mul = offer.OffererSoldResourcesUnit.Multiply(sliderVal);
+				ConfirmButton.Text = $"Buy ({offer.RecipientPaidSilverUnit * sliderVal}) => {mul.Type.AssetName} x {mul.Amount}";
 			}
 			ConfirmButton.Disabled = shouldDisable;
 		}

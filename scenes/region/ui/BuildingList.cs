@@ -61,7 +61,7 @@ public partial class BuildingList : Control {
 		foreach (var r in btype.GetConstructionResources()) {
 			var str = r.ToString();
 			if (!resources.HasEnough(r)) {
-				str = "[color=red]" + str + "[/color]";
+				str = $"[color={Palette.BrownRust.ToHtml()}]" + str + "[/color]";
 				buildConfirmation.Disabled = true;
 			}
 			resourceListText.AppendText(str + '\n');
@@ -125,7 +125,7 @@ public partial class BuildingList : Control {
 			itemList.SetItemCustomFgColor(ix, Palette.StormDust);
 			if (ui.GetHasBuildingMaterials(buildingType)) {
 				itemList.SetItemCustomFgColor(ix, Palette.WhiteSmoke);
-				itemList.SetItemCustomBgColor(ix, Palette.LunarGreen);
+				itemList.SetItemCustomBgColor(ix, new(Palette.LunarGreen, 0.75f));
 			}
 		}
 	}

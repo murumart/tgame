@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Godot;
 using resources.visual;
+using scenes.ui;
 using static ResourceSite;
 
 
@@ -466,16 +467,17 @@ public class CraftJob : MapObjectJob {
 		return timeSpent / TimeTaken;
 	}
 
-	void GetArrayBulletList(StringBuilder sb, ResourceBundle[] resources) {
+	static void GetArrayBulletList(StringBuilder sb, ResourceBundle[] resources) {
 		for (int i = 0; i < resources.Length; ++i) {
-			sb.Append($"{resources[i].Type.AssetName} x {resources[i].Amount}");
+			sb.Append($"{resources[i].Type.ToString()} x {resources[i].Amount}");
 			if (i < resources.Length - 1) sb.Append(" + ");
 		}
 	}
 
-	void GetArrayBulletList(StringBuilder sb, ResourceConsumer[] resources) {
+	static void GetArrayBulletList(StringBuilder sb, ResourceConsumer[] resources, ResourceStorage extant) {
 		for (int i = 0; i < resources.Length; ++i) {
-			sb.Append(resources[i]);
+			if (extant.HasEnough(resources[i])) sb.Append(resources[i]);
+			else sb.Append($"[color={Palette.BrownRust.ToHtml()}]").Append(resources[i]).Append("[/color]");
 			if (i < resources.Length - 1) sb.Append(" + ");
 		}
 	}
@@ -485,7 +487,7 @@ public class CraftJob : MapObjectJob {
 	}
 
 	public void GetInputBulletList(StringBuilder sb) {
-		GetArrayBulletList(sb, Inputs);
+		GetArrayBulletList(sb, Inputs, storage);
 	}
 
 	public override string GetStatusDescription() {

@@ -53,7 +53,7 @@ public struct ResourceConsumer {
 		this.Amount = amount;
 	}
 
-	public override readonly string ToString() => $"{string.Join(" or ", Types.Select(t => t.AssetName))} x {Amount}";
+	public override readonly string ToString() => $"{string.Join(" or ", Types.Select(t => $"{t}"))} x {Amount}";
 
 }
 
