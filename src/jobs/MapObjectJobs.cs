@@ -474,9 +474,9 @@ public class CraftJob : MapObjectJob {
 		}
 	}
 
-	static void GetArrayBulletList(StringBuilder sb, ResourceConsumer[] resources, ResourceStorage extant) {
+	static void GetArrayBulletList(StringBuilder sb, ResourceConsumer[] resources, ResourceStorage has) {
 		for (int i = 0; i < resources.Length; ++i) {
-			if (extant.HasEnough(resources[i])) sb.Append(resources[i]);
+			if (has.HasEnough(resources[i])) sb.Append(resources[i]);
 			else sb.Append($"[color={Palette.BrownRust.ToHtml()}]").Append(resources[i]).Append("[/color]");
 			if (i < resources.Length - 1) sb.Append(" + ");
 		}

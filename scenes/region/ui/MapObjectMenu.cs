@@ -171,6 +171,9 @@ public partial class MapObjectMenu : Control {
 				sb.Append($"Housing room for {b.GetHousingCapacity()} people.\n");
 				sb.Append(b.HasFurniture ? "Is furnished.\n" : "Is without furniture.\n");
 			}
+			if (b.Type.GetMilitaryBoost() > 0 && b.IsConstructed) {
+				sb.Append($"+{b.Type.GetMilitaryBoost()} military power\n");
+			}
 		} else if (myMapObject is ResourceSite r) {
 			titleLabel.Text = $"{r.Type.AssetName.Capitalize()} {(r.GlobalPosition - reg.WorldPosition)}";
 			sb.Append($"The {r.Type.AssetName} contains exploitable resources...\n");
