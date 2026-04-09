@@ -1,8 +1,10 @@
 [gd_resource type="Resource" script_class="ResourceType" format=3 uid="uid://ua6pffdnaeya"]
 
+[ext_resource type="Texture2D" uid="uid://b0cni3diu7ip1" path="res://scenes/ui/resource_icons/resource_icon_3-1.tres" id="1_7av5e"]
 [ext_resource type="Script" uid="uid://coqr05mqlancq" path="res://resources/game/resource_types/ResourceType.cs" id="1_jseo6"]
 
 [resource]
 script = ExtResource("1_jseo6")
 name = "coal"
+Icon = ExtResource("1_7av5e")
 metadata/_custom_type_script = "uid://coqr05mqlancq"

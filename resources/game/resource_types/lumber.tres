@@ -1,8 +1,10 @@
 [gd_resource type="Resource" script_class="ResourceType" format=3 uid="uid://b8507qbvqvdy8"]
 
 [ext_resource type="Script" uid="uid://coqr05mqlancq" path="res://resources/game/resource_types/ResourceType.cs" id="1_owkwf"]
+[ext_resource type="Texture2D" uid="uid://bajjln5fwawpd" path="res://scenes/ui/resource_icons/resource_icon_0-2.tres" id="1_vvk0o"]
 
 [resource]
 script = ExtResource("1_owkwf")
 name = "lumber"
+Icon = ExtResource("1_vvk0o")
 metadata/_custom_type_script = "uid://coqr05mqlancq"

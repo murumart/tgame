@@ -1,8 +1,10 @@
 [gd_resource type="Resource" script_class="ResourceType" format=3 uid="uid://c3t2noe72dcgc"]
 
 [ext_resource type="Script" uid="uid://coqr05mqlancq" path="res://resources/game/resource_types/ResourceType.cs" id="1_pv465"]
+[ext_resource type="Texture2D" uid="uid://bdoax84lfoqns" path="res://scenes/ui/resource_icons/resource_icon_5-1.tres" id="1_tixjk"]
 
 [resource]
 script = ExtResource("1_pv465")
 name = "iron"
+Icon = ExtResource("1_tixjk")
 metadata/_custom_type_script = "uid://coqr05mqlancq"

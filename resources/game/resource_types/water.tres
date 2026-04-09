@@ -1,8 +1,10 @@
 [gd_resource type="Resource" script_class="ResourceType" format=3 uid="uid://dbmt5icgtucsx"]
 
+[ext_resource type="Texture2D" uid="uid://c5xnbkl2qh58b" path="res://scenes/ui/resource_icons/resource_icon_3-0.tres" id="1_8y88w"]
 [ext_resource type="Script" uid="uid://coqr05mqlancq" path="res://resources/game/resource_types/ResourceType.cs" id="1_jorar"]
 
 [resource]
 script = ExtResource("1_jorar")
 name = "water"
+Icon = ExtResource("1_8y88w")
 metadata/_custom_type_script = "uid://coqr05mqlancq"

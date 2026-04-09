@@ -1,8 +1,10 @@
 [gd_resource type="Resource" script_class="ResourceType" format=3 uid="uid://nw83fam2omvi"]
 
 [ext_resource type="Script" uid="uid://coqr05mqlancq" path="res://resources/game/resource_types/ResourceType.cs" id="1_x80pa"]
+[ext_resource type="Texture2D" uid="uid://bmwgkbsuqu1m1" path="res://scenes/ui/resource_icons/resource_icon_1-0.tres" id="1_yvj5a"]
 
 [resource]
 script = ExtResource("1_x80pa")
 name = "rock"
+Icon = ExtResource("1_yvj5a")
 metadata/_custom_type_script = "uid://coqr05mqlancq"

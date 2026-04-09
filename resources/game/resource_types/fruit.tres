@@ -1,8 +1,10 @@
 [gd_resource type="Resource" script_class="ResourceType" format=3 uid="uid://xkt4u6pl6p3"]
 
+[ext_resource type="Texture2D" uid="uid://devexvtgrjl13" path="res://scenes/ui/resource_icons/resource_icon_4-0.tres" id="1_t748o"]
 [ext_resource type="Script" uid="uid://coqr05mqlancq" path="res://resources/game/resource_types/ResourceType.cs" id="1_vepwk"]
 
 [resource]
 script = ExtResource("1_vepwk")
 name = "fruit"
+Icon = ExtResource("1_t748o")
 metadata/_custom_type_script = "uid://coqr05mqlancq"

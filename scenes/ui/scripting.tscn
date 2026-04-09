@@ -1,0 +1,38 @@
+[gd_scene format=3 uid="uid://d4ak6md2a0mix"]
+
+[ext_resource type="Texture2D" uid="uid://igcqndtljsko" path="res://scenes/ui/resource_icons/resource_icons.png" id="1_wljwk"]
+
+[sub_resource type="GDScript" id="GDScript_s3her"]
+script/source = "@tool
+extends Node
+
+@export_tool_button(\"Make Icon Textures\") var make_icon_textures: Callable
+@export var image_to_slice: Texture2D
+@export var slice_size: Vector2i
+@export var x_slices: int
+@export var y_slices: int
+@export_file_path(\"*.tres\") var out_file_base: String
+
+
+func _ready() -> void:
+	make_icon_textures = _slice
+
+
+func _slice() -> void:
+	for y in range(0, y_slices):
+		for x in range(0, x_slices):
+			var atlas := AtlasTexture.new()
+			atlas.atlas = image_to_slice
+			atlas.region = Rect2(x * slice_size.x, y * slice_size.y, slice_size.x, slice_size.y)
+			ResourceSaver.save(atlas, out_file_base.trim_suffix(\".tres\") + (\"_%s-%s\" % [x, y]) + \".tres\")
+"
+
+[node name="Scripting" type="Node2D" unique_id=485853522]
+
+[node name="IconGenerator" type="Node" parent="." unique_id=868329046]
+script = SubResource("GDScript_s3her")
+image_to_slice = ExtResource("1_wljwk")
+slice_size = Vector2i(8, 8)
+x_slices = 8
+y_slices = 8
+out_file_base = "res://scenes/ui/resource_icons/resource_icon.tres"

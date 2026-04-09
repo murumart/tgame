@@ -1,8 +1,10 @@
 [gd_resource type="Resource" script_class="ResourceType" format=3 uid="uid://pmrcwo4t316p"]
 
+[ext_resource type="Texture2D" uid="uid://dxpxdxckl47mt" path="res://scenes/ui/resource_icons/resource_icon_0-0.tres" id="1_ky0vq"]
 [ext_resource type="Script" uid="uid://coqr05mqlancq" path="res://resources/game/resource_types/ResourceType.cs" id="1_ngppw"]
 
 [resource]
 script = ExtResource("1_ngppw")
 name = "logs"
+Icon = ExtResource("1_ky0vq")
 metadata/_custom_type_script = "uid://coqr05mqlancq"

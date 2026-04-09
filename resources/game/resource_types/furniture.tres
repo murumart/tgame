@@ -1,8 +1,10 @@
 [gd_resource type="Resource" script_class="ResourceType" format=3 uid="uid://cvk2heqr2y7qv"]
 
 [ext_resource type="Script" uid="uid://coqr05mqlancq" path="res://resources/game/resource_types/ResourceType.cs" id="1_7vkyu"]
+[ext_resource type="Texture2D" uid="uid://dn2x6q0imnhdj" path="res://scenes/ui/resource_icons/resource_icon_7-0.tres" id="1_cv3ew"]
 
 [resource]
 script = ExtResource("1_7vkyu")
 name = "furniture"
+Icon = ExtResource("1_cv3ew")
 metadata/_custom_type_script = "uid://coqr05mqlancq"

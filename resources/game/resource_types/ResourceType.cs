@@ -7,6 +7,7 @@ namespace resources.game.resource_types;
 public partial class ResourceType : Resource, IResourceType {
 
 	[Export] string name;
+	[Export] public Texture2D Icon;
 	string assetIDString;
 	public string AssetName => name;
 

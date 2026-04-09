@@ -1,8 +1,10 @@
 [gd_resource type="Resource" script_class="ResourceType" format=3 uid="uid://cbynhxq0y3kkl"]
 
+[ext_resource type="Texture2D" uid="uid://0ocrpcmpk1py" path="res://scenes/ui/resource_icons/resource_icon_1-1.tres" id="1_34q3j"]
 [ext_resource type="Script" uid="uid://coqr05mqlancq" path="res://resources/game/resource_types/ResourceType.cs" id="1_500ky"]
 
 [resource]
 script = ExtResource("1_500ky")
 name = "bricks"
+Icon = ExtResource("1_34q3j")
 metadata/_custom_type_script = "uid://coqr05mqlancq"
