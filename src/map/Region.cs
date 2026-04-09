@@ -22,7 +22,24 @@ public class Region {
 	readonly Dictionary<Vector2I, GroundTileType> groundTiles = new();
 	public int OwnedTileCount => groundTiles.Count;
 	readonly List<(Vector2I Position, byte FreeDirections)> freeEdgeTiles = new() { (Vector2I.Zero, 0b1111) };
-	readonly Dictionary<Vector2I, (Region ToRight, Region ToLeft, Region Below, Region Above)> edges = new();
+
+	public readonly struct Edge {
+		
+		public readonly Region ToRight;
+		public readonly Region ToLeft;
+		public readonly Region Below;
+		public readonly Region Above;
+
+
+		public Edge(Region ToRight, Region ToLeft, Region Below, Region Above) : this() {
+			this.ToRight = ToRight;
+			this.ToLeft = ToLeft;
+			this.Below = Below;
+			this.Above = Above;
+		}
+
+	}
+	readonly Dictionary<Vector2I, Edge> edges = new();
 	public IEnumerable<Vector2I> GroundTilePositions => groundTiles.Keys;
 	readonly HashSet<Region> neighbors = new(); public ICollection<Region> Neighbors => neighbors;
 
@@ -86,11 +103,11 @@ public class Region {
 		return neighbors.Add(neighbor);
 	}
 
-	public bool GetEdge(Vector2I pos, out (Region Right, Region Left, Region Below, Region Above) edge) {
+	public bool GetEdge(Vector2I pos, out Edge edge) {
 		return edges.TryGetValue(pos, out edge);
 	}
 
-	public Span<KeyValuePair<Vector2I, (Region Right, Region Left, Region Below, Region Above)>> GetEdges() {
+	public Span<KeyValuePair<Vector2I, Edge>> GetEdges() {
 		return edges.ToArray().AsSpan();
 	}
 
@@ -176,15 +193,20 @@ public class Region {
 		foreach (var corner in corners) {
 			var tileinquestion = globalCoord + corner;
 			if (tileinquestion == recursionStartGlobal) continue;
-			if (!TileOwners.TryGetValue(tileinquestion, out var questionabletileowner) || questionabletileowner != from) continue; 
+			if (!TileOwners.TryGetValue(tileinquestion, out var questionabletileowner) || questionabletileowner != from) continue;
 			bool takentileconnectedtoothervictimtile = corners.Any(c => TileOwners.TryGetValue(tileinquestion + c, out var reg) && reg == from);
 			if (takentileconnectedtoothervictimtile) continue;
 			AnnexTile(from, tileinquestion - from.WorldPosition, TileOwners, tileinquestion, false);
 		}
 		if (!bulkop) {
-			// a bit lazy to regenerate edges like this
-			GenerationAccessor.RebuildEdge(this, TileOwners);
-			GenerationAccessor.RebuildEdge(from, TileOwners);
+			// a very lazy to regenerate edges like this
+			// between all neighbors because encountering a new region after annexation would otherwise mean we have no edges with them ?
+			foreach (var reg in this.Neighbors) {
+				GenerationAccessor.RebuildEdge(reg, TileOwners);
+			}
+			foreach (var reg in from.Neighbors) {
+				GenerationAccessor.RebuildEdge(reg, TileOwners);
+			}
 		}
 		if (from.HasMapObject(fromCoordinate)) {
 			Debug.Assert(!HasMapObject(localCoord), "Somehow, I already have a map object where im trying to steal it from??");
@@ -227,13 +249,13 @@ public class Region {
 		}
 		// we annexed the last tile they have
 		if (from.GetLandTileCount() == 0 && !bulkop) {
-			AnnexAll(from, TileOwners);
+			AnnexAll(from, TileOwners, true);
 		}
 	}
 
-	public void AnnexAll(Region from, Dictionary<Vector2I, Region> TileOwners) {
+	public void AnnexAll(Region from, Dictionary<Vector2I, Region> TileOwners, bool allowEmptyAnnex = false) {
 		Debug.Assert(Neighbors.Contains(from), "Can't annex non-neighbor");
-		Debug.Assert(from.groundTiles.Count > 0, "Can't annex empty region");
+		Debug.Assert(!allowEmptyAnnex && from.groundTiles.Count > 0, "Can't annex empty region");
 		LocalFaction.Absorb(from.LocalFaction);
 		foreach (var t in from.groundTiles.Keys) {
 			AnnexTile(from, t, TileOwners, bulkop: true);
@@ -455,7 +477,7 @@ public class Region {
 						neighborsoftile[i] = TileOwners.GetValueOrDefault(pos + region.WorldPosition + GrowDirs[i].Direction, null);
 					}
 					if (neighborsoftile.Any(a => a is null || a != region)) {
-						region.edges.Add(pos, (neighborsoftile[0], neighborsoftile[1], neighborsoftile[2], neighborsoftile[3]));
+						region.edges.Add(pos, new(neighborsoftile[0], neighborsoftile[1], neighborsoftile[2], neighborsoftile[3]));
 					}
 				}
 			}
@@ -469,7 +491,7 @@ public class Region {
 					neighborsoftile[i] = TileOwners.GetValueOrDefault(pos + region.WorldPosition + GrowDirs[i].Direction, null);
 				}
 				if (neighborsoftile.Any(a => a is null || a != region)) {
-					region.edges[pos] = (neighborsoftile[0], neighborsoftile[1], neighborsoftile[2], neighborsoftile[3]);
+					region.edges[pos] = new(neighborsoftile[0], neighborsoftile[1], neighborsoftile[2], neighborsoftile[3]);
 				}
 			}
 		}

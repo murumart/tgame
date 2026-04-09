@@ -132,14 +132,14 @@ public class FactionActions {
 		Job j = null;
 		if ((edge.Above is not null && edge.Above.LocalFaction.GetJob(worldpos, out j)) && j is TileAttackJob) return false;
 		if ((edge.Below is not null && edge.Below.LocalFaction.GetJob(worldpos, out j)) && j is TileAttackJob) return false;
-		if ((edge.Left is not null && edge.Left.LocalFaction.GetJob(worldpos, out j)) && j is TileAttackJob) return false;
-		if ((edge.Right is not null && edge.Right.LocalFaction.GetJob(worldpos, out j)) && j is TileAttackJob) return false;
+		if ((edge.ToLeft is not null && edge.ToLeft.LocalFaction.GetJob(worldpos, out j)) && j is TileAttackJob) return false;
+		if ((edge.ToRight is not null && edge.ToRight.LocalFaction.GetJob(worldpos, out j)) && j is TileAttackJob) return false;
 		
 		int ourEdges = 0;
 		if (edge.Above == attacker) ourEdges++;
 		if (edge.Below == attacker) ourEdges++;
-		if (edge.Left == attacker) ourEdges++;
-		if (edge.Right == attacker) ourEdges++;
+		if (edge.ToLeft == attacker) ourEdges++;
+		if (edge.ToRight == attacker) ourEdges++;
 		if (ourEdges >= 1) {
 			return true;
 		}

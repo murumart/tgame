@@ -56,22 +56,22 @@ public partial class LocalAI {
 
 		public readonly float Score(Profiling profiling) {
 			//Console.WriteLine($"LocalAI::Action::Score : \tscoring {this}");
-			ulong ustime = Time.GetTicksUsec();
+			//ulong ustime = Time.GetTicksUsec();
 			float score = 1f;
 			foreach (ref readonly DecisionFactor factor in factors.AsSpan()) {
-				if (factor.Equals(Factors.One)) continue;
-				ulong sustime = Time.GetTicksUsec();
+				//if (factor.Equals(Factors.One)) continue;
+				//ulong sustime = Time.GetTicksUsec();
 				float s = factor.Score();
-				profiling.LogDecisionFactor(Time.GetTicksUsec() - sustime, s, factor.ToString());
-				Debug.Assert(!Mathf.IsNaN(s), $"Action {this} Got NOT A NUMBER from scoring decision {factor}");
+				//profiling.LogDecisionFactor(Time.GetTicksUsec() - sustime, s, factor.ToString());
+				Debug.Assert(!Mathf.IsNaN(s), "got nan");
 				//Console.WriteLine($"LocalAI::Action::Score : \t\tutility of {factor} is {s}");
 				score *= s;
 				if (s <= 0f) {
 					break;
 				}
 			}
-			ustime = Time.GetTicksUsec() - ustime;
-			profiling.LogAction(ustime, score, name);
+			//ustime = Time.GetTicksUsec() - ustime;
+			//profiling.LogAction(ustime, score, name);
 			//Console.WriteLine($"LocalAI::Action::Score : \tscored *{score}* (took {ustime} us)");
 			return score;
 		}
@@ -104,19 +104,19 @@ public partial class LocalAI {
 				AIAssert(job.NeedsWorkers, "Job doesn't \"need workers\"", ac);
 				int maxChange = (int)job.Workers;
 				ac.ChangeJobWorkerCount(job, -maxChange);
-			}, $"RemoveWorkersFromJob({job})");
+			}, "RemoveWorkersFromJob({job})");
 		}
 
 		public static Action RemoveJob(DecisionFactor[] factors, FactionActions ac, Job job) {
 			return new(factors, () => {
 				ac.RemoveJob(job);
-			}, $"RemoveJob({job})");
+			}, "RemoveJob({job})");
 		}
 
 		public static Action AddMapObjectJob(DecisionFactor[] factors, FactionActions ac, MapObject mapObject, MapObjectJob job) {
 			return new(factors, () => {
 				ac.AddJob(mapObject, job);
-			}, $"AddMapObjectJob({job})");
+			}, "AddMapObjectJob({job})");
 		}
 
 		public static Action CreateGatherJob(DecisionFactor[] factors, FactionActions ac, IResourceSiteType siteType, IResourceType wantedResource) {
@@ -134,7 +134,7 @@ public partial class LocalAI {
 					}
 				}
 				AIAssert(false, "Didn't find resource site to add job to", ac);
-			}, $"CreateGatherJob({siteType.AssetName}, {wantedResource.AssetName})");
+			}, "CreateGatherJob({siteType.AssetName}, {wantedResource.AssetName})");
 		}
 
 		public static Action CreateProcessMarketJob(DecisionFactor[] factors, FactionActions ac) {
@@ -142,7 +142,7 @@ public partial class LocalAI {
 				var mp = ac.GetMarketplace();
 				AIAssert(mp is not null, "Didn't find market to add job to", ac);
 				ac.AddJob(mp, new ProcessMarketJob());
-			}, $"CreateProcessMarketJob()");
+			}, "CreateProcessMarketJob()");
 		}
 
 		public static Action PlaceBuildingJob(DecisionFactor[] factors, FactionActions ac, IBuildingType buildingType) {
@@ -155,7 +155,7 @@ public partial class LocalAI {
 				}
 				// we're dropping it silentyly, ideally would check (in a way that isn't abysmally slow)1q1141
 				//AIAssert(false, $"No free tiles left to place building {buildingType.AssetName}", ac);
-			}, $"PlaceBuildingJob({buildingType.AssetName})");
+			}, "PlaceBuildingJob({buildingType.AssetName})");
 		}
 
 		public static Action PlaceQuarryBuildingJob(DecisionFactor[] factors, FactionActions ac, GroundTileType whatground) {
@@ -168,7 +168,7 @@ public partial class LocalAI {
 					return;
 				}
 				AIAssert(false, $"No free tiles left to place building {btype.AssetName}", ac);
-			}, $"PlaceQuarryBuildingJob({whatground})");
+			}, "PlaceQuarryBuildingJob({whatground})");
 		}
 
 		public static Action SendTradeOffer(DecisionFactor[] factors, FactionActions ac, Faction[] partners, int giveSilver, ResourceBundle wantResources) {
@@ -308,27 +308,27 @@ public partial class LocalAI {
 		}
 
 		public static DecisionFactor Ease(DecisionFactor fac, float t) {
-			return new(() => Mathf.Ease(fac.Score(), t), $"Ease({fac}?)");
+			return new(() => Mathf.Ease(fac.Score(), t), "Ease({fac}?)");
 		}
 
 		public static DecisionFactor Curve(DecisionFactor fac, Curve curve) {
-			return new(() => curve.SampleBaked(fac.Score()), $"Curve({fac}?)");
+			return new(() => curve.SampleBaked(fac.Score()), "Curve({fac}?)");
 		}
 
 		public static DecisionFactor Max(DecisionFactor fac, float with) {
-			return new(() => Mathf.Max(with, fac.Score()), $"Max({fac}?)");
+			return new(() => Mathf.Max(with, fac.Score()), "Max({fac}?)");
 		}
 
 		public static DecisionFactor OneMinus(DecisionFactor fac) {
-			return new(() => 1.0f - fac.Score(), $"(1-{fac})");
+			return new(() => 1.0f - fac.Score(), "(1-{fac})");
 		}
 
 		public static DecisionFactor Mult(DecisionFactor fac, float with) {
-			return new(() => Mathf.Clamp(fac.Score() * with, 0f, 1f), $"({fac}*)");
+			return new(() => Mathf.Clamp(fac.Score() * with, 0f, 1f), "({fac}*)");
 		}
 
 		public static DecisionFactor Pow(DecisionFactor fac, float up) {
-			return new(() => { var a = fac.Score(); return Mathf.Pow(a, up); }, $"({fac}^)");
+			return new(() => { var a = fac.Score(); return Mathf.Pow(a, up); }, "({fac}^)");
 		}
 
 		public static DecisionFactor Group(DecisionFactor[] factors) {
@@ -340,7 +340,7 @@ public partial class LocalAI {
 					score *= fac.Score();
 				}
 				return score;
-			}, $"[{string.Join(", ", factors)}]");
+			}, "Group");
 		}
 
 		public static DecisionFactor HomelessnessRate(FactionActions ac) {
@@ -401,7 +401,7 @@ public partial class LocalAI {
 			return new(() => job.NeedsWorkers && job.Workers > 0 ? 1.0f : 0.0f, "JobHasEmployees");
 		}
 
-		public static DecisionFactor JobCompletion(Job job) => new(() => Mathf.Clamp(job.GetProgressEstimate(), 0f, 1f), $"JobCompletion({job})");
+		public static DecisionFactor JobCompletion(Job job) => new(() => Mathf.Clamp(job.GetProgressEstimate(), 0f, 1f), "JobCompletion({job})");
 
 		public static DecisionFactor HasResourceSiteThatProduces(FactionActions ac, IResourceType need) {
 			return new(() => {
@@ -501,7 +501,7 @@ public partial class LocalAI {
 		}
 
 		public static DecisionFactor ResourcesNeed(FactionActions ac, ResourceConsumer[] resources) {
-			return new(() => ac.GetResourceStorage().HasEnough(resources) ? 1f : 0f, $"ResourcesNeed({string.Join(", ", resources)})");
+			return new(() => ac.GetResourceStorage().HasEnough(resources) ? 1f : 0f, $"ResourcesNeed()");
 		}
 
 		public static DecisionFactor SilverNeed(FactionActions ac, int amount) {
@@ -930,6 +930,14 @@ public class GamerAI : LocalAI {
 		};
 	}
 
+	DecisionFactor[] GetCraftJobOutputsDecisionFactorsDivide(CraftJob craftJob) {
+		return craftJob.Outputs.Select(o => Factors.Mult(Factors.ResourceWant(factionActions, this, o.Type), (float)o.Amount / craftJob.TimeTaken)).ToArray();
+	}
+
+	DecisionFactor[] GetCraftJobOutputsDecisionFactors(CraftJob craftJob) {
+		return craftJob.Outputs.Select(o => Factors.ResourceWant(factionActions, this, o.Type)).ToArray();
+	}
+
 	public override void PreUpdate(TimeT minute) {
 
 		// adjust thoughts
@@ -994,7 +1002,7 @@ public class GamerAI : LocalAI {
 				var aval = building.GetAvailableJobs();
 				foreach (var job in aval) {
 					if (job is CraftJob craftJob) ephemeralActions.Add(Actions.AddMapObjectJob([
-						Factors.Group(craftJob.Outputs.Select(o => Factors.Mult(Factors.ResourceWant(factionActions, this, o.Type), (float)o.Amount / craftJob.TimeTaken)).ToArray()),
+						Factors.Group(GetCraftJobOutputsDecisionFactors(craftJob)),
 					], factionActions, mopbject, craftJob));
 					else if (job is QuarryJob qJob) ephemeralActions.Add(Actions.AddMapObjectJob([
 						Factors.ResourceWant(factionActions, this, qJob.MineResources),
@@ -1003,9 +1011,11 @@ public class GamerAI : LocalAI {
 			}
 		}
 		// assigning workers to job
+		List<DecisionFactor> factors = new(10);
+		List<DecisionFactor> negativeFactors = new(10);
 		foreach (var job in factionActions.Faction.GetJobs()) {
-			List<DecisionFactor> factors = new(10);
-			List<DecisionFactor> negativeFactors = new(10);
+			factors.Clear();
+			negativeFactors.Clear();
 			if (job is GatherResourceJob gjob) {
 				var prod = gjob.GetProduction();
 				var rwant = Factors.ResourceWant(factionActions, this, prod.ResourceType);
@@ -1016,11 +1026,10 @@ public class GamerAI : LocalAI {
 				// something about if the building wouyld produce something we have a resourceneed for?
 			} else if (job is ProcessMarketJob pjob) {
 			} else if (job is CraftJob cjob) {
-				factors.Add(Factors.Mult(Factors.Group(cjob.Outputs.Select(o => Factors.ResourceWant(factionActions, this, o.Type)).ToArray()), 0.1f));
+				factors.Add(Factors.Mult(Factors.Group(GetCraftJobOutputsDecisionFactors(cjob)), 0.1f));
 				factors.Add(Factors.ResourcesNeed(factionActions, cjob.Inputs));
 				//var mopject = factionActions.Region.GetMapObject(cjob.GlobalPosition - factionActions.Region.WorldPosition);
 				//IEnumerable<CraftJob> othersPossible = mopject.GetAvailableJobs().Where(j => j is CraftJob cj && cj.Outputs != cjob.Outputs).Cast<CraftJob>();
-				//negativeFactors.Add(Factors.Group(othersPossible.Select(p => Factors.Group(p.Outputs.Select(o => Factors.ResourceWant(factionActions, this, o.Type)).ToArray())).ToArray()));
 			} else if (job is QuarryJob qjob) {
 				factors.Add(Factors.Mult(Factors.ResourceWant(factionActions, this, qjob.MineResources), 1 / qjob.TimeTaken));
 			} else if (job is SolveProblemJob sjob) {
@@ -1033,11 +1042,12 @@ public class GamerAI : LocalAI {
 			factors.Add(Factors.Ease(Factors.OneMinus(Factors.JobEmploymentRate(job)), 4f));
 			factors.Add(Factors.IsJobUnlocked(job));
 			if (factors != null) {
-				ephemeralActions.Add(Actions.AssignWorkersToJob(factors.ToArray(), factionActions, job));
+				var facarr = factors.ToArray();
+				ephemeralActions.Add(Actions.AssignWorkersToJob(facarr, factionActions, job));
 				ephemeralActions.Add(Actions.RemoveWorkersFromJob([
 					job is not TileAttackJob && job is not SolveProblemJob ? Factors.One : Factors.Null,
 					Factors.IsJobUnlocked(job),
-					Factors.Ease(Factors.OneMinus(Factors.Group(factors.ToArray())), 5),
+					Factors.Ease(Factors.OneMinus(Factors.Group(facarr)), 5),
 					Factors.Const(0.001f),
 					Factors.OneMinus(Factors.JobCompletion(job)),
 					Factors.JobEmploymentRate(job),
@@ -1167,13 +1177,13 @@ public class GamerAI : LocalAI {
 
 	public override void Update(TimeT minute) {
 		//if (factionActions.Region == GameMan.Game.PlayRegion) Console.WriteLine($"LocalAI::Update : (of {factionActions}) doing update");
-		var ustime = Time.GetTicksUsec();
+		//var ustime = Time.GetTicksUsec();
 		// shuffle and evaluate only 30 actions
 		var span = mainActions.Concat(ephemeralActions).OrderBy(_ => GD.Randi()).Take(30).ToArray().AsSpan();
 		ChooseAction(out Action chosenAction, out float chosenScore, span, minute, GD.Randf() * 0.000005f);
-		ustime = Time.GetTicksUsec() - ustime;
+		//ustime = Time.GetTicksUsec() - ustime;
 		if (factionActions.Region == GameMan.Game.PlayRegion) Console.WriteLine($"LocalAI::Update : (of {factionActions}) chose action {chosenAction} (score {chosenScore})!");
-		if (factionActions.Region == GameMan.Game.PlayRegion) Console.WriteLine($"LocalAI::Update : choosing took {ustime} us!\n");
+		//if (factionActions.Region == GameMan.Game.PlayRegion) Console.WriteLine($"LocalAI::Update : choosing took {ustime} us!\n");
 		chosenAction.Do();
 
 		time = minute;

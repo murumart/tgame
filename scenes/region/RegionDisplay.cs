@@ -55,6 +55,9 @@ public partial class RegionDisplay : Node2D {
 	}
 
 	public override void _Process(double delta) {
+		if (GameMan.GameSpeed >= 100) {
+			return;
+		}
 		if (tileChangeQueue.Count > 0) {
 			while (tileChangeQueue.Count > 0) {
 				tilemaps.UpdateGroundAt(region, tileChangeQueue.Dequeue(), false);
@@ -87,6 +90,9 @@ public partial class RegionDisplay : Node2D {
 	}
 
 	void TimeUpdate(TimeT time) {
+		if (GameMan.GameSpeed >= 100) {
+			return;
+		}
 		DisplayJobProgress();
 	}
 

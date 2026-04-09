@@ -189,7 +189,7 @@ public class TileAttackJob : Job {
 	public override void CheckDone(Faction regionFaction) {
 		var atk = regionFaction.Region;
 		if (!Target.GetEdge(GlobalPosition - Target.WorldPosition, out var edge) // inside the other faction now
-			|| (edge.Above != atk && edge.Below != atk && edge.Left != atk && edge.Right != atk) // blocked by another acquisition
+			|| (edge.Above != atk && edge.Below != atk && edge.ToLeft != atk && edge.ToRight != atk) // blocked by another acquisition
 		) {
 			// we got cut off!!
 			// maybe even delete the workers in here?
