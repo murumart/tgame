@@ -1,0 +1,217 @@
+[gd_scene format=3 uid="uid://8c3n5ntnx5yh"]
+
+[ext_resource type="Script" uid="uid://b8k0noky1h54h" path="res://scenes/ui/ControlButtons.cs" id="1_xktde"]
+[ext_resource type="LabelSettings" uid="uid://dxqtstvq2iau3" path="res://resources/visual/theme/label_styles/six.tres" id="2_iekk1"]
+[ext_resource type="Texture2D" uid="uid://bn7kce0p0hxa5" path="res://resources/visual/theme/icons/hand.svg" id="3_ujpef"]
+[ext_resource type="Texture2D" uid="uid://gtl0hfc3nq17" path="res://resources/visual/theme/icons/magnifier.svg" id="4_6gog0"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_suhma"]
+font_size = 8
+font_color = Color(0.8352941, 0.8392157, 0.85882354, 1)
+
+[sub_resource type="InputEventAction" id="InputEventAction_u27i7"]
+action = &"pause"
+
+[sub_resource type="InputEventKey" id="InputEventKey_ppqjx"]
+device = -1
+keycode = 49
+unicode = 49
+
+[sub_resource type="Shortcut" id="Shortcut_ppqjx"]
+events = [SubResource("InputEventAction_u27i7"), SubResource("InputEventKey_ppqjx")]
+
+[sub_resource type="InputEventKey" id="InputEventKey_o0d6a"]
+device = -1
+keycode = 50
+unicode = 50
+
+[sub_resource type="Shortcut" id="Shortcut_o0d6a"]
+events = [SubResource("InputEventKey_o0d6a")]
+
+[sub_resource type="InputEventKey" id="InputEventKey_mgrsp"]
+device = -1
+keycode = 51
+unicode = 51
+
+[sub_resource type="Shortcut" id="Shortcut_4ggmx"]
+events = [SubResource("InputEventKey_mgrsp")]
+
+[sub_resource type="InputEventKey" id="InputEventKey_4ggmx"]
+device = -1
+keycode = 52
+unicode = 52
+
+[sub_resource type="Shortcut" id="Shortcut_mgrsp"]
+events = [SubResource("InputEventKey_4ggmx")]
+
+[node name="ControlButtons" type="HBoxContainer" unique_id=1015202627 node_paths=PackedStringArray("panButton", "zoomLabel", "zoomInButton", "zoomResetButton", "zoomOutButton", "gameSpeedLabel", "pauseButton", "normalSpeedButton", "fastSpeedButton", "fasterSpeedButton")]
+custom_minimum_size = Vector2(60, 0)
+theme_override_constants/separation = 1
+script = ExtResource("1_xktde")
+panButton = NodePath("VBoxContainer/PanButton")
+zoomLabel = NodePath("VBoxContainer3/ZoomLabel")
+zoomInButton = NodePath("VBoxContainer4/ZoomInButton")
+zoomResetButton = NodePath("VBoxContainer3/NormalZoomButton")
+zoomOutButton = NodePath("VBoxContainer2/ZoomOutButton")
+gameSpeedLabel = NodePath("VBoxContainer5/GameSpeedLabel")
+pauseButton = NodePath("VBoxContainer5/PauseButton")
+normalSpeedButton = NodePath("VBoxContainer6/NormalSpeedButton")
+fastSpeedButton = NodePath("VBoxContainer7/FastButton")
+fasterSpeedButton = NodePath("VBoxContainer8/FasterButton")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=717448975]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="Label" type="Label" parent="VBoxContainer" unique_id=731640282]
+layout_mode = 2
+text = "space/mouse3/wasd"
+label_settings = ExtResource("2_iekk1")
+horizontal_alignment = 1
+
+[node name="PanButton" type="Button" parent="VBoxContainer" unique_id=1773061481]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+theme_override_font_sizes/font_size = 6
+icon = ExtResource("3_ujpef")
+icon_alignment = 1
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="." unique_id=772182223]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="Label" type="Label" parent="VBoxContainer2" unique_id=1611790121]
+layout_mode = 2
+text = "ctrl+scroll"
+label_settings = ExtResource("2_iekk1")
+horizontal_alignment = 1
+
+[node name="ZoomOutButton" type="Button" parent="VBoxContainer2" unique_id=337253993]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+theme_override_font_sizes/font_size = 6
+text = "-"
+icon = ExtResource("4_6gog0")
+alignment = 2
+icon_alignment = 1
+
+[node name="VBoxContainer3" type="VBoxContainer" parent="." unique_id=374714876]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="Label" type="Label" parent="VBoxContainer3" unique_id=1590958639]
+layout_mode = 2
+label_settings = ExtResource("2_iekk1")
+horizontal_alignment = 1
+
+[node name="NormalZoomButton" type="Button" parent="VBoxContainer3" unique_id=1169425019]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+theme_override_font_sizes/font_size = 6
+icon = ExtResource("4_6gog0")
+icon_alignment = 1
+
+[node name="ZoomLabel" type="Label" parent="VBoxContainer3" unique_id=1977769252]
+layout_mode = 2
+text = "zoom: 0%"
+label_settings = SubResource("LabelSettings_suhma")
+
+[node name="VBoxContainer4" type="VBoxContainer" parent="." unique_id=568074506]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="Label" type="Label" parent="VBoxContainer4" unique_id=1657977433]
+layout_mode = 2
+text = "ctrl+scroll"
+label_settings = ExtResource("2_iekk1")
+horizontal_alignment = 1
+
+[node name="ZoomInButton" type="Button" parent="VBoxContainer4" unique_id=76189340]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+theme_override_font_sizes/font_size = 6
+text = "+"
+icon = ExtResource("4_6gog0")
+alignment = 2
+icon_alignment = 1
+
+[node name="VBoxContainer5" type="VBoxContainer" parent="." unique_id=1502104412]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="Label" type="Label" parent="VBoxContainer5" unique_id=821541064]
+layout_mode = 2
+text = "p/1"
+label_settings = ExtResource("2_iekk1")
+horizontal_alignment = 1
+
+[node name="PauseButton" type="Button" parent="VBoxContainer5" unique_id=54486019]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+theme_override_font_sizes/font_size = 6
+shortcut = SubResource("Shortcut_ppqjx")
+text = "||"
+
+[node name="GameSpeedLabel" type="Label" parent="VBoxContainer5" unique_id=993565999]
+layout_mode = 2
+text = "game speed 3x"
+label_settings = SubResource("LabelSettings_suhma")
+
+[node name="VBoxContainer6" type="VBoxContainer" parent="." unique_id=1986062603]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="Label" type="Label" parent="VBoxContainer6" unique_id=1189108885]
+layout_mode = 2
+text = "2"
+label_settings = ExtResource("2_iekk1")
+horizontal_alignment = 1
+
+[node name="NormalSpeedButton" type="Button" parent="VBoxContainer6" unique_id=442337155]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+theme_override_font_sizes/font_size = 6
+shortcut = SubResource("Shortcut_o0d6a")
+text = ">"
+
+[node name="VBoxContainer7" type="VBoxContainer" parent="." unique_id=2033894613]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="Label" type="Label" parent="VBoxContainer7" unique_id=931781992]
+layout_mode = 2
+text = "3"
+label_settings = ExtResource("2_iekk1")
+horizontal_alignment = 1
+
+[node name="FastButton" type="Button" parent="VBoxContainer7" unique_id=216587867]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+theme_override_font_sizes/font_size = 6
+shortcut = SubResource("Shortcut_4ggmx")
+text = ">>"
+
+[node name="VBoxContainer8" type="VBoxContainer" parent="." unique_id=1399087099]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="Label" type="Label" parent="VBoxContainer8" unique_id=806181654]
+layout_mode = 2
+text = "4"
+label_settings = ExtResource("2_iekk1")
+horizontal_alignment = 1
+
+[node name="FasterButton" type="Button" parent="VBoxContainer8" unique_id=1020417154]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+theme_override_font_sizes/font_size = 6
+shortcut = SubResource("Shortcut_mgrsp")
+text = ">>>"

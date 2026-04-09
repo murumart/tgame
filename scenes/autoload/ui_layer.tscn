@@ -44,6 +44,7 @@ grow_vertical = 2
 mouse_filter = 2
 
 [node name="DebugLabels" type="ScrollContainer" parent="Control" unique_id=1863737310]
+z_index = 99
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.029166667

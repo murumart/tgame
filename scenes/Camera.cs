@@ -33,6 +33,10 @@ public partial class Camera : Camera2D {
 		Position = GetScreenCenterPosition();
 	}
 
+	public override void _Input(InputEvent evt) {
+
+	}
+
 	public override void _UnhandledInput(InputEvent evt) {
 		if (evt is InputEventMouseButton bEvent) {
 			MouseButtonInput(bEvent);

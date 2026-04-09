@@ -93,18 +93,7 @@ public partial class UI : Control {
 	[Export] public Panel pauseDisplayPanel;
 
 	// top bar bottom
-	[Export] Button panButton;
-
-	[Export] Label zoomLabel;
-	[Export] Button zoomInButton;
-	[Export] Button zoomResetButton;
-	[Export] Button zoomOutButton;
-
-	[Export] public Label gameSpeedLabel;
-	[Export] public Button pauseButton;
-	[Export] public Button normalSpeedButton;
-	[Export] public Button fastSpeedButton;
-	[Export] public Button fasterSpeedButton;
+	[Export] ControlButtons controlButtons;
 
 	[Export] public RichTextLabel resourceLabel;
 
@@ -131,12 +120,8 @@ public partial class UI : Control {
 		}
 	}
 
-	bool timeSpeedAlteringDisabled = false;
-
-
 	// overrides and connections
 
-	bool cursedPanning = true;
 	public override void _Ready() {
 		buildButton.Pressed += () => OnTabButtonPressed(Tab.Build, State.ChoosingBuild);
 		agreementsButton.Pressed += () => OnTabButtonPressed(Tab.Documents, State.AgreementsMenu);
@@ -144,15 +129,6 @@ public partial class UI : Control {
 		tradeButton.Pressed += () => OnTabButtonPressed(Tab.Trade, State.TradeMenu);
 		worldButton.Pressed += () => OnTabButtonPressed(Tab.World, State.WorldMenu);
 		warButton.Pressed += () => OnTabButtonPressed(Tab.War, State.WarMenu);
-
-		pauseButton.Pressed += OnPauseButtonPressed;
-		normalSpeedButton.Pressed += OnNormalSpeedButtonPressed;
-		fastSpeedButton.Pressed += OnFastSpeedButtonPressed;
-		fasterSpeedButton.Pressed += OnFasterSpeedButtonPressed;
-
-		zoomInButton.Pressed += () => Camera.ZoomIn();
-		zoomOutButton.Pressed += () => Camera.ZoomOut();
-		zoomResetButton.Pressed += () => Camera.ZoomReset();
 
 		OptionsMenu.VisibilityToggled += b => {
 			if (b && !GameMan.IsPaused) {
@@ -163,13 +139,7 @@ public partial class UI : Control {
 			}
 		};
 
-		panButton.ButtonDown += () => {
-			Camera.StartDragging(true);
-			cursedPanning = true;
-			panButton.MouseFilter = MouseFilterEnum.Ignore;
-			panButton.Disabled = true;
-		};
-		//panButton.ButtonUp += () => Camera.StopDragging();
+		controlButtons.Camera = Camera;
 
 		announcementOkayButton.Pressed += AnnouncementOkayPressed;
 
@@ -185,17 +155,11 @@ public partial class UI : Control {
 		if (@event.IsActionPressed("escape")) {
 			Escape();
 		}
-		if (@event is InputEventMouseButton iemb && iemb.ButtonIndex == MouseButton.Left && iemb.IsReleased() && cursedPanning) {
-			cursedPanning = false;
-			Camera.StopDragging();
-			panButton.Disabled = false;
-			panButton.MouseFilter = MouseFilterEnum.Stop;
-		}
 		if (@event is InputEventKey k && k.Pressed) {
 			if (k.Keycode == Key.Key6) {
-				if (timeSpeedAlteringDisabled) return;
+				if (controlButtons.TimeSpeedAlteringDisabled) return;
 				GameMan.MultiplyGameSpeed(GameMan.GameSpeedChanger.UI, 1200);
-				SetGameSpeedLabelText();
+				controlButtons.UpdateDisplays();
 			}
 		}
 	}
@@ -209,43 +173,6 @@ public partial class UI : Control {
 			SelectTab(Tab.None);
 		}
 	}
-
-	void TogglePause() {
-		if (timeSpeedAlteringDisabled) return;
-		GameMan.TogglePause();
-		SetGameSpeedLabelText();
-	}
-
-	void OnPauseButtonPressed() {
-		TogglePause();
-	}
-
-	const int NORMAL_SPEED = 1;
-	const int FAST_SPEED = 10;
-	const int FASTER_SPEED = 30;
-
-	void OnNormalSpeedButtonPressed() {
-		if (timeSpeedAlteringDisabled) return;
-		if (GameMan.IsPaused) TogglePause();
-		GameMan.MultiplyGameSpeed(GameMan.GameSpeedChanger.UI, NORMAL_SPEED);
-		SetGameSpeedLabelText();
-	}
-
-	void OnFastSpeedButtonPressed() {
-		if (timeSpeedAlteringDisabled) return;
-		if (GameMan.IsPaused) TogglePause();
-		GameMan.MultiplyGameSpeed(GameMan.GameSpeedChanger.UI, FAST_SPEED);
-		SetGameSpeedLabelText();
-	}
-
-	void OnFasterSpeedButtonPressed() {
-		if (timeSpeedAlteringDisabled) return;
-		if (GameMan.IsPaused) TogglePause();
-		GameMan.MultiplyGameSpeed(GameMan.GameSpeedChanger.UI, FASTER_SPEED);
-		SetGameSpeedLabelText();
-	}
-
-	void SetGameSpeedLabelText() => gameSpeedLabel.Text = GameMan.IsPaused ? "paused" : $"{GameMan.GameSpeed}x game speed";
 
 	// menu activites
 
@@ -416,10 +343,9 @@ public partial class UI : Control {
 	void UpdateDisplays() {
 		resourceDisplay.Display();
 		DisplayResources();
-		SetGameSpeedLabelText();
+		controlButtons.UpdateDisplays();
 		bool gamePaused = GameMan.IsPaused || GameMan.GameSpeed == 0f;
 		pauseDisplayPanel.Visible = gamePaused;
-		zoomLabel.Text = $"zoom: {(Camera.Zoom.X):F1}";
 		if (state == State.PlacingBuild) {
 			buildingList.UpdateCursorWhilePlacing(Camera.GetMouseHoveredTilePos());
 		}
@@ -528,29 +454,29 @@ public partial class UI : Control {
 			if (old == State.ChoosingBuild) {
 				buildingList.Reset();
 				SelectTab(Tab.None);
-				SetTimeSpeedAlteringAllowed(true);
+				controlButtons.SetTimeSpeedAlteringAllowed(true);
 				if (GameMan.IsPaused && !wasPausedBefore) GameMan.TogglePause();
 			}
 			if (old == State.PlacingBuild) {
 				buildingList.Reset();
 				buildingList.SetBuildCursor(null);
-				SetTimeSpeedAlteringAllowed(true);
+				controlButtons.SetTimeSpeedAlteringAllowed(true);
 				if (GameMan.IsPaused && !wasPausedBefore) GameMan.TogglePause();
 			}
 			if (old == State.MapObjectMenu) {
 				mopjectMenu.Close();
-				SetTimeSpeedAlteringAllowed(true);
+				controlButtons.SetTimeSpeedAlteringAllowed(true);
 				if (GameMan.IsPaused && !wasPausedBefore) GameMan.TogglePause();
 				TileDeselectedEvent?.Invoke();
 			}
 			if (old == State.AgreementsMenu || old == State.JobsMenu || old == State.TradeMenu || old == State.WorldMenu) {
 				SelectTab(Tab.None);
-				SetTimeSpeedAlteringAllowed(true);
+				controlButtons.SetTimeSpeedAlteringAllowed(true);
 				if (GameMan.IsPaused && !wasPausedBefore) GameMan.TogglePause();
 			}
 			if (old == State.WarMenu) {
 				SelectTab(Tab.None);
-				SetTimeSpeedAlteringAllowed(true);
+				controlButtons.SetTimeSpeedAlteringAllowed(true);
 				if (GameMan.IsPaused && !wasPausedBefore) GameMan.TogglePause();
 				warInfoPanel.Undisplay();
 			}
@@ -563,20 +489,12 @@ public partial class UI : Control {
 			|| current == State.WorldMenu
 			|| current == State.WarMenu
 		) {
-			SetTimeSpeedAlteringAllowed(false);
+			controlButtons.SetTimeSpeedAlteringAllowed(false);
 			if (!GameMan.IsPaused) {
 				GameMan.TogglePause();
 				wasPausedBefore = false;
 			} else wasPausedBefore = true;
 		}
-	}
-
-	void SetTimeSpeedAlteringAllowed(bool to) {
-		timeSpeedAlteringDisabled = !to;
-		pauseButton.Disabled = !to;
-		fastSpeedButton.Disabled = !to;
-		fasterSpeedButton.Disabled = !to;
-		normalSpeedButton.Disabled = !to;
 	}
 
 	void Reset() {

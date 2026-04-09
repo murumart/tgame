@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://bfswljwjyhmyy" path="res://scenes/ui/resource_display.tscn" id="2_mu82y"]
 [ext_resource type="StyleBox" uid="uid://bvafrlmq6sivc" path="res://resources/visual/theme/sb_lighter.tres" id="3_kmexs"]
 [ext_resource type="LabelSettings" uid="uid://ddruam7fh1y7l" path="res://resources/visual/theme/label_styles/title.tres" id="3_mu82y"]
+[ext_resource type="PackedScene" uid="uid://8c3n5ntnx5yh" path="res://scenes/region/ui/control_buttons.tscn" id="10_4cxve"]
 [ext_resource type="Script" uid="uid://jdld04xxcpmv" path="res://scenes/map/WorldRenderer.cs" id="14_qgxsg"]
 [ext_resource type="Gradient" uid="uid://dqpagals78i71" path="res://resources/visual/map/elevation_gradient.tres" id="15_gl1ga"]
 [ext_resource type="Gradient" uid="uid://ypkjsovb40j4" path="res://resources/visual/map/temperature_gradient.tres" id="16_hclyy"]
@@ -273,6 +274,7 @@ theme_override_constants/separation = 0
 layout_mode = 2
 size_flags_horizontal = 3
 mouse_filter = 2
+theme_override_constants/separation = 0
 
 [node name="MarginContainer" type="MarginContainer" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/HBoxContainer/VBoxContainer" unique_id=1939514894]
 layout_mode = 2
@@ -289,6 +291,29 @@ mouse_filter = 2
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
+
+[node name="ControlButtons" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/HBoxContainer/VBoxContainer" unique_id=1015202627 node_paths=PackedStringArray("Camera") instance=ExtResource("10_4cxve")]
+layout_mode = 2
+alignment = 2
+Camera = NodePath("../../../../SubViewportContainer/WorldDisplay/Camera2D")
+
+[node name="Label" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/HBoxContainer/VBoxContainer/ControlButtons/VBoxContainer" parent_id_path=PackedInt32Array(1015202627, 717448975) index="0" unique_id=731640282]
+text = "space/mouse3"
+
+[node name="PanButton" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/HBoxContainer/VBoxContainer/ControlButtons/VBoxContainer" parent_id_path=PackedInt32Array(1015202627, 717448975) index="1" unique_id=1773061481]
+disabled = true
+
+[node name="VBoxContainer5" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/HBoxContainer/VBoxContainer/ControlButtons" index="4" unique_id=1502104412]
+visible = false
+
+[node name="VBoxContainer6" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/HBoxContainer/VBoxContainer/ControlButtons" index="5" unique_id=1986062603]
+visible = false
+
+[node name="VBoxContainer7" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/HBoxContainer/VBoxContainer/ControlButtons" index="6" unique_id=2033894613]
+visible = false
+
+[node name="VBoxContainer8" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/HBoxContainer/VBoxContainer/ControlButtons" index="7" unique_id=1399087099]
+visible = false
 
 [node name="MarginContainer2" type="MarginContainer" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/HBoxContainer" unique_id=723366520]
 layout_mode = 2
@@ -332,3 +357,5 @@ size_flags_vertical = 3
 theme_override_font_sizes/normal_font_size = 10
 text = "asdasdasdasdadasdasdsadaasdadadsadadsadsadsasaasdassadasdsadsadsadsadsadsadsadsadsadsadsadsadsadsadsadsadasdadadadadasdasdadadadadasdasdadadadadadasdasdadasdasdasdadasdasdasdadasdasdass"
 fit_content = true
+
+[editable path="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/HBoxContainer/VBoxContainer/ControlButtons"]
