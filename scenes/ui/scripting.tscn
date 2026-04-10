@@ -27,7 +27,13 @@ func _slice() -> void:
 			ResourceSaver.save(atlas, out_file_base.trim_suffix(\".tres\") + (\"_%s-%s\" % [x, y]) + \".tres\")
 "
 
-[node name="Scripting" type="Node2D" unique_id=485853522]
+[node name="Scripting" type="Control" unique_id=1874504471]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="IconGenerator" type="Node" parent="." unique_id=868329046]
 script = SubResource("GDScript_s3her")

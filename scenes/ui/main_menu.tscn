@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://dnrihucj07oo3" path="res://scenes/ui/MainMenu.cs" id="1_sl1te"]
 [ext_resource type="Texture2D" uid="uid://bqd6cy58ig4jh" path="res://scenes/ui/sun.png" id="2_1g8jr"]
 [ext_resource type="FontVariation" uid="uid://dliky8sbpgnxp" path="res://resources/visual/font/title_font.tres" id="2_fe2o3"]
-[ext_resource type="Texture2D" uid="uid://cpirspwwfo4f7" path="res://scenes/ui/screenshot.png" id="2_x2yvf"]
+[ext_resource type="Texture2D" uid="uid://cpirspwwfo4f7" path="res://scenes/ui/screenshots/loading_screen.png" id="2_x2yvf"]
 [ext_resource type="Material" uid="uid://cet7ep6cvqk3p" path="res://resources/visual/add_material.tres" id="3_m1kxf"]
 [ext_resource type="LabelSettings" uid="uid://0tidmu3mudw6" path="res://resources/visual/theme/label_styles/debug.tres" id="6_8g5eo"]
 [ext_resource type="LabelSettings" uid="uid://btwbnjxri1gdg" path="res://resources/visual/theme/label_styles/8px.tres" id="6_uhagc"]
@@ -14,25 +14,13 @@
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_1g8jr"]
 blend_mode = 3
 
-[sub_resource type="Gradient" id="Gradient_m1kxf"]
-offsets = PackedFloat32Array(0, 0.9779874)
-colors = PackedColorArray(0.99215686, 0.81960785, 0.4745098, 1, 0.23921569, 0.2, 0.2, 1)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_x2yvf"]
-gradient = SubResource("Gradient_m1kxf")
-width = 128
-height = 128
-fill = 1
-fill_from = Vector2(0.5, 0.5)
-fill_to = Vector2(0.5, 0)
-
-[sub_resource type="Gradient" id="Gradient_1g8jr"]
+[sub_resource type="Gradient" id="Gradient_8g5eo"]
 interpolation_mode = 2
 offsets = PackedFloat32Array(0, 0.5880503, 1)
 colors = PackedColorArray(0.87058824, 0.62352943, 0.2784314, 1, 0.47843137, 0.34509805, 0.34901962, 1, 0.4509804, 0.29803923, 0.26666668, 1)
 
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_m1kxf"]
-gradient = SubResource("Gradient_1g8jr")
+gradient = SubResource("Gradient_8g5eo")
 width = 128
 height = 128
 fill = 1
@@ -154,7 +142,7 @@ anchor_left = -0.115
 anchor_right = 2.344
 anchor_bottom = 2.0
 offset_left = 0.13365555
-offset_right = -378.53192
+offset_right = -487.9209
 offset_bottom = -360.0
 grow_horizontal = 2
 grow_vertical = 2
@@ -184,17 +172,6 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_1g8jr")
 stretch_mode = 6
-
-[node name="TextureRect2" type="TextureRect" parent="." unique_id=652127401]
-visible = false
-material = SubResource("CanvasItemMaterial_1g8jr")
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = SubResource("GradientTexture2D_x2yvf")
 
 [node name="TextureRect3" type="TextureRect" parent="." unique_id=648008140]
 material = SubResource("CanvasItemMaterial_1g8jr")
