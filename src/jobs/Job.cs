@@ -71,28 +71,13 @@ public abstract class Job {
 	}
 
 	protected static void ProvideProduction(Span<ResourceBundle> rewards, ResourceStorage resources) {
-		AddToStorage(rewards.ToArray().Clone() as ResourceBundle[], resources);
+		//Span<ResourceBundle> down = new ResourceBundle[rewards.Length];
+		//rewards.CopyTo(down);
+		AddToStorage(rewards, resources);
 	}
 
-	// add to the storage one item at a time so we get a bit of every type in storage
-	// even if it ends up filling up before we can grant everything
-	// TODO this but in a smarter way with less brutish loops
 	protected static void AddToStorage(Span<ResourceBundle> things, ResourceStorage storage) {
-		while (true) {
-			bool added = false;
-			for (int i = 0; i < things.Length; i++) {
-				if (!storage.CanAdd(1)) {
-					GD.PushWarning("Job rewards can't fit in storage");
-					break;
-				}
-				if (things[i].Amount <= 0) continue;
-
-				storage.AddResource(new ResourceBundle(things[i].Type, 1));
-				things[i] = new(things[i].Type, things[i].Amount - 1);
-				added = true;
-			}
-			if (!added) break;
-		}
+		foreach (ref readonly var thing in things) storage.AddResource(thing);
 	}
 
 	public void Lock(bool to = true) {
