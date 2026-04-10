@@ -8,7 +8,7 @@
 # what
 *.csproj.old.*
 *.csproj.old
-#hidden/
+hidden/
 
 # tracing
 *.nettrace

@@ -80,6 +80,12 @@ public partial class OptionsMenu : Control {
 					defa: 0f,
 					range: (0, 1), round: true)
 				},
+				{"vsync", new(
+					get: () => DisplayServer.WindowGetVsyncMode() == DisplayServer.VSyncMode.Adaptive ? 1f : 0f,
+					set: to => DisplayServer.WindowSetVsyncMode(to == 1f ? DisplayServer.VSyncMode.Adaptive : DisplayServer.VSyncMode.Disabled),
+					defa: 0f,
+					range: (0, 1), round: true)
+				},
 				{"display_scale", new(
 					get: () => Singleton.GetWindow().ContentScaleFactor,
 					set: to => {
