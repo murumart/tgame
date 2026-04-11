@@ -274,9 +274,10 @@ public partial class LocalAI {
 
 		public static Action StartTileInvasion(DecisionFactor[] factors, FactionActions ac, Faction against, Vector2I globalTile) {
 			return new(factors, () => {
+				int free = Math.Max(0, (int)ac.GetFreeWorkers());
+				if (free == 0) return;
 				var job = FactionActions.GetAttackJob(ac.Faction, against, globalTile);
 				FactionActions.ApplyAttackJob(ac.Faction, job);
-				int free = Math.Max(0, (int)ac.GetFreeWorkers());
 				ac.ChangeJobWorkerCount(job, Math.Min(free, Math.Min(5, (int)(GD.Randf() * free))));
 			}, $"StartTileInvasion({ac.Faction},{against})");
 		}
