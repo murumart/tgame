@@ -33,15 +33,15 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1_gjnyb")
-worldRenderer = NodePath("PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/SubViewportContainer/WorldDisplay/WorldRenderer")
-ResourceDisplay = NodePath("PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/HBoxContainer/VBoxContainer/MarginContainer/HBoxContainer/ResourceDisplay")
-camera = NodePath("PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/SubViewportContainer/WorldDisplay/Camera2D")
-factionPanel = NodePath("PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/HBoxContainer/MarginContainer2/HBoxContainer/Factionpanel")
-factionTitleLabel = NodePath("PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/HBoxContainer/MarginContainer2/HBoxContainer/Factionpanel/MarginContainer/VBoxContainer/Title")
-factionInfoLabel = NodePath("PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/HBoxContainer/MarginContainer2/HBoxContainer/Factionpanel/MarginContainer/VBoxContainer/FactionInfo")
+worldRenderer = NodePath("PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/MarginContainer/PanelContainer/SubViewportContainer/WorldDisplay/WorldRenderer")
+ResourceDisplay = NodePath("PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/MarginContainer/VBoxContainer/MarginContainer/HBoxContainer/ResourceDisplay")
+camera = NodePath("PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/MarginContainer/PanelContainer/SubViewportContainer/WorldDisplay/Camera2D")
+factionPanel = NodePath("PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/MarginContainer2/HBoxContainer/Factionpanel")
+factionTitleLabel = NodePath("PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/MarginContainer2/HBoxContainer/Factionpanel/MarginContainer/VBoxContainer/Title")
+factionInfoLabel = NodePath("PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/MarginContainer2/HBoxContainer/Factionpanel/MarginContainer/VBoxContainer/FactionInfo")
 drawLayerButtons = [NodePath("PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle6/HBoxContainer/Ground"), NodePath("PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle/HBoxContainer/Elevation"), NodePath("PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle2/HBoxContainer/Temperature"), NodePath("PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle3/HBoxContainer/Humidity"), NodePath("PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle7/HBoxContainer/Drainage"), NodePath("PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle4/HBoxContainer/SeaWind")]
 regionDisplayCheck = NodePath("PanelContainer2/MarginContainer/VBoxContainer/HBoxContainer/Toggle5/HBoxContainer/Regions")
-controlButtons = NodePath("PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/HBoxContainer/VBoxContainer/ControlButtons")
+controlButtons = NodePath("PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/MarginContainer/VBoxContainer/ControlButtons")
 
 [node name="PanelContainer2" type="PanelContainer" parent="." unique_id=1657113591]
 layout_mode = 2
@@ -220,20 +220,34 @@ theme_override_constants/margin_top = 2
 theme_override_constants/margin_right = 2
 theme_override_constants/margin_bottom = 2
 
-[node name="SubViewportContainer" type="SubViewportContainer" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer" unique_id=1399082485]
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer" unique_id=594196504]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 0
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer" unique_id=1081017290]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PanelContainer" type="PanelContainer" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/MarginContainer" unique_id=1953583359]
+clip_children = 1
+layout_mode = 2
+mouse_filter = 2
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/MarginContainer/PanelContainer" unique_id=1399082485]
 layout_mode = 2
 stretch = true
 mouse_target = true
 
-[node name="WorldDisplay" type="SubViewport" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/SubViewportContainer" unique_id=2007410222]
+[node name="WorldDisplay" type="SubViewport" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/MarginContainer/PanelContainer/SubViewportContainer" unique_id=2007410222]
 transparent_bg = true
 handle_input_locally = false
 snap_2d_transforms_to_pixel = true
 canvas_item_default_texture_filter = 0
-size = Vector2i(468, 304)
+size = Vector2i(340, 304)
 render_target_update_mode = 4
 
-[node name="WorldRenderer" type="Node" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/SubViewportContainer/WorldDisplay" unique_id=154580274 node_paths=PackedStringArray("groundSprite", "RegionSprite", "highlightSprite")]
+[node name="WorldRenderer" type="Node" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/MarginContainer/PanelContainer/SubViewportContainer/WorldDisplay" unique_id=154580274 node_paths=PackedStringArray("groundSprite", "RegionSprite", "highlightSprite")]
 script = ExtResource("14_qgxsg")
 groundSprite = NodePath("Ground")
 RegionSprite = NodePath("Regions")
@@ -244,79 +258,69 @@ seaWindGradient = SubResource("Gradient_8xr07")
 humidityGradient = ExtResource("17_0csb4")
 drainageGradient = SubResource("Gradient_4t3sq")
 
-[node name="Ground" type="Sprite2D" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/SubViewportContainer/WorldDisplay/WorldRenderer" unique_id=1625310556]
+[node name="Ground" type="Sprite2D" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/MarginContainer/PanelContainer/SubViewportContainer/WorldDisplay/WorldRenderer" unique_id=1625310556]
 centered = false
 
-[node name="Regions" type="Sprite2D" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/SubViewportContainer/WorldDisplay/WorldRenderer" unique_id=333950887]
+[node name="Regions" type="Sprite2D" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/MarginContainer/PanelContainer/SubViewportContainer/WorldDisplay/WorldRenderer" unique_id=333950887]
 modulate = Color(1.4758431, 1.4758431, 1.4758431, 1)
 material = SubResource("CanvasItemMaterial_tq526")
 centered = false
 
-[node name="Highlight" type="Sprite2D" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/SubViewportContainer/WorldDisplay/WorldRenderer" unique_id=346764024]
+[node name="Highlight" type="Sprite2D" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/MarginContainer/PanelContainer/SubViewportContainer/WorldDisplay/WorldRenderer" unique_id=346764024]
 modulate = Color(1, 1, 1, 0.26666668)
 material = SubResource("CanvasItemMaterial_5lxtd")
 centered = false
 
-[node name="Camera2D" type="Camera2D" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/SubViewportContainer/WorldDisplay" unique_id=1956777431]
+[node name="Camera2D" type="Camera2D" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/MarginContainer/PanelContainer/SubViewportContainer/WorldDisplay" unique_id=1956777431]
 script = ExtResource("18_orbx1")
 CanMoveWithKeyboard = false
 
-[node name="PanelContainer" type="PanelContainer" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer" unique_id=1953583359]
-clip_children = 1
-layout_mode = 2
-mouse_filter = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer" unique_id=594196504]
-layout_mode = 2
-mouse_filter = 2
-theme_override_constants/separation = 0
-
-[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/HBoxContainer" unique_id=156893236]
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/MarginContainer" unique_id=156893236]
 layout_mode = 2
 size_flags_horizontal = 3
 mouse_filter = 2
 theme_override_constants/separation = 0
 
-[node name="MarginContainer" type="MarginContainer" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/HBoxContainer/VBoxContainer" unique_id=1939514894]
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/MarginContainer/VBoxContainer" unique_id=1939514894]
 layout_mode = 2
 theme_override_constants/margin_left = 2
 theme_override_constants/margin_top = 2
 theme_override_constants/margin_right = 2
 theme_override_constants/margin_bottom = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/HBoxContainer/VBoxContainer/MarginContainer" unique_id=1851554679]
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/MarginContainer/VBoxContainer/MarginContainer" unique_id=1851554679]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="ResourceDisplay" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/HBoxContainer/VBoxContainer/MarginContainer/HBoxContainer" unique_id=2043342601 instance=ExtResource("2_mu82y")]
+[node name="ResourceDisplay" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/MarginContainer/VBoxContainer/MarginContainer/HBoxContainer" unique_id=2043342601 instance=ExtResource("2_mu82y")]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
 
-[node name="ControlButtons" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/HBoxContainer/VBoxContainer" unique_id=1015202627 node_paths=PackedStringArray("Camera") instance=ExtResource("10_4cxve")]
+[node name="ControlButtons" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/MarginContainer/VBoxContainer" unique_id=1015202627 node_paths=PackedStringArray("Camera") instance=ExtResource("10_4cxve")]
 layout_mode = 2
 alignment = 2
-Camera = NodePath("../../../../SubViewportContainer/WorldDisplay/Camera2D")
+Camera = NodePath("../../PanelContainer/SubViewportContainer/WorldDisplay/Camera2D")
 
-[node name="Label" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/HBoxContainer/VBoxContainer/ControlButtons/VBoxContainer" parent_id_path=PackedInt32Array(1015202627, 717448975) index="0" unique_id=731640282]
+[node name="Label" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/MarginContainer/VBoxContainer/ControlButtons/VBoxContainer" parent_id_path=PackedInt32Array(1015202627, 717448975) index="0" unique_id=731640282]
 text = "space/mouse3"
 
-[node name="PanButton" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/HBoxContainer/VBoxContainer/ControlButtons/VBoxContainer" parent_id_path=PackedInt32Array(1015202627, 717448975) index="1" unique_id=1773061481]
+[node name="PanButton" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/MarginContainer/VBoxContainer/ControlButtons/VBoxContainer" parent_id_path=PackedInt32Array(1015202627, 717448975) index="1" unique_id=1773061481]
 disabled = true
 
-[node name="VBoxContainer5" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/HBoxContainer/VBoxContainer/ControlButtons" index="4" unique_id=1502104412]
+[node name="VBoxContainer5" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/MarginContainer/VBoxContainer/ControlButtons" index="4" unique_id=1502104412]
 visible = false
 
-[node name="VBoxContainer6" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/HBoxContainer/VBoxContainer/ControlButtons" index="5" unique_id=1986062603]
+[node name="VBoxContainer6" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/MarginContainer/VBoxContainer/ControlButtons" index="5" unique_id=1986062603]
 visible = false
 
-[node name="VBoxContainer7" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/HBoxContainer/VBoxContainer/ControlButtons" index="6" unique_id=2033894613]
+[node name="VBoxContainer7" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/MarginContainer/VBoxContainer/ControlButtons" index="6" unique_id=2033894613]
 visible = false
 
-[node name="VBoxContainer8" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/HBoxContainer/VBoxContainer/ControlButtons" index="7" unique_id=1399087099]
+[node name="VBoxContainer8" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/MarginContainer/VBoxContainer/ControlButtons" index="7" unique_id=1399087099]
 visible = false
 
-[node name="MarginContainer2" type="MarginContainer" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/HBoxContainer" unique_id=723366520]
+[node name="MarginContainer2" type="MarginContainer" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer" unique_id=723366520]
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 1.2
@@ -326,32 +330,32 @@ theme_override_constants/margin_top = 2
 theme_override_constants/margin_right = 2
 theme_override_constants/margin_bottom = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/HBoxContainer/MarginContainer2" unique_id=1742408807]
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/MarginContainer2" unique_id=1742408807]
 layout_mode = 2
 mouse_filter = 2
 alignment = 2
 
-[node name="Factionpanel" type="PanelContainer" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/HBoxContainer/MarginContainer2/HBoxContainer" unique_id=1248779983]
+[node name="Factionpanel" type="PanelContainer" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/MarginContainer2/HBoxContainer" unique_id=1248779983]
 layout_mode = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/HBoxContainer/MarginContainer2/HBoxContainer/Factionpanel" unique_id=1170704511]
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/MarginContainer2/HBoxContainer/Factionpanel" unique_id=1170704511]
 layout_mode = 2
 theme_override_constants/margin_left = 2
 theme_override_constants/margin_top = 2
 theme_override_constants/margin_right = 2
 theme_override_constants/margin_bottom = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/HBoxContainer/MarginContainer2/HBoxContainer/Factionpanel/MarginContainer" unique_id=656614046]
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/MarginContainer2/HBoxContainer/Factionpanel/MarginContainer" unique_id=656614046]
 custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="Title" type="Label" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/HBoxContainer/MarginContainer2/HBoxContainer/Factionpanel/MarginContainer/VBoxContainer" unique_id=684263515]
+[node name="Title" type="Label" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/MarginContainer2/HBoxContainer/Factionpanel/MarginContainer/VBoxContainer" unique_id=684263515]
 layout_mode = 2
 text = "Faction title"
 label_settings = ExtResource("3_mu82y")
 
-[node name="FactionInfo" type="RichTextLabel" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/HBoxContainer/MarginContainer2/HBoxContainer/Factionpanel/MarginContainer/VBoxContainer" unique_id=1530252710]
+[node name="FactionInfo" type="RichTextLabel" parent="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/MarginContainer2/HBoxContainer/Factionpanel/MarginContainer/VBoxContainer" unique_id=1530252710]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -360,4 +364,4 @@ bbcode_enabled = true
 text = "asdasdasdasdadasdasdsadaasdadadsadadsadsadsasaasdassadasdsadsadsadsadsadsadsadsadsadsadsadsadsadsadsadsadasdadadadadasdasdadadadadasdasdadadadadadasdasdadasdasdasdadasdasdasdadasdasdass"
 fit_content = true
 
-[editable path="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/PanelContainer/HBoxContainer/VBoxContainer/ControlButtons"]
+[editable path="PanelContainer2/MarginContainer/VBoxContainer/PanelContainer/MarginContainer/HBoxContainer/MarginContainer/VBoxContainer/ControlButtons"]

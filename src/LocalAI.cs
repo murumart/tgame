@@ -233,7 +233,7 @@ public partial class LocalAI {
 						maxworkers = job.Workers;
 					}
 				}
-				if (maxj is null || maxworkers == 0) return;
+				if (maxj is null || maxworkers < 2) return;
 				AIAssert(maxj is not null && maxworkers != 0, "Bad, ", ac);
 				ac.ChangeJobWorkerCount(maxj, -1);
 			}, "FreeAWorker");
@@ -1032,7 +1032,7 @@ public class GamerAI : LocalAI {
 				//var mopject = factionActions.Region.GetMapObject(cjob.GlobalPosition - factionActions.Region.WorldPosition);
 				//IEnumerable<CraftJob> othersPossible = mopject.GetAvailableJobs().Where(j => j is CraftJob cj && cj.Outputs != cjob.Outputs).Cast<CraftJob>();
 			} else if (job is QuarryJob qjob) {
-				factors.Add(Factors.Mult(Factors.ResourceWant(factionActions, this, qjob.MineResources), 1 / qjob.TimeTaken));
+				factors.Add(Factors.Mult(Factors.ResourceWant(factionActions, this, qjob.MineResources), 1f / qjob.TimeTaken));
 			} else if (job is SolveProblemJob sjob) {
 				factors.Add(Factors.One);
 			} else if (job is TileAttackJob atkjob) {

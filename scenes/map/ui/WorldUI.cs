@@ -216,7 +216,7 @@ public partial class WorldUI : Control {
 		worldRenderer.DrawMode = a;
 	}
 
-	public void DisplayWorld(World world, Game game = null) {
+	public void DisplayWorld(World world, Game game) {
 		Debug.Assert(_ready);
 		this.world = world;
 		this.game = game;
@@ -267,7 +267,7 @@ public partial class WorldUI : Control {
 
 	void OnDrawLayersChanged() {
 		Debug.Assert(world is not null, "Need a Woirld");
-		DisplayWorld(world);
+		DisplayWorld(world, game);
 		if (map is not null) DrawRegions(p_map: map);
 	}
 

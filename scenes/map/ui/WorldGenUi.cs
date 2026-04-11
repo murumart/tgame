@@ -75,7 +75,7 @@ public partial class WorldGenUi : MarginContainer {
 	async Task GenerateContinents() => await worldGenerator.GenerateContinents(world, (float)noiseScaleSpinbox.Value, (float)depthSpinbox.Value);
 
 	void OnWorldGenerated() {
-		worldUI.DisplayWorld(world);
+		worldUI.DisplayWorld(world, null);
 	}
 
 	async void OnWorldSeedEntered(string what) {
