@@ -138,6 +138,7 @@ public partial class WorldGenUi : MarginContainer {
 
 	async void OnGenRegionsPressed() {
 		Debug.Assert(!worldGenerator.Generating);
+		worldUI.SelectRegion(null);
 		OnStartGenerating();
 
 		if (!drawFast && !OS.HasFeature("editor_runtime")) {
@@ -160,7 +161,7 @@ public partial class WorldGenUi : MarginContainer {
 	}
 
 	void OnRegionSelected(Region region) {
-		playHereButton.Disabled = region.LocalFaction.IsWild;
+		playHereButton.Disabled = region is null || region.LocalFaction.IsWild;
 	}
 
 	void SetupGame() {
