@@ -302,7 +302,7 @@ public class Region {
 		float score = 0;
 		foreach (var (_, count) in resourceCounts) score += count * 0.1f;
 		score *= resourceCounts.Count;
-		score -= (75 - (int)LocalFaction.Population.Count) * 8;
+		score -= (75 - (int)LocalFaction.Population.Count) * 16;
 		return Math.Max((int)score, 20);
 	}
 

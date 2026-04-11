@@ -165,6 +165,7 @@ aa
 a
 "
 fit_content = true
+autowrap_mode = 0
 
 [node name="Fat" type="Control" parent="VBoxContainer/MarginContainer/Horizon" unique_id=1462543820]
 layout_mode = 2

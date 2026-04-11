@@ -195,7 +195,7 @@ public partial class UI : Control {
 			case Tab.Trade: {
 					var fac = GetFactionActions();
 					var pm = fac.GetProcessMarketJob();
-					if (pm is null) {
+					if (pm is null || !pm.IsValid) {
 						tradeInfoPanel.DisplayNoMarket();
 					} else tradeInfoPanel.Display(fac.Faction, pm.TradeOffers);
 				}

@@ -162,6 +162,6 @@ Rünnakud. rünnak mingi teise ruudu vastu oleks problem, mida teine peaks lahen
 - [ ] enable regions switch when generate regions?
 - [X] make camera flying less floaty
 - [X] limit camera to edges of the world
-- [ ] hide hud buttons on gameover
-- [ ] build quarry wouhtout rocks..?
+- [X] hide hud buttons on gameover
+- [X] build quarry wouhtout rocks..?
 - [ ] might not notice silver switches out

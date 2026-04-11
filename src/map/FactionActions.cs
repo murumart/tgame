@@ -34,7 +34,7 @@ public class FactionActions {
 			var job = GetMapObjectsJob(m);
 			if (job != null && job is ProcessMarketJob) return job as ProcessMarketJob;
 			return null;
-		}, Field<ProcessMarketJob>.NullCheck);
+		}, (pmj) => pmj is null || !pmj.IsValid);
 	}
 
 	// resources
