@@ -1069,15 +1069,6 @@ public class GamerAI : LocalAI {
 					Factors.IsValidWarTarget(factionActions, n),
 				], factionActions, n.LocalFaction));
 			} else {
-				var edges = n.GetEdges();
-				if (edges.Length == 0) continue;
-				var ep = n.WorldPosition + edges[(int)(GD.Randi() % edges.Length)].Key;
-				if (factionActions.Faction.GetJob(ep, out _)) continue;
-				if (!FactionActions.CanAttack(factionActions.Region, n, ep)) continue;
-				ephemeralActions.Add(Actions.StartTileInvasion([
-					Factors.Ease(Factors.FreeWorkerRate(factionActions), 0.05f),
-					Factors.HasFreeWorkers(factionActions),
-				], factionActions, n.LocalFaction, ep));
 				ephemeralActions.Add(Actions.SendPeaceRequest([
 					(thoughtsAboutFactions.GetValueOrDefault(n.LocalFaction, new()).Traitorousness > 0 ? Factors.Null : Factors.One),
 					Factors.HaveWeNotSentPeaceRequest(factionActions, n.LocalFaction),
@@ -1085,6 +1076,24 @@ public class GamerAI : LocalAI {
 					Factors.Const((1f / Militarism) * 0.01f),
 					Factors.OneMinus(Factors.Const(Mathf.Clamp(thoughtsAboutFactions[n.LocalFaction].AtWar * Militarism, 0f, 1f))),
 				], factionActions, n.LocalFaction));
+
+				var edges = n.GetEdges();
+				if (edges.Length == 0) continue;
+				var ep = Vector2I.Left;
+				for (int xxx = 0; xxx < 20; xxx++) {
+					var rp = edges[(int)(GD.Randi() % edges.Length)].Key;
+					if (!n.GetGroundTile(rp, out var tile) || (tile & GroundTileType.HasLand) == 0) continue;
+					ep = n.WorldPosition + rp;
+					if (factionActions.Faction.GetJob(ep, out _)) continue;
+					if (!FactionActions.CanAttack(factionActions.Region, n, ep)) continue;
+					break;
+				}
+				if (ep == Vector2I.Left) continue;
+				if (!FactionActions.CanAttack(factionActions.Region, n, ep)) continue;
+				ephemeralActions.Add(Actions.StartTileInvasion([
+					Factors.Ease(Factors.FreeWorkerRate(factionActions), 0.05f),
+					Factors.HasFreeWorkers(factionActions),
+				], factionActions, n.LocalFaction, ep));
 			}
 		}
 
