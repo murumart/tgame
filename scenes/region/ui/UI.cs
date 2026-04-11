@@ -298,6 +298,14 @@ public partial class UI : Control {
 			sb.Append($" ({(int)foodUsage} eaten/day)");
 
 			(c as Label).Text = sb.ToString();
+			var modulate = c.Modulate;
+			if (food <= 0 && modulate != Palette.BrownRust) {
+				c.Modulate = Palette.BrownRust;
+			} else if (food < foodUsage * 0.5 && modulate != Palette.Chardonnay) {
+				c.Modulate = Palette.Chardonnay;
+			} else if (modulate != Colors.White) {
+				c.Modulate = Colors.White;
+			}
 		},
 		() => {
 			var (food, foodUsage) = GetFoodAndUsage();
@@ -308,11 +316,11 @@ public partial class UI : Control {
 			var reg = fac.Region;
 
 			resourceDisplay.Display(c => {
-				(c as Label).Text = $"    silver: {fac.Silver}    ";
+				(c as Label).Text = $"    silver: {fac.LiquidSilver}";
 			}, () => {
 				float liq = fac.LiquidSilver;
 				float tot = GameMan.Game.Map.TotalSilver;
-				return $"{liq} total\n{(int)(liq / tot * 100)}% of world silver owned";
+				return $"{fac.Silver} free\n{liq - fac.Silver} in trade\n{(int)(liq / tot * 100)}% of world silver owned";
 			});
 			resourceDisplay.Display(c => {
 				string txt = "";
