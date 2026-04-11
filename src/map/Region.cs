@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Godot;
 using scenes.ui;
+using static RegionStatic;
 using static ResourceSite;
 
 
@@ -289,6 +290,29 @@ public class Region {
 		return f;
 	}
 
+	public int GetStartEaseScore() {
+		if (LocalFaction.IsWild) return 0;
+		Dictionary<IResourceType, int> resourceCounts = new();
+		foreach (var mapObject in mapObjects.Values) if (mapObject is ResourceSite rs) foreach (var w in rs.Wells) {
+			if (!resourceCounts.TryGetValue(w.ResourceType, out int c)) {
+				resourceCounts[w.ResourceType] = 0;
+			}
+			resourceCounts[w.ResourceType] += w.InitialBunches;
+		}
+		float score = 0;
+		foreach (var (_, count) in resourceCounts) score += count * 0.1f;
+		score *= resourceCounts.Count;
+		score -= (75 - (int)LocalFaction.Population.Count) * 8;
+		return Math.Max((int)score, 20);
+	}
+
+	public Difficulty GetStartDifficulty(int score) {
+		if (score > 2000) return Difficulty.Breezy;
+		if (score > 300) return Difficulty.Normal;
+		if (score > 0) return Difficulty.Tedious;
+		return Difficulty.Impossible;
+	}
+
 	public override string ToString() {
 		return $"Reg({WorldPosition},({LocalFaction}))";
 	}
@@ -506,6 +530,29 @@ public class Region {
 			}
 		}
 
+	}
+
+}
+
+public static class RegionStatic {
+
+	public enum Difficulty {
+		Breezy,
+		Normal,
+		Tedious,
+		Impossible,
+		Max
+	}
+
+	public static string Describe(this Difficulty difficulty) {
+		Debug.Assert(difficulty < Difficulty.Max && difficulty >= Difficulty.Breezy);
+		return difficulty switch {
+			Difficulty.Breezy => $"[color={Palette.BrassGreen.ToHtml()}]BREEZY[/color]",
+			Difficulty.Normal => $"[color={Palette.WhiteSmoke.ToHtml()}]NORMAL[/color]",
+			Difficulty.Tedious => $"[color={Palette.BrownRust.ToHtml()}]TEDIOUS[/color]",
+			Difficulty.Impossible => $"[color={Palette.Dusk.ToHtml()}]IMPOSSIBLE[/color]",
+			_ => throw new NotImplementedException(),
+		};
 	}
 
 }

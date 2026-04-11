@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Text;
 using Godot;
 
 namespace scenes.map.ui;
@@ -132,16 +133,24 @@ public partial class WorldUI : Control {
 		factionTitleLabel.Text = region.LocalFaction.Name;
 		var things = string.Join(", ", region.GetMapObjects().Select(a => ((IAssetType)a.Type).AssetName).Distinct());
 		int landtiles = region.GetLandTileCount();
+		StringBuilder naturalResources = new();
+		naturalResources.Append('\n');
+		foreach (var b in region.NaturalResources.Value) {
+			naturalResources.Append('\t').Append(b.Type).Append(" x ").Append(b.Amount).Append('\n');
+		}
+		int score = region.GetStartEaseScore();
+		var difficulty = region.GetStartDifficulty(score).Describe();
 		factionInfoLabel.Text =
 			(region.LocalFaction.HasOwningFaction()
 				? "Colony of " + region.LocalFaction.GetOwningFaction()
 				: region.LocalFaction.IsWild
 					? "Howling wilderness"
 					: "Sovereign territory") + "\n"
+			+ $"Difficulty: {difficulty}\n"
 			+ $"Land tiles: {landtiles} ({(int)(((float)landtiles / map.TotalLandTiles) * 1000) * 0.1:F1}% of world land)\n"
 			+ $"Sea tiles: {region.GetOceanTileCount()}\n"
 			+ $"Population: {(region.LocalFaction.GetPopulationCount())}\n"
-			+ $"Natural Resources: {string.Join(", ", region.NaturalResources.Value.Select(a => a.ToString()))}\n"
+			+ $"Natural Resources: {naturalResources}"
 			+ $"Potential Food: {(int)region.GetPotentialFoodFirstMonth()}\n"
 			+ $"Map objects: {things}\n"
 			+ $"Region IX: {region.WorldIndex}"
