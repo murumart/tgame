@@ -1075,7 +1075,7 @@ public class GamerAI : LocalAI {
 				if (factionActions.Faction.GetJob(ep, out _)) continue;
 				if (!FactionActions.CanAttack(factionActions.Region, n, ep)) continue;
 				ephemeralActions.Add(Actions.StartTileInvasion([
-					Factors.Ease(Factors.FreeWorkerRate(factionActions), 0.3f),
+					Factors.Ease(Factors.FreeWorkerRate(factionActions), 0.05f),
 					Factors.HasFreeWorkers(factionActions),
 				], factionActions, n.LocalFaction, ep));
 				ephemeralActions.Add(Actions.SendPeaceRequest([

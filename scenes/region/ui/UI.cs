@@ -69,6 +69,7 @@ public partial class UI : Control {
 	[Export] public RegionCamera Camera;
 
 	// bottom bar buttons
+	[Export] public Control bottomBarButtonParent;
 	[Export] public Button buildButton;
 	[Export] public Button agreementsButton;
 	[Export] public Button jobsButton;
@@ -367,7 +368,8 @@ public partial class UI : Control {
 		}
 		var resources = GetResourcesEvent?.Invoke();
 		if (resources == null) return;
-		foreach (var p in resources) {
+		var enumm = resources.AsEnumerable().OrderBy(a => a.Key.AssetName);
+		foreach (var p in enumm) {
 			sb.Append($"{p.Key.ToString()} x {p.Value.Amount}\n");
 		}
 		sb.Append($"\ntotal {resources.ItemAmount}");
@@ -515,6 +517,11 @@ public partial class UI : Control {
 
 	public void GameOver() {
 		GameIsOver = true;
+		state = State.Idle;
+		buildButton.Hide();
+		jobsButton.Hide();
+		tradeButton.Hide();
+		warButton.Hide();
 	}
 
 	public void MapClick(Vector2I tile) => MapClickEvent?.Invoke(tile);

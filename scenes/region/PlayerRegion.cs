@@ -64,6 +64,13 @@ public partial class PlayerRegion : Node {
 			"After much too much fighting, we have decided to put down our weapons and bury this feud. In such a beautiful moment, we can not but celebrate and wish that this peace is lasting and fair...\n\nAt least for us.",
 			title: $"War Ended With {w}"
 		);
+		region.DisappearedEvent += () => {
+			ui.Announce(
+				$"Through your \"brilliant\" leadership, the climate of the world's politics has shifted in a grand way, more than a mere movement of borders. In fact, there are now much less borders -- the historical entity of {faction.Name} no longer exists. What people inhabited this entity are now divided between others, maybe living a better life, maybe doomed to servitude.\n\nThe game is over.",
+				title: "Annexed"
+			);
+			ui.GameOver();
+		};
 
 		GameMan.Game.Time.TimePassedEvent += PassTime;
 		GameMan.Game.Time.HourPassedEvent += HourlyUpdate;

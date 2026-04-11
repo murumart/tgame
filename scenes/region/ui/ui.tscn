@@ -75,7 +75,7 @@ unicode = 98
 [sub_resource type="Shortcut" id="Shortcut_3haic"]
 events = [SubResource("InputEventKey_nqtah")]
 
-[node name="Ui" type="MarginContainer" unique_id=948088031 node_paths=PackedStringArray("buildButton", "agreementsButton", "jobsButton", "tradeButton", "worldButton", "warButton", "menuTabs", "buildingList", "documentsDisplay", "jobsList", "tradeInfoPanel", "worldUI", "warInfoPanel", "mopjectMenu", "resourceDisplay", "pauseDisplayPanel", "controlButtons", "resourceLabel", "announcementOkayButton", "announcementText", "announcementTitle", "announcementParent", "Notifications")]
+[node name="Ui" type="MarginContainer" unique_id=948088031 node_paths=PackedStringArray("bottomBarButtonParent", "buildButton", "agreementsButton", "jobsButton", "tradeButton", "worldButton", "warButton", "menuTabs", "buildingList", "documentsDisplay", "jobsList", "tradeInfoPanel", "worldUI", "warInfoPanel", "mopjectMenu", "resourceDisplay", "pauseDisplayPanel", "controlButtons", "resourceLabel", "announcementOkayButton", "announcementText", "announcementTitle", "announcementParent", "Notifications")]
 z_index = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -88,6 +88,7 @@ theme_override_constants/margin_top = 2
 theme_override_constants/margin_right = 2
 theme_override_constants/margin_bottom = 2
 script = ExtResource("1_vkak1")
+bottomBarButtonParent = NodePath("VBoxContainer2/HBoxContainer/VBoxContainer2/ControlButtons")
 buildButton = NodePath("VBoxContainer2/HBoxContainer/VBoxContainer2/ControlButtons/VBoxContainer/BuildButton")
 agreementsButton = NodePath("VBoxContainer2/HBoxContainer/VBoxContainer2/ControlButtons/AgreementsButton")
 jobsButton = NodePath("VBoxContainer2/HBoxContainer/VBoxContainer2/ControlButtons/VBoxContainer2/JobsButton")

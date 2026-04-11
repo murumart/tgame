@@ -46,6 +46,7 @@ events = [SubResource("InputEventKey_4ggmx")]
 
 [node name="ControlButtons" type="HBoxContainer" unique_id=1015202627 node_paths=PackedStringArray("panButton", "zoomLabel", "zoomInButton", "zoomResetButton", "zoomOutButton", "gameSpeedLabel", "pauseButton", "normalSpeedButton", "fastSpeedButton", "fasterSpeedButton")]
 custom_minimum_size = Vector2(60, 0)
+mouse_filter = 2
 theme_override_constants/separation = 1
 script = ExtResource("1_xktde")
 panButton = NodePath("VBoxContainer/PanButton")
