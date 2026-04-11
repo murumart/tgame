@@ -1082,8 +1082,8 @@ public class GamerAI : LocalAI {
 				var ep = Vector2I.Left;
 				for (int xxx = 0; xxx < 20; xxx++) {
 					var rp = edges[(int)(GD.Randi() % edges.Length)].Key;
-					if (!n.GetGroundTile(rp, out var tile) || (tile & GroundTileType.HasLand) == 0) continue;
 					ep = n.WorldPosition + rp;
+					if (!n.GetGroundTile(rp, out var tile) || (tile & GroundTileType.HasLand) == 0) continue;
 					if (factionActions.Faction.GetJob(ep, out _)) continue;
 					if (!FactionActions.CanAttack(factionActions.Region, n, ep)) continue;
 					break;
