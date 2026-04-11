@@ -61,9 +61,10 @@ public partial class WorldGenUi : MarginContainer {
 		OnWorldGenerated();
 	}
 
-	public void LoadCurrentWorld() {
-		this.map = GameMan.Game.Map;
-		this.world = this.map.World;
+	public void LoadWorld(Game game) {
+		Debug.Assert(game is not null);
+		this.map = game.Map;
+		this.world = game.Map.World;
 		OnWorldGenerated();
 	}
 

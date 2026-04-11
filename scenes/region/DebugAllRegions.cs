@@ -15,7 +15,7 @@ public partial class DebugAllRegions : Node {
 	public override void _Ready() {
 		camera.SetProcess(false);
 		worldGenUi.GoBackEvent += GenMap;
-		worldGenUi.LoadCurrentWorld();
+		worldGenUi.LoadWorld(GameMan.Game);
 		GenMap();
 	}
 
