@@ -108,11 +108,8 @@ namespace scenes.map {
 					float distanceSqFromCentre = (Vector2.One * 0.5f).DistanceSquaredTo(vec) * 1.7f;
 
 					float continentSample = continentNoise.GetNoise2D(x, y);
-					continentSample = Mathf.Clamp(
-						baseDepth
-						+ elevationCurve.SampleBaked(continentSample)
-						- islandCurve.SampleBaked(distanceSqFromCentre),
-					-1f, 1f);
+					continentSample = Mathf.Min(continentSample + baseDepth, 1f);
+					continentSample = Mathf.Clamp(elevationCurve.SampleBaked(continentSample) - islandCurve.SampleBaked(distanceSqFromCentre), -1f, 1f);
 
 					world.SetElevation(x, y, continentSample);
 				}
@@ -185,6 +182,8 @@ namespace scenes.map {
 			}
 			await Task.Delay(1);
 
+			var sandBit = GroundTileType.HasSand;
+			var snowBit = GroundTileType.HasSnow;
 			for (int x = 0; x < world.Width; x++) {
 				for (int y = 0; y < world.Height; y++) {
 					var ele = world.GetElevation(x, y);
@@ -194,12 +193,12 @@ namespace scenes.map {
 					var tile = GroundTileType.Sea;
 					if (ele >= 0) {
 						tile = GroundTileType.HasLand;
-						if (ele <= 0.012f || humi < 0.02f || temp > 0.9f || drain > 0.95f) tile |= GroundTileType.HasSand;
+						if (ele <= 0.012f || humi < 0.02f || temp > 0.9f || drain > 0.95f) tile |= sandBit;
 						else if (humi > 0.15f) {
-							if (temp < 0) tile |= GroundTileType.HasSnow;
+							if (temp < 0) tile |= snowBit;
 							else {
 								tile |= GroundTileType.HasVeg;
-								if (temp > 0.55f && humi < 0.45f || drain > 0.8f) tile |= GroundTileType.HasSand;
+								if (temp > 0.55f && humi < 0.45f || drain > 0.8f) tile |= sandBit;
 							}
 
 							if (humi > 0.45f && drain < 0.2f) {
@@ -259,13 +258,16 @@ namespace scenes.map {
 		public Dictionary<Vector2I, Region> GenerateRegionStarts(World world, int regionCount) {
 			var startPoses = new Dictionary<Vector2I, Region>();
 			int regionsMade = 0;
+			const int maxTries = 9999;
 
 			while (regionsMade < regionCount) {
+				int tries = 0;
 				var tile = new Vector2I(rng.RandiRange(0, world.Width - 1), rng.RandiRange(0, world.Height - 1));
 				while (
-					(world.GetTile(tile.X, tile.Y) & GroundTileType.HasVeg) == 0
+					((world.GetTile(tile.X, tile.Y) & GroundTileType.HasVeg) == 0
 					|| (world.GetTile(tile.X, tile.Y) & GroundTileType.HasLand) == 0
-					|| startPoses.ContainsKey(tile)
+					|| startPoses.ContainsKey(tile))
+					&& tries++ < maxTries
 				) {
 					tile = new Vector2I(rng.RandiRange(0, world.Width - 1), rng.RandiRange(0, world.Height - 1));
 				}
