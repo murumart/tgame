@@ -52,6 +52,10 @@ public partial class WorldGenUi : MarginContainer {
 		worldUI.RegionSelected += OnRegionSelected;
 
 		worldSeedLabel.Text = "" + GD.Randi();
+
+		if (GetTree().CurrentScene == this) {
+			InitialiseNewWorld();
+		}
 	}
 
 	public void InitialiseNewWorld() {
